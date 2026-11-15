@@ -18,7 +18,7 @@ Rust-Shazam-Client fuer Linux mit GUI und CLI, keine lokale Shazam-Datenbank. Fi
 Shazam-Dienst. Native Rust-/Systembibliotheken und optional GTK/Audio sind separat zu bauen; ein vermeintliches
 SongRec-Core-Python-SDK wird nicht erfunden. Keine Mikrofonaufnahme oder Erkennungsanfrage automatisch starten.
 
-## Native Quellenverwaltung
+## Nativer CLI-Build
 
 Python >=3.11, Git, Cargo/Rust, C-Compiler, pkg-config, gettext/msgfmt sowie
 ALSA-, GLib- und OpenSSL-Entwicklungsbibliotheken erforderlich. 8192 MiB
@@ -46,16 +46,25 @@ geaenderte Dateien, Modelle, Datenbanken, Logs und sonstige Benutzerdaten bleibe
 Die Cargo.lock-Abhaengigkeiten werden in `native-sbom.cdx.json` verzeichnet;
 das ist eine Lockfile-Inventur, kein Nachweis aller gelinkten Systembibliotheken.
 Keine systemd-Unit fuer die CLI. [Voraussetzungen und Testmatrix](SOURCE_INSTALL_READINESS.md).
-Beim alten Quellbestand ist `source_prepared: true` weiterhin kein Buildnachweis.
-Keine systemd-Unit fuer reine Quellenverwaltung. Native Runtime, Dependency-Lock,
-SBOM und echter End-to-End-Test bleiben offen. Kein automatischer Start/Download
+Der echte End-to-End-Test bleibt offen. Kein automatischer Start/Download
 von Modellen, Aufnahme, Training, API-Test oder Dienst.
+
+## Alter Quellenmodus
+
+Mit `--source-only` bleibt die bisherige Quellenverwaltung am alten Pin erhalten.
+Hier gelten weiterhin 2048 MiB Mindestreserve nur fuer Quellen, nicht fuer Builds.
+Ein erfolgreicher Checkout meldet `source_prepared: true`, `installed: false`
+und `runtime_tested: false`. Er ist kein Buildnachweis und wird nicht automatisch
+in den neuen nativen CLI-Build umgewandelt. Dessen Mindestreserve betraegt 8192 MiB.
+Bei fehlenden Voraussetzungen oder fehlgeschlagenem Build wird auch im nativen
+Modus kein erfolgreicher Installationsnachweis geschrieben.
 
 ## Einsatz in der Hybrid-Plattform
 
 [Musikerkennung und Domain-Modelle](../AUDIO_RECOGNITION_AND_DOMAIN_MODELS.md)
-erlaeutert Datenfluss, Modellkarten und Sicherheitsgrenzen. Auf dem VPS werden
-Quellen verwaltet; Android-/Desktop-Werkzeuge laufen nicht dadurch als Server.
+erlaeutert Datenfluss, Modellkarten und Sicherheitsgrenzen. Auf dem Linux-VPS kann
+die native CLI gebaut werden; die GUI ist nicht Teil dieses Buildrezepts und
+es wird kein Musikerkennungsserver automatisch gestartet.
 GPU-Inferenz gehoert auf passende lokale Worker; private Endpunkte nur ueber
 WireGuard, Authentifizierung und bewusst freigegebene Clients verwenden.
 

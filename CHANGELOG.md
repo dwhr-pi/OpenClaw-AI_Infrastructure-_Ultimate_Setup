@@ -4,6 +4,7 @@
 
 ### 2026-11-15: Native Testkandidaten und ehrliche Abschnittsmatrix
 
+- CI-Folgekorrektur: SongRec dokumentiert alten Quellenmodus und neuen CLI-Build getrennt mit korrekten Statuswerten.
 - Outlines: private Python-Basisinstallation aus GitHub mit upstream uv.lock und expliziter privater uv-Freigabe.
 - eSpeak NG: privater CMake-Build mit Sprachdaten, ohne globale Installation oder Audiostart.
 - SongRec: gepinnter 0.4.3-CLI-Build mit Cargo.lock statt ungeeignetem neuerem Desktop-Quellenpin.
