@@ -1,5 +1,9 @@
 # GitHub-Ergaenzungen: Qwen Desktop, Hermes/Jarvis und Medienquellen
 
+Neu: [Native Buildkandidaten und Abschnittsmatrix MiniMax bis Cloudflare](SOURCE_INSTALL_READINESS.md).
+Outlines, eSpeak NG und SongRec haben jetzt separate native Standardpfade;
+bisherige reine Quellen bleiben ausdruecklich mit `--source-only` verwaltbar.
+
 Neue GameDev-Auswahl:
 [Godot, XR Tools, O3DE, Lively sowie Unity-/Unreal-Einordnung](ai-game-engines-xr-wallpaper.md).
 Godot hat einen separaten optionalen Linux-Source-Build; die anderen neuen Quellpakete starten keine

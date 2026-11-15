@@ -8,26 +8,35 @@ README und COPYING werden gegen feste SHA256 geprueft.
 
 ## Installation und Lifecycle
 
-Nur GitHub-Quellenbereitstellung, **kein nativer Build und keine Audiowiedergabe**.
-Python 3 und Git erforderlich; 2048 MiB Reserve fuer Quellen, keine gemessene
-Runtime-Groesse. Kein Docker oder automatischer Dienststart.
+Jetzt **nativer CMake-Build mit Sprachdaten im privaten Tool-Verzeichnis**.
+Linux/WSL, Python 3, Git, CMake, Make und C-Compiler erforderlich; 4096 MiB
+Mindestreserve, keine gemessene Runtime-Groesse. Keine globale Installation,
+Audiowiedergabe, Docker oder automatischer Dienststart. Optionale pcaudiolib-,
+Sonic-, MBROLA- und SpeechPlayer-Anbindungen bleiben deaktiviert.
 
 ```bash
 bash scripts/tools/espeak_ng_install.sh --dry-run
 bash scripts/tools/espeak_ng_install.sh
 bash scripts/tools/espeak_ng_status.sh
 bash scripts/tools/espeak_ng_doctor.sh
+bash scripts/tools/espeak_ng_doctor.sh --smoke
 bash scripts/tools/espeak_ng_update.sh --dry-run
 bash scripts/tools/espeak_ng_uninstall.sh --dry-run
 ```
 
-`source_prepared` bezeichnet Quellen, `installed: false`, `runtime_tested: false`.
-Doctor prueft Pin/Origin/Hashvertraege/Inventar, keine Aussprache oder Audio.
+`installed: true` folgt erst nach Build, privater Installation und `--version`-Probe.
+`runtime_tested: false` bedeutet weiterhin: keine Aussprache-/Audio-Abnahme.
+Doctor prueft Pin/Origin/Hashvertraege/Inventar; nur `--smoke` startet explizit
+die begrenzte `--version`-Probe, keine Audiowiedergabe.
 Update bleibt beim Pin. Uninstall ohne `--dry-run` entfernt nur unveraenderte
 Quellen mit Besitznachweis unter `~/.openclaw_ultimate_user_data/tools/espeak_ng/`.
 Bei eigenen Aenderungen Abbruch; Logs, Modelle und andere Benutzerdaten bleiben.
-Keine systemd-Unit fuer reine Quellenverwaltung. Nativer CMake-Build,
-Sprachdaten-/Komponenten-Lock/SBOM und Aussprache-Smoke-Test bleiben offen.
+Keine systemd-Unit fuer die CLI. `native-sbom.cdx.json` erfasst die Hauptkomponente,
+nicht den vollstaendigen Compiler-/Systembibliothekenbaum. Compiler-/OS-Versionen
+und echte Aussprache-Abnahme sind im Linux-Testprotokoll zu erfassen.
+Alte reine Quellen sind separat mit `--source-only` verwaltbar und werden nicht
+stillschweigend ersetzt. Siehe [Testmatrix](SOURCE_INSTALL_READINESS.md).
+Beim alten Quellbestand ist `source_prepared: true` weiterhin kein Buildnachweis.
 
 ## Nutzung nach gesondertem nativem Build
 

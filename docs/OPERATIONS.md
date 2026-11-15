@@ -3,12 +3,17 @@
 ## Entwicklungsbranch und Release
 
 Im Entwicklungscheckout zuerst `git status --short --branch` pruefen.
-Den Branch `v11.18-ff` fuer die aktuelle Arbeit und Offline-Tests
-verwenden. Der Menuepunkt Setup-Update ist kein Branch-Wechsel: Fuer
+Den eigenen geprueften Arbeitsbranch fuer Entwicklung und Offline-Tests
+beibehalten; keinen Branch nur wegen der Versionsnummer wechseln.
+Aktueller Setup-Stand ist 11.18, Release-Ziel `v11.18.0`.
+Der Menuepunkt Setup-Update ist kein Branch-Wechsel: Fuer
 produktive Updates den [signierten Release-Pfad](SIGNED_RELEASES.md)
 verwenden. Ein neues 11.18-Release braucht einen neuen versionierten
 Tag und eine neue Signatur, nicht zwingend einen neuen Minisign-Schluessel.
 Die veroeffentlichten 11.17.0-Dateien nicht ueberschreiben.
+Die [neue Installationsanleitung](INSTALL_SIGNED_RELEASE.md) fuehrt Schritt fuer
+Schritt durch Clone, Quellpruefung und Installation. Vorher die
+[Veroeffentlichungs-Checkliste](releases/v11.18.0.md) abschliessen.
 
 ## Backup, Restore und Schluessel
 

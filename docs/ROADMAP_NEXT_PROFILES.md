@@ -24,7 +24,7 @@
 - Android-App-Builder erst nach SDK-/Gradle-Doctor.
 - Legal-Safe-Creator fuer Creator-Workflows erweitern.
 
-## 11.17 Planned Profile Roadmap
+## 11.18 Planned Profile Roadmap
 
 Prioritaet fuer die naechsten stabilen Ausbauschritte:
 

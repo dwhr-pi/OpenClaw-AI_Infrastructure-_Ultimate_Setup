@@ -80,17 +80,17 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `config/legal/sources.json:37`
 - `config/models.yaml:16`
 - `config/paperless_ngx.env.example:5`
-- `config/tools.yml:1154`
-- `config/tools.yml:2518`
-- `config/tools.yml:5965`
-- `config/tools.yml:5974`
-- `config/tools.yml:5984`
-- `config/tools.yml:5993`
-- `config/tools.yml:6060`
-- `config/tools.yml:6069`
-- `config/tools.yml:6117`
-- `config/tools.yml:6126`
-- `config/tools.yml:7452`
+- `config/tools.yml:1155`
+- `config/tools.yml:2519`
+- `config/tools.yml:5966`
+- `config/tools.yml:5975`
+- `config/tools.yml:5985`
+- `config/tools.yml:5994`
+- `config/tools.yml:6061`
+- `config/tools.yml:6070`
+- `config/tools.yml:6118`
+- `config/tools.yml:6127`
+- `config/tools.yml:7453`
 - `examples/docker-compose/monitoring.yml:3`
 - `examples/docker-compose/monitoring.yml:12`
 - `examples/docker-compose/monitoring.yml:21`
@@ -485,10 +485,10 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/find_skills.py:98`
 - `scripts/tools/helpers/find_skills.py:233`
 - `scripts/tools/helpers/find_skills.py:291`
-- `scripts/tools/helpers/gap_tools.py:419`
-- `scripts/tools/helpers/gap_tools.py:473`
-- `scripts/tools/helpers/gap_tools.py:494`
-- `scripts/tools/helpers/gap_tools.py:566`
+- `scripts/tools/helpers/gap_tools.py:425`
+- `scripts/tools/helpers/gap_tools.py:483`
+- `scripts/tools/helpers/gap_tools.py:510`
+- `scripts/tools/helpers/gap_tools.py:591`
 - `scripts/tools/helpers/hf_datasets_common.sh:96`
 - `scripts/tools/helpers/hf_hub_common.sh:42`
 - `scripts/tools/helpers/hf_hub_common.sh:97`
@@ -562,11 +562,11 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/opa_install.sh:6`
 - `scripts/tools/trivy_install.sh:27`
 - `setup_ultimate.sh:179`
-- `setup_ultimate.sh:2312`
-- `setup_ultimate.sh:2374`
-- `setup_ultimate.sh:2395`
-- `setup_ultimate.sh:2407`
-- `setup_ultimate.sh:2822`
+- `setup_ultimate.sh:2314`
+- `setup_ultimate.sh:2376`
+- `setup_ultimate.sh:2397`
+- `setup_ultimate.sh:2409`
+- `setup_ultimate.sh:2824`
 - `stacks/llmops-platform/docker-compose.yml:24`
 - `stacks/llmops-platform/docker-compose.yml:50`
 - `stacks/llmops-platform/docker-compose.yml:88`
@@ -675,8 +675,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `.github/workflows/linkcheck.yml:20`
 - `.github/workflows/next-level-health.yml:18`
 - `.github/workflows/shellcheck.yml:13`
-- `config/tools.yml:2937`
-- `config/tools.yml:3899`
+- `config/tools.yml:2938`
+- `config/tools.yml:3900`
 - `install.sh:619`
 - `scripts/auto_update.sh:39`
 - `scripts/auto_update.sh:43`
@@ -837,7 +837,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/yara_install.sh:7`
 - `scripts/tools/zenbot_trader_install.sh:39`
 - `scripts/tools/zenbot_trader_install.sh:40`
-- `setup_ultimate.sh:2758`
+- `setup_ultimate.sh:2760`
 - `tools/websitefactory/scripts/check-build.sh:29`
 - `tools/websitefactory/scripts/check-build.sh:37`
 
@@ -851,7 +851,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `charts/monitoring-lite/templates/network-policy.yaml:74`
 - `charts/monitoring-lite/templates/workloads.yaml:28`
 - `charts/monitoring-lite/templates/workloads.yaml:59`
-- `config/tools.yml:2371`
+- `config/tools.yml:2372`
 - `config/traefik-local/traefik.yml:4`
 - `config/traefik-local/traefik.yml:12`
 - `deploy/kustomize/optional/direct-openclaw-ollama/network-policy.yaml:11`
@@ -1031,8 +1031,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `services/inference-gateway/local_policy.py:26`
 - `services/inference-gateway/local_policy.py:27`
 - `services/inference-gateway/local_policy.py:28`
-- `setup_ultimate.sh:1629`
-- `setup_ultimate.sh:3017`
+- `setup_ultimate.sh:1631`
+- `setup_ultimate.sh:3019`
 - `stacks/freellmapi/compose.yml:8`
 - `stacks/freellmapi/compose.yml:10`
 - `stacks/llmops-platform/docker-compose.yml:20`
@@ -1065,7 +1065,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Privilegien-/Host-Kandidat
 
-659 Fundstellen, keine automatische Risikoeinstufung.
+660 Fundstellen, keine automatische Risikoeinstufung.
 
 - `.github/workflows/next-level-health.yml:17`
 - `.github/workflows/next-level-health.yml:18`
@@ -1074,9 +1074,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `charts/monitoring-lite/templates/workloads.yaml:65`
 - `config/docker_to_github.json:22`
 - `config/docker_to_github.json:1988`
-- `config/tools.yml:1476`
-- `config/tools.yml:1499`
-- `config/tools.yml:2602`
+- `config/tools.yml:1477`
+- `config/tools.yml:1500`
+- `config/tools.yml:2603`
 - `deploy/kustomize/optional/open-webui/workload.yaml:39`
 - `deploy/kustomize/optional/open-webui/workload.yaml:51`
 - `deploy/kustomize/platform-dns01/kustomization.yaml:3`
@@ -1428,6 +1428,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/film_common.sh:119`
 - `scripts/tools/helpers/freellmapi_common.sh:60`
 - `scripts/tools/helpers/freellmapi_common.sh:135`
+- `scripts/tools/helpers/gap_native_build.py:45`
 - `scripts/tools/helpers/github_docker_stack_common.sh:41`
 - `scripts/tools/helpers/github_docker_stack_common.sh:42`
 - `scripts/tools/helpers/github_docker_stack_common.sh:85`
@@ -1720,10 +1721,10 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/zotero_uninstall.sh:23`
 - `scripts/tools/zotero_uninstall.sh:24`
 - `scripts/tools/zotero_uninstall.sh:25`
-- `setup_ultimate.sh:1301`
-- `setup_ultimate.sh:2758`
-- `setup_ultimate.sh:4742`
-- `setup_ultimate.sh:5232`
+- `setup_ultimate.sh:1303`
+- `setup_ultimate.sh:2760`
+- `setup_ultimate.sh:4744`
+- `setup_ultimate.sh:5234`
 - `systemd/openclaw-workspace-backup.service.example:9`
 - `systemd/openclaw-workspace-backup.service.example:14`
 

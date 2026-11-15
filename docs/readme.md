@@ -48,8 +48,10 @@ eSpeak NG, offline pruefbare Strophen und ehrliche Phonetik-/Metrikgrenzen.
 Assembler, Open Weights, Coding-Clients, RAG, Weitertraining, Datenmigration
 und nachvollziehbare Modellherkunft; keine automatischen Modell-Downloads.
 
-[Signiertes Setup neu installieren](INSTALL_SIGNED_RELEASE.md):
-Windows-Public-Key uebernehmen, Bootstrap beziehen, Release pruefen und installieren.
+[Setup 11.18 Schritt fuer Schritt installieren](INSTALL_SIGNED_RELEASE.md):
+Ubuntu-Terminal, Clone, gepruefter Checkout, Public-Key-Import und signierte Installation.
+Ziel-Release `v11.18.0` ist noch nicht veroeffentlicht;
+[Maintainer-Checkliste](releases/v11.18.0.md) zuerst abschliessen.
 
 [Audit 11.18](AUDIT-2026-11-10.md), [Tool-Auswahl](TOOL-MATRIX.md),
 [offene Betriebsfaehigkeiten](MISSING-TOOLS.md) und [Betrieb](OPERATIONS.md).

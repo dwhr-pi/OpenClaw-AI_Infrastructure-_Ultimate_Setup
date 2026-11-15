@@ -33,6 +33,7 @@
       "name": "SongRec",
       "source": "https://github.com/marin-m/SongRec.git",
       "source_commit": "0f677c702666448642753f0e4da2fa262da67bc8",
+      "native_source_commit": "15da6b224297d7bf8a9c91b9f70af3d499a9636d",
       "category": "Audio / Recognition",
       "status": "experimental",
       "readiness": "planned",
@@ -41,7 +42,7 @@
       "risk": "high",
       "deployment": "desktop",
       "install_mode": "github-source",
-      "description": "Gepinnte Quellen; Runtime/Modelle separat offen. Rust-Shazam-Client fuer Linux mit GUI und CLI, keine lokale Shazam-Datenbank.",
+      "description": "Nativer SongRec-0.4.3-CLI-Build aus GitHub mit Cargo.lock; keine GUI, Mikrofonaufnahme oder Shazam-Anfrage. Alte Quellen separat mit --source-only.",
       "license": "GPL-3.0",
       "install_script": "scripts/tools/songrec_install.sh",
       "uninstall_script": "scripts/tools/songrec_uninstall.sh",
@@ -52,7 +53,7 @@
       "check_value": "~/.openclaw_ultimate_user_data/tools/songrec/ready.json",
       "ports": [],
       "doc": "docs/tools/songrec.md",
-      "security_note": "Nur Quellen; keine Runtime-Abnahme. Kein Docker, Modell-Pull, Mikrofon, API-, Datenbank- oder Dienststart."
+      "security_note": "Neuer nativer CLI-Build mit lokalem Versionscheck; echte Audio-/Netzwerkabnahme offen. Keine GUI, Aufnahme oder Shazam-Anfrage. Alte Quellen nur explizit verwalten."
     },
     {
       "id": "mousai",
@@ -378,7 +379,7 @@
       "risk": "medium",
       "deployment": "library",
       "install_mode": "github-source",
-      "description": "Gepinnte Structured-Output-Quellen; keine Python-Runtime oder Modelle installiert.",
+      "description": "Native private Python-Umgebung aus gepinnten GitHub-Quellen und uv.lock; keine optionalen Modell-Backends oder Inferenzstarts.",
       "license": "Apache-2.0; Modell-/Backend-Abhaengigkeiten separat pruefen",
       "install_script": "scripts/tools/outlines_install.sh",
       "uninstall_script": "scripts/tools/outlines_uninstall.sh",
@@ -389,7 +390,7 @@
       "check_value": "~/.openclaw_ultimate_user_data/tools/outlines/ready.json",
       "ports": [],
       "doc": "docs/tools/outlines.md",
-      "security_note": "Source-only: source_prepared ist kein Build-/Runtime-Nachweis. Keine Modelle, Audio, APIs, Dienste oder Docker. Vollstaendige native Runtime offen."
+      "security_note": "Native Basisbibliothek mit lokalem Importcheck; kein Modell-/Backend-/Provider-Aufruf. Echte Decoding-Abnahme offen. Alte Quellen werden nicht ersetzt."
     },
     {
       "id": "espeak_ng",
@@ -404,7 +405,7 @@
       "risk": "medium",
       "deployment": "library",
       "install_mode": "github-source",
-      "description": "Gepinnte Phonetik-/Sprachsynthese-Quellen; kein nativer Build oder Audiostart.",
+      "description": "Nativer privater CMake-Build inklusive Sprachdaten; kein Audiostart oder globales Installieren.",
       "license": "GPL-3.0-or-later; weitere Daten-/Komponentenlizenzen separat pruefen",
       "install_script": "scripts/tools/espeak_ng_install.sh",
       "uninstall_script": "scripts/tools/espeak_ng_uninstall.sh",
@@ -415,7 +416,7 @@
       "check_value": "~/.openclaw_ultimate_user_data/tools/espeak_ng/ready.json",
       "ports": [],
       "doc": "docs/tools/espeak-ng.md",
-      "security_note": "Source-only: source_prepared ist kein Build-/Runtime-Nachweis. Keine Modelle, Audio, APIs, Dienste oder Docker. Vollstaendige native Runtime offen."
+      "security_note": "Nativer privater Build mit Versionscheck, ohne Audiowiedergabe. Aussprache-/Runtime-Abnahme offen. Alte Quellen werden nicht ersetzt."
     },
     {
       "id": "qwen_coder",

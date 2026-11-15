@@ -322,7 +322,7 @@ Embedded/IoT: [Embedded Debug HIL: GDB, OpenOCD, pyOCD und Agenten](tools/embedd
 - `piper`
 - `coqui_tts`
 
-## Tool-Kandidaten fuer planned Profile ab 11.17
+## Tool-Kandidaten fuer planned Profile: Stand 11.18
 
 | Tool                    | GitHub/Quelle                                        | Zweck                                                                            | Bewertung                                                                                   |
 | ----------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |

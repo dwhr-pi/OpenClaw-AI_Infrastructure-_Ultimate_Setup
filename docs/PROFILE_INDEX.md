@@ -61,7 +61,7 @@ Dieser Index ordnet Profile nach Themen und Betriebsrisiko. Die technische Quell
 - Browser-/OSINT-/Security-Profile: nur eigene Ziele, Allowlist und defensive Nutzung.
 - Voice-/Face-/Video-Profile: Einwilligung, Rechte und klare Kennzeichnung.
 
-## Neue planned Profile ab 11.17
+## Neue planned Profile: Stand 11.18
 
 Diese Profile sind sichtbar und registry-seitig vorbereitet, installieren aber keine schweren
 Toolchains automatisch. Sie dienen als sichere Einstiegspunkte fuer spaetere Tool-Auswahl und Tests.

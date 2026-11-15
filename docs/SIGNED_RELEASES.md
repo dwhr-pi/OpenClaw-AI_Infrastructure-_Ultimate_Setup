@@ -41,7 +41,10 @@ Downgrade-Schutz gegen einen bewusst gewaehlten alten signierten Tag.
 
 Fuer den Weg ab leerem Linux-/WSL-Checkout, einschliesslich
 Windows-Schluesselkopie und Git-Bootstrap, siehe die
-[vollstaendige Anleitung fuer v11.17.0](INSTALL_SIGNED_RELEASE.md).
+[Schritt-fuer-Schritt-Anleitung fuer Setup 11.18](INSTALL_SIGNED_RELEASE.md).
+Der neue Ziel-Tag `v11.18.0` muss vor der Installation tatsaechlich signiert
+veroeffentlicht sein. Die alte [v11.17.0-Anleitung](legacy/INSTALL_SIGNED_RELEASE_v11_17_0.md)
+bleibt Historie; alte Signaturen werden nicht umetikettiert.
 
 Fehlt Minisign, fragt der Bootstrap bei interaktiver Standardeingabe mit `[j/N]`.
 Enter, EOF oder fehlende interaktive Eingabe erlauben keine Paketinstallation.
@@ -108,6 +111,9 @@ Coding-Agenten-Featurebranch oder einen anderen exakten Branch. Alternativer Opt
 signierte Tag-/Minisign-Pfad bleibt getrennt.
 
 ## Release vorbereiten: Maintainer
+
+Fuer das neue Release gilt die konkrete [Checkliste v11.18.0](releases/v11.18.0.md):
+neuer Tag, neuer Export, neue Signatur, vier Assets und anonymer Download-Test.
 
 Nur aus einem zuvor geprueften **lokalen** Tag exportieren. Der Export liest Git lokal und signiert
 oder veroeffentlicht nichts. Die folgenden Befehle sind eine Anleitung; weder Schluesselzugriff noch

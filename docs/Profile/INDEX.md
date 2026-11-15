@@ -169,7 +169,7 @@ noch nicht als eigene Installationsprofile verdrahtet.
 | `Personal_Knowledge_OS` | persönliche Wissensdatenbank und Sync     | `Personal_Knowledge_OS.md` |
 | `Repo_Maintainer`       | Repo-Pflege, Lints, Releases, Actions     | `Repo_Maintainer.md`       |
 
-## Geplante 11.17-Dachprofile
+## Geplante Dachprofile: Stand 11.18
 
 Diese Profile sind bewusst als Dachprofile registriert. Spezialnamen werden in `profiles.json` als
 Alias gefuehrt, damit das Setup nicht mit Dubletten ueberlaedt.

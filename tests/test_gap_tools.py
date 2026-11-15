@@ -260,12 +260,14 @@ class GapStorageMenuTests(unittest.TestCase):
                               capture_output=True, text=True, timeout=30)
 
     def test_menu_fallbacks_match_all_gap_tool_reserves(self):
+        from gap_native_build import specification
         command = ""
         for spec in tool.SPECS.values():
             command += "get_tool_install_fallback_min_free_mb " + shlex.quote(spec["name"]) + "\nprintf '\\n'\n"
         result = self.shell(["get_tool_install_fallback_min_free_mb"], command)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(result.stdout.splitlines(), [str(spec["reserve_mb"]) for spec in tool.SPECS.values()])
+        self.assertEqual(result.stdout.splitlines(),
+                         [str(specification(key, spec)["reserve_mb"]) for key, spec in tool.SPECS.items()])
 
     def test_qwen_host_shortage_is_rejected_by_menu_before_installer(self):
         result = self.shell(["get_tool_install_fallback_min_free_mb", "get_tool_install_min_free_mb",

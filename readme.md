@@ -114,9 +114,9 @@ Weitere Themen: [Entwicklungswerkzeuge](docs/DEVELOPMENT_TOOLS_OVERVIEW.md),
 
 **Neu in Linux oder WSL?** Die
 [vollstaendige Installationsanleitung](docs/INSTALL_SIGNED_RELEASE.md) zeigt,
-wie du `release.pub` aus Windows uebernimmst, den Bootstrap von GitHub
-beziehst, das [signierte Release v11.17.0](https://github.com/dwhr-pi/OpenClaw-AI_Infrastructure-_Ultimate_Setup/releases/tag/v11.17.0)
-zuerst nur pruefst und danach in einen neuen Ordner installierst.
+wie du klonst, den Quellstand pruefst, `release.pub` importierst und danach installierst.
+**Setup-Version: 11.18.** Release-Ziel: `v11.18.0`, noch nicht veroeffentlicht.
+Vor der signierten Installation muss der Maintainer die [Release-Checkliste](docs/releases/v11.18.0.md) abschliessen.
 Das ist kein Update einer vorhandenen Installation.
 
 <a id="-setup-erneut-starten"></a>

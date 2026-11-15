@@ -1,5 +1,8 @@
 # VPS, Kubernetes, Ollama und OpenClaw - Ultimate Setup V11.17
 
+Historischer README-Vorschlag fuer 11.17, nicht der aktuelle Einstieg.
+Setup 11.18: [aktuelle Schritt-fuer-Schritt-Anleitung](INSTALL_SIGNED_RELEASE.md).
+
 **Vorschlag fuer eine Kurz-README, kein neuer Installer und noch kein Ersatz der Root-README.**
 Relative Links beziehen sich hier auf `docs/`. Vor Uebernahme muessen alte Abschnittsanker und
 Detailinhalte im Archiv erhalten werden.

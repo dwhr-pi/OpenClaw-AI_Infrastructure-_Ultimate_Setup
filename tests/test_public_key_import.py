@@ -47,6 +47,11 @@ class PublicKeyImportTests(unittest.TestCase):
             keys.import_key(self.root / "release.key", self.destination, self.digest)
         self.assertFalse(self.destination.exists())
 
+    def test_git_commit_is_rejected_before_reading_public_key_contents(self):
+        with patch.object(keys, 'regular_read', side_effect=AssertionError('read')), self.assertRaises(ValueError):
+            keys.import_key(self.source, self.destination, '8164d68fce1700fa2de4e69baf402da4878dcc13')
+        self.assertFalse(self.destination.exists())
+
     def test_default_does_not_read_missing_source(self):
         self.assertEqual(keys.main(["--source", str(self.root / "missing.pub")]), 0)
         self.assertFalse(self.destination.exists())

@@ -99,16 +99,17 @@ Repositorys halten und bei Bedarf nur die einzelne Datei weitergeben.
 
 ## Vor jeder Installation erst pruefen
 
-Aus einem bereits geprueften Bootstrap-Checkout in Linux oder WSL:
+Aus einem bereits geprueften Bootstrap-Checkout in Linux oder WSL. Fuer
+Setup 11.18 gilt der neue Ziel-Tag `v11.18.0`; erst nach seiner tatsaechlichen
+signierten Veroeffentlichung ausfuehren. Bis dahin hier stoppen. Der alte
+[v11.17.0-Aufruf](legacy/INSTALL_SIGNED_RELEASE_v11_17_0.md) bleibt Historie.
 
 ```bash
-bash ./verify_release_and_install.sh \
-  --tag v11.17.0 --public-key "$HOME/.openclaw-release-signing/release.pub" \
-  --download --verify-only
+bash ./verify_release_and_install.sh --tag v11.18.0 --public-key "$HOME/.config/openclaw-trust/release.pub" --download --verify-only
 ```
 
-Der Beispielpfad passt zum Maintainer; Empfaenger setzen den absoluten Pfad
-zu ihrer unabhaengig bestaetigten Kopie ein. `--verify-only` klont keinen
+Der Beispielpfad entspricht dem neuen Public-Key-Import; ohne Import den absoluten
+Pfad zur unabhaengig bestaetigten Kopie einsetzen. `--verify-only` klont keinen
 Release-Checkout und fuehrt den Installer nicht aus. Geprueft werden
 Signatur, SHA256 und Metadaten; der Tag-/Checkout-Abgleich folgt im
 ausdruecklich freigegebenen Installationsschritt. Siehe

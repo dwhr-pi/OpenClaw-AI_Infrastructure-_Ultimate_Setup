@@ -314,6 +314,36 @@ git() {
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(tokens, [])
 
+    def test_current_setup_and_catalogue_versions_are_11_18(self):
+        setup = (ROOT / 'setup_ultimate.sh').read_text(encoding='utf-8')
+        self.assertEqual(re.search(r'^APP_VERSION="([^"]+)"$', setup, re.M).group(1), '11.18')
+        for path in ('config/tools.yml', 'config/profiles.yml', 'docs/Profile/profiles.json'):
+            self.assertEqual(json.loads((ROOT / path).read_text(encoding='utf-8'))['version'], '11.18')
+
+    def test_guide_is_ordered_and_does_not_claim_an_unpublished_release(self):
+        text = (ROOT / 'docs/INSTALL_SIGNED_RELEASE.md').read_text(encoding='utf-8')
+        headings = re.findall(r'^## ([0-9]+)\.', text, re.M)
+        self.assertEqual(headings, [str(number) for number in range(1, 11)])
+        self.assertIn('v11.18.0` ist noch nicht veroeffentlicht', text)
+        self.assertIn('--tag v11.18.0', text)
+        self.assertNotIn('--tag v11.17.0', text)
+        self.assertLess(text.index('## 5.'), text.index('--interactive --apply'))
+        self.assertLess(text.index('## 7.'), text.index('--download --verify-only'))
+        self.assertIn('legacy/INSTALL_SIGNED_RELEASE_v11_17_0.md', text)
+        self.assertNotIn('--legacy-unsigned', text)
+
+    def test_all_documented_bash_blocks_parse_without_execution(self):
+        bash = 'C:/Program Files/Git/bin/bash.exe' if os.name == 'nt' else shutil.which('bash')
+        if not bash or not Path(bash).is_file():
+            self.skipTest('Native Bash unavailable; never use WSL as fallback')
+        for path in ('docs/INSTALL_SIGNED_RELEASE.md', 'docs/releases/v11.18.0.md',
+                     'docs/legacy/INSTALL_SIGNED_RELEASE_v11_17_0.md'):
+            text = (ROOT / path).read_text(encoding='utf-8')
+            for block in re.findall(r'```bash\n(.*?)```', text, re.S):
+                result = subprocess.run([bash, '--noprofile', '--norc', '-n'], input=block,
+                                        text=True, capture_output=True, timeout=15)
+                self.assertEqual(result.returncode, 0, path + ': ' + result.stderr)
+
 
 if __name__ == '__main__':
     unittest.main()
