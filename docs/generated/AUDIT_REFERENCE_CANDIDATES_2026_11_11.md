@@ -246,6 +246,7 @@ Nur Nachpruefkandidaten; Status TOT wird fuer keinen dieser Pfade behauptet.
 - `scripts/tools/ffmpeg_check.sh`
 - `scripts/tools/gpt_oss_120b_check.sh`
 - `scripts/tools/helpers/cargo_build_tools.py`
+- `scripts/tools/helpers/gap_native_build.py`
 - `scripts/tools/levo_2_check.sh`
 - `scripts/tools/markdown_docs_server_check.sh`
 - `scripts/tools/minimax_m3_check.sh`

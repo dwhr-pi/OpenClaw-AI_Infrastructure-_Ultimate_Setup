@@ -903,7 +903,9 @@ get_tool_install_fallback_min_free_mb() {
   local tool_key="$1"
 
   case "$tool_key" in
-    "MiniMax_M3" | "Obot" | "DeepSeek_R1" | "Qwen_Coder" | "Outlines" | "eSpeak_NG" | "Audile" | "SongRec" | "Mousai" | "Dejavu" | "Qwen3_235B_A22B" | "QwQ_32B" | "GPT_OSS_120B" | "LeVo_2" | "MOSS_Music" | "PoeLM" | "PoeTone" | "CoPoet" | "CTGS" | "MusicGen") printf '2048' ;;
+    "Outlines" | "eSpeak_NG") printf '4096' ;;
+    "SongRec") printf '8192' ;;
+    "MiniMax_M3" | "Obot" | "DeepSeek_R1" | "Qwen_Coder" | "Audile" | "Mousai" | "Dejavu" | "Qwen3_235B_A22B" | "QwQ_32B" | "GPT_OSS_120B" | "LeVo_2" | "MOSS_Music" | "PoeLM" | "PoeTone" | "CoPoet" | "CTGS" | "MusicGen") printf '2048' ;;
     "Traefik") printf '16384' ;;
     "OpenTelemetry") printf '8192' ;;
     "Langfuse" | "Grafana_Alloy") printf '49152' ;;
@@ -4897,7 +4899,7 @@ TOOL_KEYS+=("Audile" "SongRec" "Mousai" "Dejavu" "Qwen3_235B_A22B" "QwQ_32B" "GP
 TOOL_SCRIPT_NAMES["Audile"]="audile"
 TOOLS["Audile"]="Nur Quellen; Runtime separat offen. docs/tools/audile.md"
 TOOL_SCRIPT_NAMES["SongRec"]="songrec"
-TOOLS["SongRec"]="Nur Quellen; Runtime separat offen. docs/tools/songrec.md"
+TOOLS["SongRec"]="Nativer SongRec-0.4.3-CLI-Build mit Cargo.lock; kein Mikrofon-/Shazam-Aufruf. Linux-Abnahme offen."
 TOOL_SCRIPT_NAMES["Mousai"]="mousai"
 TOOLS["Mousai"]="Nur Quellen; Runtime separat offen. docs/tools/mousai.md"
 TOOL_SCRIPT_NAMES["Dejavu"]="dejavu"
@@ -4924,8 +4926,8 @@ TOOLS["CoPoet"]="T5-Poesieforschung; nur Quellen, keine Modelle/Evaluation. docs
 TOOLS["CTGS"]="Constrained Text Generation Studio; nur Quellen, kein GUI-/Modellstart. docs/tools/ctgs.md"
 TOOL_SCRIPT_NAMES["Outlines"]="outlines"
 TOOL_SCRIPT_NAMES["eSpeak_NG"]="espeak_ng"
-TOOLS["Outlines"]="Structured-Output-GitHub-Quellen; keine Modelle/Python-Runtime. docs/tools/outlines.md"
-TOOLS["eSpeak_NG"]="Phonetik-GitHub-Quellen; kein Build oder Audiostart. docs/tools/espeak-ng.md"
+TOOLS["Outlines"]="Native private Python-Umgebung aus GitHub mit uv.lock; keine Modelle/Backend-Aufrufe. Linux-Abnahme offen."
+TOOLS["eSpeak_NG"]="Nativer privater CMake-Build mit Sprachdaten, ohne Audiowiedergabe/Autostart. Linux-Abnahme offen."
 TOOL_SCRIPT_NAMES["Qwen_Coder"]="qwen_coder"
 TOOLS["Qwen_Coder"]="Qwen-Coder-Modellquellen; getrennt von Qwen Code, keine Gewichte/Inferenz. docs/tools/qwen-coder.md"
 TOOL_SCRIPT_NAMES["MiniMax_M3"]="minimax_m3"

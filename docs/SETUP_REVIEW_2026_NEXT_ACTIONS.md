@@ -105,7 +105,7 @@ Arbeitsbericht fuer die naechsten Wartungsrunden.
 
 Sofort:
 
-- `profiles.json` auf 11.17 bringen und neue Dachprofile plus Aliasgruppen registrieren.
+- `profiles.json` steht auf 11.18; neue Dachprofile und Aliasgruppen weiterhin getrennt abnehmen.
 - Fehlende Doku-Wegweiser ergaenzen: Installation Wizard, Profilpakete, empfohlener
   Erstinstallationspfad, Troubleshooting.
 - Toolquellen transparent in `docs/GITHUB_TOOL_SOURCES.md` dokumentieren.

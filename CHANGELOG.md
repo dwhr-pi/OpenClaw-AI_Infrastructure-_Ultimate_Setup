@@ -2,6 +2,30 @@
 
 ## Unreleased
 
+### 2026-11-15: Native Testkandidaten und ehrliche Abschnittsmatrix
+
+- CI-Folgekorrektur: SongRec dokumentiert alten Quellenmodus und neuen CLI-Build getrennt mit korrekten Statuswerten.
+- Outlines: private Python-Basisinstallation aus GitHub mit upstream uv.lock und expliziter privater uv-Freigabe.
+- eSpeak NG: privater CMake-Build mit Sprachdaten, ohne globale Installation oder Audiostart.
+- SongRec: gepinnter 0.4.3-CLI-Build mit Cargo.lock statt ungeeignetem neuerem Desktop-Quellenpin.
+- Lokale 30s-Smoke-Checks, Dateiinventare und begrenzte CycloneDX-Komponentenlisten ergaenzt.
+- Abschnitt MiniMax bis Cloudflared mit konkreten Quellen-/Lizenz-/Gewichts-/Buildblockern dokumentiert.
+- Kein Linux-Build, Modell-Pull, Dienststart, Signieren oder Veroeffentlichen hier ausgefuehrt; Nutzerabnahme offen.
+
+### 2026-11-12: Durchgehende Installationsanleitung und Release-Ziel 11.18
+
+- Zehn aufeinanderfolgende Ubuntu-/WSL-Schritte von Clone und Quellpruefung bis zum Setup-Menue dokumentiert.
+- Fehlenden Importhelfer im Alt-Checkout und Unterschied zwischen Git-Commit und Public-Key-SHA256 erklaert.
+- Aktuelle Einstiege und Profil-Roadmaps auf 11.18 ausgerichtet; Runtime-/Katalogversionen waren bereits 11.18.
+- Release-Ziel v11.18.0 samt Maintainer-Checkliste vorbereitet, nicht veroeffentlicht oder signiert.
+- V11.17.0-Anleitung als Historie erhalten; alte Signaturen und fremde Abhaengigkeitsversionen unveraendert.
+
+### 2026-11-12: Clone-Anleitung fuer Ubuntu/Bash und PowerShell getrennt
+
+- Direkt kopierbaren Ubuntu-/Linux-/WSL-Block vorangestellt; keine PowerShell-Backticks in Bash-Beispielen.
+- Beide Clone-Wege ohne Zeilenfortsetzung, mit neuem Zielordner und Abbruch bei Fehlern dokumentiert.
+- Bestehende Installation vom optionalen Quellpruefungs-Clone getrennt; keine Datenloeschung oder Installerstarts.
+
 ### 2026-11-12: PR-27-Folgekorrektur fuer Konfigurationsscan und HTTP 502
 
 - Non-root-Podkontext im Sidecar-Patch explizit deklariert und gegen die Basis abgesichert.

@@ -13,6 +13,11 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts/tools/helpers'))
 import gap_tools as tool
+from gap_native_build import TOOLS as NATIVE_TOOLS
+
+
+def source_args(key, action):
+    return [key, action] + (['--source-only'] if key in NATIVE_TOOLS else [])
 
 KEYS = ('minimax_m3', 'obot', 'deepseek_r1', 'qwen_coder', 'outlines', 'espeak_ng',
         'levo_2', 'moss_music', 'poelm', 'poetone', 'copoet', 'ctgs', 'musicgen_source',
@@ -59,22 +64,22 @@ class SourceLifecycle(unittest.TestCase):
                 self.spec = self.fixture_spec(key)
                 with patch.dict(tool.SPECS, {key: self.spec}), patch.object(tool, 'git',
                         side_effect=self.fake_git), patch.object(tool, 'reserve'), redirect_stdout(io.StringIO()):
-                    self.assertEqual(tool.main([key, 'install']), 0)
+                    self.assertEqual(tool.main(source_args(key, 'install')), 0)
                     base, runtime, marker = tool.paths(key)
                     first = marker.read_bytes()
                     record = json.loads(first)
                     self.assertFalse(record['installed'])
                     self.assertTrue(record['source_prepared'])
-                    self.assertEqual(tool.main([key, 'doctor']), 0)
+                    self.assertEqual(tool.main(source_args(key, 'doctor')), 0)
                     with redirect_stdout(io.StringIO()) as output:
-                        self.assertEqual(tool.main([key, 'status']), 0)
+                        self.assertEqual(tool.main(source_args(key, 'status')), 0)
                     self.assertEqual(json.loads(output.getvalue()), dict(installed=False,
                         source_prepared=True, runtime_tested=False, scope='source'))
-                    self.assertEqual(tool.main([key, 'update']), 0)
+                    self.assertEqual(tool.main(source_args(key, 'update')), 0)
                     self.assertEqual(marker.read_bytes(), first)
                     (base / 'keep-user-data.txt').write_text('keep')
-                    self.assertEqual(tool.main([key, 'uninstall']), 0)
-                    self.assertEqual(tool.main([key, 'uninstall']), 0)
+                    self.assertEqual(tool.main(source_args(key, 'uninstall')), 0)
+                    self.assertEqual(tool.main(source_args(key, 'uninstall')), 0)
                     self.assertFalse(runtime.exists())
                     self.assertFalse(marker.exists())
                     self.assertEqual((base / 'keep-user-data.txt').read_text(), 'keep')

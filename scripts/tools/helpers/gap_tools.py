@@ -126,6 +126,9 @@ def validate_uninstall_remainder(runtime, marker, spec):
 
 
 def run(args, cwd, env):
+    if env.get('NATIVE_BUILD_STREAM') == 'gap-native':
+        import native_build_process
+        return native_build_process.run(args, cwd, env, timeout=7200)
     if env.get('NATIVE_BUILD_STREAM') == 'perplexity-sdk':
         program = Path(str(args[0])).name
         heavy = ((program == 'bazel' and 'build' in args) or
@@ -399,6 +402,9 @@ def install(runtime, marker, base, spec, install_build_deps=False):
     if runtime.exists():
         raise ValueError("Vorhandener Ordner ohne Besitznachweis; nichts ueberschrieben.")
     reserve(base, spec)
+    if spec['mode'] == 'native-build':
+        from gap_native_build import preflight
+        preflight(spec['native_tool'], base, approved=install_build_deps)
     if spec['mode'] == 'godot-build':
         from game_engine_build import preflight
         preflight()
@@ -430,7 +436,10 @@ def install(runtime, marker, base, spec, install_build_deps=False):
             if len(entries) < 2:
                 raise ValueError("Quellcheckout enthaelt keine README/Lizenzdatei.")
         if spec["mode"] != "source":
-            if spec['mode'] == 'openapi-time':
+            if spec['mode'] == 'native-build':
+                from gap_native_build import build
+                entries = build(runtime, env, spec)
+            elif spec['mode'] == 'openapi-time':
                 from openapi_servers_runtime import build
                 entries = build(runtime, env)
             elif spec['mode'] == 'godot-build':
@@ -448,7 +457,8 @@ def install(runtime, marker, base, spec, install_build_deps=False):
         record = dict(repo=spec["repo"], pin=spec["pin"], mode=spec["mode"], entries=entries,
                       installed=not spec.get('source_status_only', False),
                       source_prepared=spec['mode'] == 'source',
-                      runtime_tested=False, files=inventory(runtime))
+                      runtime_tested=False, local_smoke_passed=spec['mode'] == 'native-build',
+                      files=inventory(runtime))
         descriptor, pending = tempfile.mkstemp(prefix="ready-pending-", dir=base)
         try:
             with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
@@ -475,8 +485,9 @@ def main(argv=None):
     parser.add_argument("tool", choices=SPECS)
     parser.add_argument("action", nargs="?", default="install", choices=("install", "update", "repair", "uninstall", "status", "check", "doctor", "plan"))
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument('--install-build-deps', action='store_true', help='Browser_Use/Perplexity/OpenAPI tools: explicit consent for pinned private prerequisites; no browser/server start')
-    parser.add_argument("--source-only", action="store_true", help="MuseTalk: nur bisherigen Quellcheckout verwalten")
+    parser.add_argument('--install-build-deps', action='store_true', help='Outlines/Browser_Use/Perplexity/OpenAPI: explicit consent for pinned private prerequisites; no browser/server start')
+    parser.add_argument("--source-only", action="store_true", help="MuseTalk/Outlines/eSpeak/SongRec: bisherigen Quellcheckout statt Runtime verwalten")
+    parser.add_argument('--smoke', action='store_true', help='Expliziter lokaler 30s-Smoke-Check fuer Outlines/eSpeak/SongRec; keine Modelle/Provider')
     parser.add_argument('--resume-uninstall', action='store_true', help='Perplexity SDKs: explicit removal of unchanged inventoried remnants after a partial uninstall')
     override = parser.add_mutually_exclusive_group()
     for action in ("repair", "uninstall", "status", "check"):
@@ -486,10 +497,15 @@ def main(argv=None):
         if opts.action not in ("install", opts.override):
             parser.error("Widerspruechliche Aktionen.")
         opts.action = opts.override
-    if opts.install_build_deps and (opts.tool not in ('openapi_servers', 'browser_use', 'perplexity_mcp', 'perplexity_python', 'perplexity_node') or opts.action not in ('install', 'update', 'repair', 'plan')):
-        parser.error('--install-build-deps hier nur fuer Browser_Use/Perplexity/OpenAPI bei Install/Update/Repair oder Plan.')
+    if opts.install_build_deps and (opts.tool not in ('outlines', 'openapi_servers', 'browser_use', 'perplexity_mcp', 'perplexity_python', 'perplexity_node') or opts.action not in ('install', 'update', 'repair', 'plan')):
+        parser.error('--install-build-deps hier nur fuer Outlines/Browser_Use/Perplexity/OpenAPI bei Install/Update/Repair oder Plan.')
     if opts.resume_uninstall and (opts.tool not in ('perplexity_python', 'perplexity_node') or opts.action != 'uninstall'):
         parser.error('--resume-uninstall nur fuer ausdrueckliche Deinstallation der Perplexity SDKs.')
+    from gap_native_build import TOOLS as native_tools, specification
+    if opts.smoke and (opts.tool not in native_tools or opts.source_only or opts.action not in ('check', 'doctor')):
+        parser.error('--smoke nur bei check/doctor eines nativen Builds.')
+    if opts.source_only and opts.install_build_deps:
+        parser.error('--source-only braucht keine Build-Abhaengigkeiten.')
     if opts.tool == "musetalk" and not opts.source_only:
         from musetalk_runtime import main as musetalk_main
         return musetalk_main([opts.action] + (["--dry-run"] if opts.dry_run else []))
@@ -497,9 +513,9 @@ def main(argv=None):
         base, _, _ = paths("musetalk")
         if checked(base / "python-runtime").exists() or checked(base / "runtime-ready.json").exists():
             raise ValueError("Python-Runtime vorhanden; Deinstallation ohne --source-only verwenden. Keine verwaiste Umgebung erzeugt.")
-    if opts.source_only and opts.tool != "musetalk":
-        parser.error("--source-only ist nur fuer MuseTalk vorgesehen.")
-    spec = SPECS[opts.tool]
+    if opts.source_only and opts.tool not in native_tools | {'musetalk'}:
+        parser.error("--source-only hier nicht unterstuetzt.")
+    spec = SPECS[opts.tool] if opts.source_only else specification(opts.tool, SPECS[opts.tool])
     base, runtime, marker = paths(opts.tool)
     if opts.dry_run or opts.action == "plan":
         print(json.dumps(dict(tool=opts.tool, **spec, target=str(runtime)), indent=2))
@@ -527,8 +543,17 @@ def main(argv=None):
         except (ValueError, OSError, subprocess.SubprocessError, KeyError, TypeError):
             pass
         state = dict(installed=ready, scope=spec["mode"], runtime_tested=False)
+        if spec['mode'] == 'native-build':
+            state['source_prepared'] = False
         if spec.get('source_status_only'):
             state.update(installed=False, source_prepared=ready)
+        if ready and opts.smoke:
+            from gap_native_build import probe, smoke_command
+            env = {key: value for key, value in os.environ.items() if key in ('PATH', 'LANG', 'LC_ALL')}
+            env.update(HOME=str(runtime), HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1',
+                       PYTHONDONTWRITEBYTECODE='1')
+            probe(smoke_command(opts.tool, runtime), runtime, env)
+            state['local_smoke_passed'] = True
         print(json.dumps(state))
         return 0 if ready or opts.action == "status" else 1
     with operation(base, opts.action, tool=spec["name"]):
@@ -554,7 +579,7 @@ def main(argv=None):
                 marker.unlink()
             print("Privater unveraenderter Bestand entfernt; Nutzerdaten ausserhalb, Logs und Basiswerkzeuge bleiben.")
         else:
-            if opts.tool in ('openapi_servers', 'browser_use', 'perplexity_mcp', 'perplexity_python', 'perplexity_node'):
+            if opts.tool in ('outlines', 'openapi_servers', 'browser_use', 'perplexity_mcp', 'perplexity_python', 'perplexity_node'):
                 install(runtime, marker, base, spec, install_build_deps=opts.install_build_deps)
             else:
                 install(runtime, marker, base, spec)

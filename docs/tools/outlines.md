@@ -11,27 +11,40 @@ Metrum. Modell, Tokenizer und Backend sind separate Voraussetzungen.
 
 ## Installation und Lifecycle
 
-Der Setup-Installer bereitet **nur GitHub-Quellen** vor. Keine Paket-/Modell-
-Installation, kein API-/Inferenz-/Dienststart, kein Docker-Fallback.
-Python 3, Git, 2048 MiB Diskreserve nur fuer Quellen, nicht fuer LLMs.
+Der Setup-Installer baut jetzt eine **private Python-Basisumgebung aus GitHub**,
+mit dem upstream `uv.lock`, ohne optionale Modell-Backends. Linux/WSL,
+Python >=3.10 und <3.14, Git und 4096 MiB Diskreserve erforderlich.
+Eine vorhandene geeignete uv-Basis wird bevorzugt. Fehlt sie, darf die bestehende
+gepruefte private uv-Bereitstellung nur mit `--install-build-deps` herunterladen.
+Keine Modelle, API-/Inferenz-/Dienststarts oder Docker-Fallbacks.
 
 ```bash
 bash scripts/tools/outlines_install.sh --dry-run
 bash scripts/tools/outlines_install.sh
+bash scripts/tools/outlines_install.sh --install-build-deps
 bash scripts/tools/outlines_status.sh
 bash scripts/tools/outlines_doctor.sh
+bash scripts/tools/outlines_doctor.sh --smoke
 bash scripts/tools/outlines_update.sh --dry-run
 bash scripts/tools/outlines_uninstall.sh --dry-run
 ```
 
-`source_prepared` ist kein Buildnachweis: `installed: false`, `runtime_tested: false`.
-Doctor prueft Origin, Pin, Vertragsdateien und Inventar; kein Modellaufruf.
+Die beiden Install-Befehle sind Alternativen. `installed: true` wird erst nach
+Paketinstallation, Artefaktinventar und lokalem Regex-Importcheck geschrieben.
+`runtime_tested: false` bleibt bestehen: keine echte Modell-/Decoding-Abnahme.
+Doctor prueft offline Origin, Pin, Vertragsdateien und Inventar. Nur `--smoke`
+fuehrt explizit den begrenzten lokalen Python-Importcheck aus, ohne Modellaufruf.
 Update bleibt beim Pin. Uninstall ohne `--dry-run` entfernt nur unveraenderte
 inventarisierte Quellen mit Besitznachweis unter
 `~/.openclaw_ultimate_user_data/tools/outlines/`; eigene Aenderungen sperren
 die Entfernung. Logs, Modelle und weitere Benutzerdaten bleiben erhalten.
-Keine systemd-Unit fuer Quellenverwaltung. Native Python-Paket-/Backend-Builds,
-Dependency-Lock/SBOM und echte Decoding-Abnahme bleiben offen.
+`native-sbom.cdx.json` erfasst die installierten Python-Distributionen.
+Der lokale Paket-Versionszusatz `0.0.0+git.<Pin>` ist kein upstream Release-Tag.
+Keine systemd-Unit fuer diese Bibliothek. Optionale Backend-Builds und die echte
+Decoding-Abnahme bleiben offen. Bestehende reine Quellen werden nicht automatisch
+ersetzt; deren Lifecycle ist weiterhin mit `--source-only` erreichbar.
+Nur beim alten Quellbestand bedeutet `source_prepared: true` weiterhin keine installierte Runtime.
+Siehe [Testmatrix und Voraussetzungen](SOURCE_INSTALL_READINESS.md).
 
 ## Reim-/Lyric-Anwendung
 

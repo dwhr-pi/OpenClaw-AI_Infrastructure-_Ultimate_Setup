@@ -1890,6 +1890,41 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_game_engine_tools.py:141`
   Prueffall: `test_documentation_links_limits_and_honest_scope`
 
+## tests/test_gap_native_build.py
+
+- `tests/test_gap_native_build.py:23`
+  Prueffall: `test_source_specs_are_not_mutated`
+- `tests/test_gap_native_build.py:34`
+  Prueffall: `test_songrec_uses_locked_ubuntu_compatible_cli_pin`
+- `tests/test_gap_native_build.py:39`
+  Prueffall: `test_plan_and_status_do_not_execute_or_write`
+- `tests/test_gap_native_build.py:53`
+  Prueffall: `test_legacy_source_plan_is_explicit`
+- `tests/test_gap_native_build.py:59`
+  Prueffall: `test_smoke_rejects_model_and_source_only_requests`
+- `tests/test_gap_native_build.py:67`
+  Prueffall: `test_probe_has_timeout_and_no_shell`
+- `tests/test_gap_native_build.py:74`
+  Prueffall: `test_native_build_output_uses_bounded_streaming`
+- `tests/test_gap_native_build.py:80`
+  Prueffall: `test_foreign_platform_fails_before_dependency_lookup`
+- `tests/test_gap_native_build.py:87`
+  Prueffall: `test_root_build_is_rejected_before_download`
+- `tests/test_gap_native_build.py:95`
+  Prueffall: `test_prerequisite_failure_never_fetches`
+- `tests/test_gap_native_build.py:106`
+  Prueffall: `test_native_install_proof_and_failure_rollback`
+- `tests/test_gap_native_build.py:151`
+  Prueffall: `test_bad_contract_never_builds`
+- `tests/test_gap_native_build.py:159`
+  Prueffall: `test_espeak_commands_are_private_and_silent`
+- `tests/test_gap_native_build.py:173`
+  Prueffall: `test_outlines_sync_is_frozen_without_optional_models`
+- `tests/test_gap_native_build.py:188`
+  Prueffall: `test_songrec_locked_no_gui_build`
+- `tests/test_gap_native_build.py:199`
+  Prueffall: `test_readiness_inventory_has_no_runtime_claim`
+
 ## tests/test_gap_runtime_cleanup.py
 
 - `tests/test_gap_runtime_cleanup.py:34`
@@ -1949,7 +1984,7 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_registry_pins_wrappers_and_documentation_match`
 - `tests/test_gap_tools.py:262`
   Prueffall: `test_menu_fallbacks_match_all_gap_tool_reserves`
-- `tests/test_gap_tools.py:270`
+- `tests/test_gap_tools.py:272`
   Prueffall: `test_qwen_host_shortage_is_rejected_by_menu_before_installer`
 
 ## tests/test_gemini_desktop_clients.py
@@ -3238,19 +3273,19 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 ## tests/test_model_gateway_sources.py
 
-- `tests/test_model_gateway_sources.py:39`
+- `tests/test_model_gateway_sources.py:44`
   Prueffall: `test_plan_and_missing_status_never_create_or_fetch`
-- `tests/test_model_gateway_sources.py:55`
+- `tests/test_model_gateway_sources.py:60`
   Prueffall: `test_source_install_status_update_and_idempotent_uninstall`
-- `tests/test_model_gateway_sources.py:82`
+- `tests/test_model_gateway_sources.py:87`
   Prueffall: `test_manifest_contract_cannot_be_overridden_by_changed_marker`
-- `tests/test_model_gateway_sources.py:97`
+- `tests/test_model_gateway_sources.py:102`
   Prueffall: `test_failed_contract_rolls_back_only_new_runtime`
-- `tests/test_model_gateway_sources.py:111`
+- `tests/test_model_gateway_sources.py:116`
   Prueffall: `test_unsafe_contract_paths_and_unmanaged_directories_rejected`
-- `tests/test_model_gateway_sources.py:123`
+- `tests/test_model_gateway_sources.py:128`
   Prueffall: `test_registry_has_only_pinned_opt_in_source_entries`
-- `tests/test_model_gateway_sources.py:141`
+- `tests/test_model_gateway_sources.py:146`
   Prueffall: `test_provider_docs_keep_cloud_and_local_sources_separate`
 
 ## tests/test_model_pipeline_plan.py
@@ -4706,10 +4741,12 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_public_key_import.py:43`
   Prueffall: `test_wrong_hash_or_private_extension_never_creates_destination`
 - `tests/test_public_key_import.py:50`
+  Prueffall: `test_git_commit_is_rejected_before_reading_public_key_contents`
+- `tests/test_public_key_import.py:55`
   Prueffall: `test_default_does_not_read_missing_source`
-- `tests/test_public_key_import.py:54`
+- `tests/test_public_key_import.py:59`
   Prueffall: `test_symlink_refused_where_supported`
-- `tests/test_public_key_import.py:63`
+- `tests/test_public_key_import.py:68`
   Prueffall: `test_link_guard_remains_active_without_symlink_privilege`
 
 ## tests/test_pyannote_audio.py
@@ -5298,40 +5335,54 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 ## tests/test_signed_release.py
 
-- `tests/test_signed_release.py:52`
+- `tests/test_signed_release.py:56`
   Prueffall: `test_valid_contract_uses_independent_key_and_explicit_signature`
-- `tests/test_signed_release.py:60`
+- `tests/test_signed_release.py:64`
   Prueffall: `test_invalid_signature_fails_closed`
-- `tests/test_signed_release.py:65`
+- `tests/test_signed_release.py:69`
   Prueffall: `test_renamed_repository_is_exact_and_old_metadata_is_not_reinterpreted`
-- `tests/test_signed_release.py:76`
+- `tests/test_signed_release.py:80`
   Prueffall: `test_payload_tampering_is_rejected`
-- `tests/test_signed_release.py:81`
+- `tests/test_signed_release.py:85`
   Prueffall: `test_wrong_tag_repo_commit_and_schema_are_rejected`
-- `tests/test_signed_release.py:92`
+- `tests/test_signed_release.py:96`
   Prueffall: `test_duplicate_json_keys_are_rejected`
-- `tests/test_signed_release.py:98`
+- `tests/test_signed_release.py:102`
   Prueffall: `test_extra_duplicate_or_traversal_checksums_are_rejected`
-- `tests/test_signed_release.py:105`
+- `tests/test_signed_release.py:109`
   Prueffall: `test_release_supplied_key_is_rejected_before_signature_call`
-- `tests/test_signed_release.py:112`
+- `tests/test_signed_release.py:116`
   Prueffall: `test_mutable_originals_are_not_reread_after_signature`
-- `tests/test_signed_release.py:120`
+- `tests/test_signed_release.py:124`
   Prueffall: `test_non_versioned_tag_is_rejected_before_signature_call`
-- `tests/test_signed_release.py:164`
+- `tests/test_signed_release.py:168`
   Prueffall: `test_default_plan_never_fetches_backs_up_or_checks_out`
-- `tests/test_signed_release.py:170`
+- `tests/test_signed_release.py:174`
   Prueffall: `test_dirty_or_risky_repository_is_refused_before_backup`
-- `tests/test_signed_release.py:178`
+- `tests/test_signed_release.py:182`
   Prueffall: `test_backup_and_verification_precede_fetch_and_checkout`
-- `tests/test_signed_release.py:185`
+- `tests/test_signed_release.py:189`
   Prueffall: `test_tag_mismatch_preserves_backup_and_never_checks_out`
-- `tests/test_signed_release.py:195`
+- `tests/test_signed_release.py:199`
   Prueffall: `test_export_reads_only_local_tag_and_produces_no_signature`
-- `tests/test_signed_release.py:218`
+- `tests/test_signed_release.py:222`
   Prueffall: `test_export_refuses_existing_or_inside_repository_destination`
-- `tests/test_signed_release.py:231`
+- `tests/test_signed_release.py:235`
   Prueffall: `test_git_environment_cannot_redirect_repository_or_inject_config`
+- `tests/test_signed_release.py:256`
+  Prueffall: `test_platform_examples_do_not_mix_shell_syntax`
+- `tests/test_signed_release.py:299`
+  Prueffall: `test_ubuntu_clone_example_preserves_spaces_and_url_as_arguments`
+- `tests/test_signed_release.py:306`
+  Prueffall: `test_failed_clone_does_not_execute_log`
+- `tests/test_signed_release.py:312`
+  Prueffall: `test_existing_target_is_not_reused_or_deleted`
+- `tests/test_signed_release.py:317`
+  Prueffall: `test_current_setup_and_catalogue_versions_are_11_18`
+- `tests/test_signed_release.py:323`
+  Prueffall: `test_guide_is_ordered_and_does_not_claim_an_unpublished_release`
+- `tests/test_signed_release.py:335`
+  Prueffall: `test_all_documented_bash_blocks_parse_without_execution`
 
 ## tests/test_social_avatar_docs.py
 
@@ -6117,4 +6168,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2734**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2758**. Kein Nachweis bestandener Tests.
