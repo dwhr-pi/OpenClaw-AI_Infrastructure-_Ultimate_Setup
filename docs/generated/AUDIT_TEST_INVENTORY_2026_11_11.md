@@ -1920,9 +1920,9 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_espeak_commands_are_private_and_silent`
 - `tests/test_gap_native_build.py:173`
   Prueffall: `test_outlines_sync_is_frozen_without_optional_models`
-- `tests/test_gap_native_build.py:188`
+- `tests/test_gap_native_build.py:190`
   Prueffall: `test_songrec_locked_no_gui_build`
-- `tests/test_gap_native_build.py:199`
+- `tests/test_gap_native_build.py:201`
   Prueffall: `test_readiness_inventory_has_no_runtime_claim`
 
 ## tests/test_gap_runtime_cleanup.py
@@ -4217,6 +4217,23 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_orchestration_docs.py:48`
   Prueffall: `test_performance_alerts_separate_ram_gpu_and_gateway`
 
+## tests/test_outlines_python_selection.py
+
+- `tests/test_outlines_python_selection.py:18`
+  Prueffall: `test_falls_back_from_incompatible_dispatcher`
+- `tests/test_outlines_python_selection.py:33`
+  Prueffall: `test_explicit_override_is_respected_and_secrets_excluded`
+- `tests/test_outlines_python_selection.py:45`
+  Prueffall: `test_incompatible_override_never_falls_back`
+- `tests/test_outlines_python_selection.py:57`
+  Prueffall: `test_relative_override_rejected_without_execution`
+- `tests/test_outlines_python_selection.py:63`
+  Prueffall: `test_missing_compatible_python_precedes_uv_bootstrap`
+- `tests/test_outlines_python_selection.py:72`
+  Prueffall: `test_espeak_missing_build_tools_gives_actionable_ubuntu_command`
+- `tests/test_outlines_python_selection.py:79`
+  Prueffall: `test_malformed_and_failed_version_probes_are_not_accepted`
+
 ## tests/test_p0_safety.py
 
 - `tests/test_p0_safety.py:90`
@@ -6183,4 +6200,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2764**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2771**. Kein Nachweis bestandener Tests.

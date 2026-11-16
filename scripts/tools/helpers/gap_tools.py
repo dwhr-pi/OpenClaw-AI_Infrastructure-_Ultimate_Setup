@@ -402,9 +402,10 @@ def install(runtime, marker, base, spec, install_build_deps=False):
     if runtime.exists():
         raise ValueError("Vorhandener Ordner ohne Besitznachweis; nichts ueberschrieben.")
     reserve(base, spec)
+    native_python = None
     if spec['mode'] == 'native-build':
         from gap_native_build import preflight
-        preflight(spec['native_tool'], base, approved=install_build_deps)
+        native_python = preflight(spec['native_tool'], base, approved=install_build_deps)
     if spec['mode'] == 'godot-build':
         from game_engine_build import preflight
         preflight()
@@ -438,7 +439,10 @@ def install(runtime, marker, base, spec, install_build_deps=False):
         if spec["mode"] != "source":
             if spec['mode'] == 'native-build':
                 from gap_native_build import build
-                entries = build(runtime, env, spec)
+                if spec['native_tool'] == 'outlines':
+                    entries = build(runtime, env, spec, python=native_python)
+                else:
+                    entries = build(runtime, env, spec)
             elif spec['mode'] == 'openapi-time':
                 from openapi_servers_runtime import build
                 entries = build(runtime, env)

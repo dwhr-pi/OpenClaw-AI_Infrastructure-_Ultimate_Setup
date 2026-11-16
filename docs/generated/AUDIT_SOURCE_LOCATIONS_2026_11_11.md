@@ -485,10 +485,10 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/find_skills.py:117`
 - `scripts/tools/helpers/find_skills.py:252`
 - `scripts/tools/helpers/find_skills.py:310`
-- `scripts/tools/helpers/gap_tools.py:425`
-- `scripts/tools/helpers/gap_tools.py:483`
-- `scripts/tools/helpers/gap_tools.py:510`
-- `scripts/tools/helpers/gap_tools.py:591`
+- `scripts/tools/helpers/gap_tools.py:426`
+- `scripts/tools/helpers/gap_tools.py:487`
+- `scripts/tools/helpers/gap_tools.py:514`
+- `scripts/tools/helpers/gap_tools.py:595`
 - `scripts/tools/helpers/hf_datasets_common.sh:96`
 - `scripts/tools/helpers/hf_hub_common.sh:42`
 - `scripts/tools/helpers/hf_hub_common.sh:97`
@@ -669,7 +669,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Paketinstallation (Lockfile separat pruefen)
 
-169 Fundstellen, keine automatische Risikoeinstufung.
+170 Fundstellen, keine automatische Risikoeinstufung.
 
 - `.github/workflows/ci.yml:24`
 - `.github/workflows/linkcheck.yml:20`
@@ -760,6 +760,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/automaton_common.sh:226`
 - `scripts/tools/helpers/freellmapi_common.sh:227`
 - `scripts/tools/helpers/freellmapi_common.sh:255`
+- `scripts/tools/helpers/gap_native_build.py:90`
 - `scripts/tools/helpers/native_github_tools.py:406`
 - `scripts/tools/helpers/node_tool_common.sh:125`
 - `scripts/tools/helpers/python_tool_common.sh:34`
@@ -1065,7 +1066,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Privilegien-/Host-Kandidat
 
-660 Fundstellen, keine automatische Risikoeinstufung.
+661 Fundstellen, keine automatische Risikoeinstufung.
 
 - `.github/workflows/next-level-health.yml:17`
 - `.github/workflows/next-level-health.yml:18`
@@ -1428,7 +1429,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/film_common.sh:119`
 - `scripts/tools/helpers/freellmapi_common.sh:60`
 - `scripts/tools/helpers/freellmapi_common.sh:135`
-- `scripts/tools/helpers/gap_native_build.py:45`
+- `scripts/tools/helpers/gap_native_build.py:81`
+- `scripts/tools/helpers/gap_native_build.py:90`
 - `scripts/tools/helpers/github_docker_stack_common.sh:41`
 - `scripts/tools/helpers/github_docker_stack_common.sh:42`
 - `scripts/tools/helpers/github_docker_stack_common.sh:85`

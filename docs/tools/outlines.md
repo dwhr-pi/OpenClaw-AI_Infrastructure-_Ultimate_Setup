@@ -18,6 +18,29 @@ Eine vorhandene geeignete uv-Basis wird bevorzugt. Fehlt sie, darf die bestehend
 gepruefte private uv-Bereitstellung nur mit `--install-build-deps` herunterladen.
 Keine Modelle, API-/Inferenz-/Dienststarts oder Docker-Fallbacks.
 
+Der Installer-Interpreter darf neuer sein: Die Folgekorrektur waehlt fuer Outlines
+ein bereits vorhandenes Python >=3.10 und <3.14. Bei ungeeignetem Dispatcher
+werden die vorhandenen versionierten Interpreter (zuerst Python 3.12) geprueft.
+Kein System-Python-/PATH-Umbau und kein Python-Download. Explizite Auswahl im
+korrigierten Checkout: `OUTLINES_PYTHON_BIN=/usr/bin/python3.12`.
+Ein inkompatibler expliziter Pfad wird nicht stillschweigend durch einen anderen ersetzt.
+
+### Bisheriger PR-28-Checkout mit Python-Versionsfehler
+
+Zuerst `/usr/bin/python3.12 --version` ausfuehren. Wenn der Interpreter vorhanden
+ist, laesst sich im alten Checkout auch der Installer selbst damit starten:
+
+```bash
+GAP_TOOLS_PYTHON_BIN=/usr/bin/python3.12 bash scripts/tools/outlines_install.sh --install-build-deps
+```
+
+`GAP_TOOLS_PYTHON_BIN` betrifft den bestehenden Installer-Dispatcher;
+`OUTLINES_PYTHON_BIN` betrifft erst die neue getrennte Runtime-Auswahl.
+Der Versionsfehler ist kein Nachweis fuer ein Speicherproblem. Fehlendes uv
+oder andere nachfolgende Buildfehler bleiben eigene, separat zu pruefende Schritte.
+
+### Installation einzeln ausfuehren
+
 ```bash
 bash scripts/tools/outlines_install.sh --dry-run
 bash scripts/tools/outlines_install.sh

@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import shutil
 import subprocess
 import sys
 
@@ -38,6 +39,41 @@ def uv_spec():
     return {'id': 'outlines', 'recipe': {'private_uv': '0.13.5', 'disk_mb': 4096}}
 
 
+def select_outlines_python(base):
+    override = os.environ.get('OUTLINES_PYTHON_BIN')
+    if override and not Path(override).is_absolute():
+        raise ValueError('OUTLINES_PYTHON_BIN muss ein absoluter Interpreter-Pfad sein.')
+    candidates = ([override] if override else [sys.executable] +
+                  [shutil.which(name) for name in ('python3.12', 'python3.13', 'python3.11', 'python3.10', 'python3')])
+    seen = set()
+    env = {key: value for key, value in os.environ.items()
+           if key.upper() in ('PATH', 'SYSTEMROOT', 'LANG', 'LC_ALL', 'TEMP', 'TMP')}
+    code = 'import sys,ssl,json; assert sys.platform == "linux"; print(json.dumps(list(sys.version_info[:3])))'
+    for candidate in candidates:
+        if not candidate:
+            continue
+        try:
+            path = Path(candidate).resolve()
+            present = path.is_file()
+        except (OSError, RuntimeError):
+            continue
+        if not present or str(path) in seen:
+            continue
+        seen.add(str(path))
+        try:
+            version = json.loads(probe([path, '-I', '-S', '-B', '-c', code], base, env))
+        except (ValueError, OSError, subprocess.SubprocessError):
+            continue
+        if (isinstance(version, list) and len(version) == 3 and
+                all(type(number) is int for number in version) and
+                (3, 10) <= tuple(version[:2]) < (3, 14)):
+            print('Outlines: vorhandenes Python', '.'.join(map(str, version)), str(path), flush=True)
+            return str(path)
+    raise ValueError('Outlines-Pin braucht vorhandenes Python >=3.10 und <3.14; '
+                     'Installer-Python ist ' + '.'.join(map(str, sys.version_info[:3])) +
+                     '. OUTLINES_PYTHON_BIN auf einen kompatiblen absoluten Pfad setzen; kein Python-Download.')
+
+
 def preflight(key, base, approved=False):
     if key not in TOOLS or platform.system() != 'Linux':
         raise ValueError('Nativer Build nur unter Linux/WSL; kein Windows-/macOS-Crossbuild.')
@@ -46,12 +82,19 @@ def preflight(key, base, approved=False):
     tools = {'outlines': (), 'espeak_ng': ('cmake', 'make', 'cc'),
              'songrec': ('cargo', 'rustc', 'cc', 'pkg-config', 'msgfmt')}
     for name in tools[key]:
-        common.executable(name)
-    if key == 'outlines' and not (3, 10) <= sys.version_info[:2] < (3, 14):
-        raise ValueError('Outlines-Pin braucht Python >=3.10 und <3.14.')
+        try:
+            common.executable(name)
+        except ValueError as error:
+            if key == 'espeak_ng':
+                raise ValueError('eSpeak NG: ' + name + ' fehlt. Unter Ubuntu separat ausfuehren: '
+                                 'sudo apt-get install --no-install-recommends cmake build-essential. '
+                                 'Danach erneut installieren; kein Download/Build gestartet.') from error
+            raise
     if key == 'outlines':
+        python = select_outlines_python(base)
         import native_uv
         native_uv.select(base, uv_spec(), approved=approved, allow_download=approved)
+        return python
     if key == 'songrec' and sys.version_info < (3, 11):
         raise ValueError('SongRec-Buildnachweis braucht Python >=3.11 (tomllib).')
     if key == 'songrec':
@@ -75,12 +118,13 @@ def smoke_command(key, runtime):
     raise ValueError('Unbekanntes natives Tool.')
 
 
-def build(runtime, env, spec):
+def build(runtime, env, spec, python=None):
     key = spec['native_tool']
     common.source_contracts(runtime, spec)
     env['NATIVE_BUILD_STREAM'] = 'gap-native'
     run = lambda args: common.run(args, runtime, env)
     if key == 'outlines':
+        python = python or select_outlines_python(runtime)
         import native_uv
         native_uv.activate(runtime.parent, uv_spec(), env)
         env.update(UV_NO_CONFIG='1', UV_PYTHON_DOWNLOADS='never',
@@ -88,7 +132,7 @@ def build(runtime, env, spec):
                    SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OUTLINES='0.0.0+git.' + spec['pin'][:12],
                    HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1')
         run(['uv', 'sync', '--frozen', '--no-dev', '--no-default-groups', '--no-editable',
-             '--no-python-downloads', '--python', sys.executable])
+             '--no-python-downloads', '--python', python])
         entries = ['.venv/pyvenv.cfg', 'uv.lock']
         python = runtime / '.venv/bin/python'
         components = json.loads(probe([python, '-I', '-B', '-c',

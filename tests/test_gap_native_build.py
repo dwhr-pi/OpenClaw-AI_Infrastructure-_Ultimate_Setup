@@ -176,12 +176,14 @@ class NativeRecipeTests(unittest.TestCase):
             spec = native.specification('outlines', common.SPECS['outlines'])
             env = {}
             with patch.object(common, 'source_contracts'), patch.object(common, 'run') as run, \
-                    patch('native_uv.activate'), patch.object(native, 'probe', side_effect=['[]', 'ok']):
+                    patch('native_uv.activate'), patch.object(native, 'select_outlines_python', return_value='/fixture/python3.12'), \
+                    patch.object(native, 'probe', side_effect=['[]', 'ok']):
                 native.build(runtime, env, spec)
             command = run.call_args.args[0]
             self.assertIn('--frozen', command)
             self.assertIn('--no-default-groups', command)
             self.assertIn('--no-python-downloads', command)
+            self.assertEqual(command[-1], '/fixture/python3.12')
             self.assertNotIn('--all-extras', command)
             self.assertEqual(env['HF_HUB_OFFLINE'], '1')
 

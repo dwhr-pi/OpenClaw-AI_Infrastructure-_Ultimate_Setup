@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### 2026-11-16: Vorhandenes Python fuer Outlines getrennt auswaehlen
+
+- Outlines kann vorhandenes Python 3.10-3.13 nutzen, auch wenn der Installer mit Python 3.14 laeuft.
+- Explizite Auswahl mit OUTLINES_PYTHON_BIN, keine Python-Downloads oder Aenderung des System-Python.
+- eSpeak nennt fehlende Ubuntu-Buildwerkzeuge samt separatem APT-Befehl; kein automatischer Systemumbau.
+- Versions-/Build-Fixtures ergaenzt; echte Ubuntu-Installation und Modell-/Audio-Abnahme bleiben offen.
+
 ### 2026-11-16: Begrenzter Git-Download mit sichtbarer Diagnose
 
 - Git-Fetch erhaelt 900 Sekunden Standardbudget; explizit 180 bis 3600 Sekunden konfigurierbar.
