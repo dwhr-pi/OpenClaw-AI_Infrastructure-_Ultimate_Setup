@@ -13,7 +13,9 @@ External_DNS und Kyverno. Keine Wiederholung desselben gesperrten Installationsl
 Die zugrunde liegenden direkten CLI-Guards bleiben weiterhin gesperrt.
 
 **Valkey hat inzwischen ein [natives Buildrezept](valkey.md)**; Linux-Build- und Betriebsabnahme bleiben offen.
-Die folgenden Grenzen gelten fuer die weiterhin geplanten Eintraege, nicht fuer diesen Valkey-Build.
+Auch [Kube_Bench](kube-bench.md) hat jetzt einen nativen Go-Build mit Benchmark-Dateien;
+Linux-Build und echte CIS-Audits bleiben getrennt abzunehmen.
+Die folgenden Grenzen gelten fuer die weiterhin geplanten Eintraege, nicht fuer diese beiden Builds.
 
 **GEPLANT / NICHT INSTALLIERBAR** ist kein fertiger Installer. Die gesperrten Eintraege laden nichts herunter,
 bauen nichts und starten weder Dienste noch Cluster, Modelle oder Sicherheitspruefungen.
@@ -25,6 +27,19 @@ Die GitHub-Links sind Quellenkandidaten, **keine Freigabe eines Pins oder einer 
 Erst nach geprueftem vollen Commit, Lockfiles und Artefakthashes darf ein nativer Build folgen.
 Ein Klon, eine Policy oder ein CRD-Beispiel ersetzt keine Controller-/Runtime-Abnahme.
 Keine Docker-/Compose-Installation, kein Fallback und keine automatische Aktivierung.
+
+### Gemeldete Audit-/Scanner-Platzhalter
+
+Die Testlogs vom 16.11.2026 zu Kubescape, Nuclei, Testssl, OWASP_ZAP und Checkov
+zeigen dieselbe bewusst gesperrte Installationsroute. Fuer diese fuenf Tools ist
+weiterhin kein freigegebenes natives Build-/Lifecycle-Rezept implementiert.
+Es wurde kein Scan, TLS-Test, Proxy oder Konfigurationsaudit gestartet.
+Das ist kein Nachweis fehlender Berechtigungen oder einer Ubuntu-Inkompatibilitaet.
+Kube_Bench ist davon inzwischen getrennt: sein neuer nativer Installer baut nur
+Binary und Benchmark-Dateien und fuehrt ausschliesslich eine Versionsprobe aus.
+Vor Freigabe der uebrigen Scanner sind Quellenpin/Lizenz, Toolchain-/Ruleset-Vertrag,
+eine update-/scanfreie Versionsprobe und geschuetzter Uninstall jeweils separat zu pruefen.
+Keine ungefragten Targets, Zugangsdaten, Template-/Add-on-Updates oder Dienste.
 
 ### cert-manager und External_DNS
 
@@ -40,6 +55,10 @@ zulaessig sind. Kein Providerzugang, DNS-Aufruf oder Clusterstart durch diese Ko
 
 ## Werkzeuge
 
+Fuer gVisor, Kata Containers und Firecracker zeigt das Setup zusaetzlich eine
+rein lesende [Sandbox-Hostdiagnose und die belegten Buildgrenzen](sandbox-runtimes.md).
+Die drei vollstaendigen Installer bleiben offen; keine Scheininstallation einer einzelnen CLI.
+
 | Menue | Quellenkandidat | Zweck | Noch offen |
 | --- | --- | --- | --- |
 | cert-manager | [GitHub](https://github.com/cert-manager/cert-manager) | TLS-Zertifikatsverwaltung | Issuer vorhanden; nativer Controller-Build und CRD-Abnahme offen. |
@@ -53,7 +72,7 @@ zulaessig sind. Kein Providerzugang, DNS-Aufruf oder Clusterstart durch diese Ko
 | Kata_Containers | [GitHub](https://github.com/kata-containers/kata-containers) | VM-basierte Sandbox | Virtualisierung, CRI und native Runtime-Abnahme offen. |
 | Firecracker | [GitHub](https://github.com/firecracker-microvm/firecracker) | MicroVM-Baustein | KVM, Jailer und Kubernetes-Runtime-Anbindung offen. |
 | Milvus | [GitHub](https://github.com/milvus-io/milvus) | Alternative Vektordatenbank | Nativer Gesamtbuild, Abhaengigkeiten und Restore offen. |
-| Kube_Bench | [GitHub](https://github.com/aquasecurity/kube-bench) | CIS-Audit | Audit-Wrapper vorhanden; gepinnter Build und Benchmark-Abnahme offen. |
+| [Kube_Bench](kube-bench.md) | [GitHub](https://github.com/aquasecurity/kube-bench) | CIS-Audit | Gepinnter Go-Build mit cfg-Dateien implementiert; Linux-/CIS-Abnahme offen. Kein automatischer Audit. |
 | Kubescape | [GitHub](https://github.com/kubescape/kubescape) | Cluster-Sicherheitspruefung | Nativer Build, minimale Leserechte und Ruleset-Abnahme offen. |
 | Nuclei | [GitHub](https://github.com/projectdiscovery/nuclei) | Autorisierte Sicherheitstests | Nativer Build und separat gepruefte Templates offen; keine automatischen Scans. |
 | Testssl | [GitHub](https://github.com/testssl/testssl.sh) | TLS-Audit | Quellenpin, OpenSSL-Vertrag und Smoke-Test offen; keine automatischen Netztests. |
@@ -118,7 +137,6 @@ python3 -I -B scripts/tool_commands.py show gatekeeper
 python3 -I -B scripts/tool_commands.py show gvisor
 python3 -I -B scripts/tool_commands.py show kata_containers
 python3 -I -B scripts/tool_commands.py show keda
-python3 -I -B scripts/tool_commands.py show kube_bench
 python3 -I -B scripts/tool_commands.py show kubescape
 python3 -I -B scripts/tool_commands.py show kyverno
 python3 -I -B scripts/tool_commands.py show milvus
@@ -222,18 +240,6 @@ tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
 Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
 VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
 `KEDA` (ID `keda`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `kube_bench`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Kube_Bench` (ID `kube_bench`) waehlen und die Einzelfreigaben lesen.
 Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
 Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
 

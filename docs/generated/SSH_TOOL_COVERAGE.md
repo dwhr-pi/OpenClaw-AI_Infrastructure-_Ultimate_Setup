@@ -203,7 +203,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | kokoro_tts | [SSH-Installation](../tools/registry/kokoro_tts.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | kopia | [SSH-Installation](../tools/registry/kopia.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | krita_ai_diffusion | [SSH-Installation](../tools/registry/krita_ai_diffusion.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
-| kube_bench | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| kube_bench | [SSH-Installation](../tools/kube-bench.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | kubeconform | [SSH-Installation](../tools/development-go-tools.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | kubectl | [SSH-Installation](../tools/registry/kubectl.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | kubelinter | [SSH-Installation](../tools/development-go-tools.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |

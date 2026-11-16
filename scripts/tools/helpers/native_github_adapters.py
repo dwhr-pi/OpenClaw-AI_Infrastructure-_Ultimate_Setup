@@ -60,6 +60,10 @@ def download_asset(prefix, asset):
 
 
 def prepare(prefix, spec, env):
+    if spec['id'] == 'kube_bench':
+        from kube_bench_native import prepare as prepare_kube_bench
+        prepare_kube_bench(prefix, spec, env)
+        return
     if spec['id'] == 'valkey':
         from valkey_native import prepare as prepare_valkey
         prepare_valkey(prefix, spec, env)

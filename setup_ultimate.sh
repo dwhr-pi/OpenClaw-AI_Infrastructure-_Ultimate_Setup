@@ -905,6 +905,7 @@ get_tool_install_fallback_min_free_mb() {
   case "$tool_key" in
     "Outlines" | "eSpeak_NG") printf '4096' ;;
     "SongRec") printf '8192' ;;
+    "Kube_Bench") printf '8192' ;;
     "MiniMax_M3" | "Obot" | "DeepSeek_R1" | "Qwen_Coder" | "Audile" | "Mousai" | "Dejavu" | "Qwen3_235B_A22B" | "QwQ_32B" | "GPT_OSS_120B" | "LeVo_2" | "MOSS_Music" | "PoeLM" | "PoeTone" | "CoPoet" | "CTGS" | "MusicGen") printf '2048' ;;
     "Traefik") printf '16384' ;;
     "OpenTelemetry") printf '8192' ;;
@@ -3601,10 +3602,12 @@ run_tool_script() {
   fi
 
   # Only the interactive setup opts into the documentation approval dialog.
-  if [[ "$tool_key" =~ ^(Outlines|eSpeak_NG|SongRec|Valkey)$ && "$action" =~ ^(install|update)$ ]]; then
+  if [[ "$tool_key" =~ ^(Outlines|eSpeak_NG|SongRec|Valkey|Kube_Bench)$ && "$action" =~ ^(install|update)$ ]]; then
     local prerequisites='eSpeak NG: cmake und build-essential aus Debian-/Ubuntu-Paketen. Abweichende Release-Basis wird vor Installation mit apt simuliert.'
     if [ "$tool_key" = Outlines ]; then
       prerequisites='Outlines: geeignetes vorhandenes Python bevorzugen. Falls keines vorhanden: Ubuntu 24.04 bekommt Python 3.12/venv per apt; andere Systeme wie Ubuntu 26.04 bekommen eine private Python-3.13-Laufzeit via uv/GitHub (1024 MiB Zusatzreserve). uv bestimmt die Patchversion; Dateiinventar wird erfasst. Kein System-Python-Wechsel. Fehlendes uv aus SHA256-geprueftem GitHub-Release.'
+    elif [ "$tool_key" = Kube_Bench ]; then
+      prerequisites='Kube Bench: vorhandenes Go ab 1.26.3 bevorzugen; bei Bedarf privates SHA256-geprueftes Go bereitstellen. Gepinnter Source-Build mit cfg-Dateien; nur Versionsprobe, kein Audit/Scan, Kubeconfig- oder Cloud-Zugriff.'
     elif [ "$tool_key" = Valkey ]; then
       prerequisites='Valkey: Compiler, make, pkg-config und OpenSSL-Entwicklungsbibliotheken aus Debian-/Ubuntu-Paketen. Gepinnter privater GitHub-Build, kein Server-/Portstart und kein Austausch einer Redis-Installation.'
     elif [ "$tool_key" = SongRec ]; then
@@ -3708,7 +3711,13 @@ install_tool() {
   LAST_OPERATION_LOG_FILE=""
   ACTIVE_OPERATION_LOG_FILE=""
   if declare -p TOOLS >/dev/null 2>&1 && [[ "${TOOLS[$TOOL_KEY]:-}" == 'GEPLANT / NICHT INSTALLIERBAR:'* ]]; then
-    dialog --title "$TOOL_KEY: nur Planung, kein Installer" --msgbox "${TOOLS[$TOOL_KEY]}\n\nDieser Eintrag besitzt noch kein freigegebenes Build-/Lifecycle-Rezept. Kein Installationslauf, kein Download und keine Cluster-/DNS-Aenderung. Status bleibt unveraendert. Anleitung: docs/tools/infrastructure-candidates.md" 15 78
+    local sandbox_info=""
+    case "$TOOL_KEY" in
+      gVisor | Kata_Containers | Firecracker)
+        sandbox_info="$(python3 -I -B "$INSTALL_DIR/scripts/helpers/system_diagnostics.py" --sandbox)" || sandbox_info='Host-Metadaten nicht verfuegbar; keine Kompatibilitaet angenommen.'
+        ;;
+    esac
+    dialog --title "$TOOL_KEY: nur Planung, kein Installer" --msgbox "${TOOLS[$TOOL_KEY]}\n\nDieser Eintrag besitzt noch kein freigegebenes Build-/Lifecycle-Rezept. Kein Installationslauf, kein Download und keine Cluster-/DNS-Aenderung. Status bleibt unveraendert. Anleitung: docs/tools/infrastructure-candidates.md\n\n$sandbox_info" 22 90
     return 3
   fi
   if [ "$TOOL_KEY" = SongSage ]; then
@@ -5055,7 +5064,7 @@ TOOL_SCRIPT_NAMES["Zigbee2MQTT"]="zigbee2mqtt"
 register_native_github_tool_keys
 
 # Append documented candidates without installing or starting any component.
-TOOL_KEYS+=("cert-manager" "External_DNS" "Kyverno" "Gatekeeper" "KEDA" "Arize_Phoenix" "gVisor" "Kata_Containers" "Firecracker" "Milvus" "Kube_Bench" "Kubescape" "Nuclei" "Testssl" "OWASP_ZAP" "Checkov" "Ragas" "Temporal" "Vaultwarden" "Argo_Workflows")
+TOOL_KEYS+=("cert-manager" "External_DNS" "Kyverno" "Gatekeeper" "KEDA" "Arize_Phoenix" "gVisor" "Kata_Containers" "Firecracker" "Milvus" "Kubescape" "Nuclei" "Testssl" "OWASP_ZAP" "Checkov" "Ragas" "Temporal" "Vaultwarden" "Argo_Workflows")
 TOOL_SCRIPT_NAMES["cert-manager"]="cert_manager_candidate"
 TOOLS["cert-manager"]="GEPLANT / NICHT INSTALLIERBAR: Issuer vorhanden; nativer Controller-Build und CRD-Abnahme offen. docs/tools/infrastructure-candidates.md"
 TOOL_SCRIPT_NAMES["External_DNS"]="external_dns_candidate"
@@ -5078,8 +5087,8 @@ TOOL_SCRIPT_NAMES["Firecracker"]="firecracker_candidate"
 TOOLS["Firecracker"]="GEPLANT / NICHT INSTALLIERBAR: KVM, Jailer und Kubernetes-Runtime-Anbindung offen. docs/tools/infrastructure-candidates.md"
 TOOL_SCRIPT_NAMES["Milvus"]="milvus_candidate"
 TOOLS["Milvus"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Gesamtbuild, Abhaengigkeiten und Restore offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Kube_Bench"]="kube_bench_candidate"
-TOOLS["Kube_Bench"]="GEPLANT / NICHT INSTALLIERBAR: Audit-Wrapper vorhanden; gepinnter Build und Benchmark-Abnahme offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Kube_Bench"]="kube_bench"
+TOOLS["Kube_Bench"]="Nativer Go-Build mit Benchmark-Dateien; nur scanfreie Versionsprobe. Kein automatischer Host-/Cluster-Audit. Linux-/Benchmark-Abnahme offen. docs/tools/kube-bench.md"
 TOOL_SCRIPT_NAMES["Kubescape"]="kubescape_candidate"
 TOOLS["Kubescape"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Build, minimale Leserechte und Ruleset-Abnahme offen. docs/tools/infrastructure-candidates.md"
 TOOL_SCRIPT_NAMES["Nuclei"]="nuclei_candidate"

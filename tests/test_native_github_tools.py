@@ -46,9 +46,9 @@ class NativeGithubTests(unittest.TestCase):
         with patch.object(tool, "preflight"), patch.object(tool.common, "install", side_effect=self.source), patch.object(tool, "build", side_effect=self.build), redirect_stdout(io.StringIO()):
             tool.install(self.outer, self.prefix, self.marker, self.spec)
 
-    def test_inventory_has_54_paths_and_50_honest_build_recipes(self):
-        self.assertEqual(len(tool.TOOLS), 54)
-        self.assertEqual(sum(bool(s["recipe"]) for s in tool.TOOLS.values()), 50)
+    def test_inventory_has_55_paths_and_51_honest_build_recipes(self):
+        self.assertEqual(len(tool.TOOLS), 55)
+        self.assertEqual(sum(bool(s["recipe"]) for s in tool.TOOLS.values()), 51)
         for key, spec in tool.TOOLS.items():
             self.assertEqual(key, spec["id"])
             if spec["recipe"]:
@@ -308,7 +308,7 @@ class NativeGithubTests(unittest.TestCase):
                         path.parent.mkdir(parents=True, exist_ok=True)
                         path.write_text("built fixture")
                     return "fixture==1"
-                with patch.object(tool, "run", side_effect=run), patch.object(tool.adapters, "prepare"), patch.object(tool.native_go, "activate"), patch.object(tool.native_uv, "activate"), patch.object(tool.native_node, "activate"), patch.object(tool.native_node_npm, "activate"), patch.object(tool.archivebox_python, "select", return_value="/fixture/python3.13"), patch.object(tool.litellm_rust, "activate"), patch('valkey_native.receipts', return_value=[]):
+                with patch.object(tool, "run", side_effect=run), patch.object(tool.adapters, "prepare"), patch.object(tool.native_go, "activate"), patch.object(tool.native_uv, "activate"), patch.object(tool.native_node, "activate"), patch.object(tool.native_node_npm, "activate"), patch.object(tool.archivebox_python, "select", return_value="/fixture/python3.13"), patch.object(tool.litellm_rust, "activate"), patch('valkey_native.receipts', return_value=[]), patch('kube_bench_native.receipts', return_value=[]):
                     # Packaging adapters have separate negative/positive contract tests.
                     artifacts = tool.build(prefix, spec)
                 self.assertTrue(artifacts)

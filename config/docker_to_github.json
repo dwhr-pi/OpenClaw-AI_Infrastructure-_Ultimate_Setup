@@ -4,6 +4,36 @@
   "scope": "46 ehemalige Containerpfade plus PyAirbyte-SDK und Kubeseal-CLI; offene Gesamtplattformen ohne Docker-Fallback",
   "tools": [
     {
+      "id": "kube_bench",
+      "name": "Kube Bench",
+      "tool_key": "Kube_Bench",
+      "repo": "aquasecurity/kube-bench",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/kube_bench_candidate_install.sh",
+      "blocked_reason": null,
+      "recipe": {
+        "repo": "aquasecurity/kube-bench",
+        "pin": "5c6c22d51b926020e7414e1f1e051851d1a2feff",
+        "version": "0.16.0",
+        "kind": "go",
+        "package": ".",
+        "binary": "kube-bench",
+        "go_min": [1, 26, 3],
+        "disk_mb": 8192,
+        "ram_mb": 2048,
+        "probe": ["version"],
+        "ldflags": "-X github.com/aquasecurity/kube-bench/cmd.KubeBenchVersion=0.16.0",
+        "source_sha256": {
+          "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "go.mod": "351ae14938c2cec98e1d0c05b3a0d12ca71e79af048aafb6de392133155597df",
+          "go.sum": "b9bb74a6b3661413e6378edc132ad2274983a24899c85828a27c29bb4fb4b980",
+          "cmd/version.go": "1fde0500ea4bce366dd03c6a55ef37c85f156805c1d479396fb2655e9163636c",
+          "cfg/config.yaml": "18d59f216f679c2732e409f3c4a9e377add285df32f97f1afa115bb52d6d20c6"
+        },
+        "note": "Gepinnter nativer Go-Build mit cfg-Benchmarks; Go-Basis nur nach Zustimmung. Nur version-Probe mit eigener gepruefter Konfiguration. Kein Host-/Cluster-Audit, kubectl, Kubeconfig-, AWS-, Datenbank- oder Root-Zugriff. Linux-/Benchmark-Abnahme offen."
+      }
+    },
+    {
       "id": "valkey",
       "name": "Valkey",
       "tool_key": "Valkey",

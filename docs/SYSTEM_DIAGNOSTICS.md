@@ -8,6 +8,8 @@ eine feste, nur lesende Systemdiagnose. Alte Logs werden nicht nachtraeglich umg
 - Python: tatsaechlich fuer die Diagnose verwendete Version und Interpreterpfad.
 - Paketbasis: vorhandene Pfade zu `apt-get`, `dpkg-query` und `apt-cache` oder explizit fehlend.
 - Debian-Familie und erkannter DietPi-Marker werden getrennt vom zugrunde liegenden OS ausgegeben.
+- Sandbox-Metadaten: gVisor-Kernel-/Architekturgrenze, KVM-Geraetetyp/-Zugriffsrechte
+  und sichtbare Namespace-Marker; kein Runtime- oder Virtualisierungsfunktionstest.
 
 Der Standardparser liest `/etc/os-release` beziehungsweise den Systemfallback
 `/usr/lib/os-release`, ohne Shellcode daraus auszufuehren. Bei DietPi wird zusaetzlich
@@ -27,6 +29,9 @@ python3 -I -B scripts/helpers/system_diagnostics.py
 
 Dieser Befehl installiert nichts, fragt kein sudo an und startet keine Dienste,
 Modelle, Provider, Cluster oder WSL-Instanzen. Ausgabe bei Rueckfragen zum Fehlerlog beifuegen.
+Nur Sandbox-Metadaten: `python3 -I -B scripts/helpers/system_diagnostics.py --sandbox`.
+Ein KVM-Geraet wird nicht geoeffnet; Rechte oder Kernelmodule werden nicht geaendert.
+Details und Grenzen: [Sandbox-Runtimes](tools/sandbox-runtimes.md).
 
 ## Debian, DietPi und andere Derivate
 

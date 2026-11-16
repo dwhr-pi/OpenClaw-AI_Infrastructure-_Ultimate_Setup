@@ -320,7 +320,8 @@ def build(prefix, spec):
         run(["go", "mod", "download"], module, env)
         run(["go", "mod", "verify"], module, env)
         parallel = "-p=1" if spec["id"] == "cadvisor" else "-p=2"
-        run(["go", "build", "-mod=readonly", "-trimpath", "-buildvcs=false", parallel,
+        ldflags = ['-ldflags', recipe['ldflags']] if spec['id'] == 'kube_bench' else []
+        run(["go", "build", "-mod=readonly", "-trimpath", "-buildvcs=false", parallel, *ldflags,
              "-o", str(binary), recipe["package"]], module, env)
         artifacts = [binary.relative_to(prefix).as_posix()]
     elif kind == "rust":
@@ -429,10 +430,13 @@ def build(prefix, spec):
     if spec['id'] == 'valkey':
         from valkey_native import receipts
         artifacts.extend(receipts(prefix, spec, env))
+    if spec['id'] == 'kube_bench':
+        from kube_bench_native import receipts
+        artifacts.extend(receipts(prefix, spec, env))
     for name in artifacts:
         if not common.checked(prefix / name).is_file():
             raise ValueError("Erwartetes Buildartefakt fehlt: " + name)
-    if recipe.get("probe") and spec['id'] != 'valkey':
+    if recipe.get("probe") and spec['id'] not in ('valkey', 'kube_bench'):
         run([str(binary)] + recipe["probe"], prefix, env)
     remove_native_tree(prefix, cache_only=True)
     return artifacts

@@ -77,7 +77,7 @@ class CreativePrerequisites(unittest.TestCase):
     def test_setup_consent_and_songsage_guard_precede_transaction(self):
         text = (ROOT / 'setup_ultimate.sh').read_text(encoding='utf-8')
         dispatcher = text.split('run_tool_script() {', 1)[1].split('remove_tool_from_autostart_script()', 1)[0]
-        self.assertIn('^(Outlines|eSpeak_NG|SongRec|Valkey)$', dispatcher)
+        self.assertIn('^(Outlines|eSpeak_NG|SongRec|Valkey|Kube_Bench)$', dispatcher)
         self.assertIn('tool_args+=(--install-build-deps)', dispatcher)
         self.assertIn('--defaultno', dispatcher)
         install = text.split('install_tool() {', 1)[1].split('uninstall_tool() {', 1)[0]
@@ -93,14 +93,14 @@ class CreativePrerequisites(unittest.TestCase):
         text = (ROOT / 'setup_ultimate.sh').read_text(encoding='utf-8')
         dispatcher = 'run_tool_script() {' + text.split('run_tool_script() {', 1)[1].split('remove_tool_from_autostart_script()', 1)[0]
         stubs = '''
-declare -A TOOL_SCRIPT_NAMES=([Outlines]=outlines [eSpeak_NG]=espeak_ng [SongRec]=songrec [Valkey]=valkey)
+declare -A TOOL_SCRIPT_NAMES=([Outlines]=outlines [eSpeak_NG]=espeak_ng [SongRec]=songrec [Valkey]=valkey [Kube_Bench]=kube_bench)
 INSTALL_DIR=/fixture
 validate_tool_source_policy() { return 0; }
 dialog() { return "$DIALOG_RESULT"; }
 run_bash_script() { printf '%s\\n' "$@"; }
 '''
         env = {k: v for k, v in os.environ.items() if k.upper() in ('PATH', 'SYSTEMROOT', 'TEMP', 'TMP')}
-        for tool in ('Outlines', 'eSpeak_NG', 'SongRec', 'Valkey'):
+        for tool in ('Outlines', 'eSpeak_NG', 'SongRec', 'Valkey', 'Kube_Bench'):
             for action, answer in (('install', 0), ('install', 1), ('update', 0), ('doctor', 0)):
                 command = stubs + dispatcher + '\nDIALOG_RESULT=' + str(answer) + '\nrun_tool_script ' + tool + ' ' + action
                 result = subprocess.run([bash, '--noprofile', '--norc', '-c', command],
@@ -115,7 +115,9 @@ run_bash_script() { printf '%s\\n' "$@"; }
         text = (ROOT / 'setup_ultimate.sh').read_text(encoding='utf-8')
         install = 'install_tool() {' + text.split('install_tool() {', 1)[1].split('\nuninstall_tool() {', 1)[0]
         stubs = '''
-declare -A TOOLS=([cert-manager]='GEPLANT / NICHT INSTALLIERBAR: fixture' [External_DNS]='GEPLANT / NICHT INSTALLIERBAR: fixture' [Kyverno]='GEPLANT / NICHT INSTALLIERBAR: fixture')
+declare -A TOOLS=([cert-manager]='GEPLANT / NICHT INSTALLIERBAR: fixture' [External_DNS]='GEPLANT / NICHT INSTALLIERBAR: fixture' [Kyverno]='GEPLANT / NICHT INSTALLIERBAR: fixture' [gVisor]='GEPLANT / NICHT INSTALLIERBAR: fixture' [Kata_Containers]='GEPLANT / NICHT INSTALLIERBAR: fixture' [Firecracker]='GEPLANT / NICHT INSTALLIERBAR: fixture')
+INSTALL_DIR=/fixture
+python3() { printf 'Sandbox_Pruefumfang=fixture-only\\n'; }
 LAST_OPERATION_LOG_FILE=OLD_LOG
 ACTIVE_OPERATION_LOG_FILE=OLD_LOG
 dialog() { printf '%s\\n' "$@"; }
@@ -123,7 +125,7 @@ begin_operation_measurement() { echo UNEXPECTED-LOG; exit 90; }
 run_tool_script() { echo UNEXPECTED-INSTALLER; exit 90; }
 '''
         env = {k: v for k, v in os.environ.items() if k.upper() in ('PATH', 'SYSTEMROOT', 'TEMP', 'TMP')}
-        for tool in ('cert-manager', 'External_DNS', 'Kyverno'):
+        for tool in ('cert-manager', 'External_DNS', 'Kyverno', 'gVisor', 'Kata_Containers', 'Firecracker'):
             with tempfile.TemporaryDirectory() as directory:
                 script = Path(directory) / 'menu-fixture.sh'
                 call = ('\nrc=0; install_tool ' + tool + ' || rc=$?\n'
@@ -134,6 +136,8 @@ run_tool_script() { echo UNEXPECTED-INSTALLER; exit 90; }
             self.assertEqual(result.returncode, 3, result.stderr)
             self.assertIn('kein Installer', result.stdout)
             self.assertNotIn('UNEXPECTED-', result.stdout)
+            if tool in ('gVisor', 'Kata_Containers', 'Firecracker'):
+                self.assertIn('Sandbox_Pruefumfang=fixture-only', result.stdout)
 
 
 if __name__ == '__main__':

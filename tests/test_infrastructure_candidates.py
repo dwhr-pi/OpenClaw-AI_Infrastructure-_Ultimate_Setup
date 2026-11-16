@@ -25,10 +25,10 @@ class CandidateCatalog(unittest.TestCase):
             matches = [row for row in rows if normalized(row['name']) == normalized(name)]
             self.assertEqual(len(matches), 1, name)
             row = matches[0]
-            if row['id'] == 'valkey':
+            if row['id'] in ('valkey', 'kube_bench'):
                 self.assertEqual(row['status'], 'experimental')
                 self.assertEqual(row['install_mode'], 'github-native-build')
-                self.assertEqual(row['status_script'], 'scripts/tools/valkey_status.sh')
+                self.assertEqual(row['status_script'], 'scripts/tools/' + row['id'] + '_status.sh')
                 continue
             self.assertEqual(row['status'], 'planned')
             self.assertFalse(row['auto_install'])
@@ -54,7 +54,7 @@ class CandidateCatalog(unittest.TestCase):
             sentinel.write_text('keep', encoding='utf-8')
             scripts = list((ROOT / 'scripts/tools').glob('*_candidate_install.sh'))
             scripts = [path for path in scripts if 'infrastructure_candidate_blocked.sh' in path.read_text()]
-            self.assertEqual(len(scripts), 21)
+            self.assertEqual(len(scripts), 20)
             for path in scripts:
                 result = subprocess.run([BASH, '--noprofile', '--norc', path.as_posix()],
                                         env=env, capture_output=True, text=True, timeout=15)

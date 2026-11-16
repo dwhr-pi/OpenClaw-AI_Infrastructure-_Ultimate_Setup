@@ -3,6 +3,8 @@ import importlib.util
 import os
 from pathlib import Path
 import sys
+import stat
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -13,6 +15,50 @@ spec.loader.exec_module(diagnostics)
 
 
 class SystemDiagnostics(unittest.TestCase):
+    def test_gvisor_kernel_check_does_not_require_kvm_or_claim_runtime_success(self):
+        with patch.object(diagnostics.platform, 'system', return_value='Linux'), \
+                patch.object(diagnostics.platform, 'release', return_value='6.6-microsoft-standard-WSL2'), \
+                patch.object(diagnostics.platform, 'machine', return_value='x86_64'), \
+                patch.object(diagnostics.os, 'stat', side_effect=FileNotFoundError), \
+                patch.object(diagnostics.os, 'access') as access, \
+                patch.object(diagnostics.Path, 'exists', return_value=False):
+            result = diagnostics.sandbox_snapshot()
+        self.assertEqual(result['gVisor_Kernel_ab_5_6'], 'ja')
+        self.assertEqual(result['KVM_Geraet'], 'nicht vorhanden')
+        self.assertEqual(result['Sandbox_64bit_Architektur'], 'ja')
+        self.assertIn('kein Runtime-', result['Sandbox_Pruefumfang'])
+        access.assert_not_called()
+
+    def test_kvm_permissions_are_only_metadata_never_opened(self):
+        with patch.object(diagnostics.os, 'stat', return_value=SimpleNamespace(st_mode=stat.S_IFCHR | 0o660)), \
+                patch.object(diagnostics.os, 'access', return_value=True) as access, \
+                patch.object(diagnostics.Path, 'exists', return_value=False), \
+                patch('builtins.open', side_effect=AssertionError('No device/file opening')):
+            result = diagnostics.sandbox_snapshot()
+        self.assertEqual(result['KVM_Geraet'], 'Zeichengeraet')
+        self.assertEqual(result['KVM_Lese_Schreibrecht'], 'ja')
+        access.assert_called_once_with('/dev/kvm', os.R_OK | os.W_OK)
+
+    def test_old_kernel_or_unreadable_kvm_is_not_assumed_ready(self):
+        with patch.object(diagnostics.platform, 'system', return_value='Linux'), \
+                patch.object(diagnostics.platform, 'release', return_value='4.4-microsoft'), \
+                patch.object(diagnostics.os, 'stat', side_effect=PermissionError), \
+                patch.object(diagnostics.os, 'access') as access, \
+                patch.object(diagnostics.Path, 'exists', return_value=False):
+            result = diagnostics.sandbox_snapshot()
+        self.assertEqual(result['gVisor_Kernel_ab_5_6'], 'nein')
+        self.assertEqual(result['KVM_Geraet'], 'Metadaten nicht lesbar')
+        access.assert_not_called()
+
+    def test_non_linux_or_32bit_is_not_assumed_compatible(self):
+        for system, machine in (('Windows', 'AMD64'), ('Linux', 'armv7l')):
+            with patch.object(diagnostics.platform, 'system', return_value=system), \
+                    patch.object(diagnostics.platform, 'machine', return_value=machine), \
+                    patch.object(diagnostics.os, 'stat', side_effect=FileNotFoundError), \
+                    patch.object(diagnostics.Path, 'exists', return_value=False):
+                result = diagnostics.sandbox_snapshot()
+            self.assertEqual(result['Sandbox_64bit_Architektur'], 'nein/unbekannt')
+
     def test_ubuntu_and_wsl_are_reported_without_environment_secrets(self):
         release = {'ID': 'ubuntu', 'VERSION_ID': '24.04', 'PRETTY_NAME': 'Ubuntu 24.04.5 LTS', 'UNRELATED': 'do-not-log'}
         with patch.object(diagnostics.platform, 'freedesktop_os_release', return_value=release), \
