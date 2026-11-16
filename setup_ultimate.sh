@@ -2311,7 +2311,7 @@ show_options_menu() {
       "9" "${TXT_OPTIONS_9:-LLMOps Plattform Konfiguration (.env Stack)}" \
       "10" "${TXT_OPTIONS_10:-Huginn Konfiguration (.env Vorlage)}" \
       "───────────" "──────────── Setup / Diagnose ───────────────" \
-      "11" "${TXT_OPTIONS_6:-Setup-Repository hart reparieren / auf GitHub main zurücksetzen}" \
+      "11" "Signaturpflicht / Hinweise zur Quell-Reparatur" \
       "12" "${TXT_OPTIONS_12:-Nur auf Setup-Updates prüfen}" \
       "13" "${TXT_OPTIONS_13:-Jetzt nur das Setup aktualisieren}" \
       "────────────" "──────── Installation / Diagnose ────────────" \
@@ -2372,24 +2372,10 @@ show_options_menu() {
         run_bash_script "$INSTALL_DIR/scripts/huginn_config_manager.sh"
         ;;
       11)
-        show_operation_intro \
-          "Gesicherter Setup-Abgleich mit GitHub main" \
-          "Tracking-Aenderungen werden erst nach verifizierter Sicherung und SYNC-Freigabe ersetzt. Lokale Branches und nicht kollidierende Zusatzdateien bleiben erhalten." \
-          "Meist nur wenige Minuten, abhängig von Netzwerk und Repo-Größe" \
-          "${MIN_FREE_GB_ABSOLUTE}-${MIN_FREE_GB_RECOMMENDED} GB" \
-          "Nutze diese Methode nur, wenn das normale Update nicht greift oder ein alter Setup-Stand festhaengt."
-        if run_bash_script "$INSTALL_DIR/scripts/auto_update_hard.sh" --dry-run; then
-          read -r -p "Verifizierte Sicherung erstellen und lokale Tracking-Aenderungen ersetzen? Tippe SYNC: " confirm_repo_sync
-          if [[ "$confirm_repo_sync" == SYNC ]]; then
-            if run_bash_script "$INSTALL_DIR/scripts/auto_update_hard.sh" --apply --confirm-discard-local; then
-              read -r -p "Gesicherter Setup-Abgleich abgeschlossen. Enter zum Neustart..."
-              restart_setup_menu_after_update
-            else
-              echo 'Update fehlgeschlagen. Vorhandene Sicherungen bleiben erhalten; Log pruefen.'
-              read -r -p "Enter zurueck..."
-            fi
-          fi
-        fi
+        printf '%s\n' 'Setup-Updates erfolgen nur ueber Minisign-verifizierte Releases, nicht ueber main.'
+        printf '%s\n' 'Die unsignierte Entwickler-Quellreparatur ist kein Update und wird hier nicht ausgefuehrt.'
+        printf '%s\n' 'Nutze die signierte Update-Pruefung bzw. das signierte Setup-Update. docs/SIGNED_UPDATES.md'
+        read -r -p "Enter zurueck..."
         ;;
       12)
         show_operation_intro \
@@ -5091,6 +5077,16 @@ TOOL_SCRIPT_NAMES["Vaultwarden"]="vaultwarden_candidate"
 TOOLS["Vaultwarden"]="GEPLANT / NICHT INSTALLIERBAR: bisher nur Installationsplatzhalter. docs/tools/infrastructure-candidates.md"
 TOOL_SCRIPT_NAMES["Argo_Workflows"]="argo_workflows_candidate"
 TOOLS["Argo_Workflows"]="GEPLANT / NICHT INSTALLIERBAR: bisher nur Installationsplatzhalter. docs/tools/infrastructure-candidates.md"
+
+# Check once per interactive launch; offline/headless entrypoints exited above.
+if [[ "${OPENCLAW_UPDATE_CHECK:-1}" != 0 ]]; then
+  startup_update_notice="$(python3 -I -B "$INSTALL_DIR/scripts/security/discover_signed_update.py" \
+    --startup-check --public-key "${OPENCLAW_RELEASE_PUBLIC_KEY:-$HOME/.config/openclaw-trust/release.pub}")"
+  if [[ -n "$startup_update_notice" ]]; then
+    printf '%s\n' "$startup_update_notice"
+    dialog --title "Signierte Setup-Updates" --msgbox "$startup_update_notice" 14 78 || true
+  fi
+fi
 
 # Hauptschleife
 while true; do

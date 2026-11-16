@@ -1,15 +1,20 @@
 """Explicit online discovery; only independently Minisign-verified newer releases may update."""
 import argparse
+import importlib.util
 import json
+import os
 from pathlib import Path
 import re
+import signal
 import sys
 import tempfile
 import time
 from urllib.parse import urlsplit
 from urllib.request import build_opener, HTTPRedirectHandler, ProxyHandler, Request
 
-import update_verified_release as updater
+SPEC = importlib.util.spec_from_file_location('discovery_verified_updater', Path(__file__).with_name('update_verified_release.py'))
+updater = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(updater)
 
 ROOT = Path(__file__).resolve().parents[2]
 PROJECT = 'dwhr-pi/OpenClaw-AI_Infrastructure-_Ultimate_Setup'
@@ -144,9 +149,54 @@ def discover(repo, key, backup_root, *, apply=False, download=fetch, verifier=No
         elif not apply:
             report['status'] = 'new-signed-release-available'
         else:
-            result = (perform or updater.update)(repo, backup_root, manifest, apply=True, fetch=True)
+            result = (perform or updater.update)(repo, backup_root, manifest, apply=True, fetch=True,
+                                                  expected_head=current_commit)
             report.update(status=result['status'], checkout=True, backup=result['backup'])
         return report
+
+
+def startup_check(repo, key):
+    try:
+        updater.manifest_module.regular(key)
+    except (ValueError, OSError):
+        return ('Update-Hinweis: keine unabhaengige release.pub gefunden. Keine Online-Pruefung.\n'
+                'Schluessel importieren oder OPENCLAW_RELEASE_PUBLIC_KEY setzen; siehe docs/SIGNED_UPDATES.md.')
+    command = [sys.executable, '-I', '-B', str(Path(__file__).resolve()), '--check-online',
+               '--repo', str(repo), '--public-key', str(key)]
+    env = {name: value for name, value in os.environ.items()
+           if name in ('PATH', 'HOME', 'LANG', 'LC_ALL', 'SYSTEMROOT')}
+    process = None
+    try:
+        process = updater.subprocess.Popen(command, env=env, stdout=updater.subprocess.PIPE,
+                                           stderr=updater.subprocess.PIPE, text=True,
+                                           start_new_session=os.name == 'posix')
+        try:
+            stdout, _ = process.communicate(timeout=20)
+        except updater.subprocess.TimeoutExpired:
+            if os.name == 'posix':
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            else:
+                process.kill()
+            process.communicate(timeout=3)
+            return 'Update-Pruefung nach 20 Sekunden beendet. Status unbekannt; kein Update ausgefuehrt.'
+        if process.returncode != 0:
+            return 'Update-Pruefung nicht erfolgreich (Netzwerk, Minisign oder Release). Kein Update ausgefuehrt.'
+        report = json.loads(stdout.splitlines()[-1])
+        if report.get('status') == 'new-signed-release-available' and report.get('signature_verified') is True:
+            return ('Neues signiertes Setup-Update verfuegbar: ' + report['tag'] + '\n'
+                    'Minisign und SHA256 mit deiner release.pub geprueft.\n'
+                    'Installation nur bewusst ueber Optionen: Jetzt nur das Setup aktualisieren.')
+        if report.get('main_outside_selected_release'):
+            return ('GitHub-main weicht vom verifizierten Release ab. Diese Quellen werden nicht automatisch uebernommen.\n'
+                    'Kein neueres signiertes Setup-Update verfuegbar.')
+        return ''
+    except (ValueError, OSError, IndexError, updater.subprocess.SubprocessError):
+        if process is not None and process.poll() is None:
+            process.kill()
+        return 'Update-Pruefung derzeit nicht verfuegbar. Kein Update ausgefuehrt.'
 
 
 def main(argv=None):
@@ -157,7 +207,13 @@ def main(argv=None):
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument('--check-online', action='store_true')
     mode.add_argument('--apply', action='store_true')
+    mode.add_argument('--startup-check', action='store_true')
     args = parser.parse_args(argv)
+    if args.startup_check:
+        notice = startup_check(args.repo, args.public_key)
+        if notice:
+            print(notice)
+        return 0
     try:
         report = discover(args.repo, args.public_key, args.backup_root, apply=args.apply)
         if report['signature_verified']:
