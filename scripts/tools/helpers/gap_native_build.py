@@ -32,11 +32,19 @@ def specification(key, source):
             'uv.lock': '40440e425aa7f94e356e77ca2def1138e10d981138881ad822e183bd0de082f5'})
     else:
         result['contracts']['CMakeLists.txt'] = 'f7c978ca6cb25182697729c4eb083c71547c4f93724bf259a6b654f901835425'
+    if key == 'songrec':
+        from native_build_deps import SONGREC_PACKAGES
+        result['apt_build_deps'] = list(SONGREC_PACKAGES)
     return result
 
 
 def uv_spec():
     return {'id': 'outlines', 'recipe': {'private_uv': '0.13.5', 'disk_mb': 4096}}
+
+
+def songrec_dependency_spec():
+    from native_build_deps import SONGREC_PACKAGES
+    return {'id': 'songrec', 'recipe': {'apt_build_deps': list(SONGREC_PACKAGES)}}
 
 
 def select_outlines_python(base):
@@ -79,6 +87,11 @@ def preflight(key, base, approved=False):
         raise ValueError('Nativer Build nur unter Linux/WSL; kein Windows-/macOS-Crossbuild.')
     if hasattr(os, 'geteuid') and os.geteuid() == 0:
         raise ValueError('Nativen Tool-Build als normaler Benutzer starten, nicht mit sudo/root.')
+    if key == 'songrec':
+        if sys.version_info < (3, 11):
+            raise ValueError('SongRec-Buildnachweis braucht Python >=3.11 (tomllib).')
+        import native_build_deps
+        native_build_deps.prepare(songrec_dependency_spec(), approved=approved)
     tools = {'outlines': (), 'espeak_ng': ('cmake', 'make', 'cc'),
              'songrec': ('cargo', 'rustc', 'cc', 'pkg-config', 'msgfmt')}
     for name in tools[key]:
@@ -95,8 +108,6 @@ def preflight(key, base, approved=False):
         import native_uv
         native_uv.select(base, uv_spec(), approved=approved, allow_download=approved)
         return python
-    if key == 'songrec' and sys.version_info < (3, 11):
-        raise ValueError('SongRec-Buildnachweis braucht Python >=3.11 (tomllib).')
     if key == 'songrec':
         probe(['pkg-config', '--exists', 'alsa', 'glib-2.0', 'openssl'], base, None)
 

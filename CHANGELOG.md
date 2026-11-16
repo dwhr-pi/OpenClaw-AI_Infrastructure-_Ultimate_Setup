@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### 2026-11-16: Cargo und SongRec-Buildpakete im Installer
+
+- SongRec bietet fehlende Cargo-/Rust-/Compiler-/Header-Pakete unter Ubuntu 24.04 nach Zustimmung an.
+- --install-build-deps erlaubt die Paketphase explizit; kein sudo beim eigentlichen GitHub-Build.
+- Vorhandene private Rust-Toolchains und gemeinsame Buildwerkzeuge bleiben erhalten.
+- Offline-Plan/Status/Doctor ohne Paketaktionen; Tests fuer Ablehnung, APT-Fehler und Daten-Erhalt ergaenzt.
+
 ### 2026-11-16: Vorhandenes Python fuer Outlines getrennt auswaehlen
 
 - Outlines kann vorhandenes Python 3.10-3.13 nutzen, auch wenn der Installer mit Python 3.14 laeuft.

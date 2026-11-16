@@ -26,6 +26,34 @@ Mindestreserve fuer den neuen Build; keine GUI, keine globale Installation.
 Der CLI-Build verwendet `cargo build --release --locked --no-default-features`.
 Kein Docker-Fallback. Vollstaendiger Linux-Build bleibt durch Nutzer zu pruefen.
 
+### Cargo und Build-Voraussetzungen im Installer
+
+Der korrigierte Installer prueft unter Ubuntu 24.04 auch die gemeinsamen
+Buildpakete. Fehlendes Cargo/Rust und Entwicklungsbibliotheken werden nach
+ausdruecklicher Zustimmung ueber APT eingerichtet, danach folgt der gepinnte
+GitHub-Build als normaler Benutzer. Im interaktiven Setup fragt der Installer
+bei fehlenden Paketen nach; `j` erlaubt die Paketphase, Enter/Nein lehnt ab.
+
+Alternativ die Paketphase ausdruecklich freigeben:
+
+```bash
+bash scripts/tools/songrec_install.sh --install-build-deps
+```
+
+Freigegebene Buildpakete: `cargo`, `rustc`, `build-essential`, `pkg-config`,
+`gettext`, `libasound2-dev`, `libglib2.0-dev`, `libssl-dev`. Bereits vorhandene
+Cargo-/Rust-Binaries aus einer privaten Toolchain werden nicht durch APT ersetzt.
+Gemeinsame Buildwerkzeuge bleiben bei SongRec-Deinstallation erhalten.
+
+Ohne Zustimmung kein Paket-/Quellen-Download und kein Erfolgsmarker.
+Plan, Dry-run, Status und Doctor installieren keine Pakete und fragen nicht nach
+sudo. Nur die freigegebene Paketphase nutzt sudo; der eigentliche Build nicht.
+Auf anderen Distributionen bleiben Buildpakete manuell bereitzustellen.
+Eine nicht passende Rust-Version oder ein Compilerfehler wird nicht durch einen
+anderen Quell-Pin oder einen Docker-Fallback umgangen. Echte Linux-Buildabnahme offen.
+
+### Lifecycle-Befehle
+
 ```bash
 bash scripts/tools/songrec_install.sh --dry-run
 bash scripts/tools/songrec_install.sh
