@@ -19,6 +19,8 @@ PROBES = {'ollama': 'ollama', 'openclaw': 'openclaw', 'open_webui': 'open-webui'
 
 def audit_status(row, root):
     # A structural contract is necessary, not sufficient for runtime acceptance.
+    if row.get('status') == 'planned' and row.get('status_script') == 'scripts/tools/infrastructure_candidate_status.sh':
+        return 'DOKU-ONLY'
     if row['id'] in ('openhands', 'watchtower'):
         return 'WIDERSPRUCH'
     installer = row.get('install_script', '')

@@ -34,6 +34,37 @@ bash scripts/tools/qwen_coder_uninstall.sh --dry-run
 ```
 
 Status meldet `source_prepared`, `installed: false`, `runtime_tested: false`.
+
+### Git-Download bricht nach 180 Sekunden ab
+
+Das Protokoll `fetch ... timed out after 180 seconds` bezeichnet einen
+abgebrochenen Quelldownload, keine fehlgeschlagene Modell-Inferenz. Die genaue
+Netzwerkursache ist damit nicht festgestellt. Der Rollback darf nur den eigenen
+neu angelegten Runtime-Ordner dieses Versuchs entfernen, keine Benutzerdaten.
+
+Die Folgekorrektur verwendet fuer Fetch ein eigenes Budget: standardmaessig
+900 Sekunden, explizit 180 bis 3600 Sekunden. Git-Fortschritt und ein 30s-Heartbeat
+werden ins Log gestreamt; ein Heartbeat ist kein Fortschritts-/Erfolgsnachweis.
+Unter Linux/WSL beendet ein Timeout die Prozessgruppe vor dem Rollback.
+Keine automatischen Wiederholungen, kein Wechsel auf main/latest, keine
+deaktivierte TLS-Pruefung und kein Modell-/Git-LFS-Download.
+
+Nur **nach Uebernahme und Pruefung dieser Folgekorrektur** in den neuen Checkout:
+
+```bash
+OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS=1200 bash scripts/tools/qwen_coder_install.sh
+```
+
+Der alte PR-28-Testcheckout kennt diese Variable noch nicht; dort bewirkt sie
+keine Timeout-Aenderung. Ein erhoehtes Budget garantiert keinen Download-Erfolg.
+Bei erneutem Fehler das neue Log pruefen; vorhandene Runtime-Ordner nicht manuell
+loeschen oder mit einem Reset erzwingen. Genuegend physischen Windows-Host-Speicher
+bereitstellen. Auch ein erfolgreicher Checkout liefert noch keine Modellgewichte.
+
+[Git-Fetch-Optionen und Fortschrittsausgabe](https://git-scm.com/docs/git-fetch).
+
+### Diagnose und Daten-Erhalt
+
 Doctor prueft Pin, Origin, README-Vertrag und Inventar, keine Coding-Faehigkeit.
 Update bleibt beim Pin. Uninstall ohne `--dry-run` entfernt nur unveraenderte,
 inventarisierte Quellen mit Besitznachweis unter

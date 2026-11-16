@@ -56,9 +56,11 @@ jobs:
           python3 -B tests/test_archivebox_python.py -v
           python3 -B tests/test_native_uv.py -v
           python3 -B tests/test_native_build_deps.py -v
+          python3 -B tests/test_songrec_build_deps.py -v
           python3 -B tests/test_litellm_rust.py -v
           python3 -B tests/test_native_node_npm.py -v
           python3 -B tests/test_native_build_process.py -v
+          python3 -B tests/test_git_fetch_budget.py -v
           python3 -B tests/test_install_rollback.py -v
           python3 -B tests/test_installation_reset.py -v
           python3 -B tests/test_installation_inventory.py -v
@@ -69,12 +71,15 @@ jobs:
           python3 -B tests/test_perplexity_sdk_tools.py -v
           python3 -B tests/test_gap_runtime_cleanup.py -v
           python3 -B tests/test_gap_native_build.py -v
+          python3 -B tests/test_outlines_python_selection.py -v
           python3 -B tests/test_browseros_study.py -v
           python3 -B tests/test_enki_browser_study.py -v
           python3 -B tests/test_qwen_desktop_study.py -v
           python3 -B tests/test_litellm_rust_bootstrap.py -v
           python3 -B tests/test_litellm_build_timeout.py -v
           python3 -B tests/test_tool_menu_order.py -v
+          python3 -B tests/test_infrastructure_candidates.py -v
+          python3 -B tests/test_signed_update_discovery.py -v
           bash -n scripts/credentials_backup_menu.sh
           bash -n scripts/installation_inventory_menu.sh
           bash -n scripts/operations/backup_run.sh

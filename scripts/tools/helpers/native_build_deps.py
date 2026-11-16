@@ -12,6 +12,9 @@ import gap_tools as common
 MOSQUITTO_PACKAGES = ("git", "cmake", "build-essential", "pkg-config", "libssl-dev",
                       "libcjson-dev", "libsqlite3-dev", "libedit-dev", "libmicrohttpd-dev")
 LITELLM_PACKAGES = ("build-essential", "pkg-config")
+SONGREC_PACKAGES = ('cargo', 'rustc', 'build-essential', 'pkg-config', 'gettext',
+                    'libasound2-dev', 'libglib2.0-dev', 'libssl-dev')
+SONGREC_COMMANDS = ('cargo', 'rustc', 'cc', 'c++', 'make', 'pkg-config', 'msgfmt')
 
 
 def ubuntu_release():
@@ -32,6 +35,10 @@ def installed(package):
 def prepare(spec, approved=False):
     packages = spec["recipe"].get("apt_build_deps", [])
     name, slug = "Mosquitto", "mosquitto"
+    if spec['id'] == 'songrec':
+        if packages and tuple(packages) != SONGREC_PACKAGES:
+            raise ValueError('Nicht freigegebene SongRec-Systempaketliste; keine apt-Aktion.')
+        name, slug, packages = 'SongRec', 'songrec', SONGREC_PACKAGES
     if spec["id"] == "litellm":
         if packages and tuple(packages) != LITELLM_PACKAGES:
             raise ValueError("Nicht freigegebene LiteLLM-Systempaketliste; keine apt-Aktion.")
@@ -41,7 +48,7 @@ def prepare(spec, approved=False):
             return
     if not packages:
         return
-    if (spec["id"] not in ("mosquitto", "litellm") or
+    if (spec["id"] not in ("mosquitto", "litellm", "songrec") or
             (spec["id"] == "mosquitto" and tuple(packages) != MOSQUITTO_PACKAGES)):
         raise ValueError("Nicht freigegebene Systempaketliste; keine apt-Aktion.")
     if not ubuntu_release() or not all(shutil.which(name) for name in ("apt-get", "dpkg-query")):
@@ -50,11 +57,20 @@ def prepare(spec, approved=False):
             raise ValueError(message + " Keine Systemaenderung.")
         print(message)
         return
-    missing = [package for package in packages if not installed(package)]
+    def available(package):
+        # Respect an existing rustup/private compiler instead of replacing it with APT.
+        if slug == 'songrec' and package in ('cargo', 'rustc') and shutil.which(package):
+            return True
+        return installed(package)
+
+    missing = [package for package in packages if not available(package)]
     if not missing:
         print(name + ": Ubuntu-Buildpakete bereits vorhanden; keine apt-Aktion.")
         if slug == "litellm":
             raise ValueError("LiteLLM: Pakete installiert, aber cc/c++/make/pkg-config fehlen im PATH; PATH/Paketinstallation separat reparieren.")
+        if slug == 'songrec' and not all(shutil.which(tool) for tool in SONGREC_COMMANDS):
+            raise ValueError('SongRec: Pakete installiert, aber Buildwerkzeuge fehlen im PATH; '
+                             'PATH/Paketinstallation separat reparieren. Kein Quellen-Download.')
         return
     print(name + ": fehlende gemeinsame Buildpakete: " + " ".join(missing))
     print("Nur Compiler/Bibliotheken via apt; " + name + " selbst aus GitHub. "
@@ -77,8 +93,10 @@ def prepare(spec, approved=False):
     options = ["-o", "DPkg::Lock::Timeout=300"]
     common.run(prefix + ["apt-get"] + options + ["update"], Path.cwd(), env)
     common.run(prefix + ["apt-get"] + options + ["install", "--no-remove", "--no-install-recommends", "-y"] + missing, Path.cwd(), env)
-    if any(not installed(package) for package in packages):
+    if any(not available(package) for package in packages):
         raise ValueError(name + ": Buildpakete nach apt unvollstaendig; kein Quellen-Download.")
     if slug == "litellm" and not all(shutil.which(tool) for tool in ("cc", "c++", "make", "pkg-config")):
         raise ValueError("LiteLLM: Compiler/Linker nach apt nicht im PATH; kein Quellen-Download.")
+    if slug == 'songrec' and not all(shutil.which(tool) for tool in SONGREC_COMMANDS):
+        raise ValueError('SongRec: Cargo/Rust/Buildwerkzeuge nach apt nicht im PATH; kein Quellen-Download.')
     print(name + ": Buildabhaengigkeiten eingerichtet; GitHub-Build folgt ohne sudo/Docker.")

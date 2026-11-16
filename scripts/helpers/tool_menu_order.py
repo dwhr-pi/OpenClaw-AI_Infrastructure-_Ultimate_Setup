@@ -7,6 +7,8 @@ import stat
 import sys
 
 CORE = {'Ollama', 'OpenClaw', 'Ruflo'}
+# Explicitly requested trailing candidates; existing entries are moved, not duplicated.
+AFTER_XERJ = ["cert-manager","External_DNS","Kyverno","Gatekeeper","KEDA","Arize_Phoenix","Valkey","gVisor","Kata_Containers","Firecracker","Milvus","Kube_Bench","Kubescape","Nuclei","Testssl","OWASP_ZAP","Checkov","Ragas","Temporal","TruffleHog","Vaultwarden","Argo_Workflows"]
 KEY = re.compile(r'[A-Za-z0-9_-]+')
 
 
@@ -43,7 +45,12 @@ def ordered(keys, baseline):
     pinned = [key for key in keys if key in CORE]
     existing = sorted((key for key in keys if key not in CORE and key in baseline), key=str.upper)
     appended = [key for key in keys if key not in CORE and key not in baseline]
-    return pinned + existing + appended
+    result = pinned + existing + appended
+    if 'XERJ' in result:
+        trailing = [key for key in AFTER_XERJ if key in result]
+        result = [key for key in result if key != 'XERJ' and key not in trailing]
+        result += ['XERJ'] + trailing
+    return result
 
 
 def main(argv=None):

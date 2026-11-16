@@ -5,7 +5,9 @@ const path = require("node:path");
 const { pathToFileURL } = require("node:url");
 const { promisify } = require("node:util");
 const RETRY_DELAY_MS = 5000;
-const TRANSIENT_HTTP_STATUS = new Set([0, 500, 502, 503, 504]);
+const SERVER_RETRY_DELAY_MS = 15000;
+const SERVER_HTTP_STATUS = new Set([500, 502, 503, 504]);
+const TRANSIENT_HTTP_STATUS = new Set([0, ...SERVER_HTTP_STATUS]);
 
 function validateResults(results, options) {
   if (!Array.isArray(results)) throw new Error("Missing link-check results");
@@ -55,10 +57,32 @@ async function checkDocument(
   const repeated = new Map(
     validateResults(await check(markdown, options), options).map((result) => [result.link, result]),
   );
-  return initial.map((result) => {
+  const retried = initial.map((result) => {
     if (!retry.has(result.link)) return result;
     const next = repeated.get(result.link);
     // A missing result or newly ignored target never clears the original failure.
+    return next && next.status !== "ignored" ? next : result;
+  });
+  const serverRetry = new Set(
+    retried
+      .filter((result) => {
+        const next = repeated.get(result.link);
+        return retry.has(result.link) && next?.status === "dead" &&
+          SERVER_HTTP_STATUS.has(next.statusCode);
+      })
+      .map((result) => result.link),
+  );
+  if (!serverRetry.size) return retried;
+
+  report(`Final retry for ${serverRetry.size} persistent HTTP 5xx failure(s) after ${SERVER_RETRY_DELAY_MS}ms`);
+  await wait(SERVER_RETRY_DELAY_MS);
+  const final = new Map(
+    validateResults(await check(markdown, options), options).map((result) => [result.link, result]),
+  );
+  return retried.map((result) => {
+    if (!serverRetry.has(result.link)) return result;
+    const next = final.get(result.link);
+    // No fourth attempt, no new 429 retry and no clearing missing/ignored results.
     return next && next.status !== "ignored" ? next : result;
   });
 }
@@ -102,4 +126,4 @@ if (require.main === module) {
       process.exitCode = 2;
     });
 }
-module.exports = { checkDocument, validateResults, RETRY_DELAY_MS, main };
+module.exports = { checkDocument, validateResults, RETRY_DELAY_MS, SERVER_RETRY_DELAY_MS, main };

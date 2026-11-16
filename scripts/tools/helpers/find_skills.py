@@ -4,6 +4,7 @@ from contextlib import contextmanager, redirect_stdout
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import stat
@@ -67,6 +68,24 @@ def digest(path):
 
 
 def git(source, *args):
+    if args and args[0] == 'fetch':
+        import native_build_process
+        raw = os.environ.get('OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS', '900')
+        if not re.fullmatch(r'[0-9]{3,4}', raw) or not 180 <= int(raw) <= 3600:
+            raise ValueError('OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS: 180 bis 3600 ganze Sekunden erforderlich.')
+        timeout = int(raw)
+        env = {key: value for key, value in os.environ.items() if key.upper() in {
+            'PATH', 'HOME', 'USERPROFILE', 'SYSTEMROOT', 'TEMP', 'TMP', 'LANG', 'LC_ALL',
+            'HTTP_PROXY', 'HTTPS_PROXY', 'NO_PROXY', 'SSL_CERT_FILE', 'SSL_CERT_DIR', 'GIT_SSL_CAINFO'}}
+        env.update(GIT_TERMINAL_PROMPT='0', GIT_LFS_SKIP_SMUDGE='1',
+                   GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM='1', GIT_NOREPLACE_OBJECTS='1')
+        options = list(args[1:])
+        if '--progress' not in options:
+            options.insert(0, '--progress')
+        command = ['git', '-c', 'core.hooksPath=' + os.devnull, '-c', 'credential.helper=',
+                   '-c', 'core.fsmonitor=false', '-C', str(source), 'fetch', *options]
+        print('Git-Download: Zeitbudget', timeout, 'Sekunden; kein automatischer Wiederholungsversuch.', flush=True)
+        return native_build_process.run(command, source, env, timeout=timeout, label='Git-Download')
     result = subprocess.run(["git", "-c", "core.hooksPath=" + os.devnull,
                              "-c", "credential.helper=", "-C", str(source), *args], check=True,
                             capture_output=True, text=True, timeout=180,

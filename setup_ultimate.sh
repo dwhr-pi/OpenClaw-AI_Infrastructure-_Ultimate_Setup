@@ -2311,7 +2311,7 @@ show_options_menu() {
       "9" "${TXT_OPTIONS_9:-LLMOps Plattform Konfiguration (.env Stack)}" \
       "10" "${TXT_OPTIONS_10:-Huginn Konfiguration (.env Vorlage)}" \
       "───────────" "──────────── Setup / Diagnose ───────────────" \
-      "11" "${TXT_OPTIONS_6:-Setup-Repository hart reparieren / auf GitHub main zurücksetzen}" \
+      "11" "Signaturpflicht / Hinweise zur Quell-Reparatur" \
       "12" "${TXT_OPTIONS_12:-Nur auf Setup-Updates prüfen}" \
       "13" "${TXT_OPTIONS_13:-Jetzt nur das Setup aktualisieren}" \
       "────────────" "──────── Installation / Diagnose ────────────" \
@@ -2372,29 +2372,15 @@ show_options_menu() {
         run_bash_script "$INSTALL_DIR/scripts/huginn_config_manager.sh"
         ;;
       11)
-        show_operation_intro \
-          "Gesicherter Setup-Abgleich mit GitHub main" \
-          "Tracking-Aenderungen werden erst nach verifizierter Sicherung und SYNC-Freigabe ersetzt. Lokale Branches und nicht kollidierende Zusatzdateien bleiben erhalten." \
-          "Meist nur wenige Minuten, abhängig von Netzwerk und Repo-Größe" \
-          "${MIN_FREE_GB_ABSOLUTE}-${MIN_FREE_GB_RECOMMENDED} GB" \
-          "Nutze diese Methode nur, wenn das normale Update nicht greift oder ein alter Setup-Stand festhaengt."
-        if run_bash_script "$INSTALL_DIR/scripts/auto_update_hard.sh" --dry-run; then
-          read -r -p "Verifizierte Sicherung erstellen und lokale Tracking-Aenderungen ersetzen? Tippe SYNC: " confirm_repo_sync
-          if [[ "$confirm_repo_sync" == SYNC ]]; then
-            if run_bash_script "$INSTALL_DIR/scripts/auto_update_hard.sh" --apply --confirm-discard-local; then
-              read -r -p "Gesicherter Setup-Abgleich abgeschlossen. Enter zum Neustart..."
-              restart_setup_menu_after_update
-            else
-              echo 'Update fehlgeschlagen. Vorhandene Sicherungen bleiben erhalten; Log pruefen.'
-              read -r -p "Enter zurueck..."
-            fi
-          fi
-        fi
+        printf '%s\n' 'Setup-Updates erfolgen nur ueber Minisign-verifizierte Releases, nicht ueber main.'
+        printf '%s\n' 'Die unsignierte Entwickler-Quellreparatur ist kein Update und wird hier nicht ausgefuehrt.'
+        printf '%s\n' 'Nutze die signierte Update-Pruefung bzw. das signierte Setup-Update. docs/SIGNED_UPDATES.md'
+        read -r -p "Enter zurueck..."
         ;;
       12)
         show_operation_intro \
           "Nur auf Setup-Updates prüfen" \
-          "Prüft den lokalen Git-Stand gegen origin/main, ohne direkt Updates oder Systempakete zu installieren." \
+          "Sucht stabile Releases und prueft Minisign/SHA256 mit der lokalen release.pub. Kein main-Fallback." \
           "Wenige Sekunden bis ca. 1 Minute, je nach Netzwerk und Git-Status" \
           "$(get_operation_storage_estimate_label "main_menu_update_check" "${MIN_FREE_GB_ABSOLUTE}-${MIN_FREE_GB_RECOMMENDED} GB")" \
           "Dabei werden keine Paket-Updates installiert und keine lokalen Aenderungen automatisch verworfen."
@@ -2406,7 +2392,7 @@ show_options_menu() {
         local_update_rc=0
         show_operation_intro \
           "Jetzt nur das Setup aktualisieren" \
-          "Aktualisiert nur dieses Setup-Repository gegen origin/main. Betriebssystem und pnpm bleiben dabei unberuehrt." \
+          "Uebernimmt nur ein neueres, mit release.pub verifiziertes Release. Betriebssystem und pnpm bleiben unberuehrt." \
           "Wenige Sekunden bis einige Minuten, je nach Netzwerk und Git-Stand" \
           "$(get_operation_storage_estimate_label "main_menu_setup_only_update" "${MIN_FREE_GB_ABSOLUTE}-${MIN_FREE_GB_RECOMMENDED} GB")" \
           "Bei lokalen Aenderungen im Setup wird das Repo-Update bewusst uebersprungen, damit nichts ueberschrieben wird."
@@ -4899,7 +4885,7 @@ TOOL_KEYS+=("Audile" "SongRec" "Mousai" "Dejavu" "Qwen3_235B_A22B" "QwQ_32B" "GP
 TOOL_SCRIPT_NAMES["Audile"]="audile"
 TOOLS["Audile"]="Nur Quellen; Runtime separat offen. docs/tools/audile.md"
 TOOL_SCRIPT_NAMES["SongRec"]="songrec"
-TOOLS["SongRec"]="Nativer SongRec-0.4.3-CLI-Build mit Cargo.lock; kein Mikrofon-/Shazam-Aufruf. Linux-Abnahme offen."
+TOOLS["SongRec"]="Nativer CLI-Build; fehlendes Cargo/Rust und Buildpakete unter Ubuntu 24.04 nur nach Zustimmung. Kein Mikrofon-/Shazam-Aufruf."
 TOOL_SCRIPT_NAMES["Mousai"]="mousai"
 TOOLS["Mousai"]="Nur Quellen; Runtime separat offen. docs/tools/mousai.md"
 TOOL_SCRIPT_NAMES["Dejavu"]="dejavu"
@@ -5045,7 +5031,66 @@ TOOL_SCRIPT_NAMES["Zigbee2MQTT"]="zigbee2mqtt"
 # Ensure native migration tools are selectable, not just described in metadata.
 register_native_github_tool_keys
 
+# Append documented candidates without installing or starting any component.
+TOOL_KEYS+=("cert-manager" "External_DNS" "Kyverno" "Gatekeeper" "KEDA" "Arize_Phoenix" "Valkey" "gVisor" "Kata_Containers" "Firecracker" "Milvus" "Kube_Bench" "Kubescape" "Nuclei" "Testssl" "OWASP_ZAP" "Checkov" "Ragas" "Temporal" "Vaultwarden" "Argo_Workflows")
+TOOL_SCRIPT_NAMES["cert-manager"]="cert_manager_candidate"
+TOOLS["cert-manager"]="GEPLANT / NICHT INSTALLIERBAR: Issuer vorhanden; nativer Controller-Build und CRD-Abnahme offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["External_DNS"]="external_dns_candidate"
+TOOLS["External_DNS"]="GEPLANT / NICHT INSTALLIERBAR: Zonenrechte, TXT-Owner und nativer Build offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Kyverno"]="kyverno_candidate"
+TOOLS["Kyverno"]="GEPLANT / NICHT INSTALLIERBAR: Policies vorhanden; Controller und Admission-Abnahme offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Gatekeeper"]="gatekeeper_candidate"
+TOOLS["Gatekeeper"]="GEPLANT / NICHT INSTALLIERBAR: Nicht parallel als Default; Controller-Build und Rego-Abnahme offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["KEDA"]="keda_candidate"
+TOOLS["KEDA"]="GEPLANT / NICHT INSTALLIERBAR: CRDs, Auth, nativer Build und Kapazitaetstest offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Arize_Phoenix"]="phoenix_candidate"
+TOOLS["Arize_Phoenix"]="GEPLANT / NICHT INSTALLIERBAR: Native Installation, Persistenz, Auth und Trace-Redaction offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Valkey"]="valkey_candidate"
+TOOLS["Valkey"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Build, ACL/TLS und Gateway-Kompatibilitaet offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["gVisor"]="gvisor_candidate"
+TOOLS["gVisor"]="GEPLANT / NICHT INSTALLIERBAR: runsc-/CRI-Integration, Kernel- und GPU-Vertrag offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Kata_Containers"]="kata_containers_candidate"
+TOOLS["Kata_Containers"]="GEPLANT / NICHT INSTALLIERBAR: Virtualisierung, CRI und native Runtime-Abnahme offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Firecracker"]="firecracker_candidate"
+TOOLS["Firecracker"]="GEPLANT / NICHT INSTALLIERBAR: KVM, Jailer und Kubernetes-Runtime-Anbindung offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Milvus"]="milvus_candidate"
+TOOLS["Milvus"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Gesamtbuild, Abhaengigkeiten und Restore offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Kube_Bench"]="kube_bench_candidate"
+TOOLS["Kube_Bench"]="GEPLANT / NICHT INSTALLIERBAR: Audit-Wrapper vorhanden; gepinnter Build und Benchmark-Abnahme offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Kubescape"]="kubescape_candidate"
+TOOLS["Kubescape"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Build, minimale Leserechte und Ruleset-Abnahme offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Nuclei"]="nuclei_candidate"
+TOOLS["Nuclei"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Build und separat gepruefte Templates offen; keine automatischen Scans. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Testssl"]="testssl_candidate"
+TOOLS["Testssl"]="GEPLANT / NICHT INSTALLIERBAR: Quellenpin, OpenSSL-Vertrag und Smoke-Test offen; keine automatischen Netztests. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["OWASP_ZAP"]="owasp_zap_candidate"
+TOOLS["OWASP_ZAP"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Build, JDK und Add-on-Vertrag offen; keine automatischen Scans. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Checkov"]="checkov_candidate"
+TOOLS["Checkov"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Python-Build, Rulesets und Offline-Verhalten offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Ragas"]="ragas_candidate"
+TOOLS["Ragas"]="GEPLANT / NICHT INSTALLIERBAR: Quellenpin und nativer Build offen; keine LLM-Judge-/Provider-Aufrufe. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Temporal"]="temporal_candidate"
+TOOLS["Temporal"]="GEPLANT / NICHT INSTALLIERBAR: bisher nur Installationsplatzhalter. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["TruffleHog"]="trufflehog_candidate"
+TOOLS["TruffleHog"]="GEPLANT / NICHT INSTALLIERBAR: bisher nur Installationsplatzhalter. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Vaultwarden"]="vaultwarden_candidate"
+TOOLS["Vaultwarden"]="GEPLANT / NICHT INSTALLIERBAR: bisher nur Installationsplatzhalter. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Argo_Workflows"]="argo_workflows_candidate"
+TOOLS["Argo_Workflows"]="GEPLANT / NICHT INSTALLIERBAR: bisher nur Installationsplatzhalter. docs/tools/infrastructure-candidates.md"
+
 # Hauptschleife
+# Keep interactive startup outside the independently evaluated menu metadata.
+# Check once per interactive launch; offline/headless entrypoints exited above.
+if [[ "${BASH_SOURCE[0]:-}" == "$0" && -t 0 && "${OPENCLAW_UPDATE_CHECK:-1}" != 0 ]]; then
+  printf '%s\n' 'Pruefe signierte Setup-Updates (max. 20 Sekunden, keine Installation)...'
+  startup_update_notice="$(python3 -I -B "$INSTALL_DIR/scripts/security/discover_signed_update.py" \
+    --startup-check --public-key "${OPENCLAW_RELEASE_PUBLIC_KEY:-$HOME/.config/openclaw-trust/release.pub}")"
+  if [[ -n "$startup_update_notice" ]]; then
+    printf '%s\n' "$startup_update_notice"
+    dialog --title "Signierte Setup-Updates" --msgbox "$startup_update_notice" 14 78 || true
+  fi
+fi
+
 while true; do
   if [ "$LANGUAGE_SELECTION_REQUIRED" = "1" ]; then
     show_setup_language_menu || true

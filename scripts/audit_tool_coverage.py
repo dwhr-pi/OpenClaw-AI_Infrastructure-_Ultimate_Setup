@@ -67,6 +67,8 @@ def script_state(root, path):
         return "fehlt"
     if Path(path).name in STUBS:
         return "Platzhalter"
+    if 'infrastructure_candidate_blocked.sh' in (root / path).read_text(encoding='utf-8'):
+        return "Platzhalter"
     return "Skript vorhanden; Runtime ungeprueft"
 
 

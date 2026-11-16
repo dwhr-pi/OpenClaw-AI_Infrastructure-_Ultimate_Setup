@@ -92,7 +92,12 @@ Lokale Aenderungen blockieren das Update. Die Sicherung bleibt bei Fehlern erhal
 `~/.openclaw_ultimate_user_data` wird nicht geloescht oder zurueckgesetzt. Der Checkout allein ist
 kein getestetes Runtime-Upgrade.
 
-Der Menuepfad ohne Argumente benoetigt alle drei expliziten Einstellungen:
+Der Menuepfad ohne Argumente sucht jetzt automatisch stabile Releases und prueft sie mit der lokalen
+`~/.config/openclaw-trust/release.pub` oder `OPENCLAW_RELEASE_PUBLIC_KEY`. Beim interaktiven Start
+erscheint ein Hinweis auf ein neueres verifiziertes Release; es wird nicht automatisch installiert.
+Details und Grenzen: [signierte Update-Suche und Startpruefung](SIGNED_UPDATES.md).
+
+Eine bewusst festgelegte lokale Artefaktauswahl bleibt optional:
 
 ```bash
 export OPENCLAW_RELEASE_TAG=vX.Y.Z
@@ -100,10 +105,11 @@ export OPENCLAW_RELEASE_ARTIFACTS=/sicher/release-artefakte
 export OPENCLAW_RELEASE_PUBLIC_KEY=/sicher/separat/release.pub
 ```
 
-Ohne diese Werte bricht das Update ab, statt `origin/main` zu verwenden. `check_setup_updates.sh`
-fuehrt nur den lokalen Release-Plan aus; es fragt keine neuen Releases ab. Die bisherige
-ausdrueckliche Main-Reparatur bleibt getrennt und verlangt ihre vorhandene
-Sicherungs-/Bestaetigungslogik. `install.sh --legacy-unsigned-main` ist bewusst als unsignierter
+Ohne Tag und Artefaktverzeichnis wird online gesucht, niemals `origin/main` als Update verwendet.
+Mit dieser Auswahl fuehrt `check_setup_updates.sh` weiterhin nur den lokalen Release-Plan aus.
+Die ausdrueckliche Main-Reparatur bleibt ein separater Entwickler-CLI-Weg mit vorhandener
+Sicherungs-/Bestaetigungslogik und wird im Standardmenue nicht mehr ausgefuehrt.
+`install.sh --legacy-unsigned-main` ist bewusst als unsignierter
 Altpfad markiert, nicht der empfohlene Einstieg. Ein direkter Aufruf ohne Optionen ist gesperrt. Der
 explizite Altpfad bietet jetzt eine [Branch-Auswahl](INSTALL_BRANCH_SELECTION.md) fuer `main`, den
 Coding-Agenten-Featurebranch oder einen anderen exakten Branch. Alternativer Optionsname:

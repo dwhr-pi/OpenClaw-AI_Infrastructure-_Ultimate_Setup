@@ -2,7 +2,8 @@
 
 const assert = require("node:assert/strict");
 const { test } = require("node:test");
-const { checkDocument, RETRY_DELAY_MS } = require("../scripts/quality/check_markdown_links.cjs");
+const { checkDocument, RETRY_DELAY_MS, SERVER_RETRY_DELAY_MS } =
+  require("../scripts/quality/check_markdown_links.cjs");
 const options = { aliveStatusCodes: [200, 206], ignorePatterns: [{ pattern: "^account$" }] };
 const result = (link, statusCode, status = statusCode === 200 ? "alive" : "dead") => ({
   link,
@@ -28,7 +29,7 @@ function fixture(responses) {
   };
 }
 
-test("transport recovery reuses full document and exact options, bounded to two attempts", async () => {
+test("transport recovery reuses full document and exact options, stopping after success", async () => {
   const f = fixture([
     [result("https://example.invalid/a", 0)],
     [result("https://example.invalid/a", 200)],
@@ -89,10 +90,12 @@ test("persistent, missing, ignored and permanent retry results never turn 5xx gr
   for (const code of [500, 502, 503, 504]) {
     const dead = result("https://example.invalid/a", code);
     for (const repeated of [[dead], [], [result(dead.link, 0, "ignored")], [result(dead.link, 403)]]) {
-      const f = fixture([[dead], repeated]);
+      const f = fixture([[dead], repeated, repeated]);
       const actual = await checkDocument("text", options, f.check, f.runtime);
       assert.equal(actual[0].status, "dead");
-      assert.equal(f.calls.length, 2);
+      const persistent = repeated[0]?.status === "dead" &&
+        [500, 502, 503, 504].includes(repeated[0].statusCode);
+      assert.equal(f.calls.length, persistent ? 3 : 2);
     }
   }
 });
@@ -104,6 +107,48 @@ test("local-file and non-HTTP failures never trigger 5xx retries", async () => {
     assert.deepEqual(await checkDocument("text", options, f.check, f.runtime), [dead]);
     assert.equal(f.calls.length, 1);
   }
+});
+
+test("persistent 5xx has one final delayed attempt, preserving full parser options", async () => {
+  for (const code of [500, 502, 503, 504]) {
+    const url = "https://example.invalid/retry";
+    const permanent = result("https://example.invalid/permanent", 404);
+    const f = fixture([
+      [result(url, code), permanent],
+      [result(url, code), result(permanent.link, 200)],
+      [result(url, 200), result(permanent.link, 200)],
+    ]);
+    const actual = await checkDocument("full document", options, f.check, f.runtime);
+    assert.equal(actual[0].status, "alive");
+    assert.deepEqual(actual[1], permanent);
+    assert.equal(f.calls.length, 3);
+    assert.deepEqual(f.delays, [RETRY_DELAY_MS, SERVER_RETRY_DELAY_MS]);
+    for (const args of f.calls) assert.deepEqual(args, ["full document", options]);
+  }
+});
+
+test("final failures, missing results and newly ignored targets remain red without a fourth attempt", async () => {
+  const dead = result("https://example.invalid/a", 502);
+  for (const final of [
+    [dead], [], [result(dead.link, 0, "ignored")], [result(dead.link, 429)], [result(dead.link, 403)],
+  ]) {
+    const f = fixture([[dead], [dead], final]);
+    const actual = await checkDocument("text", options, f.check, f.runtime);
+    assert.equal(actual[0].status, "dead");
+    assert.equal(f.calls.length, 3);
+  }
+  const f = fixture([[dead], [dead], new Error("final parser failed")]);
+  await assert.rejects(checkDocument("text", options, f.check, f.runtime));
+  assert.equal(f.calls.length, 3);
+});
+
+test("transport followed by 5xx still stops after the third attempt", async () => {
+  const url = "https://example.invalid/a";
+  const f = fixture([[result(url, 0)], [result(url, 502)], [result(url, 502)]]);
+  const actual = await checkDocument("text", options, f.check, f.runtime);
+  assert.equal(actual[0].statusCode, 502);
+  assert.equal(f.calls.length, 3);
+  assert.deepEqual(f.delays, [RETRY_DELAY_MS, SERVER_RETRY_DELAY_MS]);
 });
 
 test("missing or newly ignored retry results never clear a failure", async () => {

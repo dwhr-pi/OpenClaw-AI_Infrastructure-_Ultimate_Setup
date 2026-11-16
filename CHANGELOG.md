@@ -2,6 +2,62 @@
 
 ## Unreleased
 
+### 2026-11-16: Linkcheck bei HTTP 429 und anhaltenden 5xx stabilisieren
+
+- HTTP-429-Fallbackpause ohne gueltigen Retry-After-Header von 5 auf 60 Sekunden erhoeht.
+- Ein letzter 5xx-Versuch nach 15 Sekunden; hoechstens drei Wrapper-Durchlaeufe.
+- Originalquellen und strikte Fehlerstatus bleiben erhalten; keine Ignore-Regeln oder Erfolgscodes ergaenzt.
+- Offline-Tests sichern Wiederholungsgrenzen, Parserfehler und permanente Fehler in gemischten Dokumenten ab.
+
+### 2026-11-16: shfmt-Dateiende der Infrastruktur-Kandidaten korrigieren
+
+- Zusaetzliche Leerzeile am Ende von 20 Kandidaten-/Hinweisskripten entfernt, gemaess CI-shfmt-Diff.
+- Keine Aenderung an Installationsaktionen, Signaturpflicht oder Sicherheitspruefungen.
+- Offline-Formatregression fuer Kandidatenskripte ergaenzt; keine Formatierungspruefung deaktiviert.
+
+### 2026-11-16: Offline-Regression fuer Startpruefung und Monitoring korrigieren
+
+- Interaktive Update-Pruefung vom separat auswertbaren Tool-Menue-Metadatenblock getrennt.
+- BASH_SOURCE-Guard bei Auswertung ueber Bash-stdin auch mit nounset sicher; kein Netzwerk-/Dialogaufruf.
+- Generierte Monitoring-Abdeckung auf den aktuellen Katalog mit 440 Tools synchronisiert.
+- Regression prueft die Metadaten-Grenze und den Start-Guard ohne Installer oder Dienste.
+
+### 2026-11-16: Signierte Update-Suche und Hinweis beim Start
+
+- Stabile GitHub-Releases automatisch finden, Minisign/SHA256 mit unabhaengiger release.pub pruefen.
+- Unvollstaendige Releases nur melden; Signaturfehler abbrechen, kein main- oder Downgrade-Fallback.
+- Einmalige Startpruefung mit 20-Sekunden-Limit, Hinweis statt automatischer Installation; offline abschaltbar.
+- Bestehende Release-Auswahl und Sicherungen erhalten; unsignierte Quellreparatur aus Standardmenue entfernt.
+- Offline-Fixtures pruefen Auswahl, Fehlersperren, Versionsgrenzen und rein hinweisenden Startpfad.
+
+### 2026-11-16: Infrastruktur-Kandidaten als Schlussblock hinter XERJ
+
+- 18 dokumentierte Kandidaten in Registry und Tools-Menue aufgenommen, ausdruecklich nicht installierbar.
+- Temporal, TruffleHog, Vaultwarden und Argo Workflows ohne Registry-Duplikate im Schlussblock sichtbar.
+- Offline-Status ohne Hostpruefung; nicht implementierte Aktionen mit Exit 3 statt Installationserfolg.
+- Quellen, offene native Build-/Lifecycle-Arbeiten und Auswahlgrenzen zentral dokumentiert.
+
+### 2026-11-16: Cargo und SongRec-Buildpakete im Installer
+
+- SongRec bietet fehlende Cargo-/Rust-/Compiler-/Header-Pakete unter Ubuntu 24.04 nach Zustimmung an.
+- --install-build-deps erlaubt die Paketphase explizit; kein sudo beim eigentlichen GitHub-Build.
+- Vorhandene private Rust-Toolchains und gemeinsame Buildwerkzeuge bleiben erhalten.
+- Offline-Plan/Status/Doctor ohne Paketaktionen; Tests fuer Ablehnung, APT-Fehler und Daten-Erhalt ergaenzt.
+
+### 2026-11-16: Vorhandenes Python fuer Outlines getrennt auswaehlen
+
+- Outlines kann vorhandenes Python 3.10-3.13 nutzen, auch wenn der Installer mit Python 3.14 laeuft.
+- Explizite Auswahl mit OUTLINES_PYTHON_BIN, keine Python-Downloads oder Aenderung des System-Python.
+- eSpeak nennt fehlende Ubuntu-Buildwerkzeuge samt separatem APT-Befehl; kein automatischer Systemumbau.
+- Versions-/Build-Fixtures ergaenzt; echte Ubuntu-Installation und Modell-/Audio-Abnahme bleiben offen.
+
+### 2026-11-16: Begrenzter Git-Download mit sichtbarer Diagnose
+
+- Git-Fetch erhaelt 900 Sekunden Standardbudget; explizit 180 bis 3600 Sekunden konfigurierbar.
+- Git-Fortschritt, PID und 30s-Heartbeat werden gestreamt statt bis zum Timeout verborgen.
+- Bestehenden Prozessgruppen-Abbruch unter Linux/WSL vor Rollback wiederverwendet; kein automatischer Retry.
+- Commit-Pins, Integritaetspruefungen und Quellen-/Modell-Trennung bleiben erhalten; keine echte Download-Abnahme.
+
 ### 2026-11-15: Native Testkandidaten und ehrliche Abschnittsmatrix
 
 - CI-Folgekorrektur: SongRec dokumentiert alten Quellenmodus und neuen CLI-Build getrennt mit korrekten Statuswerten.

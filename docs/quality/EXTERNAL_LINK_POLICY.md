@@ -2,6 +2,32 @@
 
 Stand: 31.10.2026. Keine Merge- oder Produktionsfreigabe.
 
+## Nachpruefung 16.11.2026: rustfmt und AMD HIP
+
+Am Commit `246680c` scheiterte der PR-Linkcheck an HTTP 502 fuer rustfmt in der
+[Entwicklungsuebersicht](../DEVELOPMENT_TOOLS_OVERVIEW.md), der Push-Linkcheck an HTTP 429 fuer
+AMD HIP Unified Memory im [Speicherleitfaden](../memory/UNIFIED_MEMORY_AND_OFFLOADING.md).
+Beide Originalquellen waren separat erreichbar; das ersetzt keinen erfolgreichen CI-Abruf.
+Die Quellen bleiben aktive Links, keine Ausnahmen oder Umleitung auf beliebige Ersatzseiten.
+
+HTTP 429 behaelt zwei begrenzte Upstream-Wiederholungen und respektiert `Retry-After`.
+Fehlt ein gueltiger Header, warten wir jetzt 60 statt fuenf Sekunden, entsprechend dem
+[dokumentierten Upstream-Default][mlc-retries]. Fuer im zweiten Durchlauf weiterhin tote
+HTTP-500/502/503/504-Ziele ist ein letzter Versuch nach 15 Sekunden vorgesehen.
+Es gibt keinen vierten Wrapper-Durchlauf. Ein dauerhafter Fehler bleibt rot; bessere
+Wartezeiten garantieren keine erfolgreiche Antwort. Die CI-Zeitlimits bleiben unveraendert.
+
+[mlc-retries]: https://github.com/tcort/markdown-link-check/blob/v3.15.0/README.md
+
+## Nachpruefung 16.11.2026: BashDB und HTTP 502
+
+Im [Lauf 43787138722](https://github.com/dwhr-pi/OpenClaw-AI_Infrastructure-_Ultimate_Setup/actions/runs/43787138722)
+scheiterte der Verweis auf [BashDB](https://github.com/Trepan-Debuggers/bashdb) mit HTTP 502 nach
+dem vorhandenen begrenzten Retry. Das offizielle Repository war bei der separaten Nachpruefung
+erreichbar und zeigte den Bash-Debugger. Das ist kein Nachweis, dass der fehlgeschlagene CI-Abruf
+erfolgreich war. Keine Ignore-Regel, kein behandeltes 502 als Erfolg und keine abgeschaltete Pruefung.
+Ein erneuter CI-Lauf muss die Adresse wirklich erfolgreich abrufen; ein dauerhafter Fehler bleibt rot.
+
 ## Verbindlicher Check
 
 Weiterer Nachtrag PR 27 nach Commit `05abbed` vom 12.11.2026: Die PR- und
@@ -84,9 +110,15 @@ fehlgeschlagen, auch wenn ein anderer Link den Wiederholungsversuch ausloest. Ke
 keine Domain-Ausnahme, kein `continue-on-error`. Fehlende oder nachtraeglich ignorierte Ergebnisse
 loeschen keinen Fehler; Parser-/Ergebnisfehler scheitern geschlossen. Beide echten Programme
 (Upstream-CLI und Runner) durchlaufen denselben Offline-Datei-Exitcode-Test.
-HTTP 429 behaelt ausschliesslich die bereits vorhandene begrenzte
-Upstream-Retry-Regel; der Wrapper fuegt dafuer keinen weiteren Versuch hinzu.
-Auch nach dem zweiten Durchlauf tote Ziele bleiben Fehler. Es werden weder
+HTTP 429 behaelt ausschliesslich die begrenzte Upstream-Retry-Regel mit zwei Wiederholungen;
+der Wrapper fuegt dafuer keinen weiteren Versuch hinzu. Ohne gueltiges `Retry-After` gilt eine
+Wartezeit von 60 Sekunden.
+Meldet der zweite Durchlauf fuer einen urspruenglich wiederholbaren HTTP(S)-Fehler erneut
+HTTP 500/502/503/504, folgt genau ein letzter Durchlauf nach 15 Sekunden. Nur diese weiterhin
+vorhandenen 5xx-Fehler koennen dadurch ersetzt werden; fehlende oder ignorierte Ergebnisse
+erhalten keinen zusaetzlichen Versuch. Wiederholte Transportfehler mit Status 0 allein bleiben
+nach zwei Durchlaeufen rot. Alle urspruenglichen permanenten Fehler bleiben erhalten.
+Auch nach dem letzten Durchlauf tote Ziele bleiben Fehler. Es werden weder
 zusaetzliche erfolgreiche HTTP-Statuscodes noch Domain-Ausnahmen eingefuehrt.
 
 Die zusaetzliche Einzelpruefung unter `scripts/quality/external_link_probe.py` ersetzt diesen Parser

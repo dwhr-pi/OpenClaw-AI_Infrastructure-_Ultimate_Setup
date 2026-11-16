@@ -30,7 +30,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | apscheduler | planned | unknown | unknown | not-mapped | not-mapped |
 | archivebox | experimental | unknown | d950dace5ef226634b86ebe43c7001aa7e076cbf | scripts/tools/archivebox_doctor.sh | scripts/tools/archivebox_update.sh |
 | argilla | experimental | unknown | 5338519accb13ae422f8bf9c0642651c249c49af | scripts/tools/argilla_doctor.sh | scripts/tools/argilla_update.sh |
-| argo_workflows | planned | unknown | unknown | not-mapped | not-mapped |
+| argo_workflows | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | argocd_cli | experimental | unknown | 3dc411247c3b00c283581642b0d017052d91664d | scripts/tools/argocd_cli_doctor.sh | scripts/tools/argocd_cli_update.sh |
 | arq | planned | unknown | unknown | not-mapped | not-mapped |
 | asterisk | planned | unknown | unknown | not-mapped | not-mapped |
@@ -62,6 +62,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | caddy | experimental | unknown | 2b47a1849f86389825623d6d36ee528da8b9e5fb | scripts/tools/caddy_doctor.sh | scripts/tools/caddy_update.sh |
 | cadvisor | experimental | unknown | c57813afc32715351dff34ab76a6164bcb0e5c9d | scripts/tools/cadvisor_doctor.sh | scripts/tools/cadvisor_update.sh |
 | celery | planned | unknown | unknown | not-mapped | not-mapped |
+| cert_manager | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | changedetection_io | experimental | unknown | 2bd1a87403b83eb6f37f9f23c04ee2555baccba0 | scripts/tools/changedetection_io_doctor.sh | scripts/tools/changedetection_io_update.sh |
 | changelog_generator | unknown | unknown | unknown | not-mapped | not-mapped |
 | character_library | planned | unknown | unknown | not-mapped | not-mapped |
@@ -70,6 +71,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | check_profiles | planned | unknown | unknown | not-mapped | not-mapped |
 | check_resource_budget | planned | unknown | unknown | not-mapped | not-mapped |
 | check_tools | planned | unknown | unknown | not-mapped | not-mapped |
+| checkov | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | chromadb | unknown | unknown | unknown | not-mapped | not-mapped |
 | clamav | optional | unknown | unknown | not-mapped | not-mapped |
 | claude_code | experimental | unknown | dd6bee38458cc3e6dc5f2b16eca1f0f364619ad8 | scripts/tools/claude_code_doctor.sh | scripts/tools/claude_code_update.sh |
@@ -116,6 +118,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | enki_browser_study | experimental | unknown | fd0ce82c486bbd54b4f81186fd455c0796cf536f | scripts/tools/enki_browser_study_doctor.sh | scripts/tools/enki_browser_study_update.sh |
 | espeak_ng | experimental | planned | 688cb60368d6e0998f3632af8d1c3c2ad4191fc2 | scripts/tools/espeak_ng_doctor.sh | scripts/tools/espeak_ng_update.sh |
 | esphome | unknown | unknown | unknown | not-mapped | not-mapped |
+| external_dns | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | fail2ban | unknown | unknown | unknown | not-mapped | not-mapped |
 | fal_client | experimental | unknown | 80ddb1d8f2f4b0a28a0323fd3c1d96e34c849eb5 | scripts/tools/fal_client_doctor.sh | scripts/tools/fal_client_update.sh |
 | falco | planned | unknown | unknown | not-mapped | not-mapped |
@@ -126,6 +129,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | find_skills | experimental | unknown | a80e4c9d12d607631249d4d7d059f835d4b2f13a | scripts/tools/find_skills_doctor.sh | scripts/tools/find_skills_update.sh |
 | finrag | optional | unknown | unknown | not-mapped | not-mapped |
 | finrobot | optional | unknown | unknown | not-mapped | not-mapped |
+| firecracker | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | firecrawl | unknown | unknown | unknown | not-mapped | not-mapped |
 | firejail | planned | unknown | unknown | not-mapped | not-mapped |
 | fish_speech | planned | unknown | unknown | not-mapped | not-mapped |
@@ -134,6 +138,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | forgejo | experimental | unknown | 0d791421f85ca13a63b665053d81ea765fbbc571 | scripts/tools/forgejo_doctor.sh | scripts/tools/forgejo_update.sh |
 | freellmapi | experimental | unknown | unknown | scripts/tools/freellmapi_doctor.sh | scripts/tools/freellmapi_update.sh |
 | frp | planned | unknown | unknown | not-mapped | not-mapped |
+| gatekeeper | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | gbox | unknown | unknown | unknown | not-mapped | not-mapped |
 | gemini_cli | experimental | unknown | ed96faedfd5571f055c44f2c9509d62321d1138d | scripts/tools/gemini_cli_doctor.sh | scripts/tools/gemini_cli_update.sh |
 | gemini_desktop_bwendell | experimental | unknown | 6dae4a7e88fba61a4e17aa3a58902c7a2c4f779e | scripts/tools/gemini_desktop_bwendell_doctor.sh | scripts/tools/gemini_desktop_bwendell_update.sh |
@@ -158,6 +163,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | grafana_alloy | experimental | unknown | 3b2a3565546bd36592dc49ca28604ad187f0fb85 | scripts/tools/grafana_alloy_doctor.sh | scripts/tools/grafana_alloy_update.sh |
 | grype | stable | unknown | unknown | not-mapped | not-mapped |
 | guardrails_ai | planned | unknown | unknown | not-mapped | not-mapped |
+| gvisor | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | hallo2 | planned | unknown | unknown | not-mapped | not-mapped |
 | haystack | unknown | unknown | unknown | not-mapped | not-mapped |
 | headplane | planned | unknown | unknown | not-mapped | not-mapped |
@@ -183,15 +189,20 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | k3s | planned | unknown | unknown | not-mapped | not-mapped |
 | k9s | planned | unknown | unknown | not-mapped | not-mapped |
 | karaoke_formats | experimental | unknown | unknown | scripts/tools/karaoke_formats_doctor.sh | scripts/tools/karaoke_formats_update.sh |
+| kata_containers | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
+| keda | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | kiwi_edit | experimental | unknown | 178f3f4f8221d7598fcc21875c847d6cf6323c4e | scripts/tools/kiwi_edit_doctor.sh | scripts/tools/kiwi_edit_update.sh |
 | kokoro_tts | planned | unknown | unknown | not-mapped | not-mapped |
 | kopia | planned | unknown | unknown | not-mapped | not-mapped |
 | krita_ai_diffusion | planned | unknown | unknown | not-mapped | not-mapped |
+| kube_bench | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | kubeconform | experimental | unknown | 1bd44986dd3d281725afab6b173770ec86b454fc | scripts/tools/kubeconform_doctor.sh | scripts/tools/kubeconform_update.sh |
 | kubectl | planned | unknown | unknown | not-mapped | not-mapped |
 | kubelinter | experimental | unknown | 00ad4327e3ad9e86f6956feca92917be049bcb9f | scripts/tools/kubelinter_doctor.sh | scripts/tools/kubelinter_update.sh |
+| kubescape | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | kubeseal | experimental | unknown | c58a60f0bd5283d28c25ad068e7c9760634be470 | scripts/tools/kubeseal_doctor.sh | scripts/tools/kubeseal_update.sh |
 | kustomize | planned | unknown | unknown | not-mapped | not-mapped |
+| kyverno | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | langchain | planned | unknown | unknown | not-mapped | not-mapped |
 | langflow | unknown | unknown | unknown | not-mapped | not-mapped |
 | langfuse | experimental | unknown | e139e39b9ee56475c1a6df2d8ca58a3eaffc69b1 | scripts/tools/langfuse_doctor.sh | scripts/tools/langfuse_update.sh |
@@ -239,6 +250,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | meilisearch | experimental | unknown | 7b6f9f39bd91b04d4551673780cfeb31cb3f5e7b | scripts/tools/meilisearch_doctor.sh | scripts/tools/meilisearch_update.sh |
 | melotts | planned | unknown | unknown | not-mapped | not-mapped |
 | metabase | experimental | unknown | 0a34a97ceb26ae6bce05ebbbfc39a32d268233f5 | scripts/tools/metabase_doctor.sh | scripts/tools/metabase_update.sh |
+| milvus | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | minimax_m3 | experimental | planned | 8ef4ca53e1b0e8cd3d79b617a9fd229d2b6fd5f0 | scripts/tools/minimax_m3_doctor.sh | scripts/tools/minimax_m3_update.sh |
 | minio | experimental | unknown | 7aac2a2c5b7c882e68c1ce017d8256be2feea27f | scripts/tools/minio_doctor.sh | scripts/tools/minio_update.sh |
 | mitmproxy | planned | unknown | unknown | not-mapped | not-mapped |
@@ -262,6 +274,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | nocodb | experimental | unknown | f9731d9d7e7366328834cac29f84c94b62263009 | scripts/tools/nocodb_doctor.sh | scripts/tools/nocodb_update.sh |
 | node_exporter | experimental | unknown | b9e296a911c8beaf89177362e75cc80bfa89eb7e | scripts/tools/node_exporter_doctor.sh | scripts/tools/node_exporter_update.sh |
 | node_red | experimental | unknown | df0a87cce1a243e21a2e0eb0fdbdbb8c4732392f | scripts/tools/node_red_doctor.sh | scripts/tools/node_red_update.sh |
+| nuclei | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | nvidia_smi | planned | unknown | unknown | not-mapped | not-mapped |
 | o3de_source | experimental | unknown | 3db6943249d8bd7960b9ed7e9aee310b7668586e | scripts/tools/o3de_source_doctor.sh | scripts/tools/o3de_source_update.sh |
 | obot | experimental | planned | 251f96eb1ddae99d61e78a15b7a96115fc45630b | scripts/tools/obot_doctor.sh | scripts/tools/obot_update.sh |
@@ -285,6 +298,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | openvoice | planned | unknown | unknown | not-mapped | not-mapped |
 | openwakeword | planned | unknown | unknown | not-mapped | not-mapped |
 | outlines | experimental | planned | c52af8472c6fe8a607a733ec11b709476af77a96 | scripts/tools/outlines_doctor.sh | scripts/tools/outlines_update.sh |
+| owasp_zap | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | paddleocr | planned | unknown | unknown | not-mapped | not-mapped |
 | pandoc | unknown | unknown | unknown | not-mapped | not-mapped |
 | paperless_ngx | experimental | unknown | unknown | scripts/tools/paperless_ngx_doctor.sh | scripts/tools/paperless_ngx_update.sh |
@@ -295,6 +309,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | perplexity_node | experimental | unknown | 40a16d2dad4a7e54fdbfb19eb296b10ab1f29721 | scripts/tools/perplexity_node_doctor.sh | scripts/tools/perplexity_node_update.sh |
 | perplexity_python | experimental | unknown | 1a79c5d3a7b1ef8c2dce17c0f0aa7e23f9bbdced | scripts/tools/perplexity_python_doctor.sh | scripts/tools/perplexity_python_update.sh |
 | personnel_documents | experimental | unknown | unknown | scripts/tools/personnel_documents_doctor.sh | scripts/tools/personnel_documents_update.sh |
+| phoenix | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | pihole | unknown | unknown | unknown | not-mapped | not-mapped |
 | pinokio | planned | unknown | unknown | scripts/tools/pinokio_doctor.sh | scripts/tools/pinokio_update.sh |
 | piper | unknown | unknown | unknown | not-mapped | not-mapped |
@@ -328,6 +343,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | qwq_32b | experimental | planned | 620a5eadc89ff464d339367dd9c9973a93215c81 | scripts/tools/qwq_32b_doctor.sh | scripts/tools/qwq_32b_update.sh |
 | rabbitmq | planned | unknown | unknown | not-mapped | not-mapped |
 | radicale | planned | unknown | unknown | not-mapped | not-mapped |
+| ragas | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | rclone | unknown | unknown | unknown | not-mapped | not-mapped |
 | rea | experimental | unknown | 1629266e3c08c90fed6bba5383528af7986a12b7 | scripts/tools/rea_doctor.sh | scripts/tools/rea_update.sh |
 | realesrgan | unknown | unknown | unknown | not-mapped | not-mapped |
@@ -381,22 +397,24 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | systemd_user_units | planned | unknown | unknown | not-mapped | not-mapped |
 | tailscale | unknown | unknown | unknown | not-mapped | not-mapped |
 | tasktiger | planned | unknown | unknown | not-mapped | not-mapped |
-| temporal | planned | unknown | unknown | not-mapped | not-mapped |
+| temporal | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | terraform_docs | experimental | unknown | cf462c5da36feb66051cf0a6f1124594ed9adc7c | scripts/tools/terraform_docs_doctor.sh | scripts/tools/terraform_docs_update.sh |
 | tesseract | unknown | unknown | unknown | not-mapped | not-mapped |
+| testssl | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | tflint | experimental | unknown | e352b5712a786958c94553e0859043b2a958e4b9 | scripts/tools/tflint_doctor.sh | scripts/tools/tflint_update.sh |
 | tgi | experimental | unknown | dfb3fbe78e0d1d69251bd33065591c61bafdfaa8 | scripts/tools/tgi_doctor.sh | scripts/tools/tgi_update.sh |
 | tmux | planned | unknown | unknown | not-mapped | not-mapped |
 | traefik | experimental | unknown | b46d3ea648b543a8d8c675a178b0780faae958c7 | scripts/tools/traefik_doctor.sh | scripts/tools/traefik_update.sh |
 | trafilatura | unknown | unknown | unknown | not-mapped | not-mapped |
 | trivy | unknown | unknown | unknown | not-mapped | not-mapped |
-| trufflehog | planned | unknown | unknown | not-mapped | not-mapped |
+| trufflehog | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | ufw | unknown | unknown | unknown | not-mapped | not-mapped |
 | unstructured | unknown | unknown | unknown | not-mapped | not-mapped |
 | uptime_kuma | experimental | unknown | 0c287ac4b3a6723c56ab7d8d731017e58deff533 | scripts/tools/uptime_kuma_doctor.sh | scripts/tools/uptime_kuma_update.sh |
 | uvr5 | experimental | planned | a5f88453bfb2b38b05a965bcf67727243e0cbf19 | scripts/tools/uvr5_doctor.sh | scripts/tools/uvr5_update.sh |
+| valkey | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | vault | experimental | unknown | 9f51d2357f65b0c6e842d61fb144b605a0bc78ae | scripts/tools/vault_doctor.sh | scripts/tools/vault_update.sh |
-| vaultwarden | planned | unknown | unknown | not-mapped | not-mapped |
+| vaultwarden | planned | planned | unknown | scripts/tools/infrastructure_candidate_blocked.sh | scripts/tools/infrastructure_candidate_blocked.sh |
 | velero | planned | unknown | unknown | not-mapped | not-mapped |
 | veo_api | experimental | unknown | 6bbead9ec73eee0b2557c4bf07406d3574b01533 | scripts/tools/veo_api_doctor.sh | scripts/tools/veo_api_update.sh |
 | video2dataset | experimental | unknown | 28e7d1c851a2298f3a75375f6e324950405987e7 | scripts/tools/video2dataset_doctor.sh | scripts/tools/video2dataset_update.sh |

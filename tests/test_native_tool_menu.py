@@ -22,7 +22,9 @@ class NativeToolMenuTests(unittest.TestCase):
         self.specs = json.loads((ROOT / "config/docker_to_github.json").read_text(encoding="utf-8"))["tools"]
 
     def shell(self, command):
-        result = subprocess.run([BASH, "--noprofile", "--norc", "-s"], input="set -euo pipefail\n" + command,
+        # Use the test interpreter, not an optional host alias or Windows Store launcher.
+        preamble = 'set -euo pipefail\npython3() { ' + shlex.quote(sys.executable) + ' "$@"; }\n'
+        result = subprocess.run([BASH, "--noprofile", "--norc", "-s"], input=preamble + command,
                                 cwd=ROOT, capture_output=True, text=True, timeout=60)
         self.assertEqual(result.returncode, 0, result.stderr)
         return result.stdout.splitlines()
@@ -96,6 +98,15 @@ class NativeToolMenuTests(unittest.TestCase):
         self.assertEqual(result.count('AAA_Future_Metadata_Fixture'), 1)
         self.assertLess(result.index('Zotero'), result.index('Markdown_Docs_Server'))
         self.assertLess(result.index('Markdown_Docs_Server'), result.index('AAA_Future_Metadata_Fixture'))
+
+
+    def test_metadata_has_no_startup_probe_and_stdin_guard_is_nounset_safe(self):
+        metadata = self.menu()
+        self.assertNotIn('--startup-check', metadata)
+        startup = re.search(r'^# Check once per interactive launch;.*?^fi$', self.setup, re.M | re.S).group()
+        command = ('python3() { printf "unexpected-python-probe\\n"; return 91; }\n'
+                   'dialog() { printf "unexpected-dialog\\n"; return 92; }\n' + startup)
+        self.assertEqual(self.shell(command), [])
 
 
 if __name__ == "__main__":
