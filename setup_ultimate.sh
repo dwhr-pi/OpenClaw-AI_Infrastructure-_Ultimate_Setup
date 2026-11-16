@@ -3601,6 +3601,17 @@ run_tool_script() {
   fi
 
   # Only the interactive setup opts into the documentation approval dialog.
+  if [[ "$tool_key" =~ ^(Outlines|eSpeak_NG|SongRec)$ && "$action" =~ ^(install|update)$ ]]; then
+    local prerequisites='eSpeak NG: cmake und build-essential aus Debian-/Ubuntu-Paketen. Abweichende Release-Basis wird vor Installation mit apt simuliert.'
+    if [ "$tool_key" = Outlines ]; then
+      prerequisites='Outlines: geeignetes vorhandenes Python bevorzugen. Falls keines vorhanden: Ubuntu 24.04 bekommt Python 3.12/venv per apt; andere Systeme wie Ubuntu 26.04 bekommen eine private Python-3.13-Laufzeit via uv/GitHub (1024 MiB Zusatzreserve). uv bestimmt die Patchversion; Dateiinventar wird erfasst. Kein System-Python-Wechsel. Fehlendes uv aus SHA256-geprueftem GitHub-Release.'
+    elif [ "$tool_key" = SongRec ]; then
+      prerequisites='SongRec: fehlendes Cargo/Rust, Compiler, pkg-config, gettext sowie ALSA-/GLib-/OpenSSL-Entwicklungsbibliotheken aus Debian-/Ubuntu-Paketen. Abweichende Basis wird mit apt simuliert. Vorhandene private Cargo-/Rust-Werkzeuge bleiben. SongRec aus gepinntem GitHub-Stand; kein Mikrofon-/Shazam-Aufruf.'
+    fi
+    if dialog --defaultno --title "$tool_key: Voraussetzungen" --yesno "$prerequisites\n\nFehlende Voraussetzungen im Setup einrichten? apt kann Abhaengigkeiten aktualisieren; Basiswerkzeuge bleiben erhalten. Kein System-Python-Wechsel, Modell- oder Dienststart. Nein: nur vorhandene Basis verwenden." 16 78; then
+      tool_args+=(--install-build-deps)
+    fi
+  fi
   if [[ "$tool_key" == Markdown_Docs_Server && "$action" =~ ^(install|update)$ ]]; then
     tool_args+=(--interactive)
   fi
@@ -3692,6 +3703,16 @@ plan_gitops_bootstrap_from_setup() {
 
 install_tool() {
   local TOOL_KEY="$1"
+  LAST_OPERATION_LOG_FILE=""
+  ACTIVE_OPERATION_LOG_FILE=""
+  if declare -p TOOLS >/dev/null 2>&1 && [[ "${TOOLS[$TOOL_KEY]:-}" == 'GEPLANT / NICHT INSTALLIERBAR:'* ]]; then
+    dialog --title "$TOOL_KEY: nur Planung, kein Installer" --msgbox "${TOOLS[$TOOL_KEY]}\n\nDieser Eintrag besitzt noch kein freigegebenes Build-/Lifecycle-Rezept. Kein Installationslauf, kein Download und keine Cluster-/DNS-Aenderung. Status bleibt unveraendert. Anleitung: docs/tools/infrastructure-candidates.md" 15 78
+    return 3
+  fi
+  if [ "$TOOL_KEY" = SongSage ]; then
+    dialog --title 'SongSage: Forschungs-/Planungseintrag' --msgbox 'Keine Installation verfuegbar: Die offizielle GitHub-Quelle und Code-/Gewichtslizenz des Lyrics-Modells sind nicht bestaetigt. Gleichnamige Fremdprojekte werden nicht installiert. Siehe docs/tools/songsage.md. Kein Installationslauf gestartet; Status bleibt unveraendert.' 13 76
+    return 3
+  fi
   case "$TOOL_KEY" in
     Ollama | OpenClaw | K3s)
       local core_guard_rc=0

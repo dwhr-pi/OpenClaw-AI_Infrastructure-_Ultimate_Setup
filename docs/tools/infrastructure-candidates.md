@@ -6,6 +6,12 @@ TruffleHog wird auf ausdruecklichen Wunsch in den neuen Schlussblock verschoben.
 
 ## Status und Grenzen
 
+Die Auswahl eines entsprechend markierten Kandidaten wird im Hauptmenue jetzt
+**vor** Speicherpruefung und Installationstransaktion mit einem Planungshinweis
+abgefangen (Exit 3, unveraenderter Status). Das gilt auch fuer cert-manager,
+External_DNS und Kyverno. Keine Wiederholung desselben gesperrten Installationslaufs erforderlich.
+Die zugrunde liegenden direkten CLI-Guards bleiben weiterhin gesperrt.
+
 **GEPLANT / NICHT INSTALLIERBAR** ist kein fertiger Installer. Die neuen Eintraege laden nichts herunter,
 bauen nichts und starten weder Dienste noch Cluster, Modelle oder Sicherheitspruefungen.
 Install/Update/Doctor/Uninstall enden fuer die neuen Kandidaten mit Exit 3 statt einem falschen Erfolg.
@@ -16,6 +22,18 @@ Die GitHub-Links sind Quellenkandidaten, **keine Freigabe eines Pins oder einer 
 Erst nach geprueftem vollen Commit, Lockfiles und Artefakthashes darf ein nativer Build folgen.
 Ein Klon, eine Policy oder ein CRD-Beispiel ersetzt keine Controller-/Runtime-Abnahme.
 Keine Docker-/Compose-Installation, kein Fallback und keine automatische Aktivierung.
+
+### cert-manager und External_DNS
+
+Die [offizielle cert-manager-Anleitung](https://cert-manager.io/docs/installation/helm/)
+beschreibt einen Kubernetes-Controller samt CRDs und clusterweiten Ressourcen,
+nicht eine allein durch apt auf dem WSL-Host installierbare Anwendung.
+Diese Recherche ist kein genehmigter Helm-/Container-Fallback fuer unser natives Rezept.
+Offen bleiben gepinnter Quellbuild, Artefaktnachweise, CRD-/Webhook-Vertrag,
+Kubernetes-Kompatibilitaet und ausdruecklich freigegebener Deployment-/Uninstall-Weg.
+External_DNS benoetigt zusaetzlich einen abgegrenzten DNS-Provider-Vertrag,
+minimale Zonenrechte und einen festgelegten TXT-Owner, bevor echte DNS-Aenderungen
+zulaessig sind. Kein Providerzugang, DNS-Aufruf oder Clusterstart durch diese Korrektur.
 
 ## Werkzeuge
 

@@ -2,7 +2,9 @@
 
 Gemeint ist [SongSage: Lyric Generative Pre-training](https://arxiv.org/abs/2601.01153),
 nicht ein gleichnamiger BirdNET-/MCP-Server, Hit-Song-Predictor oder Webdienst.
-Gezielte Quellenpruefung: **11.11.2026**.
+Gezielte Quellenpruefung: **11.11.2026**, erneut am **16.11.2026** anhand des
+[Originalpapers](https://arxiv.org/html/2601.01153v1) und einer gezielten Quellensuche.
+Weiterhin kein eindeutig zuordenbares GitHub-Buildrezept mit belegter Lizenz bestaetigt.
 
 Das Paper beschreibt LyricBank und ein Lyrics-LLM, haelt die Trainingsdaten
 aus Urheberrechtsgruenden jedoch zurueck. Eine eindeutige offizielle GitHub-
@@ -13,6 +15,11 @@ Ersatzprojekt gleichen Namens. Das ist kein Nachweis, dass es nirgendwo Code gib
 ## Menue und ehrlicher Status
 
 `SongSage` ist als `planned` registriert, `auto_install: false`.
+Im Hauptmenue wird eine Installationsauswahl bereits vor Speicherpruefung,
+Installationsprotokoll und Transaktion als nicht verfuegbarer Forschungseintrag
+erklaert. Es entsteht kein fehlgeschlagener Buildversuch und kein Installiert-Marker.
+Die folgenden direkten CLI-Guards bleiben aus Sicherheitsgruenden gesperrt;
+dies ist keine nachtraeglich behauptete SongSage-Installation.
 Der Handler ist ausschliesslich ein begrenzter Offline-Planungsguard:
 
 ```bash

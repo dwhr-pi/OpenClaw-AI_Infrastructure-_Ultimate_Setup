@@ -1,8 +1,21 @@
 # GitHub-Ergaenzungen: Qwen Desktop, Hermes/Jarvis und Medienquellen
 
+Fehlerprotokolle: [automatische Systemdiagnose inklusive Debian-/DietPi-Erkennung](../SYSTEM_DIAGNOSTICS.md).
+
 Neu: [Native Buildkandidaten und Abschnittsmatrix MiniMax bis Cloudflare](SOURCE_INSTALL_READINESS.md).
 Outlines, eSpeak NG und SongRec haben jetzt separate native Standardpfade;
 bisherige reine Quellen bleiben ausdruecklich mit `--source-only` verwaltbar.
+
+Korrektur vom 16.11.2026: Das Setup bietet fehlende Voraussetzungen fuer
+[Outlines](outlines.md), [eSpeak NG](espeak-ng.md) und [SongRec](songrec.md)
+direkt vor Install/Update an.
+Nach Zustimmung werden passende Python-3.12-/venv-Pakete unter Ubuntu 24.04,
+eine private Python-3.13-Basis auf anderen Systemen sowie CMake/Compiler oder
+Cargo/Rust samt SongRec-Headern auf Debian-/Ubuntu-Basis eingerichtet;
+danach folgt derselbe native Buildlauf.
+Keine manuelle apt-Vorbereitung erforderlich, kein Austausch des Standard-Python.
+[SongSage](songsage.md) bleibt bis zum Quellen-/Lizenznachweis ein Planungseintrag
+und wird vor einer Installationstransaktion verstaendlich abgefangen.
 
 Neue GameDev-Auswahl:
 [Godot, XR Tools, O3DE, Lively sowie Unity-/Unreal-Einordnung](ai-game-engines-xr-wallpaper.md).

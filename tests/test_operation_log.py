@@ -24,6 +24,7 @@ class OperationLog(unittest.TestCase):
                 path = '/' + path[0].lower() + path[2:]
             prefix = '''set -euo pipefail
 source scripts/helpers/operation_log.sh
+operation_system_summary() { printf 'ID=fixture\nVERSION_ID=24.04\n'; }
 ''' + 'USER_INSTALL_LOG_DIR="' + path + '/logs"\n' + '''
 YELLOW=; RED=; GREEN=; NC=
 get_tool_install_min_free_mb() { echo 2048; }
@@ -73,6 +74,26 @@ grep -q PRECHECK "$first"
 grep -q INSTALL_OUTPUT "$first"
 start_operation_log tool_install_Test
 test "$first" != "$ACTIVE_OPERATION_LOG_FILE"
+''')
+        self.assertEqual(r.returncode, 0, r.stderr)
+
+    def test_system_identity_is_in_new_logs_before_installer(self):
+        r = self.shell('''
+start_operation_log tool_install_SongRec
+grep -Fxq ID=fixture "$ACTIVE_OPERATION_LOG_FILE"
+grep -Fxq VERSION_ID=24.04 "$ACTIVE_OPERATION_LOG_FILE"
+''')
+        self.assertEqual(r.returncode, 0, r.stderr)
+
+    def test_real_diagnostic_wrapper_isolated_python_and_persisted_header(self):
+        r = self.shell('''
+source scripts/helpers/operation_log.sh
+python3() {
+  [[ "$1" == -I && "$2" == -B && "$3" == */system_diagnostics.py ]] || return 91
+  printf 'ID=ubuntu\\nVERSION_ID=26.04\\n'
+}
+start_operation_log tool_install_SongRec
+grep -Fxq VERSION_ID=26.04 "$ACTIVE_OPERATION_LOG_FILE"
 ''')
         self.assertEqual(r.returncode, 0, r.stderr)
 

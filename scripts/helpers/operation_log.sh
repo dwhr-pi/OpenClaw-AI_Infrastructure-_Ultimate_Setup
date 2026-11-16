@@ -69,6 +69,15 @@ print_operation_log_heading() {
   fi
 }
 
+operation_system_summary() {
+  local helper="${BASH_SOURCE[0]%/*}/system_diagnostics.py"
+  if command -v python3 >/dev/null 2>&1 && [[ -f "$helper" ]]; then
+    python3 -I -B "$helper" || printf '%s\n' 'Systemdiagnose: nicht vollstaendig verfuegbar.'
+  else
+    printf '%s\n' 'Systemdiagnose: Python3/Diagnosehelfer fehlt; keine Distribution angenommen.'
+  fi
+}
+
 start_operation_log() {
   local operation="$1" slug timestamp tool="" header
   ACTIVE_OPERATION_LOG_FILE=""
@@ -92,6 +101,7 @@ start_operation_log() {
   else
     printf -v header 'Vorgang: %s\nStart: %s\n' "$operation" "$(date -Iseconds)"
   fi
+  header+="$(operation_system_summary)"$'\n'
   if ! printf '%s' "$header" >>"$ACTIVE_OPERATION_LOG_FILE"; then
     echo 'Aktuelles Log nicht beschreibbar; Vorgang nicht gestartet.' >&2
     ACTIVE_OPERATION_LOG_FILE=""

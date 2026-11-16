@@ -89,7 +89,7 @@ class BuildDependencies(unittest.TestCase):
         run.assert_not_called()
 
     def test_non_ubuntu_explicit_apt_is_refused_but_manual_build_is_allowed(self):
-        with patch.object(deps, "ubuntu_release", return_value=False), patch.object(deps.common, "run") as run, redirect_stdout(io.StringIO()):
+        with patch.object(deps, "ubuntu_release", return_value=False), patch.object(deps, 'debian_family', return_value=False), patch.object(deps.common, "run") as run, redirect_stdout(io.StringIO()):
             deps.prepare(self.spec)
             with self.assertRaisesRegex(ValueError, "Keine Systemaenderung"):
                 deps.prepare(self.spec, approved=True)

@@ -51,7 +51,7 @@ def select_outlines_python(base):
     override = os.environ.get('OUTLINES_PYTHON_BIN')
     if override and not Path(override).is_absolute():
         raise ValueError('OUTLINES_PYTHON_BIN muss ein absoluter Interpreter-Pfad sein.')
-    candidates = ([override] if override else [sys.executable] +
+    candidates = ([override] if override else [sys.executable, '/usr/bin/python3.12'] +
                   [shutil.which(name) for name in ('python3.12', 'python3.13', 'python3.11', 'python3.10', 'python3')])
     seen = set()
     env = {key: value for key, value in os.environ.items()
@@ -92,6 +92,10 @@ def preflight(key, base, approved=False):
             raise ValueError('SongRec-Buildnachweis braucht Python >=3.11 (tomllib).')
         import native_build_deps
         native_build_deps.prepare(songrec_dependency_spec(), approved=approved)
+    if key == 'espeak_ng':
+        import native_build_deps
+        native_build_deps.prepare({'id': key, 'recipe': {
+            'apt_build_deps': list(native_build_deps.ESPEAK_PACKAGES)}}, approved=approved)
     tools = {'outlines': (), 'espeak_ng': ('cmake', 'make', 'cc'),
              'songrec': ('cargo', 'rustc', 'cc', 'pkg-config', 'msgfmt')}
     for name in tools[key]:
@@ -104,9 +108,22 @@ def preflight(key, base, approved=False):
                                  'Danach erneut installieren; kein Download/Build gestartet.') from error
             raise
     if key == 'outlines':
-        python = select_outlines_python(base)
+        try:
+            python = select_outlines_python(base)
+        except ValueError:
+            # An explicit interpreter must never be silently replaced.
+            if os.environ.get('OUTLINES_PYTHON_BIN'):
+                raise
+            import native_build_deps
+            if native_build_deps.ubuntu_release():
+                native_build_deps.prepare({'id': key, 'recipe': {
+                    'apt_build_deps': list(native_build_deps.OUTLINES_PACKAGES)}}, approved=approved)
+                python = select_outlines_python(base)
+            else:
+                from outlines_python import select
+                python = select(base, approved=approved)
         import native_uv
-        native_uv.select(base, uv_spec(), approved=approved, allow_download=approved)
+        native_uv.select(base, uv_spec(), approved=approved, allow_download=True)
         return python
     if key == 'songrec':
         probe(['pkg-config', '--exists', 'alsa', 'glib-2.0', 'openssl'], base, None)

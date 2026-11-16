@@ -28,11 +28,13 @@ Kein Docker-Fallback. Vollstaendiger Linux-Build bleibt durch Nutzer zu pruefen.
 
 ### Cargo und Build-Voraussetzungen im Installer
 
-Der korrigierte Installer prueft unter Ubuntu 24.04 auch die gemeinsamen
+Der korrigierte Installer prueft auf Debian-/Ubuntu-basierten Systemen auch die gemeinsamen
 Buildpakete. Fehlendes Cargo/Rust und Entwicklungsbibliotheken werden nach
 ausdruecklicher Zustimmung ueber APT eingerichtet, danach folgt der gepinnte
-GitHub-Build als normaler Benutzer. Im interaktiven Setup fragt der Installer
-bei fehlenden Paketen nach; `j` erlaubt die Paketphase, Enter/Nein lehnt ab.
+GitHub-Build als normaler Benutzer. Das interaktive Setup zeigt vor Install/Update
+eine eigene Zustimmung fuer die gemeinsamen Voraussetzungen und reicht die Freigabe
+an den Installer weiter. Kein manueller Cargo-Aufruf erforderlich. Im direkten
+interaktiven CLI-Lauf erlaubt `j` die Paketphase, Enter/Nein lehnt ab.
 
 Alternativ die Paketphase ausdruecklich freigeben:
 
@@ -48,7 +50,14 @@ Gemeinsame Buildwerkzeuge bleiben bei SongRec-Deinstallation erhalten.
 Ohne Zustimmung kein Paket-/Quellen-Download und kein Erfolgsmarker.
 Plan, Dry-run, Status und Doctor installieren keine Pakete und fragen nicht nach
 sudo. Nur die freigegebene Paketphase nutzt sudo; der eigentliche Build nicht.
-Auf anderen Distributionen bleiben Buildpakete manuell bereitzustellen.
+Ubuntu 26.04, Debian und DietPi werden nicht nur wegen einer abweichenden
+Release-Nummer abgewiesen. Ausserhalb der bisherigen Ubuntu-24.04-Basis muss
+zuerst eine apt-Installationssimulation erfolgreich sein. Paketquellen bleiben unveraendert.
+Die Diagnose nennt jetzt die erkannte `ID`/`VERSION_ID` und unterscheidet eine
+nicht freigegebene Distribution von fehlendem `apt-get`/`dpkg-query` im PATH.
+Die Betriebssystemdatei wird mit dem Standardparser inklusive `/usr/lib/os-release`-
+Fallback gelesen, nicht als Shellskript ausgefuehrt. Die Distributionsfamilie,
+Paketwerkzeuge, festgelegte Paketliste und Buildpruefungen bleiben verbindlich.
 Eine nicht passende Rust-Version oder ein Compilerfehler wird nicht durch einen
 anderen Quell-Pin oder einen Docker-Fallback umgangen. Echte Linux-Buildabnahme offen.
 

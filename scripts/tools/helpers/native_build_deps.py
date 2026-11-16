@@ -1,6 +1,7 @@
-"""Consent-gated Ubuntu build dependencies, separate from unprivileged builds."""
+"""Consent-gated Debian-family build dependencies, separate from unprivileged builds."""
 import os
 from pathlib import Path
+import platform
 import shutil
 import subprocess
 import sys
@@ -15,15 +16,27 @@ LITELLM_PACKAGES = ("build-essential", "pkg-config")
 SONGREC_PACKAGES = ('cargo', 'rustc', 'build-essential', 'pkg-config', 'gettext',
                     'libasound2-dev', 'libglib2.0-dev', 'libssl-dev')
 SONGREC_COMMANDS = ('cargo', 'rustc', 'cc', 'c++', 'make', 'pkg-config', 'msgfmt')
+ESPEAK_PACKAGES = ('cmake', 'build-essential')
+OUTLINES_PACKAGES = ('python3.12', 'python3.12-venv')
+
+
+def os_release():
+    # Standard parser handles shell quoting and /usr/lib/os-release fallback, without executing it.
+    try:
+        return platform.freedesktop_os_release()
+    except OSError:
+        return {}
 
 
 def ubuntu_release():
-    values = {}
-    for line in Path("/etc/os-release").read_text(encoding="utf-8").splitlines():
-        if "=" in line:
-            key, value = line.split("=", 1)
-            values[key] = value.strip('"')
+    values = os_release()
     return values.get("ID") == "ubuntu" and values.get("VERSION_ID") == "24.04"
+
+
+def debian_family():
+    values = os_release()
+    return (values.get('ID') in ('ubuntu', 'debian', 'dietpi') or
+            bool({'ubuntu', 'debian'} & set(values.get('ID_LIKE', '').split())))
 
 
 def installed(package):
@@ -35,6 +48,15 @@ def installed(package):
 def prepare(spec, approved=False):
     packages = spec["recipe"].get("apt_build_deps", [])
     name, slug = "Mosquitto", "mosquitto"
+    extra = {
+        'espeak_ng': ('eSpeak NG', ESPEAK_PACKAGES, ('cmake', 'make', 'cc')),
+        'outlines': ('Outlines', OUTLINES_PACKAGES, ()),
+    }
+    if spec['id'] in extra:
+        name, expected, commands = extra[spec['id']]
+        if tuple(packages) != expected:
+            raise ValueError('Nicht freigegebene Systempaketliste; keine apt-Aktion.')
+        slug = spec['id']
     if spec['id'] == 'songrec':
         if packages and tuple(packages) != SONGREC_PACKAGES:
             raise ValueError('Nicht freigegebene SongRec-Systempaketliste; keine apt-Aktion.')
@@ -48,12 +70,20 @@ def prepare(spec, approved=False):
             return
     if not packages:
         return
-    if (spec["id"] not in ("mosquitto", "litellm", "songrec") or
+    if (spec["id"] not in ("mosquitto", "litellm", "songrec", "espeak_ng", "outlines") or
             (spec["id"] == "mosquitto" and tuple(packages) != MOSQUITTO_PACKAGES)):
         raise ValueError("Nicht freigegebene Systempaketliste; keine apt-Aktion.")
-    if not ubuntu_release() or not all(shutil.which(name) for name in ("apt-get", "dpkg-query")):
-        message = name + ": gefuehrter apt-Weg nur fuer Ubuntu 24.04; Buildwerkzeuge/Bibliotheken separat bereitstellen. Siehe docs/tools/" + slug + ".md."
-        if approved:
+    release = os_release()
+    supported = ubuntu_release() or debian_family()
+    missing_managers = [tool for tool in ('apt-get', 'dpkg-query') if not shutil.which(tool)]
+    if not supported or missing_managers:
+        details = ('ID=' + str(release.get('ID', 'unbekannt')) +
+                   ', VERSION_ID=' + str(release.get('VERSION_ID', 'unbekannt')))
+        reason = ('Paketwerkzeuge fehlen im PATH: ' + ', '.join(missing_managers)
+                  if supported else 'Distribution nicht als Debian-/Ubuntu-Familie erkannt')
+        message = (name + ': ' + reason + ' (' + details + '). '
+                   'Gefuehrter apt-Weg erfordert Debian-/Ubuntu-Familie und passende Pakete. Siehe docs/tools/' + slug + '.md.')
+        if approved or (slug == 'songrec' and not all(shutil.which(tool) for tool in SONGREC_COMMANDS)):
             raise ValueError(message + " Keine Systemaenderung.")
         print(message)
         return
@@ -65,15 +95,17 @@ def prepare(spec, approved=False):
 
     missing = [package for package in packages if not available(package)]
     if not missing:
-        print(name + ": Ubuntu-Buildpakete bereits vorhanden; keine apt-Aktion.")
+        print(name + ": Basis-Buildpakete bereits vorhanden; keine apt-Aktion.")
         if slug == "litellm":
             raise ValueError("LiteLLM: Pakete installiert, aber cc/c++/make/pkg-config fehlen im PATH; PATH/Paketinstallation separat reparieren.")
         if slug == 'songrec' and not all(shutil.which(tool) for tool in SONGREC_COMMANDS):
             raise ValueError('SongRec: Pakete installiert, aber Buildwerkzeuge fehlen im PATH; '
                              'PATH/Paketinstallation separat reparieren. Kein Quellen-Download.')
+        if slug in extra and not all(shutil.which(tool) for tool in commands):
+            raise ValueError(name + ': Pakete installiert, aber Buildwerkzeuge fehlen im PATH; kein Quellen-Download.')
         return
     print(name + ": fehlende gemeinsame Buildpakete: " + " ".join(missing))
-    print("Nur Compiler/Bibliotheken via apt; " + name + " selbst aus GitHub. "
+    print("Nur freigegebene Basiswerkzeuge/Bibliotheken via apt; " + name + " selbst aus GitHub. "
           "apt kann Abhaengigkeiten aktualisieren. Basiswerkzeuge bleiben bei Deinstallation erhalten.")
     print("Gezielt erneut starten: bash scripts/tools/" + slug + "_install.sh --install-build-deps")
     if not approved and sys.stdin.isatty():
@@ -92,6 +124,10 @@ def prepare(spec, approved=False):
     env["DEBIAN_FRONTEND"] = "noninteractive"
     options = ["-o", "DPkg::Lock::Timeout=300"]
     common.run(prefix + ["apt-get"] + options + ["update"], Path.cwd(), env)
+    if not ubuntu_release():
+        print(name + ': abweichende Debian-/Ubuntu-Basis; Paketaufloesung vor Installation simulieren.')
+        common.run(prefix + ['apt-get'] + options + ['--simulate', 'install', '--no-remove',
+                   '--no-install-recommends'] + missing, Path.cwd(), env)
     common.run(prefix + ["apt-get"] + options + ["install", "--no-remove", "--no-install-recommends", "-y"] + missing, Path.cwd(), env)
     if any(not available(package) for package in packages):
         raise ValueError(name + ": Buildpakete nach apt unvollstaendig; kein Quellen-Download.")
@@ -99,4 +135,6 @@ def prepare(spec, approved=False):
         raise ValueError("LiteLLM: Compiler/Linker nach apt nicht im PATH; kein Quellen-Download.")
     if slug == 'songrec' and not all(shutil.which(tool) for tool in SONGREC_COMMANDS):
         raise ValueError('SongRec: Cargo/Rust/Buildwerkzeuge nach apt nicht im PATH; kein Quellen-Download.')
+    if slug in extra and not all(shutil.which(tool) for tool in commands):
+        raise ValueError(name + ': Buildwerkzeuge nach apt nicht im PATH; kein Quellen-Download.')
     print(name + ": Buildabhaengigkeiten eingerichtet; GitHub-Build folgt ohne sudo/Docker.")
