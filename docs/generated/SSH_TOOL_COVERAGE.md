@@ -3,7 +3,7 @@
 Generiert aus der vollstaendigen Tool-Registry und ihren verlinkten Anleitungen.
 Keine Installation, SSH-Verbindung oder Runtime-Pruefung; kein Produktivnachweis.
 
-**422 / 422 Tool-IDs mit zugeordneter Anleitung, SSH-Einstieg und eigenem Offline-Plan.**
+**440 / 440 Tool-IDs mit zugeordneter Anleitung, SSH-Einstieg und eigenem Offline-Plan.**
 
 Bestehende Sammelanleitungen bleiben erhalten. Neue kurze Einstiegsseiten schliessen
 Dokumentationsluecken, ersetzen aber keine fehlende Lifecycle- oder Runtime-Abnahme.
@@ -70,6 +70,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | caddy | [SSH-Installation](../tools/caddy.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | cadvisor | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | celery | [SSH-Installation](../tools/registry/celery.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| cert_manager | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | changedetection_io | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | changelog_generator | [SSH-Installation](../tools/registry/changelog_generator.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | character_library | [SSH-Installation](../tools/registry/character_library.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
@@ -78,6 +79,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | check_profiles | [SSH-Installation](../tools/registry/check_profiles.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | check_resource_budget | [SSH-Installation](../tools/registry/check_resource_budget.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | check_tools | [SSH-Installation](../tools/registry/check_tools.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| checkov | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | chromadb | [SSH-Installation](../tools/registry/chromadb.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | clamav | [SSH-Installation](../tools/registry/clamav.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | claude_code | [SSH-Installation](../agents/coding-agent-profiles.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
@@ -124,6 +126,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | enki_browser_study | [SSH-Installation](../tools/enki-browser-study.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | espeak_ng | [SSH-Installation](../tools/espeak-ng.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | esphome | [SSH-Installation](../tools/registry/esphome.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| external_dns | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | fail2ban | [SSH-Installation](../tools/registry/fail2ban.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | fal_client | [SSH-Installation](../tools/fal-client.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | falco | [SSH-Installation](../tools/registry/falco.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
@@ -134,6 +137,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | find_skills | [SSH-Installation](../tools/find-skills.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | finrag | [SSH-Installation](../tools/registry/finrag.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | finrobot | [SSH-Installation](../tools/registry/finrobot.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| firecracker | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | firecrawl | [SSH-Installation](../tools/registry/firecrawl.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | firejail | [SSH-Installation](../tools/registry/firejail.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | fish_speech | [SSH-Installation](../tools/registry/fish_speech.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
@@ -142,6 +146,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | forgejo | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | freellmapi | [SSH-Installation](../tools/freellmapi.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | frp | [SSH-Installation](../tools/registry/frp.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| gatekeeper | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | gbox | [SSH-Installation](../tools/gbox.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | gemini_cli | [SSH-Installation](../agents/coding-agent-profiles.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | gemini_desktop_bwendell | [SSH-Installation](../tools/gemini-desktop-clients.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
@@ -166,6 +171,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | grafana_alloy | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | grype | [SSH-Installation](../tools/registry/grype.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | guardrails_ai | [SSH-Installation](../tools/registry/guardrails_ai.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| gvisor | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | hallo2 | [SSH-Installation](../tools/registry/hallo2.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | haystack | [SSH-Installation](../tools/registry/haystack.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | headplane | [SSH-Installation](../tools/registry/headplane.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
@@ -191,15 +197,20 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | k3s | [SSH-Installation](../tools/registry/k3s.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | k9s | [SSH-Installation](../K9S_INSTALLATION_NOTES.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | karaoke_formats | [SSH-Installation](../media_studio/KARAOKE_SUBTITLES_GUIDE.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| kata_containers | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| keda | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | kiwi_edit | [SSH-Installation](../tools/kiwi-edit.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | kokoro_tts | [SSH-Installation](../tools/registry/kokoro_tts.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | kopia | [SSH-Installation](../tools/registry/kopia.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | krita_ai_diffusion | [SSH-Installation](../tools/registry/krita_ai_diffusion.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| kube_bench | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | kubeconform | [SSH-Installation](../tools/development-go-tools.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | kubectl | [SSH-Installation](../tools/registry/kubectl.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | kubelinter | [SSH-Installation](../tools/development-go-tools.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| kubescape | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | kubeseal | [SSH-Installation](../GITOPS_SMALL_VPS.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | kustomize | [SSH-Installation](../KUSTOMIZE_INSTALLATION_NOTES.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| kyverno | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | langchain | [SSH-Installation](../tools/registry/langchain.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | langflow | [SSH-Installation](../tools/registry/langflow.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | langfuse | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
@@ -247,6 +258,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | meilisearch | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | melotts | [SSH-Installation](../tools/registry/melotts.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | metabase | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
+| milvus | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | minimax_m3 | [SSH-Installation](../tools/minimax-m3.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | minio | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | mitmproxy | [SSH-Installation](../tools/registry/mitmproxy.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
@@ -270,6 +282,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | nocodb | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | node_exporter | [SSH-Installation](../tools/node-exporter.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | node_red | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
+| nuclei | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | nvidia_smi | [SSH-Installation](../tools/registry/nvidia_smi.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | o3de_source | [SSH-Installation](../tools/ai-game-engines-xr-wallpaper.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | obot | [SSH-Installation](../tools/obot.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
@@ -293,6 +306,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | openvoice | [SSH-Installation](../tools/registry/openvoice.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | openwakeword | [SSH-Installation](../tools/registry/openwakeword.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | outlines | [SSH-Installation](../tools/outlines.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| owasp_zap | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | paddleocr | [SSH-Installation](../tools/registry/paddleocr.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | pandoc | [SSH-Installation](../tools/registry/pandoc.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | paperless_ngx | [SSH-Installation](../tools/personnel-documents.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
@@ -303,6 +317,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | perplexity_node | [SSH-Installation](../tools/comet-and-browser-research.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | perplexity_python | [SSH-Installation](../tools/comet-and-browser-research.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | personnel_documents | [SSH-Installation](../tools/personnel-documents.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| phoenix | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | pihole | [SSH-Installation](../tools/registry/pihole.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | pinokio | [SSH-Installation](../tools/pinokio.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | piper | [SSH-Installation](../tools/registry/piper.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
@@ -336,6 +351,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | qwq_32b | [SSH-Installation](../tools/qwq-32b.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | rabbitmq | [SSH-Installation](../tools/registry/rabbitmq.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | radicale | [SSH-Installation](../tools/registry/radicale.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| ragas | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | rclone | [SSH-Installation](../tools/registry/rclone.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | rea | [SSH-Installation](../tools/rea.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | realesrgan | [SSH-Installation](../tools/registry/realesrgan.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
@@ -392,6 +408,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | temporal | [SSH-Installation](../tools/registry/temporal.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | terraform_docs | [SSH-Installation](../tools/development-go-tools.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | tesseract | [SSH-Installation](../tools/registry/tesseract.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| testssl | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | tflint | [SSH-Installation](../tools/development-go-tools.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | tgi | [SSH-Installation](../tools/tgi.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | tmux | [SSH-Installation](../tools/registry/tmux.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
@@ -403,6 +420,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | unstructured | [SSH-Installation](../tools/registry/unstructured.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | uptime_kuma | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | uvr5 | [SSH-Installation](../tools/local-audio-chain.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| valkey | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | vault | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | vaultwarden | [SSH-Installation](../tools/registry/vaultwarden.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | velero | [SSH-Installation](../VELERO_INSTALLATION_NOTES.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |

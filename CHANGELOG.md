@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### 2026-11-16: Infrastruktur-Kandidaten als Schlussblock hinter XERJ
+
+- 18 dokumentierte Kandidaten in Registry und Tools-Menue aufgenommen, ausdruecklich nicht installierbar.
+- Temporal, TruffleHog, Vaultwarden und Argo Workflows ohne Registry-Duplikate im Schlussblock sichtbar.
+- Offline-Status ohne Hostpruefung; nicht implementierte Aktionen mit Exit 3 statt Installationserfolg.
+- Quellen, offene native Build-/Lifecycle-Arbeiten und Auswahlgrenzen zentral dokumentiert.
+
 ### 2026-11-16: Cargo und SongRec-Buildpakete im Installer
 
 - SongRec bietet fehlende Cargo-/Rust-/Compiler-/Header-Pakete unter Ubuntu 24.04 nach Zustimmung an.

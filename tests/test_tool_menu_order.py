@@ -78,7 +78,10 @@ class ToolMenuOrderTests(unittest.TestCase):
         remaining = [name for name in names if name not in pinned and name not in appended]
         result = self.run_sort(names)
         # LC_ALL=C sort -f folds ASCII letters to uppercase, including around underscores.
-        self.assertEqual(result, pinned + sorted(remaining, key=str.upper) + appended)
+        expected = pinned + sorted(remaining, key=str.upper) + appended
+        trailing = [key for key in ordering.AFTER_XERJ if key in expected]
+        expected = [key for key in expected if key != 'XERJ' and key not in trailing] + ['XERJ'] + trailing
+        self.assertEqual(result, expected)
         for name in ('Markdown_Docs_Server', 'Cloudflared', 'XERJ'):
             self.assertIn(name, appended)
             self.assertGreater(result.index(name), result.index('Zotero'))

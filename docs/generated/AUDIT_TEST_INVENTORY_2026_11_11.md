@@ -5431,6 +5431,33 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_social_avatar_docs.py:89`
   Prueffall: `test_checks_do_not_enable_cloud_or_publish`
 
+## tests/test_songrec_build_deps.py
+
+- `tests/test_songrec_build_deps.py:27`
+  Prueffall: `test_whitelist_contains_only_compilers_and_headers`
+- `tests/test_songrec_build_deps.py:35`
+  Prueffall: `test_no_consent_never_runs_apt`
+- `tests/test_songrec_build_deps.py:42`
+  Prueffall: `test_interactive_no_and_eof_never_run_apt`
+- `tests/test_songrec_build_deps.py:52`
+  Prueffall: `test_explicit_and_interactive_approval_install_cargo_only_when_missing`
+- `tests/test_songrec_build_deps.py:79`
+  Prueffall: `test_existing_private_rust_is_not_replaced_by_apt`
+- `tests/test_songrec_build_deps.py:88`
+  Prueffall: `test_installed_packages_with_broken_path_fail_without_apt`
+- `tests/test_songrec_build_deps.py:95`
+  Prueffall: `test_foreign_package_list_is_rejected`
+- `tests/test_songrec_build_deps.py:101`
+  Prueffall: `test_non_ubuntu_explicit_install_is_refused`
+- `tests/test_songrec_build_deps.py:107`
+  Prueffall: `test_apt_failure_never_becomes_success`
+- `tests/test_songrec_build_deps.py:115`
+  Prueffall: `test_plan_status_and_doctor_never_prepare_packages`
+- `tests/test_songrec_build_deps.py:127`
+  Prueffall: `test_storage_failure_precedes_package_phase_and_fetch`
+- `tests/test_songrec_build_deps.py:139`
+  Prueffall: `test_preflight_passes_explicit_approval_to_package_phase`
+
 ## tests/test_source_preservation.py
 
 - `tests/test_source_preservation.py:58`
@@ -5628,19 +5655,19 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_bad_input_is_not_executed_or_echoed`
 - `tests/test_tool_menu_order.py:64`
   Prueffall: `test_all_registered_tools_are_sorted_without_losing_entries`
-- `tests/test_tool_menu_order.py:100`
+- `tests/test_tool_menu_order.py:103`
   Prueffall: `test_future_tools_and_case_insensitive_order`
-- `tests/test_tool_menu_order.py:113`
+- `tests/test_tool_menu_order.py:116`
   Prueffall: `test_formerly_appended_tools_join_the_alphabetical_list`
-- `tests/test_tool_menu_order.py:122`
+- `tests/test_tool_menu_order.py:125`
   Prueffall: `test_browser_and_study_tools_join_a_z_after_separator`
-- `tests/test_tool_menu_order.py:128`
+- `tests/test_tool_menu_order.py:131`
   Prueffall: `test_core_order_above_separator_is_preserved`
-- `tests/test_tool_menu_order.py:132`
+- `tests/test_tool_menu_order.py:135`
   Prueffall: `test_missing_invalid_or_duplicate_baseline_keeps_all_entries`
-- `tests/test_tool_menu_order.py:143`
+- `tests/test_tool_menu_order.py:146`
   Prueffall: `test_crlf_and_unterminated_baseline_and_failed_sort`
-- `tests/test_tool_menu_order.py:152`
+- `tests/test_tool_menu_order.py:155`
   Prueffall: `test_duplicate_menu_key_does_not_change_selection`
 
 ## tests/test_tool_observability.py
@@ -6200,4 +6227,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2771**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2783**. Kein Nachweis bestandener Tests.
