@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### 2026-11-16: Linkcheck bei HTTP 429 und anhaltenden 5xx stabilisieren
+
+- HTTP-429-Fallbackpause ohne gueltigen Retry-After-Header von 5 auf 60 Sekunden erhoeht.
+- Ein letzter 5xx-Versuch nach 15 Sekunden; hoechstens drei Wrapper-Durchlaeufe.
+- Originalquellen und strikte Fehlerstatus bleiben erhalten; keine Ignore-Regeln oder Erfolgscodes ergaenzt.
+- Offline-Tests sichern Wiederholungsgrenzen, Parserfehler und permanente Fehler in gemischten Dokumenten ab.
+
 ### 2026-11-16: shfmt-Dateiende der Infrastruktur-Kandidaten korrigieren
 
 - Zusaetzliche Leerzeile am Ende von 20 Kandidaten-/Hinweisskripten entfernt, gemaess CI-shfmt-Diff.

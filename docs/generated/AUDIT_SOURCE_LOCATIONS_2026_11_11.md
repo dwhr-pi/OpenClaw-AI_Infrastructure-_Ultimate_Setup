@@ -326,10 +326,10 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/profiles/coding_agents.py:255`
 - `scripts/projects/project_brief.py:227`
 - `scripts/projects/project_brief.py:336`
-- `scripts/quality/check_markdown_links.cjs:66`
-- `scripts/quality/check_markdown_links.cjs:95`
-- `scripts/quality/check_markdown_links.cjs:96`
-- `scripts/quality/check_markdown_links.cjs:105`
+- `scripts/quality/check_markdown_links.cjs:90`
+- `scripts/quality/check_markdown_links.cjs:119`
+- `scripts/quality/check_markdown_links.cjs:120`
+- `scripts/quality/check_markdown_links.cjs:129`
 - `scripts/quality/development_install.py:358`
 - `scripts/quality/development_install.py:425`
 - `scripts/quality/development_toolchains.py:183`

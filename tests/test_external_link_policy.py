@@ -84,6 +84,16 @@ class ExternalLinkPolicyTests(unittest.TestCase):
             self.assertNotIn(status, self.config["aliveStatusCodes"])
         self.assertEqual(self.config["replacementPatterns"], [])
 
+    def test_rate_limit_backoff_is_bounded_without_accepting_429(self):
+        self.assertTrue(self.config['retryOn429'])
+        self.assertEqual(self.config['retryCount'], 2)
+        self.assertEqual(self.config['fallbackRetryDelay'], '60s')
+        self.assertNotIn(429, self.config['aliveStatusCodes'])
+        for url in ('https://github.com/rust-lang/rustfmt',
+                    'https://rocm.docs.amd.com/projects/HIP/en/latest/how-to/hip_runtime_api/'
+                    'memory_management/unified_memory.html'):
+            self.assertFalse(self.ignored(url))
+
     def test_ci_link_gates_use_the_same_explicit_configuration(self):
         for name in ("ci.yml", "linkcheck.yml"):
             text = (ROOT / ".github/workflows" / name).read_text(encoding="utf-8")
