@@ -2019,6 +2019,21 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_gemini_development_docs.py:81`
   Prueffall: `test_key_github_sources_are_present`
 
+## tests/test_git_fetch_budget.py
+
+- `tests/test_git_fetch_budget.py:22`
+  Prueffall: `test_default_streaming_fetch_preserves_exact_pin`
+- `tests/test_git_fetch_budget.py:33`
+  Prueffall: `test_explicit_bounded_budget`
+- `tests/test_git_fetch_budget.py:40`
+  Prueffall: `test_invalid_budget_stops_before_process`
+- `tests/test_git_fetch_budget.py:48`
+  Prueffall: `test_errors_are_not_retried_or_reported_success`
+- `tests/test_git_fetch_budget.py:56`
+  Prueffall: `test_provider_secrets_and_git_injection_not_inherited`
+- `tests/test_git_fetch_budget.py:69`
+  Prueffall: `test_local_git_commands_keep_short_budget_and_stdout`
+
 ## tests/test_gitlab_openforge_docs.py
 
 - `tests/test_gitlab_openforge_docs.py:13`
@@ -6168,4 +6183,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2758**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2764**. Kein Nachweis bestandener Tests.

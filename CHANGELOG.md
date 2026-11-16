@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### 2026-11-16: Begrenzter Git-Download mit sichtbarer Diagnose
+
+- Git-Fetch erhaelt 900 Sekunden Standardbudget; explizit 180 bis 3600 Sekunden konfigurierbar.
+- Git-Fortschritt, PID und 30s-Heartbeat werden gestreamt statt bis zum Timeout verborgen.
+- Bestehenden Prozessgruppen-Abbruch unter Linux/WSL vor Rollback wiederverwendet; kein automatischer Retry.
+- Commit-Pins, Integritaetspruefungen und Quellen-/Modell-Trennung bleiben erhalten; keine echte Download-Abnahme.
+
 ### 2026-11-15: Native Testkandidaten und ehrliche Abschnittsmatrix
 
 - CI-Folgekorrektur: SongRec dokumentiert alten Quellenmodus und neuen CLI-Build getrennt mit korrekten Statuswerten.

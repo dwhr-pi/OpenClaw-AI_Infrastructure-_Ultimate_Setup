@@ -59,6 +59,7 @@ jobs:
           python3 -B tests/test_litellm_rust.py -v
           python3 -B tests/test_native_node_npm.py -v
           python3 -B tests/test_native_build_process.py -v
+          python3 -B tests/test_git_fetch_budget.py -v
           python3 -B tests/test_install_rollback.py -v
           python3 -B tests/test_installation_reset.py -v
           python3 -B tests/test_installation_inventory.py -v

@@ -1,4 +1,4 @@
-"""Stream compiler diagnostics with bounded memory and explicit process status."""
+"""Stream process diagnostics with bounded memory and explicit process status."""
 from collections import deque
 import os
 import signal
@@ -7,12 +7,12 @@ import threading
 import time
 
 
-def run(args, cwd, env, timeout=7200, heartbeat=30):
+def run(args, cwd, env, timeout=7200, heartbeat=30, label='Build'):
     print('Befehl:', ' '.join(map(str, args)), flush=True)
     process = subprocess.Popen(list(map(str, args)), cwd=cwd, env=env,
                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                text=True, errors='replace', start_new_session=os.name == 'posix')
-    print('Buildprozess gestartet; PID:', process.pid, flush=True)
+    print(label + 'prozess gestartet; PID:', process.pid, flush=True)
     tail = deque(maxlen=256)
     errors = []
 
@@ -37,15 +37,15 @@ def run(args, cwd, env, timeout=7200, heartbeat=30):
                 code = process.wait(timeout=min(heartbeat, remaining))
                 break
             except subprocess.TimeoutExpired:
-                print('Build laeuft; PID:', process.pid, 'Dauer:', round(time.monotonic() - started),
+                print(label + ' laeuft; PID:', process.pid, 'Dauer:', round(time.monotonic() - started),
                       's; Restbudget:', max(0, round(deadline - time.monotonic())),
                       's (Prozess noch nicht beendet, kein Fortschritts-/Erfolgsnachweis).', flush=True)
         reader.join(timeout=5)
         if reader.is_alive() or errors:
             raise OSError('Build-Ausgabe nicht vollstaendig lesbar; kein Erfolgsnachweis.')
-        print('Buildprozess beendet; PID:', process.pid, 'Exit:', code, flush=True)
+        print(label + 'prozess beendet; PID:', process.pid, 'Exit:', code, flush=True)
         if code < 0:
-            print('Build durch Signal beendet:', -code,
+            print(label + ' durch Signal beendet:', -code,
                   '; SIGKILL kann OOM bedeuten, ist aber kein OOM-Nachweis. Kernel-/WSL-Logs pruefen.', flush=True)
         if code:
             raise subprocess.CalledProcessError(code, args, output=''.join(tail))
@@ -64,8 +64,8 @@ def run(args, cwd, env, timeout=7200, heartbeat=30):
         if isinstance(error, subprocess.TimeoutExpired):
             error.output = ''.join(tail)
             print('Zeitlimit erreicht:', timeout, 'Sekunden. Teil-Ausgabe steht im aktuellen Log;'
-                  ' Ursache (langsamer Build/Netzwerk/Haenger) daraus pruefen, kein OOM-Nachweis.', flush=True)
-        print('Build abgebrochen; PID:', process.pid, 'Exit:', process.returncode,
+                  ' Ursache (langsamer Prozess/Netzwerk/Haenger) daraus pruefen, kein OOM-Nachweis.', flush=True)
+        print(label + ' abgebrochen; PID:', process.pid, 'Exit:', process.returncode,
               '(Timeout/Signal/Fehler; kein Erfolgsnachweis).', flush=True)
         raise
     finally:
