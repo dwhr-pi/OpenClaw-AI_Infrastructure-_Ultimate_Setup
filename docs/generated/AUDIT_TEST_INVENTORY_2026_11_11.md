@@ -3944,16 +3944,18 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 ## tests/test_native_tool_menu.py
 
-- `tests/test_native_tool_menu.py:43`
+- `tests/test_native_tool_menu.py:45`
   Prueffall: `test_all_native_recipes_are_really_selectable_with_dispatch_and_description`
-- `tests/test_native_tool_menu.py:60`
+- `tests/test_native_tool_menu.py:62`
   Prueffall: `test_registration_is_idempotent_and_preserves_existing_order_and_selection`
-- `tests/test_native_tool_menu.py:73`
+- `tests/test_native_tool_menu.py:75`
   Prueffall: `test_status_allowlist_and_direct_script_normalization_use_same_keys`
-- `tests/test_native_tool_menu.py:80`
+- `tests/test_native_tool_menu.py:82`
   Prueffall: `test_labels_preserve_blockers_and_ordering`
-- `tests/test_native_tool_menu.py:91`
+- `tests/test_native_tool_menu.py:93`
   Prueffall: `test_future_metadata_additions_are_registered_exactly_once_after_z`
+- `tests/test_native_tool_menu.py:103`
+  Prueffall: `test_metadata_has_no_startup_probe_and_stdin_guard_is_nounset_safe`
 
 ## tests/test_native_uv.py
 
@@ -6277,4 +6279,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2805**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2806**. Kein Nachweis bestandener Tests.

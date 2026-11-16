@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### 2026-11-16: Offline-Regression fuer Startpruefung und Monitoring korrigieren
+
+- Interaktive Update-Pruefung vom separat auswertbaren Tool-Menue-Metadatenblock getrennt.
+- BASH_SOURCE-Guard bei Auswertung ueber Bash-stdin auch mit nounset sicher; kein Netzwerk-/Dialogaufruf.
+- Generierte Monitoring-Abdeckung auf den aktuellen Katalog mit 440 Tools synchronisiert.
+- Regression prueft die Metadaten-Grenze und den Start-Guard ohne Installer oder Dienste.
+
 ### 2026-11-16: Signierte Update-Suche und Hinweis beim Start
 
 - Stabile GitHub-Releases automatisch finden, Minisign/SHA256 mit unabhaengiger release.pub pruefen.

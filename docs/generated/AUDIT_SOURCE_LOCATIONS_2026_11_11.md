@@ -1728,7 +1728,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `setup_ultimate.sh:1303`
 - `setup_ultimate.sh:2746`
 - `setup_ultimate.sh:4730`
-- `setup_ultimate.sh:5278`
+- `setup_ultimate.sh:5279`
 - `systemd/openclaw-workspace-backup.service.example:9`
 - `systemd/openclaw-workspace-backup.service.example:14`
 
