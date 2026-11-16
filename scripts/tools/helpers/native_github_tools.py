@@ -1,6 +1,7 @@
 """Native GitHub builds replacing image installers; never starts services."""
 import argparse
 import hashlib
+import importlib
 import json
 import os
 from pathlib import Path
@@ -27,6 +28,25 @@ import litellm_rust_bootstrap
 ROOT = Path(__file__).resolve().parents[3]
 MANIFEST = ROOT / "config/docker_to_github.json"
 TOOLS = {item["id"]: item for item in json.loads(MANIFEST.read_text(encoding="utf-8"))["tools"]}
+CANDIDATE_BACKENDS = {
+    **dict.fromkeys(('cert_manager', 'external_dns', 'kyverno', 'gatekeeper', 'keda',
+                     'temporal', 'argo_workflows'), 'candidate_go_controllers'),
+    **dict.fromkeys(('kubescape', 'nuclei', 'trufflehog', 'testssl'), 'candidate_security_native'),
+    **dict.fromkeys(('gvisor', 'kata_containers', 'firecracker'), 'native_sandbox_candidates'),
+    **dict.fromkeys(('phoenix', 'checkov', 'ragas'), 'python_reviewed_native'),
+    **dict.fromkeys(('milvus', 'vaultwarden', 'owasp_zap'), 'security_data_native'),
+}
+
+
+def candidate_backend(spec):
+    if spec['recipe']['kind'] != 'candidate-native':
+        return None
+    name = CANDIDATE_BACKENDS.get(spec['id'])
+    if name is None:
+        raise ValueError('Kein freigegebener nativer Buildadapter fuer ' + spec['id'])
+    return importlib.import_module(name)
+
+
 for key, item in TOOLS.items():
     recipe = item.get("recipe")
     if not re.fullmatch(r"[a-z0-9_]+", key):
@@ -37,7 +57,7 @@ for key, item in TOOLS.items():
             raise ValueError("Nicht freigegebene Quellen-Ausnahme.")
         if (not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", recipe["repo"]) or
                 not re.fullmatch(r"[0-9a-f]{40}", recipe["pin"]) or
-                recipe["kind"] not in ("go", "rust", "cmake", "make", "python", "requirements", "npm", "pnpm", "pipeline") or
+                recipe["kind"] not in ("go", "rust", "cmake", "make", "python", "requirements", "npm", "pnpm", "pipeline", "candidate-native") or
                 not isinstance(recipe["disk_mb"], int) or recipe["disk_mb"] < 1024):
             raise ValueError("Ungueltiges natives Buildrezept.")
         for field in ("artifact", "entry", "assets", "assets_script", "module_dir", "package", "binary"):
@@ -160,6 +180,10 @@ def preflight(outer, spec, install_build_deps=False):
         minimum = spec["recipe"].get("ram_mb", 4096 if spec["recipe"]["disk_mb"] >= 16384 else 2048)
         if int(memory["MemAvailable"].split()[0]) < minimum * 1024:
             raise ValueError("Zu wenig verfuegbarer RAM: mindestens " + str(minimum) + " MiB fuer diesen Build.")
+    backend = candidate_backend(spec)
+    if backend is not None:
+        backend.preflight(outer, spec, approved=install_build_deps)
+        return
     if spec["id"] == "litellm":
         litellm_build_timeout()  # Validate before downloads, apt or source checkout.
     if spec["id"] in ("litellm", "xerj"):
@@ -264,6 +288,18 @@ def build(prefix, spec):
     kind = recipe["kind"]
     checkout = prefix / "source"
     env = environment(prefix)
+    backend = candidate_backend(spec)
+    if backend is not None:
+        artifacts = backend.build(checkout, prefix, spec, env)
+        if not artifacts or len(artifacts) != len(set(artifacts)):
+            raise ValueError('Native Artefaktliste leer oder doppelt; kein Erfolgsnachweis.')
+        for name in artifacts:
+            path = Path(name)
+            if (not isinstance(name, str) or path.is_absolute() or '..' in path.parts or
+                    '\\' in name or ':' in name or not common.checked(prefix / path).is_file()):
+                raise ValueError('Erwartetes natives Buildartefakt fehlt/unsicher: ' + str(name))
+        remove_native_tree(prefix, cache_only=True)
+        return artifacts
     litellm_rust.activate(prefix.parent, spec, env)
     native_go.activate(prefix.parent, spec, env)
     native_uv.activate(prefix.parent, spec, env)
@@ -546,6 +582,9 @@ def install(outer, prefix, marker, spec, install_build_deps=False, quarantine_in
         files = common.inventory(prefix)
         record = dict(recipe_hash=recipe_hash(spec), commit=recipe["pin"], scope="native-github-build",
                       application_tested=False, artifacts=artifacts, files=files)
+        if recipe['kind'] == 'candidate-native':
+            record['activation_performed'] = False
+            record['build_scope'] = recipe.get('acceptance', recipe.get('note', 'native-components-only'))
         if spec["id"] == "xerj":
             # Existing release receipts retain their recipe hash and ownership checks.
             record["cargo_profile"] = "quick"
@@ -632,6 +671,16 @@ def main(argv=None):
         report = dict(installed=ready, scope="native-github-build" if ready else "absent",
                       application_tested=False, blocked_reason=spec["blocked_reason"],
                       build_note=(spec.get("recipe") or {}).get("note", ""))
+        if (spec.get('recipe') or {}).get('kind') == 'candidate-native':
+            report['activation_performed'] = False
+            report['build_scope'] = spec['recipe'].get('acceptance', spec['recipe'].get('note', 'native-components-only'))
+            if ready and args.action == 'doctor':
+                backend = candidate_backend(spec)
+                if hasattr(backend, 'doctor'):
+                    report['artifact_diagnostics'] = backend.doctor(prefix, spec)
+                report['doctor_exit'] = 3
+                print(json.dumps(report))
+                return 3  # Artifact integrity is not a completed runtime/deployment acceptance.
         if args.tool == "rhasspy" and args.action == "doctor" and not spec["recipe"]:
             report["legacy_review"] = rhasspy_legacy_diagnostic()
         print(json.dumps(report))

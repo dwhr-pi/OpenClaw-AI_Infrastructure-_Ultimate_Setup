@@ -1,6 +1,3 @@
 #!/usr/bin/env bash
-# Catalog candidate only; no installer or runtime is available.
 set -euo pipefail
-ROOT="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd)"
-printf '%s\n' 'OWASP_ZAP: GEPLANT / NICHT INSTALLIERBAR. Native Build- und Lifecycle-Abnahme offen.'
-exec "$BASH" "$ROOT/scripts/tools/infrastructure_candidate_blocked.sh" "$@"
+exec bash "${BASH_SOURCE[0]%/*}/owasp_zap_install.sh" "$@"

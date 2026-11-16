@@ -84,6 +84,11 @@ jobs:
           python3 -B tests/test_litellm_build_timeout.py -v
           python3 -B tests/test_tool_menu_order.py -v
           python3 -B tests/test_infrastructure_candidates.py -v
+          python3 -B tests/test_native_candidate_sync.py -v
+          python3 -B tests/test_native_candidate_dispatch.py -v
+          python3 -B tests/test_candidate_go_controllers.py -v
+          python3 -B tests/test_python_reviewed_native.py -v
+          python3 -B tests/test_security_data_native.py -v
           python3 -B tests/test_signed_update_discovery.py -v
           bash -n scripts/credentials_backup_menu.sh
           bash -n scripts/installation_inventory_menu.sh

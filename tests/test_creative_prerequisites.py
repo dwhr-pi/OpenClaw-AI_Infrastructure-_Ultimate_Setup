@@ -77,7 +77,9 @@ class CreativePrerequisites(unittest.TestCase):
     def test_setup_consent_and_songsage_guard_precede_transaction(self):
         text = (ROOT / 'setup_ultimate.sh').read_text(encoding='utf-8')
         dispatcher = text.split('run_tool_script() {', 1)[1].split('remove_tool_from_autostart_script()', 1)[0]
-        self.assertIn('^(Outlines|eSpeak_NG|SongRec|Valkey|Kube_Bench)$', dispatcher)
+        self.assertIn('^(Outlines|eSpeak_NG|SongRec|Valkey|Kube_Bench|', dispatcher)
+        for key in ('cert-manager', 'External_DNS', 'KEDA', 'Arize_Phoenix', 'Vaultwarden', 'Argo_Workflows'):
+            self.assertIn('|' + key, dispatcher)
         self.assertIn('tool_args+=(--install-build-deps)', dispatcher)
         self.assertIn('--defaultno', dispatcher)
         install = text.split('install_tool() {', 1)[1].split('uninstall_tool() {', 1)[0]

@@ -178,8 +178,11 @@ def render(root=ROOT, files=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check', action='store_true')
+    parser.add_argument('--write', action='store_true', help='Regenerate all committed static inventories.')
     parser.add_argument('--document', choices=OUTPUTS)
     args = parser.parse_args()
+    if sum((args.check, args.write, bool(args.document))) > 1:
+        parser.error('--check, --write und --document sind gegenseitig ausgeschlossen')
     try:
         outputs = render()
         if args.check:
@@ -189,6 +192,13 @@ def main():
                 print('Audit-Inventare nicht synchron: ' + ', '.join(drift), file=sys.stderr)
                 return 1
             print('Statische Audit-Inventare synchron; keine Runtime-Abnahme.')
+        elif args.write:
+            for name, value in outputs.items():
+                path = ROOT / name
+                if path.is_symlink():
+                    raise ValueError('Verlinktes Inventarziel abgelehnt.')
+                path.write_text(value, encoding='utf-8', newline='\n')
+            print('Statische Audit-Inventare regeneriert; keine Runtime-Abnahme.')
         elif args.document:
             print(outputs[args.document], end='')
         else:

@@ -19,6 +19,13 @@ SONGREC_COMMANDS = ('cargo', 'rustc', 'cc', 'c++', 'make', 'pkg-config', 'msgfmt
 ESPEAK_PACKAGES = ('cmake', 'build-essential')
 OUTLINES_PACKAGES = ('python3.12', 'python3.12-venv')
 VALKEY_PACKAGES = ('build-essential', 'pkg-config', 'libssl-dev')
+TESTSSL_PACKAGES = ('bash', 'openssl', 'bsdextrautils', 'coreutils', 'gawk', 'grep',
+                    'sed', 'procps', 'findutils', 'util-linux')
+SANDBOX_PACKAGES = {
+    'gvisor': ('build-essential', 'python3', 'ca-certificates', 'bzip2'),
+    'firecracker': ('build-essential', 'musl-tools', 'python3', 'ca-certificates'),
+    'kata_containers': ('build-essential', 'pkg-config', 'libseccomp-dev', 'ca-certificates'),
+}
 
 
 def os_release():
@@ -50,10 +57,12 @@ def prepare(spec, approved=False):
     packages = spec["recipe"].get("apt_build_deps", [])
     name, slug = "Mosquitto", "mosquitto"
     extra = {
+        'testssl': ('testssl', TESTSSL_PACKAGES, ('bash', 'openssl', 'hexdump', 'unshare')),
         'valkey': ('Valkey', VALKEY_PACKAGES, ('make', 'cc', 'c++', 'pkg-config')),
         'espeak_ng': ('eSpeak NG', ESPEAK_PACKAGES, ('cmake', 'make', 'cc')),
         'outlines': ('Outlines', OUTLINES_PACKAGES, ()),
     }
+    extra.update({key: (key, packages, ('cc', 'make')) for key, packages in SANDBOX_PACKAGES.items()})
     if spec['id'] in extra:
         name, expected, commands = extra[spec['id']]
         if tuple(packages) != expected:
@@ -72,7 +81,7 @@ def prepare(spec, approved=False):
             return
     if not packages:
         return
-    if (spec["id"] not in ("mosquitto", "litellm", "songrec", "espeak_ng", "outlines", "valkey") or
+    if (spec["id"] not in ("mosquitto", "litellm", "songrec", "espeak_ng", "outlines", "valkey", 'testssl', *SANDBOX_PACKAGES) or
             (spec["id"] == "mosquitto" and tuple(packages) != MOSQUITTO_PACKAGES)):
         raise ValueError("Nicht freigegebene Systempaketliste; keine apt-Aktion.")
     release = os_release()

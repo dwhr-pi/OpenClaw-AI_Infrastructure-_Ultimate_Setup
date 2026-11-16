@@ -1,0 +1,188 @@
+{
+  "tools": [
+    {
+      "id": "gvisor",
+      "tool_key": "gVisor",
+      "name": "gVisor",
+      "repo": "google/gvisor",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/gvisor_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/sandbox-native-candidates.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "candidate_module": "scripts/tools/helpers/native_sandbox_candidates.py",
+        "note": "Vollstaendiges gVisor-Releasebundle nativ mit Bazel 9.3.1; nur Versionsprobe, keine Sandbox-/CRI-Abnahme.",
+        "repo": "google/gvisor",
+        "pin": "a0e6be6fb5e03d8ebea13592f36a097c7e9a41b9",
+        "version": "release-20261109.0",
+        "disk_mb": 65536,
+        "ram_mb": 8192,
+        "tools": [
+          "git",
+          "bazel",
+          "cc",
+          "c++",
+          "make",
+          "python3"
+        ],
+        "source_sha256": {
+          "LICENSE": "0fbab5c58efbdf6d31e8085214f2dd821659c03d73cff3ed2b08e98826ea1cd9",
+          "README.md": "0164b6a864027e506c90185bb3c8b5bc0d70e51dc6e872b2b1d8719364dfcba3",
+          "images/default/bazelversion": "10ba73729037af18a205cb7f273f8676ef03aec9610e248d138c8f385457cda8",
+          "MODULE.bazel": "4b8f3ca647e66eb0bcf39f7289dedb13fe572ab4cd3dd7d02d42454c19f20be4",
+          "debian/BUILD": "87e52587227ab5d801ee55a56e8d5c61afd57bd96f3514cb2f3cd62982da6669",
+          "tools/release.bzl": "5b8f5d651f2473ba94aa173827be2fc7a54062917ecf99374f2d692a82bb9eda"
+        },
+        "acceptance": "complete-release-bundle; version-only; no sandbox or CRI acceptance",
+        "apt_build_deps": [
+          "build-essential",
+          "python3",
+          "ca-certificates",
+          "bzip2"
+        ],
+        "service_applicability": "CLI/build components only; no unit, service start or cluster registration",
+        "bazel_exact": "9.3.1",
+        "build_target": "//debian:gvisor-release-tar-bz2",
+        "external_toolchain_assets": [
+          {
+            "url": "https://github.com/bazelbuild/bazel/releases/download/9.3.1/bazel-9.3.1-linux-x86_64",
+            "sha256": "7f775b54bbec487efaf0f49ccda1d2ed02cd34f582edfdd6aeeec76e39ef585c"
+          },
+          {
+            "url": "https://github.com/bazelbuild/bazel/releases/download/9.3.1/bazel-9.3.1-linux-arm64",
+            "sha256": "10ba9cb76d4ee748d274dcc2981992bb12b74a203dc41a9c2eceeb8f29359366"
+          }
+        ]
+      }
+    },
+    {
+      "id": "firecracker",
+      "tool_key": "Firecracker",
+      "name": "Firecracker + Jailer",
+      "repo": "firecracker-microvm/firecracker",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/firecracker_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/sandbox-native-candidates.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "candidate_module": "scripts/tools/helpers/native_sandbox_candidates.py",
+        "note": "Native Firecracker-/Jailer-Hostkomponenten mit Rust 1.97.0 und musl; kein Gast-Kernel/rootfs und keine VM-Abnahme.",
+        "repo": "firecracker-microvm/firecracker",
+        "pin": "eaf83bb718a559d324613d566eaf776b31a62340",
+        "version": "1.18.0",
+        "disk_mb": 16384,
+        "ram_mb": 4096,
+        "tools": [
+          "git",
+          "cc",
+          "musl-gcc",
+          "make",
+          "python3"
+        ],
+        "source_sha256": {
+          "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "Cargo.toml": "bc89c8e6f5c74642e6b5c7c1f1a58ec65912922f0f70c3a69b1ae92694799659",
+          "Cargo.lock": "e95fab1aefe06b0d4f28abb02e97a8415ca1acb3f3f7ddc3b7d370b591643664",
+          "rust-toolchain.toml": "bfaf8ec692b6fdc56ad4534d465b852e5a660616b0dc1c3a78b288b41450c04c",
+          "src/firecracker/build.rs": "d7312497726509400d7a267bc87c0c03698fe76ea67ae09a32f46e352180efea",
+          "resources/seccomp/x86_64-unknown-linux-musl.json": "e165d4a31f03c7e8398622fe11078f506f7e0191b7f9272c2d583274f3f51656",
+          "resources/seccomp/aarch64-unknown-linux-musl.json": "9b73ffb7d5d76c4ba29b4cd7437b9c28bda14627b997a8a4046a3033785b2a96"
+        },
+        "acceptance": "host-components-firecracker-and-jailer; no guest kernel/rootfs or VM acceptance",
+        "apt_build_deps": [
+          "build-essential",
+          "musl-tools",
+          "python3",
+          "ca-certificates"
+        ],
+        "service_applicability": "CLI/build components only; no unit, service start or cluster registration",
+        "external_toolchain_assets": [
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/rustc-1.97.0-x86_64-unknown-linux-gnu.tar.xz",
+            "sha256": "0a8787303c88b018af61b5c53a0c7024d516d175e623eeab35a35eab11dbcad0"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/cargo-1.97.0-x86_64-unknown-linux-gnu.tar.xz",
+            "sha256": "5c5bc94af02797b699bb7d4e85b356192eab9fb50376053a1e6edf509fcf7129"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/rust-std-1.97.0-x86_64-unknown-linux-gnu.tar.xz",
+            "sha256": "0c43618128a7a6b96b0b04c04cf7b28dd52fb0991a74c9615fbd1a684ff88712"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/rust-std-1.97.0-x86_64-unknown-linux-musl.tar.xz",
+            "sha256": "9744b43bed4a89db05e83dc8054d3e92e23ddb70a6c08c54ccde9a58d7b28627"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/rustc-1.97.0-aarch64-unknown-linux-gnu.tar.xz",
+            "sha256": "06a71688ee297515ebc6a815e42c779735c09423b0bed056e0896c80c7295399"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/cargo-1.97.0-aarch64-unknown-linux-gnu.tar.xz",
+            "sha256": "71f0457abe8fdf9fc048009f867acc27b21e25c8e06a1a3e9a12c637833b6aab"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/rust-std-1.97.0-aarch64-unknown-linux-gnu.tar.xz",
+            "sha256": "b6a90dab26527f17e7e395e24b2d79976e30432c41feb073fe920d3b26b709a0"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/rust-std-1.97.0-aarch64-unknown-linux-musl.tar.xz",
+            "sha256": "91b55028112e6a978386de46013820d921330f0a182d11900f117e9f0f4ef338"
+          }
+        ],
+        "rust_exact": "1.97.0",
+        "rust_target": "native-unknown-linux-musl",
+        "optional_toolchain_env": "NATIVE_SOURCE_RUST_TOOLCHAIN",
+        "private_toolchain": "consent-gated Rust 1.97.0 compiler/Cargo/host-std/musl-std; fixed dated official component archives"
+      }
+    },
+    {
+      "id": "kata_containers",
+      "tool_key": "Kata_Containers",
+      "name": "Kata Containers (Go-Hostkomponenten)",
+      "repo": "kata-containers/kata-containers",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/kata_containers_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/sandbox-native-candidates.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "candidate_module": "scripts/tools/helpers/native_sandbox_candidates.py",
+        "note": "Nur native Legacy-Go-Hostkomponenten kata-runtime und Shim; KEINE vollstaendige Kata-Installation ohne Agent, Gast-Kernel/rootfs und Hypervisor.",
+        "repo": "kata-containers/kata-containers",
+        "pin": "03cf2ec06a5d302f23af811744f6bcea49988bfb",
+        "version": "4.3.1",
+        "disk_mb": 16384,
+        "ram_mb": 4096,
+        "tools": [
+          "git",
+          "go",
+          "make",
+          "cc"
+        ],
+        "source_sha256": {
+          "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "src/runtime/Makefile": "4fcf40a5595d9c952b57d13635aefb992acf16823c5d6dea18226a9f5e841006",
+          "src/runtime/go.mod": "75986d61c7c28d65d2d8adf42641c95b48b5e05ba281a85262a3358773a21aff",
+          "src/runtime/go.sum": "53c8f184f6a6113378b3c292e15d830037e3a30ffce919e8b162fb18f8ac9580",
+          "versions.yaml": "ec97b60fe417a6cd74904c59b828d33a1189fe1547a7fd35d95331fb47a0bd52"
+        },
+        "acceptance": "components-only: legacy Go runtime and shim; no runtime-rs, agent, kernel, rootfs, hypervisor, configuration or CRI acceptance",
+        "apt_build_deps": [
+          "build-essential",
+          "pkg-config",
+          "libseccomp-dev",
+          "ca-certificates"
+        ],
+        "service_applicability": "CLI/build components only; no unit, service start or cluster registration",
+        "go_min": [1, 26, 9],
+        "private_go": "existing private_go go1.27.3 bootstrap; consent-gated"
+      }
+    }
+  ]
+}

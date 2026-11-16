@@ -1,0 +1,101 @@
+{
+  "tools": [
+    {
+      "id": "phoenix",
+      "tool_key": "Arize_Phoenix",
+      "name": "Arize Phoenix",
+      "repo": "Arize-ai/phoenix",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/phoenix_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/python-reviewed-native.md",
+      "license": "Elastic-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "python_reviewed_native",
+        "repo": "Arize-ai/phoenix",
+        "pin": "2aa3a3c3afecc1e7cec16978b553d836ba409f28",
+        "version": "8.32.1",
+        "distribution": "arize-phoenix",
+        "import_module": "phoenix",
+        "cli": "phoenix",
+        "private_uv": "0.13.5",
+        "tools": ["uv"],
+        "frontend_node": "22.23.4",
+        "frontend_pnpm": "10.2.0",
+        "frontend_pnpm_sha256": "72f1630812107c8723eb5be4517725f3e13f09cfd8f71571cf29f23ce318bdb7",
+        "disk_mb": 12288,
+        "ram_mb": 4096,
+        "source_sha256": {
+          "pyproject.toml": "33cb60d8db75db3ca8221ab825584af195d07101f27e4ab163d4bf401cbd36dc",
+          "src/phoenix/version.py": "51a35531d39b231c8b7858622615b4683467f000530351236ab263c18d829846",
+          "app/package.json": "924c7bff1dc98b0607614436b4b681d479652a065ed5a0fd6215791c3d22d8fb",
+          "app/pnpm-lock.yaml": "eb0a2136d73d2003eb5f32d880307df60d9a3843e8fcc01613994384c04fe523",
+          "app/vite.config.mts": "daa27efd337cd166e59ae10078d56c8ed5d6519b3171b50219021ea61350a49b"
+        },
+        "note": "Source-Wheel einschliesslich kompiliertem Frontend, private CPython-3.12-venv. Importprobe ohne launch_app/Dienststart. Elastic-2.0 vorher pruefen. Keine Laufzeit-/Datenbankabnahme; Linux-End-to-End-Build noch ausstehend."
+      }
+    },
+    {
+      "id": "checkov",
+      "tool_key": "Checkov",
+      "name": "Checkov",
+      "repo": "bridgecrewio/checkov",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/checkov_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/python-reviewed-native.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "python_reviewed_native",
+        "repo": "bridgecrewio/checkov",
+        "pin": "9ea6d83d477afb3691795eda79d8f4dd56851d4b",
+        "version": "3.2.495",
+        "distribution": "checkov",
+        "import_module": "checkov",
+        "cli": "checkov",
+        "private_uv": "0.13.5",
+        "tools": ["uv"],
+        "disk_mb": 8192,
+        "ram_mb": 2048,
+        "source_sha256": {
+          "pyproject.toml": "9b5c4a859258ce52bbbd9ee23ba93243a039f2bac08e930a764fdf3679099fb4",
+          "setup.py": "b4c8292cb242b037bd4021fc20f1348fc99c4a13c44f868ea15a8e7b60fa89e8",
+          "checkov/version.py": "aef11ef6facd19a131626f7e0061a66a10dc2be0d6f3bb090642c44569fe79db"
+        },
+        "note": "Echtes Source-Wheel mit generierten JSON-Graph-Policies und Checkov-CLI in eigener venv; keine Scans/Providerkontakte. Python-docker ist deklarierte Bibliotheksabhaengigkeit, keine Engine/Containerinstallation. Linux-End-to-End-Build noch ausstehend."
+      }
+    },
+    {
+      "id": "ragas",
+      "tool_key": "Ragas",
+      "name": "Ragas",
+      "repo": "vibrantlabsai/ragas",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/ragas_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/python-reviewed-native.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "python_reviewed_native",
+        "repo": "vibrantlabsai/ragas",
+        "pin": "8b4653c41abf6c8f86f63397f1a960d6411c0ca9",
+        "version": "0.3.9",
+        "distribution": "ragas",
+        "import_module": "ragas",
+        "cli": "ragas",
+        "private_uv": "0.13.5",
+        "tools": ["uv"],
+        "disk_mb": 12288,
+        "ram_mb": 2048,
+        "source_sha256": {
+          "pyproject.toml": "011aaffd64d194640b10a6e1075cd2eca07d0aaecf6ed717e687cfa1c59003f9",
+          "src/ragas/__init__.py": "c1f89c728e67b2082d5e226917b5d65f1ca84db051ee613e0f844c818ac20448"
+        },
+        "note": "Source-Wheel mit expliziter gepinnter SCM-Version, CLI und evaluate/aevaluate-Importprobe. Keine Evaluation, Inferenz, Modell-Downloads oder Providerkontakte; keine all/dev-Extras. Linux-End-to-End-Build noch ausstehend."
+      }
+    }
+  ]
+}

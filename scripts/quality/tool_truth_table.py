@@ -80,9 +80,16 @@ def render(root=ROOT):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check', action='store_true')
+    parser.add_argument('--write', action='store_true', help='Regenerate the committed offline inventory.')
     args = parser.parse_args()
     expected = render()
     path = ROOT / OUTPUT
+    if args.check and args.write:
+        parser.error('--check und --write sind gegenseitig ausgeschlossen.')
+    if args.write:
+        path.write_text(expected, encoding='utf-8', newline='\n')
+        print('Tool-Wahrheitstabelle regeneriert; keine Runtime-Abnahme.')
+        return 0
     if args.check:
         if not path.is_file() or path.read_text(encoding='utf-8') != expected:
             print('Tool-Wahrheitstabelle ist nicht synchron.', file=sys.stderr)

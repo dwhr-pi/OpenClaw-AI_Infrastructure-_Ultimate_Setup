@@ -12,6 +12,9 @@ NATIVE_GITHUB_TOOL_KEYS+=("FFmpeg")
 NATIVE_GITHUB_TOOL_KEYS+=("Valkey")
 NATIVE_GITHUB_TOOL_KEYS+=("Kube_Bench")
 
+# Generated reviewed candidate keys; see sync_native_candidates.py.
+NATIVE_GITHUB_TOOL_KEYS+=("cert-manager" "External_DNS" "Kyverno" "Gatekeeper" "KEDA" "Temporal" "Argo_Workflows" "Arize_Phoenix" "Checkov" "Ragas" "gVisor" "Firecracker" "Kata_Containers" "Milvus" "Vaultwarden" "OWASP_ZAP" "Kubescape" "Nuclei" "TruffleHog" "Testssl")
+
 register_native_github_tool_keys() {
   local key
   local -A seen=()

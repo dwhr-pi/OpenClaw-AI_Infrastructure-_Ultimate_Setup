@@ -18,10 +18,16 @@
         "kind": "go",
         "package": ".",
         "binary": "kube-bench",
-        "go_min": [1, 26, 3],
+        "go_min": [
+          1,
+          26,
+          3
+        ],
         "disk_mb": 8192,
         "ram_mb": 2048,
-        "probe": ["version"],
+        "probe": [
+          "version"
+        ],
         "ldflags": "-X github.com/aquasecurity/kube-bench/cmd.KubeBenchVersion=0.16.0",
         "source_sha256": {
           "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
@@ -48,14 +54,40 @@
         "kind": "pipeline",
         "disk_mb": 4096,
         "ram_mb": 1024,
-        "tools": ["make", "cc", "c++", "pkg-config"],
-        "apt_build_deps": ["build-essential", "pkg-config", "libssl-dev"],
-        "build_env": {"NATIVE_BUILD_STREAM": "1"},
-        "steps": [
-          {"args": ["make", "-j1", "BUILD_TLS=yes", "MALLOC=libc", "OPT=-O2", "valkey-server", "valkey-cli"]}
+        "tools": [
+          "make",
+          "cc",
+          "c++",
+          "pkg-config"
         ],
-        "artifacts": ["source/src/valkey-server", "source/src/valkey-cli"],
-        "probe": ["--version"],
+        "apt_build_deps": [
+          "build-essential",
+          "pkg-config",
+          "libssl-dev"
+        ],
+        "build_env": {
+          "NATIVE_BUILD_STREAM": "1"
+        },
+        "steps": [
+          {
+            "args": [
+              "make",
+              "-j1",
+              "BUILD_TLS=yes",
+              "MALLOC=libc",
+              "OPT=-O2",
+              "valkey-server",
+              "valkey-cli"
+            ]
+          }
+        ],
+        "artifacts": [
+          "source/src/valkey-server",
+          "source/src/valkey-cli"
+        ],
+        "probe": [
+          "--version"
+        ],
         "source_sha256": {
           "COPYING": "1a53dca3aab7ce048e91e77b03c0342f3075366f9dede8ec4d19d0cf229e12a0",
           "README.md": "0eb2a325ce5addca49994f82e28fc302d0c8d60d8813d76cbd967d12379ee8d4",
@@ -78,10 +110,18 @@
         "repo": "argoproj/argo-cd",
         "pin": "3dc411247c3b00c283581642b0d017052d91664d",
         "kind": "go",
-        "go_min": [1, 27, 0],
+        "go_min": [
+          1,
+          27,
+          0
+        ],
         "package": "./cmd",
         "binary": "argocd",
-        "probe": ["version", "--client", "--short"],
+        "probe": [
+          "version",
+          "--client",
+          "--short"
+        ],
         "disk_mb": 16384,
         "note": "Git-Quellbuild am 03.11.2026 gelesenen HEAD; kein Release-Binaerdownload, sudo, Clusterzugriff oder Dienststart. Monolithischer Upstream-Build, Laufzeitabnahme offen; kein Produktionsrelease-Nachweis."
       },
@@ -98,10 +138,16 @@
         "repo": "cloudflare/cloudflared",
         "pin": "872b241f94871665c1c157adefcf90c11f0ead96",
         "kind": "go",
-        "go_min": [1, 27, 3],
+        "go_min": [
+          1,
+          27,
+          3
+        ],
         "package": "./cmd/cloudflared",
         "binary": "cloudflared",
-        "probe": ["--version"],
+        "probe": [
+          "--version"
+        ],
         "disk_mb": 8192,
         "note": "Git-Quellbuild am 03.11.2026 gelesenen HEAD; kein latest-DEB, dpkg, Tunnel-Login, Tokenzugriff oder Dienststart. Build-/Tunnel-Abnahme offen; kein Produktionsrelease-Nachweis."
       },
@@ -118,10 +164,16 @@
         "repo": "traefik/traefik",
         "pin": "b46d3ea648b543a8d8c675a178b0780faae958c7",
         "kind": "go",
-        "go_min": [1, 27, 3],
+        "go_min": [
+          1,
+          27,
+          3
+        ],
         "package": "./cmd/traefik",
         "binary": "traefik",
-        "probe": ["version"],
+        "probe": [
+          "version"
+        ],
         "disk_mb": 16384,
         "note": "Nativer Headless-Go-Build ohne Dashboard-Build: vorhandener Embed-Platzhalter bleibt ungenutzt, api.dashboard=false. Kein make binary (dessen Web-UI-Pfad verwendet Docker). Lokale Unit/TLS separat ueber scripts/setup_traefik_local.sh, kein Serverstart beim Build."
       },
@@ -138,10 +190,16 @@
         "repo": "bitnami/sealed-secrets",
         "pin": "c58a60f0bd5283d28c25ad068e7c9760634be470",
         "kind": "go",
-        "go_min": [1, 27, 3],
+        "go_min": [
+          1,
+          27,
+          3
+        ],
         "package": "./cmd/kubeseal",
         "binary": "kubeseal",
-        "probe": ["--version"],
+        "probe": [
+          "--version"
+        ],
         "disk_mb": 4096,
         "note": "Nur Sealed-Secrets-CLI aus GitHub gebaut. Kein Controller, Clusterzugriff, Key-Import oder Secret-Apply; Go >=1.27.3 erforderlich."
       },
@@ -152,17 +210,25 @@
       "name": "OpenTelemetry",
       "tool_key": "OpenTelemetry",
       "repo": "open-telemetry/opentelemetry-collector",
-      "previous_images": ["otel/opentelemetry-collector:0.100.0"],
+      "previous_images": [
+        "otel/opentelemetry-collector:0.100.0"
+      ],
       "previous_installer": "scripts/tools/opentelemetry_install.sh",
       "recipe": {
         "repo": "open-telemetry/opentelemetry-collector",
         "pin": "30add0562534958c3b4173fa307b5a3497d0bc9c",
         "kind": "go",
-        "go_min": [1, 26, 0],
+        "go_min": [
+          1,
+          26,
+          0
+        ],
         "module_dir": "cmd/otelcorecol",
         "package": ".",
         "binary": "otelcorecol",
-        "probe": ["--version"],
+        "probe": [
+          "--version"
+        ],
         "disk_mb": 8192,
         "note": "Core-Collector aus gepinntem GitHub-Quellstand; keine Contrib-Distribution. Kein Collector-/Docker-Start. Vorhandene alte logging-Konfiguration nicht uebernehmen; siehe docs/tools/opentelemetry-native.md. Linux-Build und Betrieb noch separat abzunehmen."
       },
@@ -539,7 +605,11 @@
         "repo": "google/cadvisor",
         "pin": "c57813afc32715351dff34ab76a6164bcb0e5c9d",
         "kind": "go",
-        "go_min": [1, 25, 0],
+        "go_min": [
+          1,
+          25,
+          0
+        ],
         "package": ".",
         "module_dir": "cmd",
         "assets_script": "build/assets.sh",
@@ -565,7 +635,11 @@
         "pin": "2bd1a87403b83eb6f37f9f23c04ee2555baccba0",
         "kind": "python",
         "private_uv": "0.13.5",
-        "python_min": [3, 11, 0],
+        "python_min": [
+          3,
+          11,
+          0
+        ],
         "distribution": "changedetection.io",
         "disk_mb": 8192
       },
@@ -938,8 +1012,16 @@
         "pin": "f2118fc7670ba3fa736d9b8f4deef9077a45a720",
         "kind": "python",
         "private_uv": "0.13.5",
-        "python_min": [3, 10, 0],
-        "python_max": [3, 15, 0],
+        "python_min": [
+          3,
+          10,
+          0
+        ],
+        "python_max": [
+          3,
+          15,
+          0
+        ],
         "distribution": "litellm",
         "extras": "proxy",
         "disk_mb": 8192
@@ -1056,7 +1138,11 @@
         "repo": "minio/minio",
         "pin": "7aac2a2c5b7c882e68c1ce017d8256be2feea27f",
         "kind": "go",
-        "go_min": [1, 24, 8],
+        "go_min": [
+          1,
+          24,
+          8
+        ],
         "package": ".",
         "binary": "minio",
         "probe": [
@@ -1749,8 +1835,16 @@
         "distribution": "searxng",
         "disk_mb": 8192,
         "private_uv": "0.13.5",
-        "python_min": [3, 10, 0],
-        "python_max": [3, 14, 0],
+        "python_min": [
+          3,
+          10,
+          0
+        ],
+        "python_max": [
+          3,
+          14,
+          0
+        ],
         "build_env": {
           "SEARXNG_SETTINGS_PATH": "{source}/searx/settings.yml"
         }
@@ -1950,7 +2044,11 @@
         "repo": "containrrr/watchtower",
         "pin": "ca0e86e824ec05389ab972ea97d04d4bf0476e90",
         "kind": "go",
-        "go_min": [1, 20, 0],
+        "go_min": [
+          1,
+          20,
+          0
+        ],
         "disk_mb": 4096,
         "binary": "watchtower",
         "package": ".",
@@ -2020,10 +2118,20 @@
         "cargo_package": "xerj-server",
         "no_default_features": true,
         "binary": "xerj",
-        "probe": ["--version"],
+        "probe": [
+          "--version"
+        ],
         "disk_mb": 16384,
         "ram_mb": 4096,
-        "tools": ["cargo", "rustc", "cc", "c++", "make", "pkg-config", "perl"],
+        "tools": [
+          "cargo",
+          "rustc",
+          "cc",
+          "c++",
+          "make",
+          "pkg-config",
+          "perl"
+        ],
         "note": "Optionaler nativer Rust-Release-Build mit engine/Cargo.lock; ohne neuronale Default-Features. Nur --version-Probe. Keine Server-, Modell-, Autoindex-, MCP-, Feedback- oder Corpus-Hub-Aktion; Rust/Build-Abhaengigkeiten vorher separat bereitstellen."
       },
       "blocked_reason": null
@@ -2041,14 +2149,47 @@
         "kind": "pipeline",
         "disk_mb": 8192,
         "ram_mb": 2048,
-        "tools": ["bash", "cc", "make", "pkg-config"],
-        "steps": [
-          {"args": ["bash", "./configure", "--prefix={prefix}/app", "--disable-debug", "--disable-doc", "--disable-autodetect", "--disable-network", "--disable-shared", "--enable-static", "--disable-x86asm"]},
-          {"args": ["make", "-j2"]},
-          {"args": ["make", "install"]}
+        "tools": [
+          "bash",
+          "cc",
+          "make",
+          "pkg-config"
         ],
-        "artifacts": ["app/bin/ffmpeg", "app/bin/ffprobe"],
-        "probe": ["-version"],
+        "steps": [
+          {
+            "args": [
+              "bash",
+              "./configure",
+              "--prefix={prefix}/app",
+              "--disable-debug",
+              "--disable-doc",
+              "--disable-autodetect",
+              "--disable-network",
+              "--disable-shared",
+              "--enable-static",
+              "--disable-x86asm"
+            ]
+          },
+          {
+            "args": [
+              "make",
+              "-j2"
+            ]
+          },
+          {
+            "args": [
+              "make",
+              "install"
+            ]
+          }
+        ],
+        "artifacts": [
+          "app/bin/ffmpeg",
+          "app/bin/ffprobe"
+        ],
+        "probe": [
+          "-version"
+        ],
         "note": "Privater gepinnter CPU-Build fuer WAV/FLAC, Audiofilter und Loudness-Analyse. Kein apt-FFmpeg, sudo, globaler Symlink, Netzwerkprotokoll, NVENC oder Autodetect externer Codecs. Alte /opt-/PATH-Installationen bleiben erhalten."
       },
       "blocked_reason": null
@@ -2079,7 +2220,1683 @@
         "note": "Separates Python-SDK aus GitHub, KEIN Ersatz fuer Airbyte Core. Kein Connector-Download, Account, Datenbank-Setup oder Jobstart. Manche Connector-Ausfuehrungswege benoetigen weiterhin Container; diese werden nicht eingerichtet."
       },
       "blocked_reason": null
+    },
+    {
+      "id": "cert_manager",
+      "tool_key": "cert-manager",
+      "name": "cert-manager",
+      "repo": "cert-manager/cert-manager",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/cert_manager_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-go-controllers.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_go_controllers",
+        "repo": "cert-manager/cert-manager",
+        "pin": "925c22283de556172d48d96a165dc2fa27f7a6ff",
+        "version": "v1.21.3",
+        "go_min": [
+          1,
+          26,
+          0
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "git",
+          "go"
+        ],
+        "builds": [
+          {
+            "module_dir": "cmd/controller",
+            "package": ".",
+            "binary": "cert-manager-controller"
+          },
+          {
+            "module_dir": "cmd/cainjector",
+            "package": ".",
+            "binary": "cert-manager-cainjector"
+          },
+          {
+            "module_dir": "cmd/webhook",
+            "package": ".",
+            "binary": "cert-manager-webhook"
+          },
+          {
+            "module_dir": "cmd/acmesolver",
+            "package": ".",
+            "binary": "cert-manager-acmesolver"
+          },
+          {
+            "module_dir": "cmd/startupapicheck",
+            "package": ".",
+            "binary": "cert-manager-startupapicheck"
+          }
+        ],
+        "ldflags": "-X github.com/cert-manager/cert-manager/pkg/util.AppVersion=v1.21.3 -X github.com/cert-manager/cert-manager/pkg/util.AppGitCommit=925c22283de556172d48d96a165dc2fa27f7a6ff",
+        "source_sha256": {
+          "go.mod": "510da8ae6fabd64062b860b599b642d1109ea68b9da87b42d5517113e99975b7",
+          "go.sum": "2bb0f33e2a5be532f9abad036295b960982e507c9e43a39b5289235b97d15da4",
+          "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "Makefile": "a99249d47093a48d2f06b1c2ecf8ffb4df8a78edf11b16e3c5cd6cbdd79e405b",
+          "cmd/controller/go.mod": "8bb78276807e68d9cbfe491044ed432b38df5375e424b60c9e941dca85f6c305",
+          "cmd/controller/go.sum": "c0d9b4274096705c49d24d8dc23e0955f134cdfd7134e09594796248ae1a0dce",
+          "cmd/controller/main.go": "a869aa041c4fcb8d683417d0981af79d1092758a1dce48ff7d6e06b6662ddb6d",
+          "cmd/cainjector/go.mod": "973b8e7dd4a74c5ebb0b2bef9955b7701894747362a7ff3b3ca4844e5d97a2cf",
+          "cmd/cainjector/go.sum": "ee3807cb18852f8f8b671281be9fae2b943707b2c731bda6d3e2c38ef8bafdb0",
+          "cmd/cainjector/main.go": "24b371d913a0e11ca76eaf224fbddb7429e2a18c037d3a984b8520dd50d3d186",
+          "cmd/webhook/go.mod": "41116e2cc8e3d856274d51374f7398b5558e1fa8d3d20d3bc2e819df6c70e565",
+          "cmd/webhook/go.sum": "3811d5c5b5c833d885230474b7ef5d59c2dbe9b2614dcd9a895beac9903dee78",
+          "cmd/webhook/main.go": "2e30cb45f59bff52bfb4a7d6c63c1de3dbcfd3d75965f3e142e1b04871876b50",
+          "cmd/acmesolver/go.mod": "549cc03c2ba286031458054f755767cd0984e1065a1b5106b81697918e9dfdd4",
+          "cmd/acmesolver/go.sum": "92d6f400259be7bd277f6c3c7971937e52eb740b763374d97b5f5bc4ed3cd5d9",
+          "cmd/acmesolver/main.go": "22db98c46f1e58ea485a84496cb5bb73f28b92bd372bf95176391fb2f682e3a9",
+          "cmd/startupapicheck/go.mod": "931603e69a83a1b3c1ee4f33ecf0b43515ae0fa2fa22794c1e33de5b02318ac7",
+          "cmd/startupapicheck/go.sum": "9f08d34a00eb71e1e77c618cd7b3cd42a4c0e0b224c80bb3692d461c2ba7f1da",
+          "cmd/startupapicheck/main.go": "9732af0c4278fee025f2a2ed5e429a71f981deed402ffd2182cdcf31f3ba7940",
+          "cmd/controller/app/start.go": "9462c7c774439fa6447987d0b08b6fea0789e476de2632fc0cdd0431ab2b5f25",
+          "cmd/controller/app/controller.go": "c0d2d01c0753e525ce51db774ed5ec4a5a554060cda8d88541f4e87ff54c5191",
+          "pkg/util/version.go": "713c48cee2e5fe7b4096a6e808dc725b96edb6e6eb834839e8809bf7dbf109b3"
+        },
+        "static_files": [
+          "deploy/charts/cert-manager/Chart.yaml",
+          "deploy/charts/cert-manager/README.template.md",
+          "deploy/charts/cert-manager/templates/_helpers.tpl",
+          "deploy/charts/cert-manager/templates/cainjector-config.yaml",
+          "deploy/charts/cert-manager/templates/cainjector-deployment.yaml",
+          "deploy/charts/cert-manager/templates/cainjector-poddisruptionbudget.yaml",
+          "deploy/charts/cert-manager/templates/cainjector-psp-clusterrole.yaml",
+          "deploy/charts/cert-manager/templates/cainjector-psp-clusterrolebinding.yaml",
+          "deploy/charts/cert-manager/templates/cainjector-psp.yaml",
+          "deploy/charts/cert-manager/templates/cainjector-rbac.yaml",
+          "deploy/charts/cert-manager/templates/cainjector-service.yaml",
+          "deploy/charts/cert-manager/templates/cainjector-serviceaccount.yaml",
+          "deploy/charts/cert-manager/templates/controller-config.yaml",
+          "deploy/charts/cert-manager/templates/crd-acme.cert-manager.io_challenges.yaml",
+          "deploy/charts/cert-manager/templates/crd-acme.cert-manager.io_orders.yaml",
+          "deploy/charts/cert-manager/templates/crd-cert-manager.io_certificaterequests.yaml",
+          "deploy/charts/cert-manager/templates/crd-cert-manager.io_certificates.yaml",
+          "deploy/charts/cert-manager/templates/crd-cert-manager.io_clusterissuers.yaml",
+          "deploy/charts/cert-manager/templates/crd-cert-manager.io_issuers.yaml",
+          "deploy/charts/cert-manager/templates/deployment.yaml",
+          "deploy/charts/cert-manager/templates/extras-objects.yaml",
+          "deploy/charts/cert-manager/templates/networkpolicy-cainjector.yaml",
+          "deploy/charts/cert-manager/templates/networkpolicy-cert-manager.yaml",
+          "deploy/charts/cert-manager/templates/networkpolicy-webhooks.yaml",
+          "deploy/charts/cert-manager/templates/poddisruptionbudget.yaml",
+          "deploy/charts/cert-manager/templates/podmonitor.yaml",
+          "deploy/charts/cert-manager/templates/psp-clusterrole.yaml",
+          "deploy/charts/cert-manager/templates/psp-clusterrolebinding.yaml",
+          "deploy/charts/cert-manager/templates/psp.yaml",
+          "deploy/charts/cert-manager/templates/rbac.yaml",
+          "deploy/charts/cert-manager/templates/service.yaml",
+          "deploy/charts/cert-manager/templates/serviceaccount.yaml",
+          "deploy/charts/cert-manager/templates/servicemonitor.yaml",
+          "deploy/charts/cert-manager/templates/startupapicheck-job.yaml",
+          "deploy/charts/cert-manager/templates/startupapicheck-psp-clusterrole.yaml",
+          "deploy/charts/cert-manager/templates/startupapicheck-psp-clusterrolebinding.yaml",
+          "deploy/charts/cert-manager/templates/startupapicheck-psp.yaml",
+          "deploy/charts/cert-manager/templates/startupapicheck-rbac.yaml",
+          "deploy/charts/cert-manager/templates/startupapicheck-serviceaccount.yaml",
+          "deploy/charts/cert-manager/templates/webhook-config.yaml",
+          "deploy/charts/cert-manager/templates/webhook-deployment.yaml",
+          "deploy/charts/cert-manager/templates/webhook-mutating-webhook.yaml",
+          "deploy/charts/cert-manager/templates/webhook-poddisruptionbudget.yaml",
+          "deploy/charts/cert-manager/templates/webhook-psp-clusterrole.yaml",
+          "deploy/charts/cert-manager/templates/webhook-psp-clusterrolebinding.yaml",
+          "deploy/charts/cert-manager/templates/webhook-psp.yaml",
+          "deploy/charts/cert-manager/templates/webhook-rbac.yaml",
+          "deploy/charts/cert-manager/templates/webhook-service.yaml",
+          "deploy/charts/cert-manager/templates/webhook-serviceaccount.yaml",
+          "deploy/charts/cert-manager/templates/webhook-validating-webhook.yaml",
+          "deploy/charts/cert-manager/tests/cainjector/cainjector-deployment_test.yaml",
+          "deploy/charts/cert-manager/tests/controller/defaults_test.yaml",
+          "deploy/charts/cert-manager/tests/controller/deployment_test.yaml",
+          "deploy/charts/cert-manager/tests/controller/service_test.yaml",
+          "deploy/charts/cert-manager/tests/controller/serviceaccount_test.yaml",
+          "deploy/charts/cert-manager/tests/startupapicheck/startupapicheck-job_test.yaml",
+          "deploy/charts/cert-manager/tests/webhook/webhook-deployment_test.yaml",
+          "deploy/charts/cert-manager/values.schema.json",
+          "deploy/charts/cert-manager/values.yaml",
+          "deploy/crds/README.md",
+          "deploy/crds/acme.cert-manager.io_challenges.yaml",
+          "deploy/crds/acme.cert-manager.io_orders.yaml",
+          "deploy/crds/cert-manager.io_certificaterequests.yaml",
+          "deploy/crds/cert-manager.io_certificates.yaml",
+          "deploy/crds/cert-manager.io_clusterissuers.yaml",
+          "deploy/crds/cert-manager.io_issuers.yaml",
+          "deploy/manifests/01-namespace.yaml",
+          "deploy/manifests/README.md",
+          "deploy/manifests/helm-values.yaml",
+          "deploy/manifests/namespace.yaml"
+        ],
+        "probe_mode": "go-buildinfo",
+        "probe": [],
+        "artifact": "bin/cert-manager-controller",
+        "note": "Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. CRDs/Chart-/Konfigurationsdateien werden nur kopiert, nicht angewendet."
+      }
+    },
+    {
+      "id": "external_dns",
+      "tool_key": "External_DNS",
+      "name": "External_DNS",
+      "repo": "kubernetes-sigs/external-dns",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/external_dns_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-go-controllers.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_go_controllers",
+        "repo": "kubernetes-sigs/external-dns",
+        "pin": "c40894ac060e0920b2b49035df18005954f83a7a",
+        "version": "v0.24.0",
+        "go_min": [
+          1,
+          27,
+          3
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "git",
+          "go"
+        ],
+        "builds": [
+          {
+            "module_dir": ".",
+            "package": ".",
+            "binary": "external-dns"
+          }
+        ],
+        "ldflags": "-X sigs.k8s.io/external-dns/pkg/version.Version=v0.24.0 -X sigs.k8s.io/external-dns/pkg/version.GitCommit=c40894ac060e0920b2b49035df18005954f83a7a",
+        "source_sha256": {
+          "go.mod": "c39e7755daa3e676a37096b6c7512928f1867fcc3ff1b7cfb50f97faff47fc49",
+          "go.sum": "d2cf32c9f3101f7b78be954e0654c8ae12caeb62f84b02dd0dbf6d9ab014291c",
+          "Makefile": "de50c10492303e8a09714615a7d601d3452c398e50ba9165c65651a592da888f",
+          "main.go": "9884b29b40789f05d4e4b2791bc8cd7f4b3d9bd92a494d387a3c935d5e3566eb",
+          "pkg/apis/externaldns/types.go": "d9d1b6554631a92e276b501aa65144fb3777120dae7e7e4fa275407822c62a42",
+          "controller/controller.go": "7e8d9c3b6be3a753590060eddd7e790684b76929083cc5e347bf52072a823a3b"
+        },
+        "static_files": [
+          "charts/external-dns/.schema.yaml",
+          "charts/external-dns/CHANGELOG.md",
+          "charts/external-dns/Chart.yaml",
+          "charts/external-dns/README.md",
+          "charts/external-dns/ci/ci-values.yaml",
+          "charts/external-dns/crds/dnsendpoints.externaldns.k8s.io.yaml",
+          "charts/external-dns/crds/dnsrecords.externaldns.k8s.io.yaml",
+          "charts/external-dns/schema/values.yaml",
+          "charts/external-dns/templates/_helpers.tpl",
+          "charts/external-dns/templates/clusterrole.yaml",
+          "charts/external-dns/templates/clusterrolebinding.yaml",
+          "charts/external-dns/templates/deployment.yaml",
+          "charts/external-dns/templates/secret.yaml",
+          "charts/external-dns/templates/service.yaml",
+          "charts/external-dns/templates/serviceaccount.yaml",
+          "charts/external-dns/templates/servicemonitor.yaml",
+          "charts/external-dns/tests/common-metadata_test.yaml",
+          "charts/external-dns/tests/deployment-config_test.yaml",
+          "charts/external-dns/tests/deployment-flags_test.yaml",
+          "charts/external-dns/tests/deployment-scheduling_test.yaml",
+          "charts/external-dns/tests/json-schema_test.yaml",
+          "charts/external-dns/tests/namespace-override_test.yaml",
+          "charts/external-dns/tests/notes-deprecation_test.yaml",
+          "charts/external-dns/tests/notes_test.yaml",
+          "charts/external-dns/tests/rbac_test.yaml",
+          "charts/external-dns/tests/secret_test.yaml",
+          "charts/external-dns/tests/service_test.yaml",
+          "charts/external-dns/tests/serviceaccount_test.yaml",
+          "charts/external-dns/values.schema.json",
+          "charts/external-dns/values.yaml",
+          "config/crd/standard/dnsendpoints.externaldns.k8s.io.yaml",
+          "config/crd/standard/dnsrecords.externaldns.k8s.io.yaml"
+        ],
+        "probe_mode": "go-buildinfo",
+        "probe": [],
+        "artifact": "bin/external-dns",
+        "note": "Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. CRDs/Chart-/Konfigurationsdateien werden nur kopiert, nicht angewendet."
+      }
+    },
+    {
+      "id": "kyverno",
+      "tool_key": "Kyverno",
+      "name": "Kyverno",
+      "repo": "kyverno/kyverno",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/kyverno_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-go-controllers.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_go_controllers",
+        "repo": "kyverno/kyverno",
+        "pin": "f666af06e9bd310c7e730f1523c0430e90371a89",
+        "version": "v1.20.0",
+        "go_min": [
+          1,
+          27,
+          3
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "git",
+          "go"
+        ],
+        "builds": [
+          {
+            "module_dir": ".",
+            "package": "./cmd/kyverno",
+            "binary": "kyverno"
+          },
+          {
+            "module_dir": ".",
+            "package": "./cmd/background-controller",
+            "binary": "background-controller"
+          },
+          {
+            "module_dir": ".",
+            "package": "./cmd/cleanup-controller",
+            "binary": "cleanup-controller"
+          },
+          {
+            "module_dir": ".",
+            "package": "./cmd/reports-controller",
+            "binary": "reports-controller"
+          },
+          {
+            "module_dir": ".",
+            "package": "./cmd/kyverno-init",
+            "binary": "kyverno-init"
+          },
+          {
+            "module_dir": ".",
+            "package": "./cmd/readiness-checker",
+            "binary": "readiness-checker"
+          }
+        ],
+        "ldflags": "-X github.com/kyverno/kyverno/pkg/version.BuildVersion=v1.20.0",
+        "source_sha256": {
+          "go.mod": "2297dd6636afbc8162c977d0778354721783afc751cbda3bdfa38dc758e3968e",
+          "go.sum": "94073ff68ab5c2ebdd8d39bbacb8734830062325c0e291bf7cce41539f8704f8",
+          "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "Makefile": "1dd92831ace852e63f6f61e0c9ee8db431ec476c9c8958552c247cefe9d09d28",
+          "cmd/kyverno/main.go": "88d29b6e567fb69946c4ccf2217d621042552f70fa57f9c4608fa0747981ccca",
+          "cmd/background-controller/main.go": "d1fe687452ecf2c696623094d995f5a504cbb4f070165a8339db1b353f642eda",
+          "cmd/cleanup-controller/main.go": "f466cf6b0466509d01b1a4560c8aa966164bfaf94a6724880f6be91d865a2963",
+          "cmd/reports-controller/main.go": "cd41143100033664a9346f7ba1b8339d55374061331dd54093d60a41d603fb02",
+          "cmd/kyverno-init/main.go": "02271c00f9846db9d5d598261e1a036909fb0932209c9e64718e344923fbf022",
+          "cmd/readiness-checker/main.go": "a7c64c9ed683890e1b4d055fc073eeda13cbe9b7db3dbc4cab7af5a08bc8a982",
+          "pkg/version/version.go": "1f96e0fa947c80d0818ccb51b94685f01a24618688f725c24ece39ba962f9ad1",
+          "cmd/internal/flag.go": "6b8780ec07720e6d256fd75cbc798d06b2e5dd3bd0eaaf3afb0ccb6f9b99a09c",
+          "cmd/internal/version.go": "b63f8416b1f918d983fc9a2b496855e131dd68c48b2eee9c8ee45afa3af76e2a"
+        },
+        "static_files": [
+          "charts/kyverno/Chart.yaml",
+          "charts/kyverno/README.md",
+          "charts/kyverno/charts/crds/Chart.yaml",
+          "charts/kyverno/charts/crds/README.md",
+          "charts/kyverno/charts/crds/templates/_helpers.tpl",
+          "charts/kyverno/charts/crds/templates/kyverno.io/kyverno.io_cleanuppolicies.yaml",
+          "charts/kyverno/charts/crds/templates/kyverno.io/kyverno.io_clustercleanuppolicies.yaml",
+          "charts/kyverno/charts/crds/templates/kyverno.io/kyverno.io_clusterpolicies.yaml",
+          "charts/kyverno/charts/crds/templates/kyverno.io/kyverno.io_globalcontextentries.yaml",
+          "charts/kyverno/charts/crds/templates/kyverno.io/kyverno.io_policies.yaml",
+          "charts/kyverno/charts/crds/templates/kyverno.io/kyverno.io_policyexceptions.yaml",
+          "charts/kyverno/charts/crds/templates/kyverno.io/kyverno.io_updaterequests.yaml",
+          "charts/kyverno/charts/crds/templates/reports.kyverno.io/reports.kyverno.io_clusterephemeralreports.yaml",
+          "charts/kyverno/charts/crds/templates/reports.kyverno.io/reports.kyverno.io_ephemeralreports.yaml",
+          "charts/kyverno/charts/crds/templates/wgpolicyk8s.io/wgpolicyk8s.io_clusterpolicyreports.yaml",
+          "charts/kyverno/charts/crds/templates/wgpolicyk8s.io/wgpolicyk8s.io_policyreports.yaml",
+          "charts/kyverno/charts/crds/values.yaml",
+          "charts/kyverno/charts/grafana/Chart.yaml",
+          "charts/kyverno/charts/grafana/README.md",
+          "charts/kyverno/charts/grafana/dashboard/kyverno-dashboard.json",
+          "charts/kyverno/charts/grafana/templates/dashboard.yaml",
+          "charts/kyverno/charts/grafana/values.yaml",
+          "charts/kyverno/ci/caCertsConfigMap-values.yaml",
+          "charts/kyverno/ci/cleanupController-values.yaml",
+          "charts/kyverno/ci/default-values.yaml",
+          "charts/kyverno/ci/existingImagePullSecrets-values.yaml",
+          "charts/kyverno/ci/extraContainers-values.yaml",
+          "charts/kyverno/ci/hooks-values.yaml",
+          "charts/kyverno/ci/imagePullSecrets-values.yaml",
+          "charts/kyverno/ci/imageRegistry-values.yaml",
+          "charts/kyverno/ci/legacy-policy-optout-values.yaml",
+          "charts/kyverno/ci/lifecycle-values.yaml",
+          "charts/kyverno/ci/monitoring-values.yaml",
+          "charts/kyverno/ci/networkpolicy-values.yaml",
+          "charts/kyverno/ci/nodeSelector-global-values.yaml",
+          "charts/kyverno/ci/openreports-values.yaml",
+          "charts/kyverno/ci/replicas-values.yaml",
+          "charts/kyverno/ci/reportsServer-values.yaml",
+          "charts/kyverno/ci/resourceFilters-values.yaml",
+          "charts/kyverno/ci/resourceFiltersInclude-values.yaml",
+          "charts/kyverno/templates/_helpers.tpl",
+          "charts/kyverno/templates/_helpers/_deployment.tpl",
+          "charts/kyverno/templates/_helpers/_flowcontrol.tpl",
+          "charts/kyverno/templates/_helpers/_image.tpl",
+          "charts/kyverno/templates/_helpers/_labels.tpl",
+          "charts/kyverno/templates/_helpers/_names.tpl",
+          "charts/kyverno/templates/_helpers/_pdb.tpl",
+          "charts/kyverno/templates/_templating/_helpers.tpl",
+          "charts/kyverno/templates/_templating/namespace.yaml",
+          "charts/kyverno/templates/admission-controller/_helpers.tpl",
+          "charts/kyverno/templates/admission-controller/cert-manager-certificates.yaml",
+          "charts/kyverno/templates/admission-controller/clusterrole.yaml",
+          "charts/kyverno/templates/admission-controller/clusterrolebinding.yaml",
+          "charts/kyverno/templates/admission-controller/configmap.yaml",
+          "charts/kyverno/templates/admission-controller/deployment.yaml",
+          "charts/kyverno/templates/admission-controller/flowschema.yaml",
+          "charts/kyverno/templates/admission-controller/horizontalpodautoscaler.yaml",
+          "charts/kyverno/templates/admission-controller/networkpolicy.yaml",
+          "charts/kyverno/templates/admission-controller/poddisruptionbudget.yaml",
+          "charts/kyverno/templates/admission-controller/prioritylevelconfiguration.yaml",
+          "charts/kyverno/templates/admission-controller/role.yaml",
+          "charts/kyverno/templates/admission-controller/rolebinding.yaml",
+          "charts/kyverno/templates/admission-controller/secret.yaml",
+          "charts/kyverno/templates/admission-controller/service.yaml",
+          "charts/kyverno/templates/admission-controller/serviceaccount.yaml",
+          "charts/kyverno/templates/admission-controller/servicemonitor.yaml",
+          "charts/kyverno/templates/background-controller/_helpers.tpl",
+          "charts/kyverno/templates/background-controller/clusterrole.yaml",
+          "charts/kyverno/templates/background-controller/clusterrolebinding.yaml",
+          "charts/kyverno/templates/background-controller/configmap.yaml",
+          "charts/kyverno/templates/background-controller/deployment.yaml",
+          "charts/kyverno/templates/background-controller/networkpolicy.yaml",
+          "charts/kyverno/templates/background-controller/poddisruptionbudget.yaml",
+          "charts/kyverno/templates/background-controller/role.yaml",
+          "charts/kyverno/templates/background-controller/rolebinding.yaml",
+          "charts/kyverno/templates/background-controller/service.yaml",
+          "charts/kyverno/templates/background-controller/serviceaccount.yaml",
+          "charts/kyverno/templates/background-controller/servicemonitor.yaml",
+          "charts/kyverno/templates/cleanup-controller/_helpers.tpl",
+          "charts/kyverno/templates/cleanup-controller/cert-manager-certificates.yaml",
+          "charts/kyverno/templates/cleanup-controller/clusterrole.yaml",
+          "charts/kyverno/templates/cleanup-controller/clusterrolebinding.yaml",
+          "charts/kyverno/templates/cleanup-controller/deployment.yaml",
+          "charts/kyverno/templates/cleanup-controller/networkpolicy.yaml",
+          "charts/kyverno/templates/cleanup-controller/poddisruptionbudget.yaml",
+          "charts/kyverno/templates/cleanup-controller/role.yaml",
+          "charts/kyverno/templates/cleanup-controller/rolebinding.yaml",
+          "charts/kyverno/templates/cleanup-controller/secret.yaml",
+          "charts/kyverno/templates/cleanup-controller/service.yaml",
+          "charts/kyverno/templates/cleanup-controller/serviceaccount.yaml",
+          "charts/kyverno/templates/cleanup-controller/servicemonitor.yaml",
+          "charts/kyverno/templates/config/_helpers.tpl",
+          "charts/kyverno/templates/config/configmap.yaml",
+          "charts/kyverno/templates/config/imagepullsecret.yaml",
+          "charts/kyverno/templates/config/metricsconfigmap.yaml",
+          "charts/kyverno/templates/hooks/_helpers.tpl",
+          "charts/kyverno/templates/hooks/post-upgrade-migrate-resources.yaml",
+          "charts/kyverno/templates/hooks/pre-delete-remove-webhooks.yaml",
+          "charts/kyverno/templates/hooks/pre-delete-scale-to-zero.yaml",
+          "charts/kyverno/templates/hooks/pre-install-check-legacy-policies.yaml",
+          "charts/kyverno/templates/prometheusrule.yaml",
+          "charts/kyverno/templates/rbac/_helpers.tpl",
+          "charts/kyverno/templates/rbac/policies.yaml",
+          "charts/kyverno/templates/rbac/policyreports.yaml",
+          "charts/kyverno/templates/rbac/reports.yaml",
+          "charts/kyverno/templates/rbac/updaterequests.yaml",
+          "charts/kyverno/templates/reports-controller/_helpers.tpl",
+          "charts/kyverno/templates/reports-controller/clusterrole.yaml",
+          "charts/kyverno/templates/reports-controller/clusterrolebinding.yaml",
+          "charts/kyverno/templates/reports-controller/configmap.yaml",
+          "charts/kyverno/templates/reports-controller/deployment.yaml",
+          "charts/kyverno/templates/reports-controller/flowschema.yaml",
+          "charts/kyverno/templates/reports-controller/networkpolicy.yaml",
+          "charts/kyverno/templates/reports-controller/poddisruptionbudget.yaml",
+          "charts/kyverno/templates/reports-controller/prioritylevelconfiguration.yaml",
+          "charts/kyverno/templates/reports-controller/role.yaml",
+          "charts/kyverno/templates/reports-controller/rolebinding.yaml",
+          "charts/kyverno/templates/reports-controller/service.yaml",
+          "charts/kyverno/templates/reports-controller/serviceaccount.yaml",
+          "charts/kyverno/templates/reports-controller/servicemonitor.yaml",
+          "charts/kyverno/templates/reports-server/_helpers.tpl",
+          "charts/kyverno/templates/tests/_helpers.tpl",
+          "charts/kyverno/templates/tests/admission-controller-liveness.yaml",
+          "charts/kyverno/templates/tests/admission-controller-metrics.yaml",
+          "charts/kyverno/templates/tests/admission-controller-readiness.yaml",
+          "charts/kyverno/templates/tests/cleanup-controller-liveness.yaml",
+          "charts/kyverno/templates/tests/cleanup-controller-metrics.yaml",
+          "charts/kyverno/templates/tests/cleanup-controller-readiness.yaml",
+          "charts/kyverno/templates/tests/helper-functions-test.yaml",
+          "charts/kyverno/templates/tests/reports-controller-metrics.yaml",
+          "charts/kyverno/templates/validate-legacy-policies.yaml",
+          "charts/kyverno/templates/validate.yaml",
+          "charts/kyverno/values.yaml",
+          "config/crds/kyverno/README.md",
+          "config/crds/kyverno/kyverno.io_cleanuppolicies.yaml",
+          "config/crds/kyverno/kyverno.io_clustercleanuppolicies.yaml",
+          "config/crds/kyverno/kyverno.io_clusterpolicies.yaml",
+          "config/crds/kyverno/kyverno.io_globalcontextentries.yaml",
+          "config/crds/kyverno/kyverno.io_policies.yaml",
+          "config/crds/kyverno/kyverno.io_policyexceptions.yaml",
+          "config/crds/kyverno/kyverno.io_updaterequests.yaml",
+          "config/crds/policies.kyverno.io/policies.kyverno.io_deletingpolicies.yaml",
+          "config/crds/policies.kyverno.io/policies.kyverno.io_generatingpolicies.yaml",
+          "config/crds/policies.kyverno.io/policies.kyverno.io_imagevalidatingpolicies.yaml",
+          "config/crds/policies.kyverno.io/policies.kyverno.io_mutatingpolicies.yaml",
+          "config/crds/policies.kyverno.io/policies.kyverno.io_namespaceddeletingpolicies.yaml",
+          "config/crds/policies.kyverno.io/policies.kyverno.io_namespacedgeneratingpolicies.yaml",
+          "config/crds/policies.kyverno.io/policies.kyverno.io_namespacedimagevalidatingpolicies.yaml",
+          "config/crds/policies.kyverno.io/policies.kyverno.io_namespacedmutatingpolicies.yaml",
+          "config/crds/policies.kyverno.io/policies.kyverno.io_namespacedvalidatingpolicies.yaml",
+          "config/crds/policies.kyverno.io/policies.kyverno.io_policyexceptions.yaml",
+          "config/crds/policies.kyverno.io/policies.kyverno.io_validatingpolicies.yaml",
+          "config/crds/policyreport/wgpolicyk8s.io_clusterpolicyreports.yaml",
+          "config/crds/policyreport/wgpolicyk8s.io_policyreports.yaml",
+          "config/crds/reports/reports.kyverno.io_clusterephemeralreports.yaml",
+          "config/crds/reports/reports.kyverno.io_ephemeralreports.yaml"
+        ],
+        "probe_mode": "go-buildinfo",
+        "probe": [],
+        "artifact": "bin/kyverno",
+        "note": "Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. CRDs/Chart-/Konfigurationsdateien werden nur kopiert, nicht angewendet."
+      }
+    },
+    {
+      "id": "gatekeeper",
+      "tool_key": "Gatekeeper",
+      "name": "Gatekeeper",
+      "repo": "open-policy-agent/gatekeeper",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/gatekeeper_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-go-controllers.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_go_controllers",
+        "repo": "open-policy-agent/gatekeeper",
+        "pin": "2d0b6ad97cf3a8b8436a00a1f4b07b3a56b92ca0",
+        "version": "v3.23.1",
+        "go_min": [
+          1,
+          26,
+          0
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "git",
+          "go"
+        ],
+        "builds": [
+          {
+            "module_dir": ".",
+            "package": ".",
+            "binary": "gatekeeper"
+          }
+        ],
+        "ldflags": "-X github.com/open-policy-agent/gatekeeper/v3/pkg/version.Version=v3.23.1",
+        "source_sha256": {
+          "go.mod": "28a85725035896c603f541cefd1621a68380c98934a8aabc1e168b358bd455d9",
+          "go.sum": "65b3131abb4f2859668275523b606afb4c4bdaaa0635d3dd86a26f71cfe488ff",
+          "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "Makefile": "df89e39d6d9629e9a406bceb85555c08c09070014224bbe9547b09d9307c1a84",
+          "main.go": "9fcd6944837cd116c776f9b8855a822496c77c5314333a0156a90e169540a10f"
+        },
+        "static_files": [
+          "charts/gatekeeper/Chart.yaml",
+          "charts/gatekeeper/README.md",
+          "charts/gatekeeper/crds/assign-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/assignimage-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/assignmetadata-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/config-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/configpodstatus-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/connection-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/connectionpodstatus-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/constraintpodstatus-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/constrainttemplate-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/constrainttemplatepodstatus-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/expansiontemplate-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/expansiontemplatepodstatus-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/modifyset-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/mutatorpodstatus-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/provider-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/providerpodstatus-customresourcedefinition.yaml",
+          "charts/gatekeeper/crds/syncset-customresourcedefinition.yaml",
+          "charts/gatekeeper/templates/_helpers.tpl",
+          "charts/gatekeeper/templates/gatekeeper-admin-serviceaccount.yaml",
+          "charts/gatekeeper/templates/gatekeeper-audit-deployment.yaml",
+          "charts/gatekeeper/templates/gatekeeper-audit-violation-export-connection.yaml",
+          "charts/gatekeeper/templates/gatekeeper-controller-manager-deployment.yaml",
+          "charts/gatekeeper/templates/gatekeeper-controller-manager-network-policy.yaml",
+          "charts/gatekeeper/templates/gatekeeper-controller-manager-poddisruptionbudget.yaml",
+          "charts/gatekeeper/templates/gatekeeper-critical-pods-resourcequota.yaml",
+          "charts/gatekeeper/templates/gatekeeper-manager-role-clusterrole.yaml",
+          "charts/gatekeeper/templates/gatekeeper-manager-role-role.yaml",
+          "charts/gatekeeper/templates/gatekeeper-manager-rolebinding-clusterrolebinding.yaml",
+          "charts/gatekeeper/templates/gatekeeper-manager-rolebinding-rolebinding.yaml",
+          "charts/gatekeeper/templates/gatekeeper-mutating-webhook-configuration-mutatingwebhookconfiguration.yaml",
+          "charts/gatekeeper/templates/gatekeeper-validating-webhook-configuration-validatingwebhookconfiguration.yaml",
+          "charts/gatekeeper/templates/gatekeeper-webhook-server-cert-secret.yaml",
+          "charts/gatekeeper/templates/gatekeeper-webhook-service-service.yaml",
+          "charts/gatekeeper/templates/namespace-post-install.yaml",
+          "charts/gatekeeper/templates/namespace-post-upgrade.yaml",
+          "charts/gatekeeper/templates/probe-webhook-post-install.yaml",
+          "charts/gatekeeper/templates/upgrade-crds-hook.yaml",
+          "charts/gatekeeper/templates/webhook-configs-pre-delete.yaml",
+          "charts/gatekeeper/values.yaml",
+          "deploy/gatekeeper.yaml"
+        ],
+        "probe_mode": "go-buildinfo",
+        "probe": [],
+        "artifact": "bin/gatekeeper",
+        "note": "Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. CRDs/Chart-/Konfigurationsdateien werden nur kopiert, nicht angewendet."
+      }
+    },
+    {
+      "id": "keda",
+      "tool_key": "KEDA",
+      "name": "KEDA",
+      "repo": "kedacore/keda",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/keda_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-go-controllers.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_go_controllers",
+        "repo": "kedacore/keda",
+        "pin": "43b5dfcd7a0a8a08e328b65667464986f60ee12c",
+        "version": "v2.21.1",
+        "private_go": {
+          "version": "go1.27.4",
+          "metadata_url": "https://go.dev/dl/?mode=json&include=all",
+          "archives": {
+            "linux-amd64": [
+              "7226736c2339719cda28fbf3a54d71aa63bcefe376e98cef00034268dab24840",
+              70680823
+            ],
+            "linux-arm64": [
+              "3392582988a273a87ab5043ee1b2c9c17a2c3c00580bf9326c47a2e0aaaeac92",
+              67129258
+            ]
+          }
+        },
+        "go_min": [
+          1,
+          27,
+          4
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "git",
+          "go"
+        ],
+        "builds": [
+          {
+            "module_dir": ".",
+            "package": "./cmd/operator",
+            "binary": "keda"
+          },
+          {
+            "module_dir": ".",
+            "package": "./cmd/adapter",
+            "binary": "keda-adapter"
+          },
+          {
+            "module_dir": ".",
+            "package": "./cmd/webhooks",
+            "binary": "keda-admission-webhooks"
+          }
+        ],
+        "ldflags": "-X github.com/kedacore/keda/v2/version.Version=v2.21.1 -X github.com/kedacore/keda/v2/version.GitCommit=43b5dfcd7a0a8a08e328b65667464986f60ee12c",
+        "source_sha256": {
+          "go.mod": "7700c45e453f64b4a9f2cb304e71cfbaf8dd906f141bfbb62ff0e7220cbd926b",
+          "go.sum": "722bbbf2f8b86a3dcee5e2242606e35d66b11436b80e7b6da21b543ac6c946cf",
+          "LICENSE": "56531aa6d5a0ae8aae14b050f6aafe55a068b97c1f57728b547e55bcc0e29036",
+          "Makefile": "52b5cb20c2d34f642cda0570258cd572d2757afd52d03f66495b4d8f1dedda19",
+          "cmd/operator/main.go": "07a426f8ff11029d7e97bbf0a1857033f45cc914792858ad9b5088b1d586cd2b",
+          "cmd/adapter/main.go": "b15e38d6ab43a71d960f786adf1f995f81bdeda9618dee8b9f784e9aac488922",
+          "cmd/webhooks/main.go": "3efe8d8127d075e725c890c0c40bee5fa740a91f3ce3251d94d78d77b60fb354",
+          "version/version.go": "61157ddd5f67c72d5c93e7b87c34eb23fcdf2045f5df43feb8b9ddd531229d24"
+        },
+        "static_files": [
+          "config/crd/bases/eventing.keda.sh_cloudeventsources.yaml",
+          "config/crd/bases/eventing.keda.sh_clustercloudeventsources.yaml",
+          "config/crd/bases/keda.sh_clustertriggerauthentications.yaml",
+          "config/crd/bases/keda.sh_scaledjobs.yaml",
+          "config/crd/bases/keda.sh_scaledobjects.yaml",
+          "config/crd/bases/keda.sh_triggerauthentications.yaml",
+          "config/crd/kustomization.yaml",
+          "config/crd/patches/scaledjob_patch.yaml",
+          "config/crd/patches/scaledobject_patch.yaml",
+          "config/default/kustomization.yaml",
+          "config/default/kustomize-config/metadataLabelTransformer.yaml",
+          "config/manager/kustomization.yaml",
+          "config/manager/manager.yaml",
+          "config/manager/service.yaml",
+          "config/metrics-server/api_service.yaml",
+          "config/metrics-server/deployment.yaml",
+          "config/metrics-server/kustomization.yaml",
+          "config/metrics-server/role.yaml",
+          "config/metrics-server/role_binding.yaml",
+          "config/metrics-server/service.yaml",
+          "config/rbac/aggregate_cluster_roles.yaml",
+          "config/rbac/kustomization.yaml",
+          "config/rbac/role.yaml",
+          "config/rbac/role_binding.yaml"
+        ],
+        "probe_mode": "go-buildinfo",
+        "probe": [],
+        "artifact": "bin/keda",
+        "note": "Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. CRDs/Chart-/Konfigurationsdateien werden nur kopiert, nicht angewendet."
+      }
+    },
+    {
+      "id": "temporal",
+      "tool_key": "Temporal",
+      "name": "Temporal",
+      "repo": "temporalio/temporal",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/temporal_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-go-controllers.md",
+      "license": "MIT",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_go_controllers",
+        "repo": "temporalio/temporal",
+        "pin": "6d085822273f4336796e6959c73ab1d14a23eb77",
+        "version": "v1.32.2",
+        "go_min": [
+          1,
+          26,
+          10
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "git",
+          "go"
+        ],
+        "builds": [
+          {
+            "module_dir": ".",
+            "package": "./cmd/server",
+            "binary": "temporal-server"
+          },
+          {
+            "module_dir": ".",
+            "package": "./cmd/tools/sql",
+            "binary": "temporal-sql-tool"
+          },
+          {
+            "module_dir": ".",
+            "package": "./cmd/tools/cassandra",
+            "binary": "temporal-cassandra-tool"
+          }
+        ],
+        "ldflags": "",
+        "source_sha256": {
+          "go.mod": "a2649848e2ddcb1c7194a3a9cb937d7006a425dbbee28b6d48a965da27e309d4",
+          "go.sum": "3ed31df838ccc77d4d2b8c44f5c90c7caca5b1c44c8477ae08b9f955e68a0e55",
+          "LICENSE": "6aab9afd99ceb1dcaf6a0d91386b46baef9bce17ae4006044e0f231e31430b69",
+          "Makefile": "8c586101991c119f76b0e1cfbcfd382edb0999f8ae19d15a75a45bfb82c13f5b",
+          "cmd/server/main.go": "09118e503486ea79371a44e00c666d66fb6476492368177e8af6e179e2709612",
+          "cmd/tools/sql/main.go": "bfc43e541f77396ef6e80fa56ee9c73aef89f88a2172c4b8dd58fb573313737f",
+          "cmd/tools/cassandra/main.go": "0e38a69756d60e6941dba3aa6f47533b5c84d746dd927e1cebd6871e32a0d9bd",
+          "common/headers/headers.go": "a6a707d74ea66fed454394aaab6d2cce8fcc3a1440a16b85966990295f2f2d86"
+        },
+        "static_files": [
+          "schema/cassandra/README.md",
+          "schema/cassandra/temporal/versioned/v1.0/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.1/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.10/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.11/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.12/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.13/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.2/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.3/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.4/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.5/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.6/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.7/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.8/manifest.json",
+          "schema/cassandra/temporal/versioned/v1.9/manifest.json",
+          "schema/mysql/v8/temporal/database.sql",
+          "schema/mysql/v8/temporal/schema.sql",
+          "schema/mysql/v8/temporal/versioned/v1.0/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.0/schema.sql",
+          "schema/mysql/v8/temporal/versioned/v1.1/cluster_metadata.sql",
+          "schema/mysql/v8/temporal/versioned/v1.1/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.10/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.10/task_queue_user_data.sql",
+          "schema/mysql/v8/temporal/versioned/v1.11/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.11/queues.sql",
+          "schema/mysql/v8/temporal/versioned/v1.12/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.12/nexus_incoming_services.sql",
+          "schema/mysql/v8/temporal/versioned/v1.13/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.13/nexus_endpoints.sql",
+          "schema/mysql/v8/temporal/versioned/v1.14/add_current_executions_start_time.sql",
+          "schema/mysql/v8/temporal/versioned/v1.14/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.15/add_current_executions_data.sql",
+          "schema/mysql/v8/temporal/versioned/v1.15/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.16/fix_data_encoding_column.sql",
+          "schema/mysql/v8/temporal/versioned/v1.16/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.17/add_chasm_node_maps.sql",
+          "schema/mysql/v8/temporal/versioned/v1.17/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.18/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.18/tasks_v2.sql",
+          "schema/mysql/v8/temporal/versioned/v1.19/current_chasm_executions.sql",
+          "schema/mysql/v8/temporal/versioned/v1.19/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.2/blob_size.sql",
+          "schema/mysql/v8/temporal/versioned/v1.2/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.2/queue.sql",
+          "schema/mysql/v8/temporal/versioned/v1.3/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.3/visibility_tasks.sql",
+          "schema/mysql/v8/temporal/versioned/v1.4/cluster_metadata.sql",
+          "schema/mysql/v8/temporal/versioned/v1.4/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.5/cluster_membership.sql",
+          "schema/mysql/v8/temporal/versioned/v1.5/event.sql",
+          "schema/mysql/v8/temporal/versioned/v1.5/executions.sql",
+          "schema/mysql/v8/temporal/versioned/v1.5/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.6/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.6/queue_metadata.sql",
+          "schema/mysql/v8/temporal/versioned/v1.7/cluster_metadata_info.sql",
+          "schema/mysql/v8/temporal/versioned/v1.7/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.7/no_start_version.sql",
+          "schema/mysql/v8/temporal/versioned/v1.7/tiered_storage_tasks.sql",
+          "schema/mysql/v8/temporal/versioned/v1.8/alter_columns.sql",
+          "schema/mysql/v8/temporal/versioned/v1.8/drop_unused_tasks_table.sql",
+          "schema/mysql/v8/temporal/versioned/v1.8/manifest.json",
+          "schema/mysql/v8/temporal/versioned/v1.9/history_tasks_table.sql",
+          "schema/mysql/v8/temporal/versioned/v1.9/manifest.json",
+          "schema/mysql/v8/visibility/database.sql",
+          "schema/mysql/v8/visibility/schema.sql",
+          "schema/mysql/v8/visibility/versioned/v1.0/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.0/schema.sql",
+          "schema/mysql/v8/visibility/versioned/v1.1/index.sql",
+          "schema/mysql/v8/visibility/versioned/v1.1/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.10/add_temporal_reported_problems.sql",
+          "schema/mysql/v8/visibility/versioned/v1.10/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.11/add_chasm_search_attributes.sql",
+          "schema/mysql/v8/visibility/versioned/v1.11/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.12/add_low_cardinality_keyword.sql",
+          "schema/mysql/v8/visibility/versioned/v1.12/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.13/add_used_deployment_versions_search_attribute.sql",
+          "schema/mysql/v8/visibility/versioned/v1.13/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.14/add_external_payload_size_and_count_search_attributes.sql",
+          "schema/mysql/v8/visibility/versioned/v1.14/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.2/advanced_visibility.sql",
+          "schema/mysql/v8/visibility/versioned/v1.2/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.3/add_build_ids_search_attribute.sql",
+          "schema/mysql/v8/visibility/versioned/v1.3/add_history_size_bytes.sql",
+          "schema/mysql/v8/visibility/versioned/v1.3/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.4/add_execution_duration.sql",
+          "schema/mysql/v8/visibility/versioned/v1.4/add_parent_workflow_info.sql",
+          "schema/mysql/v8/visibility/versioned/v1.4/add_state_transition_count.sql",
+          "schema/mysql/v8/visibility/versioned/v1.4/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.5/add_root_workflow_info.sql",
+          "schema/mysql/v8/visibility/versioned/v1.5/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.6/fix_root_workflow_info.sql",
+          "schema/mysql/v8/visibility/versioned/v1.6/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.7/add_pause_info_search_attribute.sql",
+          "schema/mysql/v8/visibility/versioned/v1.7/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.8/add_deployment_search_attributes.sql",
+          "schema/mysql/v8/visibility/versioned/v1.8/manifest.json",
+          "schema/mysql/v8/visibility/versioned/v1.9/add_version_column.sql",
+          "schema/mysql/v8/visibility/versioned/v1.9/manifest.json",
+          "schema/postgresql/v12/temporal/database.sql",
+          "schema/postgresql/v12/temporal/schema.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.0/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.0/schema.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.1/cluster_metadata.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.1/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.10/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.10/task_queue_user_data.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.11/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.11/queue_v2.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.12/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.12/nexus_incoming_services.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.13/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.13/nexus_endpoints.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.14/add_current_executions_start_time.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.14/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.15/add_current_executions_data.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.15/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.16/fix_data_encoding_column.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.16/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.17/add_chasm_node_maps.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.17/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.18/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.18/tasks_v2.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.19/current_chasm_executions.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.19/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.2/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.2/queue.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.3/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.3/visibility_tasks.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.4/cluster_metadata.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.4/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.5/cluster_membership.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.5/event.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.5/executions.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.5/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.6/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.6/queue_metadata.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.7/cluster_metadata_info.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.7/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.7/no_start_version.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.7/tiered_storage_tasks.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.8/alter_columns.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.8/drop_unused_tasks_table.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.8/manifest.json",
+          "schema/postgresql/v12/temporal/versioned/v1.9/history_tasks_table.sql",
+          "schema/postgresql/v12/temporal/versioned/v1.9/manifest.json",
+          "schema/postgresql/v12/visibility/database.sql",
+          "schema/postgresql/v12/visibility/schema.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.0/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.0/schema.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.1/index.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.1/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.10/add_temporal_reported_columns.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.10/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.11/add_chasm_search_attributes.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.11/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.12/add_low_cardinality_keyword.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.12/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.13/add_used_deployment_versions_search_attribute.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.13/combined_v1.10_v1.13.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.13/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.14/add_external_payload_size_and_count_search_attributes.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.14/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.2/advanced_visibility.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.2/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.3/add_build_ids_search_attribute.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.3/add_history_size_bytes.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.3/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.4/add_execution_duration.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.4/add_parent_workflow_info.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.4/add_state_transition_count.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.4/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.5/add_root_workflow_info.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.5/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.6/fix_root_workflow_info.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.6/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.7/add_pause_info_search_attribute.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.7/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.8/add_deployment_search_attributes.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.8/manifest.json",
+          "schema/postgresql/v12/visibility/versioned/v1.9/add_version_column.sql",
+          "schema/postgresql/v12/visibility/versioned/v1.9/manifest.json",
+          "config/development-postgres12.yaml",
+          "config/dynamicconfig/development-sql.yaml"
+        ],
+        "probe_mode": "go-buildinfo",
+        "probe": [],
+        "artifact": "bin/temporal-server",
+        "note": "Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. Server und SQL-/Cassandra-Werkzeuge; Datenbank, Schema-Migration, TLS/Auth und Deployment separat.",
+        "tags": [
+          "disable_grpc_modules"
+        ]
+      }
+    },
+    {
+      "id": "argo_workflows",
+      "tool_key": "Argo_Workflows",
+      "name": "Argo_Workflows",
+      "repo": "argoproj/argo-workflows",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/argo_workflows_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-go-controllers.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_go_controllers",
+        "repo": "argoproj/argo-workflows",
+        "pin": "43021573c5a35cbafae009043c132dfcef43a112",
+        "version": "v4.1.6",
+        "go_min": [
+          1,
+          26,
+          10
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "git",
+          "go"
+        ],
+        "builds": [
+          {
+            "module_dir": ".",
+            "package": "./cmd/workflow-controller",
+            "binary": "workflow-controller"
+          },
+          {
+            "module_dir": ".",
+            "package": "./cmd/argoexec",
+            "binary": "argoexec"
+          }
+        ],
+        "ldflags": "-X github.com/argoproj/argo-workflows/v4.version=v4.1.6 -X github.com/argoproj/argo-workflows/v4.gitCommit=43021573c5a35cbafae009043c132dfcef43a112 -X github.com/argoproj/argo-workflows/v4.gitTag=v4.1.6 -X github.com/argoproj/argo-workflows/v4.gitTreeState=clean",
+        "source_sha256": {
+          "go.mod": "b7ad887324c84c5bbe386bc9663639045b40db515dfce32c8f2e6f7c6992ae1e",
+          "go.sum": "1c88fa90b1bbcb45d49845465e7a764678315ae138deb63f0bb10f29bdf64778",
+          "LICENSE": "c996fc213c94f4a4a838407d355b081226caa7b103a4f239bb87fb8f1d8e3a60",
+          "Makefile": "734c11fcbf8ad9690de2c1c86033900e0638a51c90b9ba24ae66e87acdd97144",
+          "cmd/workflow-controller/main.go": "6c21af141fc82e6c587292533ac84123f1877ded930b57dc9c927a44a5b02495",
+          "cmd/argoexec/main.go": "7f9ee9f4d05f9729b3ce382435d838e8957df2a71efd36ff80e91cb21dfe38c4"
+        },
+        "static_files": [
+          "manifests/base/argo-server/argo-server-deployment.yaml",
+          "manifests/base/argo-server/argo-server-sa.yaml",
+          "manifests/base/argo-server/argo-server-service.yaml",
+          "manifests/base/argo-server/kustomization.yaml",
+          "manifests/base/crds/full/README.md",
+          "manifests/base/crds/full/argoproj.io_clusterworkflowtemplates.yaml",
+          "manifests/base/crds/full/argoproj.io_cronworkflows.yaml",
+          "manifests/base/crds/full/argoproj.io_workflowartifactgctasks.yaml",
+          "manifests/base/crds/full/argoproj.io_workfloweventbindings.yaml",
+          "manifests/base/crds/full/argoproj.io_workflows.yaml",
+          "manifests/base/crds/full/argoproj.io_workflowtaskresults.yaml",
+          "manifests/base/crds/full/argoproj.io_workflowtasksets.yaml",
+          "manifests/base/crds/full/argoproj.io_workflowtemplates.yaml",
+          "manifests/base/crds/full/kustomization.yaml",
+          "manifests/base/crds/minimal/README.md",
+          "manifests/base/crds/minimal/argoproj.io_clusterworkflowtemplates.yaml",
+          "manifests/base/crds/minimal/argoproj.io_cronworkflows.yaml",
+          "manifests/base/crds/minimal/argoproj.io_workflowartifactgctasks.yaml",
+          "manifests/base/crds/minimal/argoproj.io_workfloweventbindings.yaml",
+          "manifests/base/crds/minimal/argoproj.io_workflows.yaml",
+          "manifests/base/crds/minimal/argoproj.io_workflowtaskresults.yaml",
+          "manifests/base/crds/minimal/argoproj.io_workflowtasksets.yaml",
+          "manifests/base/crds/minimal/argoproj.io_workflowtemplates.yaml",
+          "manifests/base/crds/minimal/kustomization.yaml",
+          "manifests/base/workflow-controller/kustomization.yaml",
+          "manifests/base/workflow-controller/workflow-controller-configmap.yaml",
+          "manifests/base/workflow-controller/workflow-controller-deployment.yaml",
+          "manifests/base/workflow-controller/workflow-controller-priorityclass.yaml",
+          "manifests/base/workflow-controller/workflow-controller-sa.yaml",
+          "manifests/cluster-install-no-crds/argo-server-rbac/argo-server-clusterole.yaml",
+          "manifests/cluster-install-no-crds/argo-server-rbac/argo-server-clusterolebinding.yaml",
+          "manifests/cluster-install-no-crds/argo-server-rbac/kustomization.yaml",
+          "manifests/cluster-install-no-crds/kustomization.yaml",
+          "manifests/cluster-install-no-crds/workflow-controller-rbac/kustomization.yaml",
+          "manifests/cluster-install-no-crds/workflow-controller-rbac/workflow-aggregate-roles.yaml",
+          "manifests/cluster-install-no-crds/workflow-controller-rbac/workflow-controller-clusterrole.yaml",
+          "manifests/cluster-install-no-crds/workflow-controller-rbac/workflow-controller-clusterrolebinding.yaml",
+          "manifests/cluster-install-no-crds/workflow-controller-rbac/workflow-controller-role.yaml",
+          "manifests/cluster-install-no-crds/workflow-controller-rbac/workflow-controller-rolebinding.yaml",
+          "manifests/cluster-install/kustomization.yaml"
+        ],
+        "probe_mode": "go-buildinfo",
+        "probe": [],
+        "artifact": "bin/workflow-controller",
+        "note": "Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. Nur Controller und Executor, kein UI-/API-Server; Workflow-Pods brauchen separate freigegebene CRI-Images."
+      }
+    },
+    {
+      "id": "phoenix",
+      "tool_key": "Arize_Phoenix",
+      "name": "Arize Phoenix",
+      "repo": "Arize-ai/phoenix",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/phoenix_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/python-reviewed-native.md",
+      "license": "Elastic-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "python_reviewed_native",
+        "repo": "Arize-ai/phoenix",
+        "pin": "2aa3a3c3afecc1e7cec16978b553d836ba409f28",
+        "version": "8.32.1",
+        "distribution": "arize-phoenix",
+        "import_module": "phoenix",
+        "cli": "phoenix",
+        "private_uv": "0.13.5",
+        "tools": [
+          "uv"
+        ],
+        "frontend_node": "22.23.4",
+        "frontend_pnpm": "10.2.0",
+        "frontend_pnpm_sha256": "72f1630812107c8723eb5be4517725f3e13f09cfd8f71571cf29f23ce318bdb7",
+        "disk_mb": 12288,
+        "ram_mb": 4096,
+        "source_sha256": {
+          "pyproject.toml": "33cb60d8db75db3ca8221ab825584af195d07101f27e4ab163d4bf401cbd36dc",
+          "src/phoenix/version.py": "51a35531d39b231c8b7858622615b4683467f000530351236ab263c18d829846",
+          "app/package.json": "924c7bff1dc98b0607614436b4b681d479652a065ed5a0fd6215791c3d22d8fb",
+          "app/pnpm-lock.yaml": "eb0a2136d73d2003eb5f32d880307df60d9a3843e8fcc01613994384c04fe523",
+          "app/vite.config.mts": "daa27efd337cd166e59ae10078d56c8ed5d6519b3171b50219021ea61350a49b"
+        },
+        "note": "Source-Wheel einschliesslich kompiliertem Frontend, private CPython-3.12-venv. Importprobe ohne launch_app/Dienststart. Elastic-2.0 vorher pruefen. Keine Laufzeit-/Datenbankabnahme; Linux-End-to-End-Build noch ausstehend."
+      }
+    },
+    {
+      "id": "checkov",
+      "tool_key": "Checkov",
+      "name": "Checkov",
+      "repo": "bridgecrewio/checkov",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/checkov_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/python-reviewed-native.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "python_reviewed_native",
+        "repo": "bridgecrewio/checkov",
+        "pin": "9ea6d83d477afb3691795eda79d8f4dd56851d4b",
+        "version": "3.2.495",
+        "distribution": "checkov",
+        "import_module": "checkov",
+        "cli": "checkov",
+        "private_uv": "0.13.5",
+        "tools": [
+          "uv"
+        ],
+        "disk_mb": 8192,
+        "ram_mb": 2048,
+        "source_sha256": {
+          "pyproject.toml": "9b5c4a859258ce52bbbd9ee23ba93243a039f2bac08e930a764fdf3679099fb4",
+          "setup.py": "b4c8292cb242b037bd4021fc20f1348fc99c4a13c44f868ea15a8e7b60fa89e8",
+          "checkov/version.py": "aef11ef6facd19a131626f7e0061a66a10dc2be0d6f3bb090642c44569fe79db"
+        },
+        "note": "Echtes Source-Wheel mit generierten JSON-Graph-Policies und Checkov-CLI in eigener venv; keine Scans/Providerkontakte. Python-docker ist deklarierte Bibliotheksabhaengigkeit, keine Engine/Containerinstallation. Linux-End-to-End-Build noch ausstehend."
+      }
+    },
+    {
+      "id": "ragas",
+      "tool_key": "Ragas",
+      "name": "Ragas",
+      "repo": "vibrantlabsai/ragas",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/ragas_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/python-reviewed-native.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "python_reviewed_native",
+        "repo": "vibrantlabsai/ragas",
+        "pin": "8b4653c41abf6c8f86f63397f1a960d6411c0ca9",
+        "version": "0.3.9",
+        "distribution": "ragas",
+        "import_module": "ragas",
+        "cli": "ragas",
+        "private_uv": "0.13.5",
+        "tools": [
+          "uv"
+        ],
+        "disk_mb": 12288,
+        "ram_mb": 2048,
+        "source_sha256": {
+          "pyproject.toml": "011aaffd64d194640b10a6e1075cd2eca07d0aaecf6ed717e687cfa1c59003f9",
+          "src/ragas/__init__.py": "c1f89c728e67b2082d5e226917b5d65f1ca84db051ee613e0f844c818ac20448"
+        },
+        "note": "Source-Wheel mit expliziter gepinnter SCM-Version, CLI und evaluate/aevaluate-Importprobe. Keine Evaluation, Inferenz, Modell-Downloads oder Providerkontakte; keine all/dev-Extras. Linux-End-to-End-Build noch ausstehend."
+      }
+    },
+    {
+      "id": "gvisor",
+      "tool_key": "gVisor",
+      "name": "gVisor",
+      "repo": "google/gvisor",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/gvisor_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/sandbox-native-candidates.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "candidate_module": "scripts/tools/helpers/native_sandbox_candidates.py",
+        "note": "Vollstaendiges gVisor-Releasebundle nativ mit Bazel 9.3.1; nur Versionsprobe, keine Sandbox-/CRI-Abnahme.",
+        "repo": "google/gvisor",
+        "pin": "a0e6be6fb5e03d8ebea13592f36a097c7e9a41b9",
+        "version": "release-20261109.0",
+        "disk_mb": 65536,
+        "ram_mb": 8192,
+        "tools": [
+          "git",
+          "bazel",
+          "cc",
+          "c++",
+          "make",
+          "python3"
+        ],
+        "source_sha256": {
+          "LICENSE": "0fbab5c58efbdf6d31e8085214f2dd821659c03d73cff3ed2b08e98826ea1cd9",
+          "README.md": "0164b6a864027e506c90185bb3c8b5bc0d70e51dc6e872b2b1d8719364dfcba3",
+          "images/default/bazelversion": "10ba73729037af18a205cb7f273f8676ef03aec9610e248d138c8f385457cda8",
+          "MODULE.bazel": "4b8f3ca647e66eb0bcf39f7289dedb13fe572ab4cd3dd7d02d42454c19f20be4",
+          "debian/BUILD": "87e52587227ab5d801ee55a56e8d5c61afd57bd96f3514cb2f3cd62982da6669",
+          "tools/release.bzl": "5b8f5d651f2473ba94aa173827be2fc7a54062917ecf99374f2d692a82bb9eda"
+        },
+        "acceptance": "complete-release-bundle; version-only; no sandbox or CRI acceptance",
+        "apt_build_deps": [
+          "build-essential",
+          "python3",
+          "ca-certificates",
+          "bzip2"
+        ],
+        "service_applicability": "CLI/build components only; no unit, service start or cluster registration",
+        "bazel_exact": "9.3.1",
+        "build_target": "//debian:gvisor-release-tar-bz2",
+        "external_toolchain_assets": [
+          {
+            "url": "https://github.com/bazelbuild/bazel/releases/download/9.3.1/bazel-9.3.1-linux-x86_64",
+            "sha256": "7f775b54bbec487efaf0f49ccda1d2ed02cd34f582edfdd6aeeec76e39ef585c"
+          },
+          {
+            "url": "https://github.com/bazelbuild/bazel/releases/download/9.3.1/bazel-9.3.1-linux-arm64",
+            "sha256": "10ba9cb76d4ee748d274dcc2981992bb12b74a203dc41a9c2eceeb8f29359366"
+          }
+        ]
+      }
+    },
+    {
+      "id": "firecracker",
+      "tool_key": "Firecracker",
+      "name": "Firecracker + Jailer",
+      "repo": "firecracker-microvm/firecracker",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/firecracker_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/sandbox-native-candidates.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "candidate_module": "scripts/tools/helpers/native_sandbox_candidates.py",
+        "note": "Native Firecracker-/Jailer-Hostkomponenten mit Rust 1.97.0 und musl; kein Gast-Kernel/rootfs und keine VM-Abnahme.",
+        "repo": "firecracker-microvm/firecracker",
+        "pin": "eaf83bb718a559d324613d566eaf776b31a62340",
+        "version": "1.18.0",
+        "disk_mb": 16384,
+        "ram_mb": 4096,
+        "tools": [
+          "git",
+          "cc",
+          "musl-gcc",
+          "make",
+          "python3"
+        ],
+        "source_sha256": {
+          "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "Cargo.toml": "bc89c8e6f5c74642e6b5c7c1f1a58ec65912922f0f70c3a69b1ae92694799659",
+          "Cargo.lock": "e95fab1aefe06b0d4f28abb02e97a8415ca1acb3f3f7ddc3b7d370b591643664",
+          "rust-toolchain.toml": "bfaf8ec692b6fdc56ad4534d465b852e5a660616b0dc1c3a78b288b41450c04c",
+          "src/firecracker/build.rs": "d7312497726509400d7a267bc87c0c03698fe76ea67ae09a32f46e352180efea",
+          "resources/seccomp/x86_64-unknown-linux-musl.json": "e165d4a31f03c7e8398622fe11078f506f7e0191b7f9272c2d583274f3f51656",
+          "resources/seccomp/aarch64-unknown-linux-musl.json": "9b73ffb7d5d76c4ba29b4cd7437b9c28bda14627b997a8a4046a3033785b2a96"
+        },
+        "acceptance": "host-components-firecracker-and-jailer; no guest kernel/rootfs or VM acceptance",
+        "apt_build_deps": [
+          "build-essential",
+          "musl-tools",
+          "python3",
+          "ca-certificates"
+        ],
+        "service_applicability": "CLI/build components only; no unit, service start or cluster registration",
+        "external_toolchain_assets": [
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/rustc-1.97.0-x86_64-unknown-linux-gnu.tar.xz",
+            "sha256": "0a8787303c88b018af61b5c53a0c7024d516d175e623eeab35a35eab11dbcad0"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/cargo-1.97.0-x86_64-unknown-linux-gnu.tar.xz",
+            "sha256": "5c5bc94af02797b699bb7d4e85b356192eab9fb50376053a1e6edf509fcf7129"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/rust-std-1.97.0-x86_64-unknown-linux-gnu.tar.xz",
+            "sha256": "0c43618128a7a6b96b0b04c04cf7b28dd52fb0991a74c9615fbd1a684ff88712"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/rust-std-1.97.0-x86_64-unknown-linux-musl.tar.xz",
+            "sha256": "9744b43bed4a89db05e83dc8054d3e92e23ddb70a6c08c54ccde9a58d7b28627"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/rustc-1.97.0-aarch64-unknown-linux-gnu.tar.xz",
+            "sha256": "06a71688ee297515ebc6a815e42c779735c09423b0bed056e0896c80c7295399"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/cargo-1.97.0-aarch64-unknown-linux-gnu.tar.xz",
+            "sha256": "71f0457abe8fdf9fc048009f867acc27b21e25c8e06a1a3e9a12c637833b6aab"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/rust-std-1.97.0-aarch64-unknown-linux-gnu.tar.xz",
+            "sha256": "b6a90dab26527f17e7e395e24b2d79976e30432c41feb073fe920d3b26b709a0"
+          },
+          {
+            "url": "https://static.rust-lang.org/dist/2026-07-09/rust-std-1.97.0-aarch64-unknown-linux-musl.tar.xz",
+            "sha256": "91b55028112e6a978386de46013820d921330f0a182d11900f117e9f0f4ef338"
+          }
+        ],
+        "rust_exact": "1.97.0",
+        "rust_target": "native-unknown-linux-musl",
+        "optional_toolchain_env": "NATIVE_SOURCE_RUST_TOOLCHAIN",
+        "private_toolchain": "consent-gated Rust 1.97.0 compiler/Cargo/host-std/musl-std; fixed dated official component archives"
+      }
+    },
+    {
+      "id": "kata_containers",
+      "tool_key": "Kata_Containers",
+      "name": "Kata Containers (Go-Hostkomponenten)",
+      "repo": "kata-containers/kata-containers",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/kata_containers_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/sandbox-native-candidates.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "candidate_module": "scripts/tools/helpers/native_sandbox_candidates.py",
+        "note": "Nur native Legacy-Go-Hostkomponenten kata-runtime und Shim; KEINE vollstaendige Kata-Installation ohne Agent, Gast-Kernel/rootfs und Hypervisor.",
+        "repo": "kata-containers/kata-containers",
+        "pin": "03cf2ec06a5d302f23af811744f6bcea49988bfb",
+        "version": "4.3.1",
+        "disk_mb": 16384,
+        "ram_mb": 4096,
+        "tools": [
+          "git",
+          "go",
+          "make",
+          "cc"
+        ],
+        "source_sha256": {
+          "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "src/runtime/Makefile": "4fcf40a5595d9c952b57d13635aefb992acf16823c5d6dea18226a9f5e841006",
+          "src/runtime/go.mod": "75986d61c7c28d65d2d8adf42641c95b48b5e05ba281a85262a3358773a21aff",
+          "src/runtime/go.sum": "53c8f184f6a6113378b3c292e15d830037e3a30ffce919e8b162fb18f8ac9580",
+          "versions.yaml": "ec97b60fe417a6cd74904c59b828d33a1189fe1547a7fd35d95331fb47a0bd52"
+        },
+        "acceptance": "components-only: legacy Go runtime and shim; no runtime-rs, agent, kernel, rootfs, hypervisor, configuration or CRI acceptance",
+        "apt_build_deps": [
+          "build-essential",
+          "pkg-config",
+          "libseccomp-dev",
+          "ca-certificates"
+        ],
+        "service_applicability": "CLI/build components only; no unit, service start or cluster registration",
+        "go_min": [
+          1,
+          26,
+          9
+        ],
+        "private_go": "existing private_go go1.27.3 bootstrap; consent-gated"
+      }
+    },
+    {
+      "id": "milvus",
+      "tool_key": "Milvus",
+      "name": "Milvus",
+      "repo": "milvus-io/milvus",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/milvus_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/security-data-native.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "repo": "milvus-io/milvus",
+        "pin": "63100f8f5b4b675a12fe78fc9673b005ee318731",
+        "version": "3.0.6",
+        "kind": "candidate-native",
+        "candidate_module": "security_data_native",
+        "disk_mb": 65536,
+        "ram_mb": 8192,
+        "tools": [
+          "go",
+          "conan",
+          "cmake",
+          "gcc",
+          "g++",
+          "make",
+          "pkg-config",
+          "perl",
+          "nasm",
+          "protoc"
+        ],
+        "rust_exact": "1.92.0",
+        "conan_remote": "https://milvus01.jfrog.io/artifactory/api/conan/default-conan-local2",
+        "go_min": [
+          1,
+          26,
+          9
+        ],
+        "source_sha256": {
+          "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "Makefile": "91828f611e542f666639f6e7e0a1b865d85ba68328867dd1621748f1a372c62c",
+          "go.mod": "d9eb3bce81d247c84e3b21382227171b8065dd144731330ede1a12e3b0cdeb8b",
+          "go.sum": "f692b6ba714c11b389d107be9d3804013d6f0a8d4246847d7a1754565334dc50",
+          "internal/core/conanfile.py": "8a4b6f6dd6f3c63e6fcf923be9afe98e988494249ac0ab8a713ac3d63eed8809",
+          "internal/core/CMakeLists.txt": "7deec32fc52150ce42c02339914dd4557cd6526c394354f0d057de4b4e00fdf9",
+          "internal/core/thirdparty/tantivy/tantivy-binding/Cargo.lock": "be8e8f514b5bc76e667e03332d93b60004f3c9fec47e99247f0e509ec386a915",
+          "scripts/3rdparty_build.sh": "0ffaf0690832059fecfd52302c4141f25318fea313c2a96d95e8c282efd10718",
+          "scripts/setenv.sh": "eb1974de5fd5758fac1fb802afb9759ab3884069b716618eca5f9beb94fc1e5b",
+          "internal/http/webui/index.html": "326d6061d57986758937dca6e571331c485543d564131782b06e304facd8e68e",
+          "configs/milvus.yaml": "44036508b203baa9ab62195c40151e259706724dde76c22580c0d18a082aaa52"
+        },
+        "scope": "Milvus CPU Server/Core mit eingebetteten versionierten Web-UI-Assets; ohne etcd/MinIO/Pulsar, GPU, DiskANN oder Betriebsabnahme",
+        "note": "Milvus CPU Server/Core mit eingebetteten versionierten Web-UI-Assets; ohne etcd/MinIO/Pulsar, GPU, DiskANN oder Betriebsabnahme. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+        "probe_strategy": "static-artifact-only; security_data_native.doctor(prefix,spec); runtime exit 3"
+      }
+    },
+    {
+      "id": "vaultwarden",
+      "tool_key": "Vaultwarden",
+      "name": "Vaultwarden",
+      "repo": "dani-garcia/vaultwarden",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/vaultwarden_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/security-data-native.md",
+      "license": "AGPL-3.0-only",
+      "recipe": {
+        "repo": "dani-garcia/vaultwarden",
+        "pin": "6ed6921cc2b0e03b4d74189574d2a5e71c512e97",
+        "version": "1.37.5",
+        "kind": "candidate-native",
+        "candidate_module": "security_data_native",
+        "disk_mb": 12288,
+        "ram_mb": 4096,
+        "tools": [
+          "cc",
+          "pkg-config",
+          "perl"
+        ],
+        "rust_exact": "1.99.1",
+        "source_sha256": {
+          "Cargo.toml": "bc1aefc2caafd71f136716568898657a26a9b53be9f5f84e8fa917f0d0da6242",
+          "Cargo.lock": "c5a282fff5cde4ca23be157fcb5dfa3196274c6cd341280bc390269f769c112c",
+          "rust-toolchain.toml": "0e36059f4355f670348becd9e32208a1f0ef40d90613b2d672438b05223fc2b0",
+          ".env.template": "add4775b02a577923d6dee5f6adf1b2d149b4e830eeb60bcd069f3ceee16961b",
+          "src/main.rs": "7174e61c1705ae590d4177f59dbe3ddce1e031df485b6753985eac16086bfe27",
+          "build.rs": "7f7aab7429daeab96aa8cd2f7046afe2ac8e58dc8443042d3cb51ee603962ac6",
+          "LICENSE.txt": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef"
+        },
+        "scope": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation",
+        "note": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+        "probe_strategy": "static-artifact-only; security_data_native.doctor(prefix,spec); runtime exit 3"
+      }
+    },
+    {
+      "id": "owasp_zap",
+      "tool_key": "OWASP_ZAP",
+      "name": "OWASP_ZAP",
+      "repo": "zaproxy/zaproxy",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/owasp_zap_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/security-data-native.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "repo": "zaproxy/zaproxy",
+        "pin": "8a1bff313f4d183dba5aa154ecbe89ad751c9153",
+        "version": "2.17.0",
+        "kind": "candidate-native",
+        "candidate_module": "security_data_native",
+        "disk_mb": 12288,
+        "ram_mb": 4096,
+        "tools": [
+          "java",
+          "javac",
+          "gradle"
+        ],
+        "gradle_exact": "8.13",
+        "java_major": 21,
+        "gradle_distribution": {
+          "url": "https://services.gradle.org/distributions/gradle-8.13-all.zip",
+          "sha256": "fba8464465835e74f7270bbf43d6d8a8d7709ab0a43ce1aa3323f73e9aa0c612"
+        },
+        "source_sha256": {
+          "LICENSE": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+          "BUILDING.md": "d605f45ea7fdf875bade24ce4ea621c491e07cfc9bc4d3a0615fbbbeeaf70da9",
+          "build.gradle.kts": "11b4916b7304860a53e5dbd30d8f521d2d07f7d7cbebdfba6bba084c84e48247",
+          "zap/zap.gradle.kts": "f5a06283200c4a0325b6f909e0e369fdd1fc55ef9c4f3b452e2fb0a31ca86c1c",
+          "zap/gradle.properties": "f91c10a5f58bacc6856d356daafa4d4179d9a892e4cc6d2e8aee743c54a94293",
+          "gradle/wrapper/gradle-wrapper.properties": "ad03ee10e05d83bdea5cbe7a23eb70bdc136c7fb02aa0315a8fe7b8b9aa08664",
+          "settings.gradle.kts": "ccfab3a1e0c8750d7a9628bd4be2c05d1f56dac4e888cc410c6cfa1b6ceffb2f",
+          "buildSrc/build.gradle.kts": "d93a55fd5c55e5821c01dd5efa27e621a0e6c3e717c4f14d8637632349cc0cf5",
+          "buildSrc/src/main/kotlin/org/zaproxy/zap/distributions.gradle.kts": "7be0800bde15f1615b252f15d2ac5d19187b4caad09cd887d1d8c0ec34df8ce4"
+        },
+        "scope": "ZAP Core-JAR mit Runtime-JARs, xml/lang/db-Konfiguration und Startskripten; ohne Add-ons/Browser/Installer/JRE; kein vollstaendiges Scanprofil",
+        "note": "ZAP Core-JAR mit Runtime-JARs, xml/lang/db-Konfiguration und Startskripten; ohne Add-ons/Browser/Installer/JRE; kein vollstaendiges Scanprofil. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+        "probe_strategy": "static-artifact-only; security_data_native.doctor(prefix,spec); runtime exit 3"
+      }
+    },
+    {
+      "id": "kubescape",
+      "tool_key": "Kubescape",
+      "name": "Kubescape",
+      "repo": "kubescape/kubescape",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/kubescape_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-security-candidates.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_security_native",
+        "repo": "kubescape/kubescape",
+        "pin": "ec65d3184f6bab7d1ad6e5db9d970d452316d253",
+        "version": "4.0.20",
+        "release_tag": "v4.0.20",
+        "binary": "kubescape",
+        "package": ".",
+        "go_min": [
+          1,
+          27,
+          0
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "go",
+          "unshare"
+        ],
+        "source_sha256": {
+          "go.mod": "34f7238d1bbe6505042c65472224143a3fc52e4d5a5909f94dd85d647672d4ce",
+          "go.sum": "50ca6dbe42fbd7f888d2f0291eec1d474fbd3c837973f2c3145a667afd1759f6",
+          "Makefile": "6168e7b03e57d8585868032ea18fb011ef80df2764415a418ada10913776cfda",
+          "cmd/version/version.go": "30a75df19160dfefde73a3bda26de2fc7def713dbb1e5a282fc99c3a730147ce",
+          "cmd/root.go": "561e25099b8dffdc90ea9dccf4f437fb6f5adada16ecad7bd57f391c510181ff",
+          ".goreleaser.yaml": "d37a008ee2066d0d281b4f956604aeaf1671a20a9d54b20974d2da47ed560655",
+          "main.go": "298bb640396db9b8b5a2b35ef666fd8a4c9380f72a180d85731a21140305ee7f",
+          "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "core/pkg/opaprocessor/cel/vapdata/README.md": "cb0dad7ecd9826e42ca6578a0f713b098c709639d4e737f47d59718d0a050e0d",
+          "core/pkg/opaprocessor/cel/vapdata/basic-control-configuration.yaml": "e6ff3c18cfb60d8eaf463049dbfea9eae69891d32304193df727cebad2f8a285",
+          "core/pkg/opaprocessor/cel/vapdata/kubescape-validating-admission-policies.yaml": "ce32ba2e8e23e600125d72ffc080d5b63797f8a6aabeb057e094b4c4b1ec0d22",
+          "core/pkg/opaprocessor/cel/vapdata/policy-configuration-definition.yaml": "04c872af48fa6d8c43b7969b742b32a9438ce1d77558f4c3efe50963a365df5d"
+        },
+        "probe": [
+          "version",
+          "--format",
+          "json"
+        ],
+        "note": "Nur lokale CLI-Artefakte; keine Dienste, Scans, Templates, Browser, Cluster-/Providerzugriffe oder Updates. Netzwerklose Versionsprobe braucht unshare/User-Netzwerk-Namespace. Reale Linux/WSL-Buildabnahme noch offen."
+      }
+    },
+    {
+      "id": "nuclei",
+      "tool_key": "Nuclei",
+      "name": "Nuclei",
+      "repo": "projectdiscovery/nuclei",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/nuclei_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-security-candidates.md",
+      "license": "MIT",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_security_native",
+        "repo": "projectdiscovery/nuclei",
+        "pin": "a8c88feb4a1c8e961b7902534ce3af97e9d524a4",
+        "version": "3.11.1",
+        "release_tag": "v3.11.1",
+        "binary": "nuclei",
+        "package": "./cmd/nuclei",
+        "go_min": [
+          1,
+          26,
+          0
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "go",
+          "unshare"
+        ],
+        "source_sha256": {
+          "go.mod": "57e1f9230ef1da13280cc702c01b6135241128fbc710adea399eaa6d142b849c",
+          "go.sum": "c9be45a7baa2b3fda7d9ecdea91865b9caf78a733c70d1133d346bcc7dba501b",
+          "Makefile": "7852eae1035c17ada9f66f872e1597a3cdd4a24d9e307f7b2d34d35ed9429215",
+          "cmd/nuclei/main.go": "b9231a0b134c685a29c87058b9a9c21d6b50ed2879e6f9ffaad7a93f7784622a",
+          "pkg/types/types.go": "3821ecadaa9ab8d763bedfa75d27521ff24d0493f32720ec4995b0d3dcb138c9",
+          "pkg/catalog/config/constants.go": "ccda51c8f1438da2fb5d6badb278f5dc94f8812cbb18cd25a5b65861f82da381",
+          ".goreleaser.yml": "0339c563850d0a665f7f0788e14f774999b3794b4d79e58ebda72ed0c59dfbb0",
+          "LICENSE.md": "5fa6644d2dd1987a79c06f4af210d2cf8cfc4ee799999029d0f9980c9cf95a2c"
+        },
+        "probe": [
+          "-disable-update-check",
+          "-version"
+        ],
+        "note": "Nur lokale CLI-Artefakte; keine Dienste, Scans, Templates, Browser, Cluster-/Providerzugriffe oder Updates. Netzwerklose Versionsprobe braucht unshare/User-Netzwerk-Namespace. Reale Linux/WSL-Buildabnahme noch offen."
+      }
+    },
+    {
+      "id": "trufflehog",
+      "tool_key": "TruffleHog",
+      "name": "TruffleHog",
+      "repo": "trufflesecurity/trufflehog",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/trufflehog_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-security-candidates.md",
+      "license": "AGPL-3.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_security_native",
+        "repo": "trufflesecurity/trufflehog",
+        "pin": "3bd2b5887eb0efb8fa18bfd1d296032924e4ffdc",
+        "version": "3.99.9",
+        "release_tag": "v3.99.9",
+        "binary": "trufflehog",
+        "package": ".",
+        "go_min": [
+          1,
+          26,
+          0
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "go",
+          "unshare"
+        ],
+        "source_sha256": {
+          "go.mod": "afb0b47eca05e9045f211483614c7304a915917e6467a3d9f59720dc363c1140",
+          "go.sum": "19ba957fd3e58783cc7b2bf6caa83fbed535dcd22df5b503414466c68aba873c",
+          "main.go": "9d2766297e793674685058dab44206d51d8cd39d65333721483be663c7f2549b",
+          "pkg/version/version.go": "5843d5041acb9372b88285722d050503a448ce5701ece7d4ff52d42f71bf0946",
+          ".goreleaser.yml": "0d19fca87d760b0df51eb1602ab0d341b500195a6849a0f9cabd091f95ee2a05",
+          "LICENSE": "33d580ea3d93edcb787c2fa826bbf5afcec3058ce4c894a6beaad3eb4f389d2b"
+        },
+        "probe": [
+          "--no-update",
+          "--version"
+        ],
+        "note": "Nur lokale CLI-Artefakte; keine Dienste, Scans, Templates, Browser, Cluster-/Providerzugriffe oder Updates. Netzwerklose Versionsprobe braucht unshare/User-Netzwerk-Namespace. Reale Linux/WSL-Buildabnahme noch offen."
+      }
+    },
+    {
+      "id": "testssl",
+      "tool_key": "Testssl",
+      "name": "Testssl",
+      "repo": "testssl/testssl.sh",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/testssl_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-security-candidates.md",
+      "license": "GPL-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_security_native",
+        "repo": "testssl/testssl.sh",
+        "pin": "4f17be931a9d60f3f987975aea8221f1a8eaf7aa",
+        "version": "3.2.5",
+        "release_tag": "v3.2.5",
+        "binary": "testssl",
+        "package": null,
+        "disk_mb": 1024,
+        "ram_mb": 256,
+        "tools": [
+          "bash",
+          "openssl",
+          "unshare",
+          "hexdump",
+          "dd",
+          "grep",
+          "awk",
+          "tr",
+          "sed",
+          "wc",
+          "date",
+          "cat",
+          "ps",
+          "kill",
+          "head",
+          "tail",
+          "dirname",
+          "mktemp",
+          "uname",
+          "readlink",
+          "sort",
+          "find",
+          "rm"
+        ],
+        "source_sha256": {
+          "testssl.sh": "cf49497b6c43bd3b906a017a91ea87a8ca73d0f8682bf947f802f4df04acecb3",
+          "Readme.md": "66366e8cd317cad850d19e59987ef5c29644c7513faf0cdb05149c5af6ee7bed",
+          "LICENSE": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+          "etc/Apple.pem": "8235d8d6ef486c5a9f4acc9b10ecf5bc25455df97a0f780799cdb32cdadfa471",
+          "etc/DST Root CA X3.txt": "139a5e4a4e0fa505378c72c5f700934ce8333f4e6b1b508886c4b0eb14f4be99",
+          "etc/Java.pem": "f6ff9753cc08b749d7704bb136eacfa3dd8174d4d67220beec00a119fd19ddfd",
+          "etc/Linux.pem": "98af63978c2bf6ff6908649beba6015bf9264224e470a86eb52402a3574dcaef",
+          "etc/Microsoft.pem": "8864b51484a6317f092453531f9d479ef2cd68c8033321cffaa12f57d8adeb3a",
+          "etc/Mozilla.pem": "796f1389bfea13c0ed78f663b765baaff54a508e5483786bd6ece73c5e3e3cbe",
+          "etc/README.md": "f72a699697a18f7179bd5dddaf7dbc75f57f8c759383a071a9b89da585529be7",
+          "etc/SSLSocketClient.java": "7c966961a20b8bd2bd53ca941bda7b32cde235289533230158e87253b6b3a7f3",
+          "etc/ca_hashes.txt": "d7e557d75170c787a88b4ef6a15b679d6e896efa37dbe6718fdaf0b7c299709d",
+          "etc/cipher-mapping.txt": "7a5efe10907d68de2c4c9ac29e9944817fa647e6c4e5673e16ec9cf20b54d944",
+          "etc/client-simulation.txt": "af502db2f22960c55fffaf3c02a7f04d1268a8f4ccfb8d78b9d276c312a493a3",
+          "etc/client-simulation.wiresharked.md": "543eb79a1344276b57f20ecf2f5f0063cd817289845accd1561017b486dbf779",
+          "etc/client-simulation.wiresharked.txt": "3ab9b97091173e17ee5c57ec360655f2e327164299145947d2e9129fd7d03bd9",
+          "etc/common-primes.txt": "b8463ee06af11c3934cfdb6766a646b98db01779ee93161317ee98417066f305",
+          "etc/curves-mapping.txt": "448fbc8ff0e20af3eeae5e0702895b89affdba4b1aa324b1b460eaeb3c2ca476",
+          "etc/curves.txt": "4119b7a279d68b98397479b157517920dbda2f2cbf5b85762208210071349fc6",
+          "etc/openssl.cnf": "1f877b6a065b7f0147e3d0fcb5c93383cb3f1082bb5bfb4934f49385e898bc2c",
+          "etc/tls_data.txt": "898cab3b309710cb1e134dca8ee1e771485b643f9d5384da9df716ce6602520b"
+        },
+        "probe": [
+          "--version"
+        ],
+        "note": "Nur lokale CLI-Artefakte; keine Dienste, Scans, Templates, Browser, Cluster-/Providerzugriffe oder Updates. Netzwerklose Versionsprobe braucht unshare/User-Netzwerk-Namespace. Reale Linux/WSL-Buildabnahme noch offen.",
+        "apt_build_deps": [
+          "bash",
+          "openssl",
+          "bsdextrautils",
+          "coreutils",
+          "gawk",
+          "grep",
+          "sed",
+          "procps",
+          "findutils",
+          "util-linux"
+        ]
+      }
     }
   ]
 }
-

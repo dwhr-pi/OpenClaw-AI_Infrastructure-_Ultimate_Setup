@@ -13,6 +13,9 @@ import webinar_releases as releases
 
 VERSION = "0.13.5"
 SUPPORTED_TOOLS = {
+    "phoenix": "Arize_Phoenix",
+    "checkov": "Checkov",
+    "ragas": "Ragas",
     "outlines": "Outlines",
     "openapi_servers": "OpenAPI_Servers",
     "browser_use": "Browser_Use",

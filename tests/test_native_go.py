@@ -29,7 +29,9 @@ class NativeGoTests(unittest.TestCase):
 
     def test_all_versioned_go_recipes_have_matching_explicit_contracts(self):
         versioned = {key: item for key, item in tools.TOOLS.items()
-                     if (item.get("recipe") or {}).get("go_min") is not None}
+                     if (item.get("recipe") or {}).get("go_min") is not None and
+                     (key not in tools.CANDIDATE_BACKENDS or
+                      tools.CANDIDATE_BACKENDS[key] == 'candidate_security_native')}
         self.assertEqual(set(versioned), set(go.CONTRACTS))
         for key, spec in versioned.items():
             with self.subTest(tool=key):

@@ -42,9 +42,6 @@ class FormattingPolicy(unittest.TestCase):
                  directory / 'infrastructure_candidate_status.sh']
         for path in paths:
             text = path.read_text(encoding='utf-8')
-            if ('infrastructure_candidate_blocked.sh' not in text and
-                    path.name not in ('infrastructure_candidate_blocked.sh', 'infrastructure_candidate_status.sh')):
-                continue
             self.assertTrue(text.endswith('\n'), path.name)
             self.assertFalse(text.endswith('\n\n'), path.name)
             checked.append(path.name)

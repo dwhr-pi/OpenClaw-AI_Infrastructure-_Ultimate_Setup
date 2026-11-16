@@ -1,6 +1,3 @@
 #!/usr/bin/env bash
-# Catalog candidate only; no native build or lifecycle is approved.
 set -euo pipefail
-ROOT="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd)"
-printf '%s\n' 'Vaultwarden: GEPLANT / NICHT INSTALLIERBAR. Siehe docs/tools/infrastructure-candidates.md'
-exec "$BASH" "$ROOT/scripts/tools/infrastructure_candidate_blocked.sh" "$@"
+exec bash "${BASH_SOURCE[0]%/*}/vaultwarden_install.sh" "$@"

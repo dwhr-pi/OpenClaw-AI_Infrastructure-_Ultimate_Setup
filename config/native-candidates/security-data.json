@@ -1,0 +1,142 @@
+{
+  "tools": [
+    {
+      "id": "milvus",
+      "tool_key": "Milvus",
+      "name": "Milvus",
+      "repo": "milvus-io/milvus",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/milvus_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/security-data-native.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "repo": "milvus-io/milvus",
+        "pin": "63100f8f5b4b675a12fe78fc9673b005ee318731",
+        "version": "3.0.6",
+        "kind": "candidate-native",
+        "candidate_module": "security_data_native",
+        "disk_mb": 65536,
+        "ram_mb": 8192,
+        "tools": [
+          "go",
+          "conan",
+          "cmake",
+          "gcc",
+          "g++",
+          "make",
+          "pkg-config",
+          "perl",
+          "nasm",
+          "protoc"
+        ],
+        "rust_exact": "1.92.0",
+        "conan_remote": "https://milvus01.jfrog.io/artifactory/api/conan/default-conan-local2",
+        "go_min": [
+          1,
+          26,
+          9
+        ],
+        "source_sha256": {
+          "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "Makefile": "91828f611e542f666639f6e7e0a1b865d85ba68328867dd1621748f1a372c62c",
+          "go.mod": "d9eb3bce81d247c84e3b21382227171b8065dd144731330ede1a12e3b0cdeb8b",
+          "go.sum": "f692b6ba714c11b389d107be9d3804013d6f0a8d4246847d7a1754565334dc50",
+          "internal/core/conanfile.py": "8a4b6f6dd6f3c63e6fcf923be9afe98e988494249ac0ab8a713ac3d63eed8809",
+          "internal/core/CMakeLists.txt": "7deec32fc52150ce42c02339914dd4557cd6526c394354f0d057de4b4e00fdf9",
+          "internal/core/thirdparty/tantivy/tantivy-binding/Cargo.lock": "be8e8f514b5bc76e667e03332d93b60004f3c9fec47e99247f0e509ec386a915",
+          "scripts/3rdparty_build.sh": "0ffaf0690832059fecfd52302c4141f25318fea313c2a96d95e8c282efd10718",
+          "scripts/setenv.sh": "eb1974de5fd5758fac1fb802afb9759ab3884069b716618eca5f9beb94fc1e5b",
+          "internal/http/webui/index.html": "326d6061d57986758937dca6e571331c485543d564131782b06e304facd8e68e",
+          "configs/milvus.yaml": "44036508b203baa9ab62195c40151e259706724dde76c22580c0d18a082aaa52"
+        },
+        "scope": "Milvus CPU Server/Core mit eingebetteten versionierten Web-UI-Assets; ohne etcd/MinIO/Pulsar, GPU, DiskANN oder Betriebsabnahme",
+        "note": "Milvus CPU Server/Core mit eingebetteten versionierten Web-UI-Assets; ohne etcd/MinIO/Pulsar, GPU, DiskANN oder Betriebsabnahme. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+        "probe_strategy": "static-artifact-only; security_data_native.doctor(prefix,spec); runtime exit 3"
+      }
+    },
+    {
+      "id": "vaultwarden",
+      "tool_key": "Vaultwarden",
+      "name": "Vaultwarden",
+      "repo": "dani-garcia/vaultwarden",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/vaultwarden_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/security-data-native.md",
+      "license": "AGPL-3.0-only",
+      "recipe": {
+        "repo": "dani-garcia/vaultwarden",
+        "pin": "6ed6921cc2b0e03b4d74189574d2a5e71c512e97",
+        "version": "1.37.5",
+        "kind": "candidate-native",
+        "candidate_module": "security_data_native",
+        "disk_mb": 12288,
+        "ram_mb": 4096,
+        "tools": [
+          "cc",
+          "pkg-config",
+          "perl"
+        ],
+        "rust_exact": "1.99.1",
+        "source_sha256": {
+          "Cargo.toml": "bc1aefc2caafd71f136716568898657a26a9b53be9f5f84e8fa917f0d0da6242",
+          "Cargo.lock": "c5a282fff5cde4ca23be157fcb5dfa3196274c6cd341280bc390269f769c112c",
+          "rust-toolchain.toml": "0e36059f4355f670348becd9e32208a1f0ef40d90613b2d672438b05223fc2b0",
+          ".env.template": "add4775b02a577923d6dee5f6adf1b2d149b4e830eeb60bcd069f3ceee16961b",
+          "src/main.rs": "7174e61c1705ae590d4177f59dbe3ddce1e031df485b6753985eac16086bfe27",
+          "build.rs": "7f7aab7429daeab96aa8cd2f7046afe2ac8e58dc8443042d3cb51ee603962ac6",
+          "LICENSE.txt": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef"
+        },
+        "scope": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation",
+        "note": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+        "probe_strategy": "static-artifact-only; security_data_native.doctor(prefix,spec); runtime exit 3"
+      }
+    },
+    {
+      "id": "owasp_zap",
+      "tool_key": "OWASP_ZAP",
+      "name": "OWASP_ZAP",
+      "repo": "zaproxy/zaproxy",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/owasp_zap_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/security-data-native.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "repo": "zaproxy/zaproxy",
+        "pin": "8a1bff313f4d183dba5aa154ecbe89ad751c9153",
+        "version": "2.17.0",
+        "kind": "candidate-native",
+        "candidate_module": "security_data_native",
+        "disk_mb": 12288,
+        "ram_mb": 4096,
+        "tools": [
+          "java",
+          "javac",
+          "gradle"
+        ],
+        "gradle_exact": "8.13",
+        "java_major": 21,
+        "gradle_distribution": {
+          "url": "https://services.gradle.org/distributions/gradle-8.13-all.zip",
+          "sha256": "fba8464465835e74f7270bbf43d6d8a8d7709ab0a43ce1aa3323f73e9aa0c612"
+        },
+        "source_sha256": {
+          "LICENSE": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+          "BUILDING.md": "d605f45ea7fdf875bade24ce4ea621c491e07cfc9bc4d3a0615fbbbeeaf70da9",
+          "build.gradle.kts": "11b4916b7304860a53e5dbd30d8f521d2d07f7d7cbebdfba6bba084c84e48247",
+          "zap/zap.gradle.kts": "f5a06283200c4a0325b6f909e0e369fdd1fc55ef9c4f3b452e2fb0a31ca86c1c",
+          "zap/gradle.properties": "f91c10a5f58bacc6856d356daafa4d4179d9a892e4cc6d2e8aee743c54a94293",
+          "gradle/wrapper/gradle-wrapper.properties": "ad03ee10e05d83bdea5cbe7a23eb70bdc136c7fb02aa0315a8fe7b8b9aa08664",
+          "settings.gradle.kts": "ccfab3a1e0c8750d7a9628bd4be2c05d1f56dac4e888cc410c6cfa1b6ceffb2f",
+          "buildSrc/build.gradle.kts": "d93a55fd5c55e5821c01dd5efa27e621a0e6c3e717c4f14d8637632349cc0cf5",
+          "buildSrc/src/main/kotlin/org/zaproxy/zap/distributions.gradle.kts": "7be0800bde15f1615b252f15d2ac5d19187b4caad09cd887d1d8c0ec34df8ce4"
+        },
+        "scope": "ZAP Core-JAR mit Runtime-JARs, xml/lang/db-Konfiguration und Startskripten; ohne Add-ons/Browser/Installer/JRE; kein vollstaendiges Scanprofil",
+        "note": "ZAP Core-JAR mit Runtime-JARs, xml/lang/db-Konfiguration und Startskripten; ohne Add-ons/Browser/Installer/JRE; kein vollstaendiges Scanprofil. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+        "probe_strategy": "static-artifact-only; security_data_native.doctor(prefix,spec); runtime exit 3"
+      }
+    }
+  ]
+}
