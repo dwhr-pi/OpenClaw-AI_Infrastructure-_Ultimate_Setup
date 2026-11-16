@@ -1,6 +1,7 @@
 """Offline contracts only; these fixtures are not Linux runtime acceptance."""
 import copy
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -71,9 +72,71 @@ class ReviewedPythonTests(unittest.TestCase):
             script = helper.probe_script(spec['recipe'])
             compile(script, '<probe>', 'exec')
             self.assertIn('socket.socket.bind = denied', script)
-            self.assertIn('subprocess.Popen = denied', script)
+            self.assertIn('sys.addaudithook(audit_runtime)', script)
+            self.assertNotIn('subprocess.Popen = denied', script)
             self.assertNotIn('launch_app(', script)
             self.assertNotIn('evaluate(', script)
+
+    def test_import_guard_preserves_popen_types_and_blocks_cached_process_calls(self):
+        guard = helper.probe_script(self.specs()[0]['recipe']).split('assert sys.prefix != sys.base_prefix')[0]
+        body = '''
+assert subprocess.Popen is original
+class ImportCompatiblePopen(subprocess.Popen):
+    pass
+assert subprocess.Popen[str]
+for action in (lambda: original([sys.executable, '-c', 'raise SystemExit(99)']),
+               lambda: os.system('exit 99')):
+    try:
+        action()
+    except RuntimeError as error:
+        assert 'blockiert Audit-Ereignis' in str(error)
+    else:
+        raise AssertionError('Process creation was not blocked')
+for event in ('socket.connect', 'socket.bind', 'socket.sendto', 'os.posix_spawn', 'os.fork'):
+    try:
+        sys.audit(event, None)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError(event)
+print('guard-ok')
+'''
+        script = 'import os, subprocess\noriginal = subprocess.Popen\n' + guard + body
+        result = subprocess.run([sys.executable, '-I', '-B', '-c', script],
+                                capture_output=True, text=True, timeout=15, check=True)
+        self.assertEqual(result.stdout.strip(), 'guard-ok')
+
+    def test_failed_probe_logs_traceback_without_credential_shaped_values(self):
+        error = subprocess.CalledProcessError(1, 'probe', stderr=(
+            '\x1b[31mTraceback\x1b[0m\nModuleNotFoundError: missing_fixture\n'
+            'token=hidden-value Bearer hidden-bearer https://user:hidden-password@example.test\n'))
+        output = io.StringIO()
+        with patch.object(helper.subprocess, 'run', side_effect=error), patch('sys.stdout', output):
+            with self.assertRaises(subprocess.CalledProcessError):
+                helper.execute(['python', '-c', 'probe'], ROOT, {}, 45)
+        text = output.getvalue()
+        self.assertIn('ModuleNotFoundError: missing_fixture', text)
+        for forbidden in ('\x1b', 'hidden-value', 'hidden-bearer', 'hidden-password'):
+            self.assertNotIn(forbidden, text)
+
+    def test_timeout_diagnostics_are_bounded_and_decode_bytes(self):
+        error = subprocess.TimeoutExpired('probe', 45, output=b'x' * 10000,
+                                         stderr=b'Timeout detail\xff\x00')
+        details = helper.failure_details(error)
+        self.assertIn('Timeout detail', details)
+        self.assertNotIn('\x00', details)
+        self.assertLess(len(details), 6100)
+        with patch.object(helper.subprocess, 'run', side_effect=error), patch('sys.stdout', io.StringIO()):
+            with self.assertRaises(subprocess.TimeoutExpired):
+                helper.execute(['python'], ROOT, {}, 45)
+        self.assertIn('Keine Kindprozess-Ausgabe', helper.failure_details(
+            subprocess.CalledProcessError(1, 'probe')))
+
+    def test_build_runner_streams_with_shared_timeout(self):
+        with patch.object(helper.native_build_process, 'run', return_value='done') as run:
+            self.assertEqual(helper.build_execute(['python', '-m', 'build'], ROOT, {}), 'done')
+        self.assertEqual(run.call_args.kwargs['timeout'], 7200)
+        self.assertEqual(run.call_args.kwargs['label'], 'Python-/Frontend-Build')
 
     def test_explicit_unsupported_python_never_downloads(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -4964,21 +4964,29 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 ## tests/test_python_reviewed_native.py
 
-- `tests/test_python_reviewed_native.py:23`
+- `tests/test_python_reviewed_native.py:24`
   Prueffall: `test_exact_candidate_contracts`
-- `tests/test_python_reviewed_native.py:35`
+- `tests/test_python_reviewed_native.py:36`
   Prueffall: `test_environment_drops_credentials_and_python_injection`
-- `tests/test_python_reviewed_native.py:45`
+- `tests/test_python_reviewed_native.py:46`
   Prueffall: `test_source_mismatch_prevents_execution`
-- `tests/test_python_reviewed_native.py:55`
+- `tests/test_python_reviewed_native.py:56`
   Prueffall: `test_incomplete_wheels_fail_closed`
-- `tests/test_python_reviewed_native.py:64`
+- `tests/test_python_reviewed_native.py:65`
   Prueffall: `test_probe_is_bounded_and_never_cli_execution`
-- `tests/test_python_reviewed_native.py:78`
+- `tests/test_python_reviewed_native.py:80`
+  Prueffall: `test_import_guard_preserves_popen_types_and_blocks_cached_process_calls`
+- `tests/test_python_reviewed_native.py:109`
+  Prueffall: `test_failed_probe_logs_traceback_without_credential_shaped_values`
+- `tests/test_python_reviewed_native.py:122`
+  Prueffall: `test_timeout_diagnostics_are_bounded_and_decode_bytes`
+- `tests/test_python_reviewed_native.py:135`
+  Prueffall: `test_build_runner_streams_with_shared_timeout`
+- `tests/test_python_reviewed_native.py:141`
   Prueffall: `test_explicit_unsupported_python_never_downloads`
-- `tests/test_python_reviewed_native.py:87`
+- `tests/test_python_reviewed_native.py:150`
   Prueffall: `test_missing_python_requires_explicit_consent`
-- `tests/test_python_reviewed_native.py:94`
+- `tests/test_python_reviewed_native.py:157`
   Prueffall: `test_build_rejects_wrong_source_layout`
 
 ## tests/test_queue_safety.py
@@ -6510,4 +6518,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2905**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2909**. Kein Nachweis bestandener Tests.

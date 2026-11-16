@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -15,6 +16,7 @@ import zipfile
 import gap_tools as common
 import native_uv
 import native_node
+import native_build_process
 import webinar_releases as releases
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -116,10 +118,37 @@ def environment(base):
     return env
 
 
+def failure_details(error):
+    """Bound child diagnostics and remove terminal controls/credential-shaped values."""
+    parts = []
+    for label, value in (('stderr', error.stderr), ('stdout', error.output)):
+        if isinstance(value, bytes):
+            value = value.decode('utf-8', errors='replace')
+        if not value:
+            continue
+        value = re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', value)
+        value = ''.join(char for char in value if char in '\n\t' or char.isprintable())
+        value = re.sub(r'(?i)(https?://)[^\s/@]+:[^\s/@]+@', r'\1[redacted]@', value)
+        value = re.sub(r'(?i)(\bBearer\s+)\S+', r'\1[redacted]', value)
+        value = re.sub(r'''(?ix)((?:api[_-]?key|token|password|secret|authorization)\b["']?\s*[:=]\s*)[^\s,;]+''',
+                       r'\1[redacted]', value)
+        parts.append(label + ':\n' + value[-6000:])
+    return '\n'.join(parts) or 'Keine Kindprozess-Ausgabe vorhanden.'
+
+
 def execute(args, cwd, env, timeout=7200):
-    result = subprocess.run(list(map(str, args)), cwd=cwd, env=env, capture_output=True,
-                            text=True, errors='replace', check=True, timeout=timeout)
+    try:
+        result = subprocess.run(list(map(str, args)), cwd=cwd, env=env, capture_output=True,
+                                text=True, errors='replace', check=True, timeout=timeout)
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+        print('Python-Build/Probe fehlgeschlagen; begrenzte bereinigte Diagnose:\n' + failure_details(error),
+              flush=True)
+        raise
     return result.stdout.strip()
+
+
+def build_execute(args, cwd, env):
+    return native_build_process.run(args, cwd, env, timeout=7200, label='Python-/Frontend-Build')
 
 
 def select_python(outer, spec, approved=False):
@@ -212,23 +241,29 @@ def inspect_wheel(wheel, recipe):
 
 
 def probe_script(recipe):
-    # Disable sockets and subprocesses before importing the installed public API.
+    # Keep Popen a real class: imports can subclass it or use Popen[str] annotations.
     return '''import importlib, importlib.metadata as m, json, socket, subprocess, sys
 def denied(*args, **kwargs):
     raise RuntimeError("Runtime-Probe erlaubt kein Netzwerk/Unterprozess")
+def audit_runtime(event, args):
+    if event in {"subprocess.Popen", "os.system", "os.posix_spawn", "os.fork", "os.forkpty",
+                 "socket.connect", "socket.bind", "socket.getaddrinfo", "socket.gethostbyname",
+                 "socket.gethostbyaddr", "socket.sendto", "socket.sendmsg"}:
+        raise RuntimeError("Runtime-Probe blockiert Audit-Ereignis: " + event)
+sys.addaudithook(audit_runtime)
 socket.socket.connect = denied
 socket.socket.connect_ex = denied
 socket.create_connection = denied
 socket.getaddrinfo = denied
 socket.socket.bind = denied
-subprocess.Popen = denied
 assert sys.prefix != sys.base_prefix
 module = importlib.import_module(%r)
 assert m.version(%r) == %r
 %s
 rows = sorted([{"name": d.metadata["Name"], "version": d.version} for d in m.distributions()], key=lambda d: d["name"].lower())
 print(json.dumps({"version": m.version(%r), "module": module.__name__, "distributions": rows,
-                  "application_tested": False, "network_allowed": False, "scan_performed": False}))
+                  "application_tested": False, "network_allowed": False, "process_allowed": False,
+                  "guard": "cpython-audit-hook-and-socket-guards", "scan_performed": False}))
 ''' % (recipe['import_module'], recipe['distribution'], recipe['version'],
        {'ragas': 'assert callable(module.evaluate) and callable(module.aevaluate)',
         'arize-phoenix': 'assert callable(module.launch_app)',
@@ -242,7 +277,7 @@ def build(source, prefix, spec, env, run=None):
     if source != prefix / 'source':
         raise ValueError('Buildquelle muss im eigenen nativen Praefix liegen.')
     verify_source(source, recipe)
-    runner = run or execute
+    runner = run or build_execute
     child = environment(common.checked(prefix / '_python-build'))
     uv = native_uv.select(prefix.parent, spec, allow_download=False)
     python = select_python(prefix.parent, spec)
@@ -291,6 +326,7 @@ def build(source, prefix, spec, env, run=None):
     if not cli.is_file():
         raise ValueError('Installierter CLI-Einstieg fehlt.')
     # The bounded probe always uses the local executor, never a long-running build runner.
+    print(spec['name'] + ': begrenzte Offline-Importprobe (45s); kein Dienst-/Modellstart.', flush=True)
     report = json.loads(execute([vpython, '-I', '-B', '-c', probe_script(recipe)], prefix, child, 45))
     verify_source(source, recipe)
     wheel_name = wheel.relative_to(prefix).as_posix()

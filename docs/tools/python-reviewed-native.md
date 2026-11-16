@@ -26,6 +26,12 @@ Installationsziel: `~/.openclaw_ultimate_user_data/tools/TOOL/native-github/`.
 Die `venv`, Source-Wheels, Hash-Locks, SBOM und Importprobe bleiben im privaten Toolverzeichnis.
 Checkov startet keinen IaC-Scan; Ragas ruft weder LLM-Judges noch Provider auf.
 Die begrenzte Python-Probe blockiert Netzwerk-/Unterprozessaufrufe vor dem Import.
+Dabei bleibt `subprocess.Popen` als Klasse erhalten, damit Typannotationen und Bibliotheksimporte funktionieren.
+Ein CPython-Audit-Hook und Socket-Sperren verhindern die erfassten Prozess-/Netzwerkaufrufe;
+dies ist keine Betriebssystem-Sandbox fuer nicht vertrauenswuerdigen Code.
+Buildschritte zeigen laufende Ausgabe, Prozess-ID und regelmaessige Lebenszeichen statt still zu warten.
+Scheitert die 45-Sekunden-Importprobe, protokolliert sie begrenzte, bereinigte Fehlerausgabe und bleibt fehlgeschlagen.
+Im gemeldeten Phoenix-Versuch fehlte diese Ausgabe; die konkrete Importursache ist deshalb noch nicht belegt.
 Phoenix startet keinen HTTP-/Tracing-Dienst. Auth, Datenbank, Trace-Redaction und Betrieb sind separat abzunehmen.
 
 ## Pruefung und Lifecycle
