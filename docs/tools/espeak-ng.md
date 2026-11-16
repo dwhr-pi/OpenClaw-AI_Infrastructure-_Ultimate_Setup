@@ -14,16 +14,16 @@ Mindestreserve, keine gemessene Runtime-Groesse. Keine globale Installation,
 Audiowiedergabe, Docker oder automatischer Dienststart. Optionale pcaudiolib-,
 Sonic-, MBROLA- und SpeechPlayer-Anbindungen bleiben deaktiviert.
 
-Bei `cmake fehlt` oder fehlendem Make/C-Compiler zuerst nur die Ubuntu-
-Build-Voraussetzungen einrichten, nicht eSpeak aus einem anderen Paket installieren:
-
-```bash
-sudo apt-get update
-sudo apt-get install --no-install-recommends cmake build-essential
-```
-
-Danach den folgenden Installationsbefehl erneut ausfuehren. Diese APT-Schritte
-installieren Buildwerkzeuge und starten keinen eSpeak-Dienst.
+Fehlendes CMake/Make/C-Compiler wird jetzt **im Setup** behandelt. Das Hauptmenue
+fragt vor Install/Update nach Zustimmung; auf Debian-/Ubuntu-Basis richtet der Installer
+dann fehlendes `cmake` und `build-essential` ueber apt ein und setzt denselben Lauf
+mit dem privaten GitHub-Build fort. eSpeak selbst wird nicht als Systempaket installiert.
+Direkter CLI-Aufruf mit derselben ausdruecklichen Freigabe:
+`bash scripts/tools/espeak_ng_install.sh --install-build-deps`.
+Unter Ubuntu 26.04, Debian und DietPi wird zuerst eine apt-Installation simuliert.
+Ohne Freigabe keine Systemaenderung. Fehler, nicht erkannte Distributionsfamilien oder weiterhin
+fehlende Compiler stoppen vor dem Quellen-Download. Plan/Status/Doctor bleiben lesend.
+Basiswerkzeuge bleiben bei Deinstallation erhalten; keine Dienste werden gestartet.
 
 ```bash
 bash scripts/tools/espeak_ng_install.sh --dry-run

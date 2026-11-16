@@ -99,9 +99,37 @@ class SongRecDependencies(unittest.TestCase):
             run.assert_not_called()
 
     def test_non_ubuntu_explicit_install_is_refused(self):
-        with patch.object(deps, 'ubuntu_release', return_value=False), patch.object(deps.common, 'run') as run:
+        with patch.object(deps, 'ubuntu_release', return_value=False), patch.object(deps, 'debian_family', return_value=False), patch.object(deps.common, 'run') as run:
             with self.assertRaisesRegex(ValueError, 'Keine Systemaenderung'):
                 deps.prepare(self.spec, approved=True)
+            run.assert_not_called()
+
+    def test_unsupported_system_reports_actual_release_before_missing_cargo(self):
+        with patch.object(deps, 'ubuntu_release', return_value=False), \
+                patch.object(deps, 'os_release', return_value={'ID': 'fedora', 'VERSION_ID': '44'}), \
+                patch.object(deps.common, 'run') as run:
+            with self.assertRaisesRegex(ValueError, 'ID=fedora, VERSION_ID=44') as error:
+                deps.prepare(self.spec)
+            self.assertIn('nicht als Debian-/Ubuntu-Familie erkannt', str(error.exception))
+            run.assert_not_called()
+
+    def test_missing_package_manager_is_not_misreported_as_other_distribution(self):
+        with patch.object(deps, 'os_release', return_value={'ID': 'ubuntu', 'VERSION_ID': '24.04'}), \
+                patch.object(deps.shutil, 'which', side_effect=lambda name: None if name == 'apt-get' else 'fixture'), \
+                patch.object(deps.common, 'run') as run:
+            with self.assertRaisesRegex(ValueError, 'Paketwerkzeuge fehlen im PATH: apt-get'):
+                deps.prepare(self.spec, approved=True)
+            run.assert_not_called()
+
+    def test_unreadable_os_release_is_not_assumed_supported(self):
+        with patch.object(deps.platform, 'freedesktop_os_release', side_effect=OSError('fixture')):
+            self.assertEqual(deps.os_release(), {})
+
+    def test_os_release_uses_standard_parser_without_shell(self):
+        with patch.object(deps.platform, 'freedesktop_os_release', return_value={
+                'ID': 'ubuntu', 'VERSION_ID': '24.04', 'PRETTY_NAME': 'Ubuntu 24.04.5 LTS'}), \
+                patch.object(deps.subprocess, 'run') as run:
+            self.assertEqual(deps.os_release()['VERSION_ID'], '24.04')
             run.assert_not_called()
 
     def test_apt_failure_never_becomes_success(self):
@@ -143,6 +171,19 @@ class SongRecDependencies(unittest.TestCase):
                 patch.object(native, 'probe'):
             native.preflight('songrec', Path('.'), approved=True)
         prepare.assert_called_once_with(self.spec, approved=True)
+
+
+class OperatingSystemDetection(unittest.TestCase):
+    def test_supported_ubuntu_point_release(self):
+        with patch.object(deps.platform, 'freedesktop_os_release', return_value={
+                'ID': 'ubuntu', 'VERSION_ID': '24.04', 'PRETTY_NAME': 'Ubuntu 24.04.5 LTS'}):
+            self.assertTrue(deps.ubuntu_release())
+
+    def test_other_or_unknown_releases_are_not_implicitly_approved(self):
+        for values in ({}, {'ID': 'ubuntu', 'VERSION_ID': '26.04'},
+                       {'ID': 'linuxmint', 'ID_LIKE': 'ubuntu', 'VERSION_ID': '24.04'}):
+            with self.subTest(values=values), patch.object(deps.platform, 'freedesktop_os_release', return_value=values):
+                self.assertFalse(deps.ubuntu_release())
 
 
 if __name__ == '__main__':

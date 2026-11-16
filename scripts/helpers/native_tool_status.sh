@@ -20,6 +20,28 @@ NATIVE_TOOL_STATUS_KEYS+=("${NATIVE_GITHUB_TOOL_KEYS[@]}")
 native_tool_marker() {
   local marker
   case "$1" in
+    # BEGIN NATIVE CANDIDATES
+    "cert-manager") marker=cert_manager/native-github/build-ready.json ;;
+    "External_DNS") marker=external_dns/native-github/build-ready.json ;;
+    "Kyverno") marker=kyverno/native-github/build-ready.json ;;
+    "Gatekeeper") marker=gatekeeper/native-github/build-ready.json ;;
+    "KEDA") marker=keda/native-github/build-ready.json ;;
+    "Temporal") marker=temporal/native-github/build-ready.json ;;
+    "Argo_Workflows") marker=argo_workflows/native-github/build-ready.json ;;
+    "Arize_Phoenix") marker=phoenix/native-github/build-ready.json ;;
+    "Checkov") marker=checkov/native-github/build-ready.json ;;
+    "Ragas") marker=ragas/native-github/build-ready.json ;;
+    "gVisor") marker=gvisor/native-github/build-ready.json ;;
+    "Firecracker") marker=firecracker/native-github/build-ready.json ;;
+    "Kata_Containers") marker=kata_containers/native-github/build-ready.json ;;
+    "Milvus") marker=milvus/native-github/build-ready.json ;;
+    "Vaultwarden") marker=vaultwarden/native-github/build-ready.json ;;
+    "OWASP_ZAP") marker=owasp_zap/native-github/build-ready.json ;;
+    "Kubescape") marker=kubescape/native-github/build-ready.json ;;
+    "Nuclei") marker=nuclei/native-github/build-ready.json ;;
+    "TruffleHog") marker=trufflehog/native-github/build-ready.json ;;
+    "Testssl") marker=testssl/native-github/build-ready.json ;;
+    # END NATIVE CANDIDATES
     OpenCode) marker=opencode/native-coding/current/OWNED.json ;;
     Aider) marker=aider/native-coding/current/OWNED.json ;;
     OpenHands) marker=openhands/native-coding/current/OWNED.json ;;
@@ -27,6 +49,8 @@ native_tool_marker() {
     "Traefik") marker=traefik/native-github/build-ready.json ;;
     XERJ) marker=xerj/native-github/build-ready.json ;;
     FFmpeg) marker=ffmpeg/native-github/build-ready.json ;;
+    Valkey) marker=valkey/native-github/build-ready.json ;;
+    Kube_Bench) marker=kube_bench/native-github/build-ready.json ;;
     OpenUtau) marker=openutau/ready.json ;;
     DiffSinger) marker=diffsinger/ready.json ;;
     Seed_VC) marker=seed_vc/ready.json ;;

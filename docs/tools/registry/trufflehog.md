@@ -70,15 +70,38 @@ python3 -I -B scripts/tool_commands.py show trufflehog
 
 ### SSH-Aktionen: `trufflehog`
 
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
+Status und Diagnose lesen den privaten Tool-Zustand auf dem VPS:
 
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`TruffleHog` (ID `trufflehog`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
+```bash
+python3 -I -B scripts/tool_commands.py run trufflehog --action status
+python3 -I -B scripts/tool_commands.py run trufflehog --action doctor
+```
+
+Die folgenden Befehle **einzeln und nur nach Freigabe** ausfuehren, nicht als
+gemeinsamen Ablauf: Installation, spaeter Update oder bewusst Deinstallation.
+Vorher Quellen, Lizenz, Ressourcen und Daten-Erhaltungsregeln dieser Anleitung pruefen.
+
+Installieren (separate Entscheidung):
+
+```bash
+python3 -I -B scripts/tool_commands.py run trufflehog --action install --apply --confirm trufflehog:install
+```
+
+Aktualisieren (separate Entscheidung):
+
+```bash
+python3 -I -B scripts/tool_commands.py run trufflehog --action update --apply --confirm trufflehog:update
+```
+
+Deinstallieren (separate Entscheidung):
+
+```bash
+python3 -I -B scripts/tool_commands.py run trufflehog --action uninstall --apply --confirm trufflehog:uninstall
+```
+
+Fehlende Build-Abhaengigkeiten stoppen den Versuch. Nur fuer Install/Update
+`--install-build-deps` nach separater Download-Freigabe ergaenzen. Kein Auto-Yes,
+kein Docker-Fallback; Source-Build/Status ist keine erfolgreiche Runtime-Abnahme.
 
 Das interaktive Setup bleibt nach bewusster Freigabe im SSH-Terminal erreichbar:
 

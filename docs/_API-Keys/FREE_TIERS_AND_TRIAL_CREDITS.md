@@ -1,5 +1,14 @@
 # Kostenlose LLM-Zugaenge: Quellen, Trial-Credits und eigene Auswertung
 
+**Wochenpruefung vom 16.11.2026:** [Quellenbericht und Commitvergleich](reviews/2026-11-16.md).
+Wichtige Nutzungsgrenze: Gemini verlangt Paid Services beim Bereitstellen von API-Clients fuer
+Nutzer im EWR, der Schweiz oder UK. Die regionale Ausnahme zur Datenverwendung ist keine
+Free-Tier-Freigabe fuer diesen Einsatz. Diese bereits datierten Bedingungen wurden jetzt
+ausdruecklich in unserer Auswertung ergaenzt; keine diese Woche bewiesene Vertragsaenderung.
+Cerebras bestaetigt 5 USD Trial fuer 30 Tage nach Zahlungsmittelverifikation.
+Together verlangt den ersten Guthabenkauf auch vor der API-Key-Erstellung.
+Keine kostenpflichtige Nutzung aktiviert; historische Tabellen bleiben erhalten.
+
 **Gezielte Together-Nachpruefung vom 11.11.2026:**
 Die [Billing-Seite](https://docs.together.ai/docs/billing-credits) bestaetigt
 paid-prepaid ohne allgemeines kostenloses Trial, mindestens 15 USD beim ersten

@@ -1,67 +1,66 @@
-# Infrastruktur-Kandidaten hinter XERJ
+# Native Infrastruktur-Installer hinter XERJ
 
-Stand: 16.11.2026. Diese Tools stehen als letzter Block **direkt hinter XERJ** im Tools-Menue.
-Bestehende Eintraege werden nicht dupliziert. Der eingefrorene A-Z-Bereich bleibt erhalten;
-TruffleHog wird auf ausdruecklichen Wunsch in den neuen Schlussblock verschoben.
+Stand: 16.11.2026. Alle 22 genannten Tools stehen weiterhin am Ende des Tools-Menues.
+Valkey und Kube_Bench behalten ihre bestehenden nativen Installer; die 20 weiteren Eintraege
+verwenden jetzt tool-spezifische native Buildrezepte statt gesperrter Dokumentations-Platzhalter.
 
-## Status und Grenzen
+**Experimentell, echte Linux-Buildabnahme offen:** Offline-Fixtures pruefen Vertrage und Fehlerpfade,
+nicht einen abgeschlossenen Ubuntu-/WSL-Build. Installation bedeutet ausschliesslich den unten
+und auf der Toolseite beschriebenen Programm-/Komponentenumfang, niemals einen betriebsbereiten Cluster.
 
-**GEPLANT / NICHT INSTALLIERBAR** ist kein fertiger Installer. Die neuen Eintraege laden nichts herunter,
-bauen nichts und starten weder Dienste noch Cluster, Modelle oder Sicherheitspruefungen.
-Install/Update/Doctor/Uninstall enden fuer die neuen Kandidaten mit Exit 3 statt einem falschen Erfolg.
-Ein expliziter `--dry-run` zeigt nur den Plan (Exit 0). Status liefert `installed: null`:
-Der Host wird nicht untersucht, auch eine separat eingerichtete Installation bleibt unberuehrt.
+## Auswahl und Voraussetzungen
 
-Die GitHub-Links sind Quellenkandidaten, **keine Freigabe eines Pins oder einer Lizenz**.
-Erst nach geprueftem vollen Commit, Lockfiles und Artefakthashes darf ein nativer Build folgen.
-Ein Klon, eine Policy oder ein CRD-Beispiel ersetzt keine Controller-/Runtime-Abnahme.
-Keine Docker-/Compose-Installation, kein Fallback und keine automatische Aktivierung.
+Im Setup das gewuenschte Tool auswaehlen und fehlende Buildvoraussetzungen bewusst freigeben.
+Quellen werden am vollen Pin gebaut; ein Clone allein erzeugt keinen Erfolgsnachweis.
+Neue Debian-/Ubuntu-Releases und DietPi werden nicht wegen einer Point-Release-Bezeichnung abgelehnt.
+Architektur, Pakete, Compiler, Kernel und Ressourcen muessen trotzdem zum Rezept passen.
+Bei WSL gilt auch der echte freie Windows-Backing-Speicher, nicht nur die virtuelle Linux-Kapazitaet.
 
-## Werkzeuge
+Kein Docker-/Compose-Fallback und kein automatischer Dienst-, Modell-, VM- oder Clusterstart.
+Keine CRD-/DNS-/Zertifikatsaenderung, kein Security-Scan oder Provideraufruf durch die Installation.
 
-| Menue | Quellenkandidat | Zweck | Noch offen |
-| --- | --- | --- | --- |
-| cert-manager | [GitHub](https://github.com/cert-manager/cert-manager) | TLS-Zertifikatsverwaltung | Issuer vorhanden; nativer Controller-Build und CRD-Abnahme offen. |
-| External_DNS | [GitHub](https://github.com/kubernetes-sigs/external-dns) | DNS-Automatisierung | Zonenrechte, TXT-Owner und nativer Build offen. |
-| Kyverno | [GitHub](https://github.com/kyverno/kyverno) | Kubernetes-Admission | Policies vorhanden; Controller und Admission-Abnahme offen. |
-| Gatekeeper | [GitHub](https://github.com/open-policy-agent/gatekeeper) | Alternative zu Kyverno | Nicht parallel als Default; Controller-Build und Rego-Abnahme offen. |
-| KEDA | [GitHub](https://github.com/kedacore/keda) | Queue-basierte Skalierung | CRDs, Auth, nativer Build und Kapazitaetstest offen. |
-| Arize_Phoenix | [GitHub](https://github.com/arize-ai/phoenix) | Alternative zu Langfuse | Native Installation, Persistenz, Auth und Trace-Redaction offen. |
-| Valkey | [GitHub](https://github.com/valkey-io/valkey) | Cache und Betriebsabhaengigkeit | Nativer Build, ACL/TLS und Gateway-Kompatibilitaet offen. |
-| gVisor | [GitHub](https://github.com/google/gvisor) | Sandbox-Runtime | runsc-/CRI-Integration, Kernel- und GPU-Vertrag offen. |
-| Kata_Containers | [GitHub](https://github.com/kata-containers/kata-containers) | VM-basierte Sandbox | Virtualisierung, CRI und native Runtime-Abnahme offen. |
-| Firecracker | [GitHub](https://github.com/firecracker-microvm/firecracker) | MicroVM-Baustein | KVM, Jailer und Kubernetes-Runtime-Anbindung offen. |
-| Milvus | [GitHub](https://github.com/milvus-io/milvus) | Alternative Vektordatenbank | Nativer Gesamtbuild, Abhaengigkeiten und Restore offen. |
-| Kube_Bench | [GitHub](https://github.com/aquasecurity/kube-bench) | CIS-Audit | Audit-Wrapper vorhanden; gepinnter Build und Benchmark-Abnahme offen. |
-| Kubescape | [GitHub](https://github.com/kubescape/kubescape) | Cluster-Sicherheitspruefung | Nativer Build, minimale Leserechte und Ruleset-Abnahme offen. |
-| Nuclei | [GitHub](https://github.com/projectdiscovery/nuclei) | Autorisierte Sicherheitstests | Nativer Build und separat gepruefte Templates offen; keine automatischen Scans. |
-| Testssl | [GitHub](https://github.com/testssl/testssl.sh) | TLS-Audit | Quellenpin, OpenSSL-Vertrag und Smoke-Test offen; keine automatischen Netztests. |
-| OWASP_ZAP | [GitHub](https://github.com/zaproxy/zaproxy) | Autorisierte Web-Sicherheitstests | Nativer Build, JDK und Add-on-Vertrag offen; keine automatischen Scans. |
-| Checkov | [GitHub](https://github.com/bridgecrewio/checkov) | IaC-Pruefung | Nativer Python-Build, Rulesets und Offline-Verhalten offen. |
-| Ragas | [GitHub](https://github.com/vibrantlabsai/ragas) | RAG-Evaluation | Quellenpin und nativer Build offen; keine LLM-Judge-/Provider-Aufrufe. |
-| Temporal | [GitHub](https://github.com/temporalio/temporal) | Persistente Workflows | Vorhandener Registry-Platzhalter; Build, Persistenz und Lifecycle offen. |
-| TruffleHog | [GitHub](https://github.com/trufflesecurity/trufflehog) | Secret-Pruefung | Vorhandener Registry-Platzhalter; nativer Build und sichere Scanvorgaben offen. |
-| Vaultwarden | [GitHub](https://github.com/dani-garcia/vaultwarden) | Passwortverwaltung | Vorhandener Registry-Platzhalter; Build, TLS, Backup und Restore offen. |
-| Argo_Workflows | [GitHub](https://github.com/argoproj/argo-workflows) | Kubernetes-Workflows | Vorhandener Registry-Platzhalter; Controller, CRDs und RBAC offen. |
+## Installer und Grenzen
 
-Die vier bisherigen Platzhalter bleiben bestehende Katalogeintraege, keine neuen Installer.
-Ihre Installationspfade verweigern nun ebenfalls mit Exit 3 einen falschen Erfolg.
-Bestehende individuelle Registry-Anleitungen bleiben erhalten; fuer alle 22 Eintraege gelten diese Grenzen.
+| Tool | Anleitung | Gebauter Umfang und offene Betriebsabnahme |
+| --- | --- | --- |
+| Kube_Bench | [kube-bench.md](kube-bench.md) | Gepinnter nativer Go-Build mit cfg-Benchmarks; Go-Basis nur nach Zustimmung. Nur version-Probe mit eigener gepruefter Konfiguration. Kein Host-/Cluster-Audit, kubectl, Kubeconfig-, AWS-, Datenbank- oder Root-Zugriff. Linux-/Benchmark-Abnahme offen. |
+| Valkey | [valkey.md](valkey.md) | Valkey 9.1.3 mit TLS und libc-Allocator, privater GitHub-Source-Build. Nur Versionsproben, kein Serverstart/Port/Redis-Ersatz. Gemeinsame Buildpakete nach Zustimmung; ACL/TLS-Konfiguration, Persistenz und Gateway-Abnahme separat. |
+| cert-manager | [native-go-controllers.md](native-go-controllers.md) | Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. CRDs/Chart-/Konfigurationsdateien werden nur kopiert, nicht angewendet. |
+| External_DNS | [native-go-controllers.md](native-go-controllers.md) | Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. CRDs/Chart-/Konfigurationsdateien werden nur kopiert, nicht angewendet. |
+| Kyverno | [native-go-controllers.md](native-go-controllers.md) | Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. CRDs/Chart-/Konfigurationsdateien werden nur kopiert, nicht angewendet. |
+| Gatekeeper | [native-go-controllers.md](native-go-controllers.md) | Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. CRDs/Chart-/Konfigurationsdateien werden nur kopiert, nicht angewendet. |
+| KEDA | [native-go-controllers.md](native-go-controllers.md) | Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. CRDs/Chart-/Konfigurationsdateien werden nur kopiert, nicht angewendet. |
+| Temporal | [native-go-controllers.md](native-go-controllers.md) | Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. Server und SQL-/Cassandra-Werkzeuge; Datenbank, Schema-Migration, TLS/Auth und Deployment separat. |
+| Argo_Workflows | [native-go-controllers.md](native-go-controllers.md) | Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. Nur Controller und Executor, kein UI-/API-Server; Workflow-Pods brauchen separate freigegebene CRI-Images. |
+| Arize_Phoenix | [python-reviewed-native.md](python-reviewed-native.md) | Source-Wheel einschliesslich kompiliertem Frontend, private CPython-3.12-venv. Importprobe ohne launch_app/Dienststart. Elastic-2.0 vorher pruefen. Keine Laufzeit-/Datenbankabnahme; Linux-End-to-End-Build noch ausstehend. |
+| Checkov | [python-reviewed-native.md](python-reviewed-native.md) | Echtes Source-Wheel mit generierten JSON-Graph-Policies und Checkov-CLI in eigener venv; keine Scans/Providerkontakte. Python-docker ist deklarierte Bibliotheksabhaengigkeit, keine Engine/Containerinstallation. Linux-End-to-End-Build noch ausstehend. |
+| Ragas | [python-reviewed-native.md](python-reviewed-native.md) | Source-Wheel mit expliziter gepinnter SCM-Version, CLI und evaluate/aevaluate-Importprobe. Keine Evaluation, Inferenz, Modell-Downloads oder Providerkontakte; keine all/dev-Extras. Linux-End-to-End-Build noch ausstehend. |
+| gVisor | [sandbox-native-candidates.md](sandbox-native-candidates.md) | Vollstaendiges gVisor-Releasebundle nativ mit Bazel 9.3.1; nur Versionsprobe, keine Sandbox-/CRI-Abnahme. |
+| Firecracker | [sandbox-native-candidates.md](sandbox-native-candidates.md) | Native Firecracker-/Jailer-Hostkomponenten mit Rust 1.97.0 und musl; kein Gast-Kernel/rootfs und keine VM-Abnahme. |
+| Kata_Containers | [sandbox-native-candidates.md](sandbox-native-candidates.md) | Nur native Legacy-Go-Hostkomponenten kata-runtime und Shim; KEINE vollstaendige Kata-Installation ohne Agent, Gast-Kernel/rootfs und Hypervisor. |
+| Milvus | [security-data-native.md](security-data-native.md) | Milvus CPU Server/Core mit eingebetteten versionierten Web-UI-Assets; ohne etcd/MinIO/Pulsar, GPU, DiskANN oder Betriebsabnahme |
+| Vaultwarden | [security-data-native.md](security-data-native.md) | Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation |
+| OWASP_ZAP | [security-data-native.md](security-data-native.md) | ZAP Core-JAR mit Runtime-JARs, xml/lang/db-Konfiguration und Startskripten; ohne Add-ons/Browser/Installer/JRE; kein vollstaendiges Scanprofil |
+| Kubescape | [native-security-candidates.md](native-security-candidates.md) | Nur lokale CLI-Artefakte; keine Dienste, Scans, Templates, Browser, Cluster-/Providerzugriffe oder Updates. Netzwerklose Versionsprobe braucht unshare/User-Netzwerk-Namespace. Reale Linux/WSL-Buildabnahme noch offen. |
+| Nuclei | [native-security-candidates.md](native-security-candidates.md) | Nur lokale CLI-Artefakte; keine Dienste, Scans, Templates, Browser, Cluster-/Providerzugriffe oder Updates. Netzwerklose Versionsprobe braucht unshare/User-Netzwerk-Namespace. Reale Linux/WSL-Buildabnahme noch offen. |
+| TruffleHog | [native-security-candidates.md](native-security-candidates.md) | Nur lokale CLI-Artefakte; keine Dienste, Scans, Templates, Browser, Cluster-/Providerzugriffe oder Updates. Netzwerklose Versionsprobe braucht unshare/User-Netzwerk-Namespace. Reale Linux/WSL-Buildabnahme noch offen. |
+| Testssl | [native-security-candidates.md](native-security-candidates.md) | Nur lokale CLI-Artefakte; keine Dienste, Scans, Templates, Browser, Cluster-/Providerzugriffe oder Updates. Netzwerklose Versionsprobe braucht unshare/User-Netzwerk-Namespace. Reale Linux/WSL-Buildabnahme noch offen. |
 
-## Schrittweise Umsetzung
+## Lifecycle und Nachweise
 
-1. Quellenpin, Lizenz am Pin, Plattform, Ressourcenbedarf und nativen Buildvertrag pruefen.
-2. Lockfiles und SBOM-Erzeugung, private Installationspfade und Artifact-Hashes festlegen.
-3. Status, Doctor, begrenzten Smoke-Test und idempotente Deinstallation implementieren.
-4. Offline-Fehlerpfade testen, danach bewusst freigegebenen Ubuntu-/WSL-Build abnehmen.
-5. Erst danach den Status anheben; Dienst-/Clusterstarts bleiben getrennte Opt-in-Aktionen.
+Jedes Tool besitzt Install, Update, Status, Check, Doctor und geschuetzten Uninstall.
+Update bleibt am freigegebenen Quellenpin; keine stillen Downloads von main/latest.
+Artefakte, Lockfiles und SBOM werden im privaten Buildverzeichnis erfasst.
+Status prueft Buildnachweise, nicht Dienstgesundheit. Doctor ist ohne gesonderte
+Laufzeitabnahme unvollstaendig; keine automatischen Netztests oder Credential-Zugriffe.
+Geaenderte oder fremde Dateien werden nicht automatisch ueberschrieben oder geloescht.
 
-Kyverno und Gatekeeper sowie Langfuse und Phoenix sind Alternativen, keine gemeinsamen Defaults.
-KEDA ersetzt keine GPU-Kapazitaet; Firecracker allein ist keine fertige Kubernetes-Sandbox.
-Kube-bench hat bereits einen [Audit-Wrapper](../../scripts/security/kube-bench-audit.sh), aber keinen Buildinstaller.
+Die verlinkten Toolseiten benennen insbesondere die noch erforderlichen Voraussetzungen
+und Komponenten: Kata-Gaeste/Hypervisor, Milvus-Betriebsdienste, Vaultwarden-Web-Vault,
+ZAP-Add-ons und Argo-API/UI sind nicht durch einen einzelnen Host-Binary-Build erledigt.
 
-Weiter: [Enterprise-Roadmap](../architecture/ENTERPRISE_HARDENING_ROADMAP.md),
-[Installationsrichtlinie](../INSTALLATION_POLICY.md), [Tool-Lifecycle](../TOOL_LIFECYCLE_STANDARD.md).
+Weiter: [Installationsrichtlinie](../INSTALLATION_POLICY.md),
+[Systemdiagnose](../SYSTEM_DIAGNOSTICS.md), [Tool-Lifecycle](../TOOL_LIFECYCLE_STANDARD.md).
 
 <!-- BEGIN GENERATED VPS SSH -->
 
@@ -89,241 +88,8 @@ test -f scripts/tool_commands.py || exit 1
 Zuerst nur den Offline-Plan lesen (keine Installation und kein Dienststart):
 
 ```bash
-python3 -I -B scripts/tool_commands.py show cert_manager
-python3 -I -B scripts/tool_commands.py show checkov
-python3 -I -B scripts/tool_commands.py show external_dns
-python3 -I -B scripts/tool_commands.py show firecracker
-python3 -I -B scripts/tool_commands.py show gatekeeper
-python3 -I -B scripts/tool_commands.py show gvisor
-python3 -I -B scripts/tool_commands.py show kata_containers
-python3 -I -B scripts/tool_commands.py show keda
-python3 -I -B scripts/tool_commands.py show kube_bench
-python3 -I -B scripts/tool_commands.py show kubescape
-python3 -I -B scripts/tool_commands.py show kyverno
-python3 -I -B scripts/tool_commands.py show milvus
-python3 -I -B scripts/tool_commands.py show nuclei
-python3 -I -B scripts/tool_commands.py show owasp_zap
-python3 -I -B scripts/tool_commands.py show phoenix
-python3 -I -B scripts/tool_commands.py show ragas
-python3 -I -B scripts/tool_commands.py show testssl
-python3 -I -B scripts/tool_commands.py show valkey
+python3 -I -B scripts/tool_commands.py list
 ```
-
-### SSH-Aktionen: `cert_manager`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`cert-manager` (ID `cert_manager`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `checkov`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Checkov` (ID `checkov`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `external_dns`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`External_DNS` (ID `external_dns`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `firecracker`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Firecracker` (ID `firecracker`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `gatekeeper`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Gatekeeper` (ID `gatekeeper`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `gvisor`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`gVisor` (ID `gvisor`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `kata_containers`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Kata_Containers` (ID `kata_containers`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `keda`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`KEDA` (ID `keda`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `kube_bench`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Kube_Bench` (ID `kube_bench`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `kubescape`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Kubescape` (ID `kubescape`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `kyverno`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Kyverno` (ID `kyverno`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `milvus`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Milvus` (ID `milvus`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `nuclei`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Nuclei` (ID `nuclei`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `owasp_zap`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`OWASP_ZAP` (ID `owasp_zap`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `phoenix`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Arize_Phoenix` (ID `phoenix`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `ragas`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Ragas` (ID `ragas`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `testssl`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Testssl` (ID `testssl`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `valkey`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Valkey` (ID `valkey`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
 
 Das interaktive Setup bleibt nach bewusster Freigabe im SSH-Terminal erreichbar:
 

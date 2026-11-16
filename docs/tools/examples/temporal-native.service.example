@@ -1,0 +1,24 @@
+# Inactive template; adapt absolute paths and configuration before manual deployment.
+[Unit]
+Description=Temporal Native Server (manual deployment only)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=temporal
+Group=temporal
+WorkingDirectory=/etc/temporal
+ExecStart=/opt/temporal/bin/temporal-server --root /etc/temporal --config /etc/temporal/config --env production start
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+UMask=0077
+StateDirectory=temporal
+ReadWritePaths=/var/lib/temporal
+
+[Install]
+WantedBy=multi-user.target

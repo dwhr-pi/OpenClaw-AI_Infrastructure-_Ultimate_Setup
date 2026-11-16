@@ -72,6 +72,11 @@ jobs:
           python3 -B tests/test_gap_runtime_cleanup.py -v
           python3 -B tests/test_gap_native_build.py -v
           python3 -B tests/test_outlines_python_selection.py -v
+          python3 -B tests/test_creative_prerequisites.py -v
+          python3 -B tests/test_system_diagnostics.py -v
+          python3 -B tests/test_outlines_private_python.py -v
+          python3 -B tests/test_valkey_native.py -v
+          python3 -B tests/test_kube_bench_native.py -v
           python3 -B tests/test_browseros_study.py -v
           python3 -B tests/test_enki_browser_study.py -v
           python3 -B tests/test_qwen_desktop_study.py -v
@@ -79,6 +84,11 @@ jobs:
           python3 -B tests/test_litellm_build_timeout.py -v
           python3 -B tests/test_tool_menu_order.py -v
           python3 -B tests/test_infrastructure_candidates.py -v
+          python3 -B tests/test_native_candidate_sync.py -v
+          python3 -B tests/test_native_candidate_dispatch.py -v
+          python3 -B tests/test_candidate_go_controllers.py -v
+          python3 -B tests/test_python_reviewed_native.py -v
+          python3 -B tests/test_security_data_native.py -v
           python3 -B tests/test_signed_update_discovery.py -v
           bash -n scripts/credentials_backup_menu.sh
           bash -n scripts/installation_inventory_menu.sh

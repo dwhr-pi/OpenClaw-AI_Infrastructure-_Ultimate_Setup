@@ -1,0 +1,342 @@
+# Hardened, inactive examples. Read README.md before creating any workload.
+# Original examples remain unchanged in docs/legacy/K8S_DEPLOYMENTS_LEGACY.md.
+# Images below are deliberately non-routable placeholders, not verified image pins.
+# A private overlay must set reviewed image digests, configuration and replicas.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai-services
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: ai-services
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: ollama
+        image: registry.invalid/openclaw-reviewed/ollama:operator-must-pin
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities: {drop: [ALL]}
+        env:
+        - {name: HOME, value: /var/lib/ollama}
+        - {name: OLLAMA_MODELS, value: /var/lib/ollama/models}
+        ports:
+        - containerPort: 11434
+        resources:
+          limits:
+            cpu: "2"
+            memory: "4Gi"
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+        volumeMounts:
+        - name: ollama-models
+          mountPath: /var/lib/ollama
+        - {name: tmp, mountPath: /tmp}
+      volumes:
+      - {name: tmp, emptyDir: {sizeLimit: 256Mi}}
+      - name: ollama-models
+        persistentVolumeClaim:
+          claimName: ollama-pvc
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-pvc
+  namespace: ai-services
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zenbot
+  namespace: ai-services
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: zenbot
+  template:
+    metadata:
+      labels:
+        app: zenbot
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: zenbot
+        image: registry.invalid/openclaw-reviewed/zenbot:operator-must-pin
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities: {drop: [ALL]}
+        env:
+        - name: MONGODB_URI
+          value: "mongodb://mongo:27017/zenbot"
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - {name: tmp, mountPath: /tmp}
+      volumes:
+      - {name: tmp, emptyDir: {sizeLimit: 128Mi}}
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: ai-services
+spec:
+  selector:
+    app: mongo
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  namespace: ai-services
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: mongo
+        image: registry.invalid/openclaw-reviewed/mongo:operator-must-pin
+        args: [--auth, --bind_ip_all]
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities: {drop: [ALL]}
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-data
+          mountPath: /data/db
+        - {name: tmp, mountPath: /tmp}
+        - {name: mongo-config, mountPath: /data/configdb}
+      volumes:
+      - {name: tmp, emptyDir: {sizeLimit: 128Mi}}
+      - {name: mongo-config, emptyDir: {sizeLimit: 64Mi}}
+      - name: mongo-data
+        persistentVolumeClaim:
+          claimName: mongo-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+  namespace: ai-services
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openmanus
+  namespace: ai-services
+  labels:
+    app: openmanus
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: openmanus
+  template:
+    metadata:
+      labels:
+        app: openmanus
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile: {type: RuntimeDefault}
+      initContainers:
+      - name: git-clone-openmanus
+        image: registry.invalid/openclaw-reviewed/git:operator-must-pin
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities: {drop: [ALL]}
+        env:
+        - {name: HOME, value: /tmp}
+        - name: OPENMANUS_COMMIT
+          valueFrom:
+            configMapKeyRef: {name: openmanus-reviewed-source, key: commit}
+        - name: OPENMANUS_REPOSITORY
+          valueFrom:
+            configMapKeyRef: {name: openmanus-reviewed-source, key: repository}
+        command: [/bin/sh, -ec]
+        args:
+        - |
+          test "${#OPENMANUS_COMMIT}" -eq 40
+          case "$OPENMANUS_COMMIT" in *[!0-9a-f]*) exit 1;; esac
+          case "$OPENMANUS_REPOSITORY" in https://github.com/*/*.git) ;; *) exit 1;; esac
+          git -c core.hooksPath=/dev/null init --template= /openmanus-src
+          git -C /openmanus-src remote add origin "$OPENMANUS_REPOSITORY"
+          git -c credential.helper= -C /openmanus-src fetch --depth=1 origin "$OPENMANUS_COMMIT"
+          git -c core.hooksPath=/dev/null -C /openmanus-src checkout --detach FETCH_HEAD
+          test "$(git -C /openmanus-src rev-parse HEAD)" = "$OPENMANUS_COMMIT"
+        volumeMounts:
+        - name: openmanus-volume
+          mountPath: /openmanus-src
+        - {name: tmp, mountPath: /tmp}
+      containers:
+      - name: openmanus
+        image: registry.invalid/openclaw-reviewed/openmanus:operator-must-pin
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities: {drop: [ALL]}
+        command: ["python", "/openmanus-src/main.py"] # Annahme: main.py ist der Startpunkt
+        ports:
+        - containerPort: 8000 # Beispiel Port
+        volumeMounts:
+        - name: openmanus-volume
+          mountPath: /openmanus-src
+          readOnly: true
+        - {name: tmp, mountPath: /tmp}
+      volumes:
+      - {name: tmp, emptyDir: {sizeLimit: 256Mi}}
+      - name: openmanus-volume
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openmanus-service
+  namespace: ai-services
+spec:
+  selector:
+    app: openmanus
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP # Interner Service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gemini-ollama-proxy
+  namespace: ai-services
+  labels:
+    app: gemini-ollama-proxy
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: gemini-ollama-proxy
+  template:
+    metadata:
+      labels:
+        app: gemini-ollama-proxy
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+      - name: proxy
+        image: registry.invalid/openclaw-reviewed/gemini-proxy:operator-must-pin
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities: {drop: [ALL]}
+        command: ["python", "/app/proxy.py"]
+        ports:
+        - containerPort: 8000
+        env:
+        - name: PROXY_AUTH_TOKEN
+          valueFrom:
+            secretKeyRef: {name: gemini-secrets, key: proxy-auth-token}
+        - name: GEMINI_MODEL
+          valueFrom:
+            configMapKeyRef: {name: gemini-reviewed-config, key: model}
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gemini-secrets
+              key: api-key
+        - name: OLLAMA_URL
+          value: "http://ollama:11434"
+        volumeMounts:
+        - {name: tmp, mountPath: /tmp}
+      volumes:
+      - {name: tmp, emptyDir: {sizeLimit: 128Mi}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gemini-ollama-proxy-service
+  namespace: ai-services
+spec:
+  selector:
+    app: gemini-ollama-proxy
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP

@@ -903,8 +903,31 @@ get_tool_install_fallback_min_free_mb() {
   local tool_key="$1"
 
   case "$tool_key" in
+    # BEGIN CANDIDATE BUDGETS
+    "cert-manager") printf '24576' ;;
+    "External_DNS") printf '24576' ;;
+    "Kyverno") printf '24576' ;;
+    "Gatekeeper") printf '24576' ;;
+    "KEDA") printf '24576' ;;
+    "Temporal") printf '24576' ;;
+    "Argo_Workflows") printf '24576' ;;
+    "Arize_Phoenix") printf '12288' ;;
+    "Checkov") printf '8192' ;;
+    "Ragas") printf '12288' ;;
+    "gVisor") printf '65536' ;;
+    "Firecracker") printf '16384' ;;
+    "Kata_Containers") printf '16384' ;;
+    "Milvus") printf '65536' ;;
+    "Vaultwarden") printf '12288' ;;
+    "OWASP_ZAP") printf '12288' ;;
+    "Kubescape") printf '24576' ;;
+    "Nuclei") printf '24576' ;;
+    "TruffleHog") printf '24576' ;;
+    "Testssl") printf '1024' ;;
+    # END CANDIDATE BUDGETS
     "Outlines" | "eSpeak_NG") printf '4096' ;;
     "SongRec") printf '8192' ;;
+    "Kube_Bench") printf '8192' ;;
     "MiniMax_M3" | "Obot" | "DeepSeek_R1" | "Qwen_Coder" | "Audile" | "Mousai" | "Dejavu" | "Qwen3_235B_A22B" | "QwQ_32B" | "GPT_OSS_120B" | "LeVo_2" | "MOSS_Music" | "PoeLM" | "PoeTone" | "CoPoet" | "CTGS" | "MusicGen") printf '2048' ;;
     "Traefik") printf '16384' ;;
     "OpenTelemetry") printf '8192' ;;
@@ -3236,7 +3259,7 @@ TOOLS["Shfmt"]="Formatter für Shell-Skripte."
 TOOLS["Hadolint"]="Linter für Dockerfiles und Container-Builds."
 TOOLS["Actionlint"]="Linter für GitHub-Actions-Workflows."
 TOOLS["Docker_Compose_Plugin"]="Stellt das Docker-Compose-Plugin für moderne Compose-Stacks bereit."
-TOOLS["TruffleHog"]="Secret-Scanner für Dateisysteme und Repositories."
+TOOLS["TruffleHog"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-security-candidates.md"
 TOOLS["ArgoCD_CLI"]="GitOps-CLI für Argo CD."
 TOOLS["Flux_CLI"]="GitOps-CLI für Flux-basierte Cluster-Workflows."
 TOOLS["Kubectx_Kubens"]="Schneller Wechsel zwischen Kubernetes-Kontexten und Namespaces."
@@ -3601,6 +3624,23 @@ run_tool_script() {
   fi
 
   # Only the interactive setup opts into the documentation approval dialog.
+  if [[ "$tool_key" =~ ^(Outlines|eSpeak_NG|SongRec|Valkey|Kube_Bench|cert-manager|External_DNS|Kyverno|Gatekeeper|KEDA|Arize_Phoenix|gVisor|Kata_Containers|Firecracker|Milvus|Kubescape|Nuclei|Testssl|OWASP_ZAP|Checkov|Ragas|Temporal|TruffleHog|Vaultwarden|Argo_Workflows)$ && "$action" =~ ^(install|update)$ ]]; then
+    local prerequisites='Gepinnter nativer GitHub-Build. Fehlende freigegebene Compiler, Laufzeiten und Entwicklungsbibliotheken werden nach Zustimmung eingerichtet, private Toolchains mit Integritaetsnachweis. Debian-/Ubuntu-Familie einschliesslich neuer Releases und DietPi: Paketaufloesung wird vor apt-Installation simuliert. Keine Fremdquelle, kein System-Python-Wechsel. Umfang und Ressourcen siehe Toolseite; keine automatische Aktivierung, Scans oder Zugangsdatenpruefung.'
+    if [ "$tool_key" = Outlines ]; then
+      prerequisites='Outlines: geeignetes vorhandenes Python bevorzugen. Falls keines vorhanden: Ubuntu 24.04 bekommt Python 3.12/venv per apt; andere Systeme wie Ubuntu 26.04 bekommen eine private Python-3.13-Laufzeit via uv/GitHub (1024 MiB Zusatzreserve). uv bestimmt die Patchversion; Dateiinventar wird erfasst. Kein System-Python-Wechsel. Fehlendes uv aus SHA256-geprueftem GitHub-Release.'
+    elif [ "$tool_key" = eSpeak_NG ]; then
+      prerequisites='eSpeak NG: cmake und build-essential aus Debian-/Ubuntu-Paketen. Abweichende Release-Basis wird vor Installation mit apt simuliert.'
+    elif [ "$tool_key" = Kube_Bench ]; then
+      prerequisites='Kube Bench: vorhandenes Go ab 1.26.3 bevorzugen; bei Bedarf privates SHA256-geprueftes Go bereitstellen. Gepinnter Source-Build mit cfg-Dateien; nur Versionsprobe, kein Audit/Scan, Kubeconfig- oder Cloud-Zugriff.'
+    elif [ "$tool_key" = Valkey ]; then
+      prerequisites='Valkey: Compiler, make, pkg-config und OpenSSL-Entwicklungsbibliotheken aus Debian-/Ubuntu-Paketen. Gepinnter privater GitHub-Build, kein Server-/Portstart und kein Austausch einer Redis-Installation.'
+    elif [ "$tool_key" = SongRec ]; then
+      prerequisites='SongRec: fehlendes Cargo/Rust, Compiler, pkg-config, gettext sowie ALSA-/GLib-/OpenSSL-Entwicklungsbibliotheken aus Debian-/Ubuntu-Paketen. Abweichende Basis wird mit apt simuliert. Vorhandene private Cargo-/Rust-Werkzeuge bleiben. SongRec aus gepinntem GitHub-Stand; kein Mikrofon-/Shazam-Aufruf.'
+    fi
+    if dialog --defaultno --title "$tool_key: Voraussetzungen" --yesno "$prerequisites\n\nFehlende Voraussetzungen im Setup einrichten? apt kann Abhaengigkeiten aktualisieren; Basiswerkzeuge bleiben erhalten. Kein System-Python-Wechsel, Modell- oder Dienststart. Nein: nur vorhandene Basis verwenden." 16 78; then
+      tool_args+=(--install-build-deps)
+    fi
+  fi
   if [[ "$tool_key" == Markdown_Docs_Server && "$action" =~ ^(install|update)$ ]]; then
     tool_args+=(--interactive)
   fi
@@ -3692,6 +3732,22 @@ plan_gitops_bootstrap_from_setup() {
 
 install_tool() {
   local TOOL_KEY="$1"
+  LAST_OPERATION_LOG_FILE=""
+  ACTIVE_OPERATION_LOG_FILE=""
+  if declare -p TOOLS >/dev/null 2>&1 && [[ "${TOOLS[$TOOL_KEY]:-}" == 'GEPLANT / NICHT INSTALLIERBAR:'* ]]; then
+    local sandbox_info=""
+    case "$TOOL_KEY" in
+      gVisor | Kata_Containers | Firecracker)
+        sandbox_info="$(python3 -I -B "$INSTALL_DIR/scripts/helpers/system_diagnostics.py" --sandbox)" || sandbox_info='Host-Metadaten nicht verfuegbar; keine Kompatibilitaet angenommen.'
+        ;;
+    esac
+    dialog --title "$TOOL_KEY: nur Planung, kein Installer" --msgbox "${TOOLS[$TOOL_KEY]}\n\nDieser Eintrag besitzt noch kein freigegebenes Build-/Lifecycle-Rezept. Kein Installationslauf, kein Download und keine Cluster-/DNS-Aenderung. Status bleibt unveraendert. Anleitung: docs/tools/infrastructure-candidates.md\n\n$sandbox_info" 22 90
+    return 3
+  fi
+  if [ "$TOOL_KEY" = SongSage ]; then
+    dialog --title 'SongSage: Forschungs-/Planungseintrag' --msgbox 'Keine Installation verfuegbar: Die offizielle GitHub-Quelle und Code-/Gewichtslizenz des Lyrics-Modells sind nicht bestaetigt. Gleichnamige Fremdprojekte werden nicht installiert. Siehe docs/tools/songsage.md. Kein Installationslauf gestartet; Status bleibt unveraendert.' 13 76
+    return 3
+  fi
   case "$TOOL_KEY" in
     Ollama | OpenClaw | K3s)
       local core_guard_rc=0
@@ -5032,51 +5088,51 @@ TOOL_SCRIPT_NAMES["Zigbee2MQTT"]="zigbee2mqtt"
 register_native_github_tool_keys
 
 # Append documented candidates without installing or starting any component.
-TOOL_KEYS+=("cert-manager" "External_DNS" "Kyverno" "Gatekeeper" "KEDA" "Arize_Phoenix" "Valkey" "gVisor" "Kata_Containers" "Firecracker" "Milvus" "Kube_Bench" "Kubescape" "Nuclei" "Testssl" "OWASP_ZAP" "Checkov" "Ragas" "Temporal" "Vaultwarden" "Argo_Workflows")
-TOOL_SCRIPT_NAMES["cert-manager"]="cert_manager_candidate"
-TOOLS["cert-manager"]="GEPLANT / NICHT INSTALLIERBAR: Issuer vorhanden; nativer Controller-Build und CRD-Abnahme offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["External_DNS"]="external_dns_candidate"
-TOOLS["External_DNS"]="GEPLANT / NICHT INSTALLIERBAR: Zonenrechte, TXT-Owner und nativer Build offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Kyverno"]="kyverno_candidate"
-TOOLS["Kyverno"]="GEPLANT / NICHT INSTALLIERBAR: Policies vorhanden; Controller und Admission-Abnahme offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Gatekeeper"]="gatekeeper_candidate"
-TOOLS["Gatekeeper"]="GEPLANT / NICHT INSTALLIERBAR: Nicht parallel als Default; Controller-Build und Rego-Abnahme offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["KEDA"]="keda_candidate"
-TOOLS["KEDA"]="GEPLANT / NICHT INSTALLIERBAR: CRDs, Auth, nativer Build und Kapazitaetstest offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Arize_Phoenix"]="phoenix_candidate"
-TOOLS["Arize_Phoenix"]="GEPLANT / NICHT INSTALLIERBAR: Native Installation, Persistenz, Auth und Trace-Redaction offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Valkey"]="valkey_candidate"
-TOOLS["Valkey"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Build, ACL/TLS und Gateway-Kompatibilitaet offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["gVisor"]="gvisor_candidate"
-TOOLS["gVisor"]="GEPLANT / NICHT INSTALLIERBAR: runsc-/CRI-Integration, Kernel- und GPU-Vertrag offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Kata_Containers"]="kata_containers_candidate"
-TOOLS["Kata_Containers"]="GEPLANT / NICHT INSTALLIERBAR: Virtualisierung, CRI und native Runtime-Abnahme offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Firecracker"]="firecracker_candidate"
-TOOLS["Firecracker"]="GEPLANT / NICHT INSTALLIERBAR: KVM, Jailer und Kubernetes-Runtime-Anbindung offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Milvus"]="milvus_candidate"
-TOOLS["Milvus"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Gesamtbuild, Abhaengigkeiten und Restore offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Kube_Bench"]="kube_bench_candidate"
-TOOLS["Kube_Bench"]="GEPLANT / NICHT INSTALLIERBAR: Audit-Wrapper vorhanden; gepinnter Build und Benchmark-Abnahme offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Kubescape"]="kubescape_candidate"
-TOOLS["Kubescape"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Build, minimale Leserechte und Ruleset-Abnahme offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Nuclei"]="nuclei_candidate"
-TOOLS["Nuclei"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Build und separat gepruefte Templates offen; keine automatischen Scans. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Testssl"]="testssl_candidate"
-TOOLS["Testssl"]="GEPLANT / NICHT INSTALLIERBAR: Quellenpin, OpenSSL-Vertrag und Smoke-Test offen; keine automatischen Netztests. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["OWASP_ZAP"]="owasp_zap_candidate"
-TOOLS["OWASP_ZAP"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Build, JDK und Add-on-Vertrag offen; keine automatischen Scans. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Checkov"]="checkov_candidate"
-TOOLS["Checkov"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Python-Build, Rulesets und Offline-Verhalten offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Ragas"]="ragas_candidate"
-TOOLS["Ragas"]="GEPLANT / NICHT INSTALLIERBAR: Quellenpin und nativer Build offen; keine LLM-Judge-/Provider-Aufrufe. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Temporal"]="temporal_candidate"
-TOOLS["Temporal"]="GEPLANT / NICHT INSTALLIERBAR: bisher nur Installationsplatzhalter. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["TruffleHog"]="trufflehog_candidate"
-TOOLS["TruffleHog"]="GEPLANT / NICHT INSTALLIERBAR: bisher nur Installationsplatzhalter. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Vaultwarden"]="vaultwarden_candidate"
-TOOLS["Vaultwarden"]="GEPLANT / NICHT INSTALLIERBAR: bisher nur Installationsplatzhalter. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Argo_Workflows"]="argo_workflows_candidate"
-TOOLS["Argo_Workflows"]="GEPLANT / NICHT INSTALLIERBAR: bisher nur Installationsplatzhalter. docs/tools/infrastructure-candidates.md"
+TOOL_KEYS+=()
+TOOL_SCRIPT_NAMES["cert-manager"]="cert_manager"
+TOOLS["cert-manager"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-go-controllers.md"
+TOOL_SCRIPT_NAMES["External_DNS"]="external_dns"
+TOOLS["External_DNS"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-go-controllers.md"
+TOOL_SCRIPT_NAMES["Kyverno"]="kyverno"
+TOOLS["Kyverno"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-go-controllers.md"
+TOOL_SCRIPT_NAMES["Gatekeeper"]="gatekeeper"
+TOOLS["Gatekeeper"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-go-controllers.md"
+TOOL_SCRIPT_NAMES["KEDA"]="keda"
+TOOLS["KEDA"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-go-controllers.md"
+TOOL_SCRIPT_NAMES["Arize_Phoenix"]="phoenix"
+TOOLS["Arize_Phoenix"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/python-reviewed-native.md"
+TOOL_SCRIPT_NAMES["Valkey"]="valkey"
+TOOLS["Valkey"]="Nativer GitHub-Build mit TLS: Server/CLI privat, Buildwerkzeuge nach Zustimmung. Kein Serverstart; Linux-/ACL-/Gateway-Abnahme offen. docs/tools/valkey.md"
+TOOL_SCRIPT_NAMES["gVisor"]="gvisor"
+TOOLS["gVisor"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/sandbox-native-candidates.md"
+TOOL_SCRIPT_NAMES["Kata_Containers"]="kata_containers"
+TOOLS["Kata_Containers"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/sandbox-native-candidates.md"
+TOOL_SCRIPT_NAMES["Firecracker"]="firecracker"
+TOOLS["Firecracker"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/sandbox-native-candidates.md"
+TOOL_SCRIPT_NAMES["Milvus"]="milvus"
+TOOLS["Milvus"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/security-data-native.md"
+TOOL_SCRIPT_NAMES["Kube_Bench"]="kube_bench"
+TOOLS["Kube_Bench"]="Nativer Go-Build mit Benchmark-Dateien; nur scanfreie Versionsprobe. Kein automatischer Host-/Cluster-Audit. Linux-/Benchmark-Abnahme offen. docs/tools/kube-bench.md"
+TOOL_SCRIPT_NAMES["Kubescape"]="kubescape"
+TOOLS["Kubescape"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-security-candidates.md"
+TOOL_SCRIPT_NAMES["Nuclei"]="nuclei"
+TOOLS["Nuclei"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-security-candidates.md"
+TOOL_SCRIPT_NAMES["Testssl"]="testssl"
+TOOLS["Testssl"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-security-candidates.md"
+TOOL_SCRIPT_NAMES["OWASP_ZAP"]="owasp_zap"
+TOOLS["OWASP_ZAP"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/security-data-native.md"
+TOOL_SCRIPT_NAMES["Checkov"]="checkov"
+TOOLS["Checkov"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/python-reviewed-native.md"
+TOOL_SCRIPT_NAMES["Ragas"]="ragas"
+TOOLS["Ragas"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/python-reviewed-native.md"
+TOOL_SCRIPT_NAMES["Temporal"]="temporal"
+TOOLS["Temporal"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-go-controllers.md"
+TOOL_SCRIPT_NAMES["TruffleHog"]="trufflehog"
+TOOLS["TruffleHog"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-security-candidates.md"
+TOOL_SCRIPT_NAMES["Vaultwarden"]="vaultwarden"
+TOOLS["Vaultwarden"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/security-data-native.md"
+TOOL_SCRIPT_NAMES["Argo_Workflows"]="argo_workflows"
+TOOLS["Argo_Workflows"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-go-controllers.md"
 
 # Hauptschleife
 # Keep interactive startup outside the independently evaluated menu metadata.

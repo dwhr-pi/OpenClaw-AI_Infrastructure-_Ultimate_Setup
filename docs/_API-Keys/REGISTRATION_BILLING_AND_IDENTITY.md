@@ -1,5 +1,12 @@
 # API-Schluessel erhalten: Freikontingente, Bezahlung und Identitaet
 
+**Aktualisierung 16.11.2026:** [Wochenbericht mit Primaerquellen](reviews/2026-11-16.md).
+Geminis regionale Datenregeln und die Paid-Services-Pflicht fuer an Nutzer im EWR, der Schweiz
+oder UK bereitgestellte API-Clients sind getrennt zu beachten. Kein automatischer Billing-Wechsel.
+Together setzt mindestens 15 USD Erstkauf bereits fuer die API-Key-Erstellung voraus.
+Groq nennt fuer den Developer-Wechsel Karte, US-Bankkonto oder SEPA-Lastschrift; dies ist
+keine Zahlungsmittelpflicht fuer den Free-Einstieg. Accountbezogene Freigaben bleiben ungeprueft.
+
 **Aktualisierung 02.11.2026:** [Wochenbericht](reviews/2026-11-02.md).
 Ollama Cloud wird aktuell als tokenbasiertes Pay-as-you-go beschrieben, nicht als bestaetigtes
 monatliches Gratisangebot. Einzahlung, Zahlarten und KYC bleiben UB.

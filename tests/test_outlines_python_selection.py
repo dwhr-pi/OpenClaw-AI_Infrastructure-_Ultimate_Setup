@@ -1,4 +1,4 @@
-"""Select existing Python only; no uv, Python download or model execution."""
+"""Offline Python selection and consent-gated prerequisite fixtures."""
 from contextlib import redirect_stdout
 import io
 import json
@@ -62,19 +62,45 @@ class OutlinesPythonSelection(unittest.TestCase):
 
     def test_missing_compatible_python_precedes_uv_bootstrap(self):
         with patch.object(native.platform, 'system', return_value='Linux'), \
+                patch('native_build_deps.ubuntu_release', return_value=True), \
                 patch.object(native.os, 'geteuid', return_value=1000, create=True), \
                 patch.object(native, 'select_outlines_python', side_effect=ValueError('kein Python')), \
+                patch('native_build_deps.prepare', side_effect=ValueError('kein Python')), \
                 patch('native_uv.select') as uv:
             with self.assertRaisesRegex(ValueError, 'kein Python'):
                 native.preflight('outlines', Path('.'), approved=True)
             uv.assert_not_called()
 
-    def test_espeak_missing_build_tools_gives_actionable_ubuntu_command(self):
+    def test_espeak_prepares_build_tools_before_checks(self):
         with patch.object(native.platform, 'system', return_value='Linux'), \
                 patch.object(native.os, 'geteuid', return_value=1000, create=True), \
-                patch.object(native.common, 'executable', side_effect=ValueError('missing')):
-            with self.assertRaisesRegex(ValueError, 'cmake build-essential'):
-                native.preflight('espeak_ng', Path('.'))
+                patch('native_build_deps.prepare') as prepare, \
+                patch.object(native.common, 'executable', return_value='fixture'):
+            native.preflight('espeak_ng', Path('.'), approved=True)
+        self.assertEqual(prepare.call_args.args[0]['recipe']['apt_build_deps'], ['cmake', 'build-essential'])
+        self.assertTrue(prepare.call_args.kwargs['approved'])
+
+    def test_outlines_missing_python_is_prepared_and_rechecked(self):
+        with patch.object(native.platform, 'system', return_value='Linux'), \
+                patch('native_build_deps.ubuntu_release', return_value=True), \
+                patch.object(native.os, 'geteuid', return_value=1000, create=True), \
+                patch.dict(os.environ, {}, clear=True), \
+                patch.object(native, 'select_outlines_python', side_effect=[ValueError('missing'), '/usr/bin/python3.12']), \
+                patch('native_build_deps.prepare') as prepare, patch('native_uv.select') as uv:
+            self.assertEqual(native.preflight('outlines', Path('.'), approved=True), '/usr/bin/python3.12')
+        self.assertEqual(prepare.call_args.args[0]['recipe']['apt_build_deps'], ['python3.12', 'python3.12-venv'])
+        uv.assert_called_once_with(Path('.'), native.uv_spec(), approved=True, allow_download=True)
+
+    def test_outlines_explicit_bad_override_never_installs_python(self):
+        with patch.object(native.platform, 'system', return_value='Linux'), \
+                patch.object(native.os, 'geteuid', return_value=1000, create=True), \
+                patch.dict(os.environ, {'OUTLINES_PYTHON_BIN': '/bad/python'}), \
+                patch.object(native, 'select_outlines_python', side_effect=ValueError('bad override')), \
+                patch('native_build_deps.prepare') as prepare, patch('native_uv.select') as uv:
+            with self.assertRaisesRegex(ValueError, 'bad override'):
+                native.preflight('outlines', Path('.'), approved=True)
+        prepare.assert_not_called()
+        uv.assert_not_called()
 
     def test_malformed_and_failed_version_probes_are_not_accepted(self):
         with tempfile.TemporaryDirectory() as temporary:

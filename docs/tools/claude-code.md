@@ -9,6 +9,10 @@ Produkt.
 
 ## Lizenzpruefung vom 21.10.2026
 
+Erneut geprueft am **16.11.2026**: [Originalquellen und Dateibaum](../_API-Keys/reviews/2026-11-16.md).
+Commercial Terms und fehlender Nachweis eines vollstaendig baubaren Agentenkerns bleiben bestehen.
+Plugins und `ant` wurden nicht als Original-Agent gewertet; kein Build oder Installer gestartet.
+
 **Aktueller Nachtrag vom 02.11.2026:** [Quellenbericht](../_API-Keys/reviews/2026-11-02.md).
 Claude Codes Originallizenz verweist weiterhin auf Commercial Terms; ein vollstaendig baubarer
 Open-Source-Agentenkern ist im gelesenen Originalrepository nicht belegt.

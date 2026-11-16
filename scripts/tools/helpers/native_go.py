@@ -11,6 +11,10 @@ import private_go
 
 
 CONTRACTS = {
+    "kubescape": ([1, 27, 0], "docs/tools/native-security-candidates.md"),
+    "nuclei": ([1, 26, 0], "docs/tools/native-security-candidates.md"),
+    "trufflehog": ([1, 26, 0], "docs/tools/native-security-candidates.md"),
+    "kube_bench": ([1, 26, 3], "docs/tools/kube-bench.md"),
     "argocd_cli": ([1, 27, 0], "docs/tools/argocd-cloudflared-native.md"),
     "cloudflared": ([1, 27, 3], "docs/tools/argocd-cloudflared-native.md"),
     "kubeseal": ([1, 27, 3], "docs/tools/kubeseal.md"),

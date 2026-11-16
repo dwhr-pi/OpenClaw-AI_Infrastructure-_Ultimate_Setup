@@ -1,0 +1,235 @@
+{
+  "tools": [
+    {
+      "id": "kubescape",
+      "tool_key": "Kubescape",
+      "name": "Kubescape",
+      "repo": "kubescape/kubescape",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/kubescape_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-security-candidates.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_security_native",
+        "repo": "kubescape/kubescape",
+        "pin": "ec65d3184f6bab7d1ad6e5db9d970d452316d253",
+        "version": "4.0.20",
+        "release_tag": "v4.0.20",
+        "binary": "kubescape",
+        "package": ".",
+        "go_min": [
+          1,
+          27,
+          0
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "go",
+          "unshare"
+        ],
+        "source_sha256": {
+          "go.mod": "34f7238d1bbe6505042c65472224143a3fc52e4d5a5909f94dd85d647672d4ce",
+          "go.sum": "50ca6dbe42fbd7f888d2f0291eec1d474fbd3c837973f2c3145a667afd1759f6",
+          "Makefile": "6168e7b03e57d8585868032ea18fb011ef80df2764415a418ada10913776cfda",
+          "cmd/version/version.go": "30a75df19160dfefde73a3bda26de2fc7def713dbb1e5a282fc99c3a730147ce",
+          "cmd/root.go": "561e25099b8dffdc90ea9dccf4f437fb6f5adada16ecad7bd57f391c510181ff",
+          ".goreleaser.yaml": "d37a008ee2066d0d281b4f956604aeaf1671a20a9d54b20974d2da47ed560655",
+          "main.go": "298bb640396db9b8b5a2b35ef666fd8a4c9380f72a180d85731a21140305ee7f",
+          "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "core/pkg/opaprocessor/cel/vapdata/README.md": "cb0dad7ecd9826e42ca6578a0f713b098c709639d4e737f47d59718d0a050e0d",
+          "core/pkg/opaprocessor/cel/vapdata/basic-control-configuration.yaml": "e6ff3c18cfb60d8eaf463049dbfea9eae69891d32304193df727cebad2f8a285",
+          "core/pkg/opaprocessor/cel/vapdata/kubescape-validating-admission-policies.yaml": "ce32ba2e8e23e600125d72ffc080d5b63797f8a6aabeb057e094b4c4b1ec0d22",
+          "core/pkg/opaprocessor/cel/vapdata/policy-configuration-definition.yaml": "04c872af48fa6d8c43b7969b742b32a9438ce1d77558f4c3efe50963a365df5d"
+        },
+        "probe": [
+          "version",
+          "--format",
+          "json"
+        ],
+        "note": "Nur lokale CLI-Artefakte; keine Dienste, Scans, Templates, Browser, Cluster-/Providerzugriffe oder Updates. Netzwerklose Versionsprobe braucht unshare/User-Netzwerk-Namespace. Reale Linux/WSL-Buildabnahme noch offen."
+      }
+    },
+    {
+      "id": "nuclei",
+      "tool_key": "Nuclei",
+      "name": "Nuclei",
+      "repo": "projectdiscovery/nuclei",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/nuclei_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-security-candidates.md",
+      "license": "MIT",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_security_native",
+        "repo": "projectdiscovery/nuclei",
+        "pin": "a8c88feb4a1c8e961b7902534ce3af97e9d524a4",
+        "version": "3.11.1",
+        "release_tag": "v3.11.1",
+        "binary": "nuclei",
+        "package": "./cmd/nuclei",
+        "go_min": [
+          1,
+          26,
+          0
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "go",
+          "unshare"
+        ],
+        "source_sha256": {
+          "go.mod": "57e1f9230ef1da13280cc702c01b6135241128fbc710adea399eaa6d142b849c",
+          "go.sum": "c9be45a7baa2b3fda7d9ecdea91865b9caf78a733c70d1133d346bcc7dba501b",
+          "Makefile": "7852eae1035c17ada9f66f872e1597a3cdd4a24d9e307f7b2d34d35ed9429215",
+          "cmd/nuclei/main.go": "b9231a0b134c685a29c87058b9a9c21d6b50ed2879e6f9ffaad7a93f7784622a",
+          "pkg/types/types.go": "3821ecadaa9ab8d763bedfa75d27521ff24d0493f32720ec4995b0d3dcb138c9",
+          "pkg/catalog/config/constants.go": "ccda51c8f1438da2fb5d6badb278f5dc94f8812cbb18cd25a5b65861f82da381",
+          ".goreleaser.yml": "0339c563850d0a665f7f0788e14f774999b3794b4d79e58ebda72ed0c59dfbb0",
+          "LICENSE.md": "5fa6644d2dd1987a79c06f4af210d2cf8cfc4ee799999029d0f9980c9cf95a2c"
+        },
+        "probe": [
+          "-disable-update-check",
+          "-version"
+        ],
+        "note": "Nur lokale CLI-Artefakte; keine Dienste, Scans, Templates, Browser, Cluster-/Providerzugriffe oder Updates. Netzwerklose Versionsprobe braucht unshare/User-Netzwerk-Namespace. Reale Linux/WSL-Buildabnahme noch offen."
+      }
+    },
+    {
+      "id": "trufflehog",
+      "tool_key": "TruffleHog",
+      "name": "TruffleHog",
+      "repo": "trufflesecurity/trufflehog",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/trufflehog_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-security-candidates.md",
+      "license": "AGPL-3.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_security_native",
+        "repo": "trufflesecurity/trufflehog",
+        "pin": "3bd2b5887eb0efb8fa18bfd1d296032924e4ffdc",
+        "version": "3.99.9",
+        "release_tag": "v3.99.9",
+        "binary": "trufflehog",
+        "package": ".",
+        "go_min": [
+          1,
+          26,
+          0
+        ],
+        "disk_mb": 24576,
+        "ram_mb": 4096,
+        "tools": [
+          "go",
+          "unshare"
+        ],
+        "source_sha256": {
+          "go.mod": "afb0b47eca05e9045f211483614c7304a915917e6467a3d9f59720dc363c1140",
+          "go.sum": "19ba957fd3e58783cc7b2bf6caa83fbed535dcd22df5b503414466c68aba873c",
+          "main.go": "9d2766297e793674685058dab44206d51d8cd39d65333721483be663c7f2549b",
+          "pkg/version/version.go": "5843d5041acb9372b88285722d050503a448ce5701ece7d4ff52d42f71bf0946",
+          ".goreleaser.yml": "0d19fca87d760b0df51eb1602ab0d341b500195a6849a0f9cabd091f95ee2a05",
+          "LICENSE": "33d580ea3d93edcb787c2fa826bbf5afcec3058ce4c894a6beaad3eb4f389d2b"
+        },
+        "probe": [
+          "--no-update",
+          "--version"
+        ],
+        "note": "Nur lokale CLI-Artefakte; keine Dienste, Scans, Templates, Browser, Cluster-/Providerzugriffe oder Updates. Netzwerklose Versionsprobe braucht unshare/User-Netzwerk-Namespace. Reale Linux/WSL-Buildabnahme noch offen."
+      }
+    },
+    {
+      "id": "testssl",
+      "tool_key": "Testssl",
+      "name": "Testssl",
+      "repo": "testssl/testssl.sh",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/testssl_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/native-security-candidates.md",
+      "license": "GPL-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "candidate_security_native",
+        "repo": "testssl/testssl.sh",
+        "pin": "4f17be931a9d60f3f987975aea8221f1a8eaf7aa",
+        "version": "3.2.5",
+        "release_tag": "v3.2.5",
+        "binary": "testssl",
+        "package": null,
+        "disk_mb": 1024,
+        "ram_mb": 256,
+        "tools": [
+          "bash",
+          "openssl",
+          "unshare",
+          "hexdump",
+          "dd",
+          "grep",
+          "awk",
+          "tr",
+          "sed",
+          "wc",
+          "date",
+          "cat",
+          "ps",
+          "kill",
+          "head",
+          "tail",
+          "dirname",
+          "mktemp",
+          "uname",
+          "readlink",
+          "sort",
+          "find",
+          "rm"
+        ],
+        "source_sha256": {
+          "testssl.sh": "cf49497b6c43bd3b906a017a91ea87a8ca73d0f8682bf947f802f4df04acecb3",
+          "Readme.md": "66366e8cd317cad850d19e59987ef5c29644c7513faf0cdb05149c5af6ee7bed",
+          "LICENSE": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+          "etc/Apple.pem": "8235d8d6ef486c5a9f4acc9b10ecf5bc25455df97a0f780799cdb32cdadfa471",
+          "etc/DST Root CA X3.txt": "139a5e4a4e0fa505378c72c5f700934ce8333f4e6b1b508886c4b0eb14f4be99",
+          "etc/Java.pem": "f6ff9753cc08b749d7704bb136eacfa3dd8174d4d67220beec00a119fd19ddfd",
+          "etc/Linux.pem": "98af63978c2bf6ff6908649beba6015bf9264224e470a86eb52402a3574dcaef",
+          "etc/Microsoft.pem": "8864b51484a6317f092453531f9d479ef2cd68c8033321cffaa12f57d8adeb3a",
+          "etc/Mozilla.pem": "796f1389bfea13c0ed78f663b765baaff54a508e5483786bd6ece73c5e3e3cbe",
+          "etc/README.md": "f72a699697a18f7179bd5dddaf7dbc75f57f8c759383a071a9b89da585529be7",
+          "etc/SSLSocketClient.java": "7c966961a20b8bd2bd53ca941bda7b32cde235289533230158e87253b6b3a7f3",
+          "etc/ca_hashes.txt": "d7e557d75170c787a88b4ef6a15b679d6e896efa37dbe6718fdaf0b7c299709d",
+          "etc/cipher-mapping.txt": "7a5efe10907d68de2c4c9ac29e9944817fa647e6c4e5673e16ec9cf20b54d944",
+          "etc/client-simulation.txt": "af502db2f22960c55fffaf3c02a7f04d1268a8f4ccfb8d78b9d276c312a493a3",
+          "etc/client-simulation.wiresharked.md": "543eb79a1344276b57f20ecf2f5f0063cd817289845accd1561017b486dbf779",
+          "etc/client-simulation.wiresharked.txt": "3ab9b97091173e17ee5c57ec360655f2e327164299145947d2e9129fd7d03bd9",
+          "etc/common-primes.txt": "b8463ee06af11c3934cfdb6766a646b98db01779ee93161317ee98417066f305",
+          "etc/curves-mapping.txt": "448fbc8ff0e20af3eeae5e0702895b89affdba4b1aa324b1b460eaeb3c2ca476",
+          "etc/curves.txt": "4119b7a279d68b98397479b157517920dbda2f2cbf5b85762208210071349fc6",
+          "etc/openssl.cnf": "1f877b6a065b7f0147e3d0fcb5c93383cb3f1082bb5bfb4934f49385e898bc2c",
+          "etc/tls_data.txt": "898cab3b309710cb1e134dca8ee1e771485b643f9d5384da9df716ce6602520b"
+        },
+        "probe": [
+          "--version"
+        ],
+        "note": "Nur lokale CLI-Artefakte; keine Dienste, Scans, Templates, Browser, Cluster-/Providerzugriffe oder Updates. Netzwerklose Versionsprobe braucht unshare/User-Netzwerk-Namespace. Reale Linux/WSL-Buildabnahme noch offen.",
+        "apt_build_deps": [
+          "bash",
+          "openssl",
+          "bsdextrautils",
+          "coreutils",
+          "gawk",
+          "grep",
+          "sed",
+          "procps",
+          "findutils",
+          "util-linux"
+        ]
+      }
+    }
+  ]
+}

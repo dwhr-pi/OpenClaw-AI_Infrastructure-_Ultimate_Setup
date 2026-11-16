@@ -1,7 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
-TOOL_NAME="Ragas"
-TOOL_KEY="Ragas"
-TOOL_SLUG="ragas"
-source "$(dirname "$0")/helpers/python_tool_common.sh"
-uninstall_python_tool
+ROOT="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd)"
+exec "${NATIVE_GITHUB_PYTHON_BIN:-python3}" -B "$ROOT/scripts/tools/helpers/native_github_tools.py" ragas uninstall "$@"

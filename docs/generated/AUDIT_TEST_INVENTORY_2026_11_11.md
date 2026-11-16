@@ -726,6 +726,45 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_caddy_recovery.py:141`
   Prueffall: `test_option_rejects_other_tools_and_uninstall_before_any_operation`
 
+## tests/test_candidate_go_controllers.py
+
+- `tests/test_candidate_go_controllers.py:74`
+  Prueffall: `test_fragment_schema_and_all_pins`
+- `tests/test_candidate_go_controllers.py:90`
+  Prueffall: `test_changed_recipe_rejected_before_processes`
+- `tests/test_candidate_go_controllers.py:99`
+  Prueffall: `test_path_traversal_rejected`
+- `tests/test_candidate_go_controllers.py:104`
+  Prueffall: `test_environment_drops_credentials_user_flags_and_crossbuild`
+- `tests/test_candidate_go_controllers.py:115`
+  Prueffall: `test_missing_go_never_downloads_without_consent`
+- `tests/test_candidate_go_controllers.py:123`
+  Prueffall: `test_keda_has_current_private_pin_but_needs_download_consent`
+- `tests/test_candidate_go_controllers.py:135`
+  Prueffall: `test_existing_go_no_bootstrap`
+- `tests/test_candidate_go_controllers.py:144`
+  Prueffall: `test_wrong_platform_fails_before_download`
+- `tests/test_candidate_go_controllers.py:151`
+  Prueffall: `test_low_disk_fails_before_download`
+- `tests/test_candidate_go_controllers.py:161`
+  Prueffall: `test_build_creates_binaries_locks_static_files_and_honest_receipts`
+- `tests/test_candidate_go_controllers.py:181`
+  Prueffall: `test_dirty_source_fails_before_compile`
+- `tests/test_candidate_go_controllers.py:189`
+  Prueffall: `test_changed_source_hash_fails_before_compile`
+- `tests/test_candidate_go_controllers.py:198`
+  Prueffall: `test_no_artifact_not_accepted`
+- `tests/test_candidate_go_controllers.py:206`
+  Prueffall: `test_metadata_must_match_commit_and_clean_tree`
+- `tests/test_candidate_go_controllers.py:213`
+  Prueffall: `test_existing_artifact_is_preserved`
+- `tests/test_candidate_go_controllers.py:225`
+  Prueffall: `test_output_inside_source_rejected`
+- `tests/test_candidate_go_controllers.py:229`
+  Prueffall: `test_component_replacements_are_recorded`
+- `tests/test_candidate_go_controllers.py:235`
+  Prueffall: `test_cert_manager_nested_modules_and_temporal_tags`
+
 ## tests/test_cargo_build_tools.py
 
 - `tests/test_cargo_build_tools.py:31`
@@ -1203,6 +1242,23 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_real_wrappers_forward_to_fixed_helper_without_workspace_or_status`
 - `tests/test_core_source_gate.py:206`
   Prueffall: `test_actual_menu_stops_before_cleanup_locks_measurement_and_status`
+
+## tests/test_creative_prerequisites.py
+
+- `tests/test_creative_prerequisites.py:20`
+  Prueffall: `test_missing_packages_need_consent_and_install_only_allowlist`
+- `tests/test_creative_prerequisites.py:47`
+  Prueffall: `test_unapproved_package_lists_rejected`
+- `tests/test_creative_prerequisites.py:54`
+  Prueffall: `test_unsupported_os_and_package_failure_stop`
+- `tests/test_creative_prerequisites.py:69`
+  Prueffall: `test_espeak_plan_accepts_flag_without_apt`
+- `tests/test_creative_prerequisites.py:77`
+  Prueffall: `test_setup_consent_and_songsage_guard_precede_transaction`
+- `tests/test_creative_prerequisites.py:89`
+  Prueffall: `test_menu_forwards_consent_only_for_approved_mutations`
+- `tests/test_creative_prerequisites.py:113`
+  Prueffall: `test_planned_infrastructure_is_rejected_before_installer_or_log`
 
 ## tests/test_credentials_backup.py
 
@@ -2141,6 +2197,19 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_grok_tooling_docs.py:68`
   Prueffall: `test_markdown_tables_have_consistent_columns`
 
+## tests/test_hardened_kubernetes_examples.py
+
+- `tests/test_hardened_kubernetes_examples.py:16`
+  Prueffall: `test_no_old_executable_path_and_every_container_is_restricted`
+- `tests/test_hardened_kubernetes_examples.py:50`
+  Prueffall: `test_proxy_authentication_and_non_ascii_headers_fail_closed`
+- `tests/test_hardened_kubernetes_examples.py:60`
+  Prueffall: `test_invalid_json_never_contacts_provider`
+- `tests/test_hardened_kubernetes_examples.py:67`
+  Prueffall: `test_credentials_are_not_in_urls_or_exception_logs`
+- `tests/test_hardened_kubernetes_examples.py:74`
+  Prueffall: `test_source_is_packaged_in_image_not_embedded_as_configmap_data`
+
 ## tests/test_hardening_preflight.py
 
 - `tests/test_hardening_preflight.py:22`
@@ -2275,9 +2344,9 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 - `tests/test_infrastructure_candidates.py:20`
   Prueffall: `test_unique_registry_and_complete_trailing_block`
-- `tests/test_infrastructure_candidates.py:34`
+- `tests/test_infrastructure_candidates.py:35`
   Prueffall: `test_tail_is_after_xerj_and_stable_without_duplicates`
-- `tests/test_infrastructure_candidates.py:43`
+- `tests/test_infrastructure_candidates.py:44`
   Prueffall: `test_blocked_actions_and_status_do_not_touch_user_data`
 
 ## tests/test_infrastructure_increment.py
@@ -2664,6 +2733,25 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_safety_documentation`
 - `tests/test_kiwi_edit.py:272`
   Prueffall: `test_sparse_checkout_keeps_package_excludes_models_media_env`
+
+## tests/test_kube_bench_native.py
+
+- `tests/test_kube_bench_native.py:33`
+  Prueffall: `test_native_pin_go_and_version_contract`
+- `tests/test_kube_bench_native.py:44`
+  Prueffall: `test_source_failure_prevents_success_receipt`
+- `tests/test_kube_bench_native.py:53`
+  Prueffall: `test_only_version_with_reviewed_config_and_without_credentials`
+- `tests/test_kube_bench_native.py:72`
+  Prueffall: `test_config_change_blocks_binary_execution`
+- `tests/test_kube_bench_native.py:83`
+  Prueffall: `test_go_lock_change_blocks_binary_execution`
+- `tests/test_kube_bench_native.py:94`
+  Prueffall: `test_wrong_version_cannot_claim_installed`
+- `tests/test_kube_bench_native.py:104`
+  Prueffall: `test_plans_and_status_never_download_or_scan`
+- `tests/test_kube_bench_native.py:115`
+  Prueffall: `test_all_wrappers_delegate_to_safe_native_lifecycle`
 
 ## tests/test_legacy_core_uninstall.py
 
@@ -3519,6 +3607,30 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_native_build_process.py:71`
   Prueffall: `test_signal_is_reported_without_claiming_oom`
 
+## tests/test_native_candidate_dispatch.py
+
+- `tests/test_native_candidate_dispatch.py:19`
+  Prueffall: `test_every_requested_adapter_is_wired_to_exact_reviewed_recipe`
+- `tests/test_native_candidate_dispatch.py:35`
+  Prueffall: `test_all_backends_reject_windows_before_packages_or_network`
+- `tests/test_native_candidate_dispatch.py:45`
+  Prueffall: `test_unreviewed_adapter_path_is_never_imported`
+- `tests/test_native_candidate_dispatch.py:54`
+  Prueffall: `test_generic_resources_fail_before_adapter_or_download`
+- `tests/test_native_candidate_dispatch.py:63`
+  Prueffall: `test_adapter_needs_real_owned_artifacts_not_a_clone_or_success_message`
+- `tests/test_native_candidate_dispatch.py:73`
+  Prueffall: `test_doctor_does_not_turn_build_receipts_into_runtime_acceptance`
+
+## tests/test_native_candidate_sync.py
+
+- `tests/test_native_candidate_sync.py:16`
+  Prueffall: `test_allowlist_covers_every_remaining_requested_tool_once`
+- `tests/test_native_candidate_sync.py:22`
+  Prueffall: `test_unknown_fragment_cannot_change_catalog`
+- `tests/test_native_candidate_sync.py:30`
+  Prueffall: `test_render_is_read_only_and_wrappers_use_native_lifecycle`
+
 ## tests/test_native_cleanup.py
 
 - `tests/test_native_cleanup.py:44`
@@ -3661,7 +3773,7 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 ## tests/test_native_github_tools.py
 
 - `tests/test_native_github_tools.py:49`
-  Prueffall: `test_inventory_has_53_paths_and_49_honest_build_recipes`
+  Prueffall: `test_inventory_has_75_paths_and_71_honest_build_recipes`
 - `tests/test_native_github_tools.py:60`
   Prueffall: `test_every_plan_and_status_are_read_only`
 - `tests/test_native_github_tools.py:69`
@@ -3700,104 +3812,104 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_unsafe_artifact_marker_is_rejected`
 - `tests/test_native_github_tools.py:265`
   Prueffall: `test_all_build_kinds_only_compile_and_probe_in_fixtures`
-- `tests/test_native_github_tools.py:331`
+- `tests/test_native_github_tools.py:333`
   Prueffall: `test_environment_excludes_credentials_and_blocks_container_fallback`
-- `tests/test_native_github_tools.py:343`
+- `tests/test_native_github_tools.py:345`
   Prueffall: `test_every_lifecycle_wrapper_uses_native_dispatcher`
-- `tests/test_native_github_tools.py:351`
+- `tests/test_native_github_tools.py:353`
   Prueffall: `test_registry_uses_build_markers_and_never_calls_blocked_recipe_ready`
-- `tests/test_native_github_tools.py:361`
+- `tests/test_native_github_tools.py:363`
   Prueffall: `test_eol_archive_requires_explicit_ack_before_fetch`
-- `tests/test_native_github_tools.py:368`
+- `tests/test_native_github_tools.py:370`
   Prueffall: `test_python_version_check_is_before_fetch_and_does_not_expose_keys`
-- `tests/test_native_github_tools.py:375`
+- `tests/test_native_github_tools.py:377`
   Prueffall: `test_submodule_pin_mismatch_rolls_back_without_fetching_dependency`
-- `tests/test_native_github_tools.py:389`
+- `tests/test_native_github_tools.py:391`
   Prueffall: `test_missing_pipeline_output_is_failure_not_source_only_success`
-- `tests/test_native_github_tools.py:398`
+- `tests/test_native_github_tools.py:400`
   Prueffall: `test_every_recipe_declares_its_toolchain_without_key_errors`
-- `tests/test_native_github_tools.py:403`
+- `tests/test_native_github_tools.py:405`
   Prueffall: `test_official_codeberg_exception_does_not_mark_a_clone_as_installed`
 
 ## tests/test_native_go.py
 
 - `tests/test_native_go.py:30`
   Prueffall: `test_all_versioned_go_recipes_have_matching_explicit_contracts`
-- `tests/test_native_go.py:40`
+- `tests/test_native_go.py:42`
   Prueffall: `test_kubeseal_contract_matches_pinned_recipe_without_controller_actions`
-- `tests/test_native_go.py:47`
+- `tests/test_native_go.py:49`
   Prueffall: `test_kubeseal_rejects_unreviewed_minimum_before_toolchain_selection`
-- `tests/test_native_go.py:56`
+- `tests/test_native_go.py:58`
   Prueffall: `test_kubeseal_missing_go_logs_repair_without_download_or_success`
-- `tests/test_native_go.py:71`
+- `tests/test_native_go.py:73`
   Prueffall: `test_kubeseal_prefers_suitable_existing_go_without_download`
-- `tests/test_native_go.py:78`
+- `tests/test_native_go.py:80`
   Prueffall: `test_kubeseal_approved_private_go_changes_only_build_environment`
-- `tests/test_native_go.py:99`
+- `tests/test_native_go.py:101`
   Prueffall: `test_version_contract_rejects_old_development_and_invalid_versions`
-- `tests/test_native_go.py:104`
+- `tests/test_native_go.py:106`
   Prueffall: `test_existing_suitable_go_never_downloads_or_changes_environment`
-- `tests/test_native_go.py:113`
+- `tests/test_native_go.py:115`
   Prueffall: `test_missing_or_old_go_requires_consent_before_download`
-- `tests/test_native_go.py:120`
+- `tests/test_native_go.py:122`
   Prueffall: `test_interactive_refusal_does_not_download`
-- `tests/test_native_go.py:126`
+- `tests/test_native_go.py:128`
   Prueffall: `test_explicit_consent_uses_existing_verified_bootstrap`
-- `tests/test_native_go.py:136`
+- `tests/test_native_go.py:138`
   Prueffall: `test_private_go_wrong_version_or_architecture_is_rejected`
-- `tests/test_native_go.py:143`
+- `tests/test_native_go.py:145`
   Prueffall: `test_build_phase_cannot_silently_download_go`
-- `tests/test_native_go.py:149`
+- `tests/test_native_go.py:151`
   Prueffall: `test_existing_private_go_updates_only_child_environment`
-- `tests/test_native_go.py:162`
+- `tests/test_native_go.py:164`
   Prueffall: `test_other_tools_do_not_trigger_go_download`
-- `tests/test_native_go.py:167`
+- `tests/test_native_go.py:169`
   Prueffall: `test_low_disk_fails_before_any_toolchain_or_source_download`
-- `tests/test_native_go.py:177`
+- `tests/test_native_go.py:179`
   Prueffall: `test_private_download_error_is_logged_without_build_success`
-- `tests/test_native_go.py:186`
+- `tests/test_native_go.py:188`
   Prueffall: `test_watchtower_contract_checks_go_mod_minimum_and_help_not_version`
-- `tests/test_native_go.py:194`
+- `tests/test_native_go.py:196`
   Prueffall: `test_watchtower_missing_go_logs_own_command_without_fetch_or_marker`
-- `tests/test_native_go.py:204`
+- `tests/test_native_go.py:206`
   Prueffall: `test_watchtower_suitable_existing_go_is_preferred`
-- `tests/test_native_go.py:209`
+- `tests/test_native_go.py:211`
   Prueffall: `test_watchtower_acceptance_activates_verified_private_go_only_for_child`
-- `tests/test_native_go.py:226`
+- `tests/test_native_go.py:228`
   Prueffall: `test_watchtower_dry_run_never_downloads_or_creates_workspace`
-- `tests/test_native_go.py:233`
+- `tests/test_native_go.py:235`
   Prueffall: `test_caddy_contract_uses_same_checked_go_minimum_and_version_only_probe`
-- `tests/test_native_go.py:240`
+- `tests/test_native_go.py:242`
   Prueffall: `test_caddy_refusal_is_logged_with_its_own_repair_command`
-- `tests/test_native_go.py:252`
+- `tests/test_native_go.py:254`
   Prueffall: `test_caddy_acceptance_validates_private_go_and_changes_only_child_path`
-- `tests/test_native_go.py:270`
+- `tests/test_native_go.py:272`
   Prueffall: `test_caddy_existing_suitable_go_never_downloads`
-- `tests/test_native_go.py:275`
+- `tests/test_native_go.py:277`
   Prueffall: `test_caddy_dry_run_flag_does_not_download_or_modify_workspace`
-- `tests/test_native_go.py:282`
+- `tests/test_native_go.py:284`
   Prueffall: `test_cadvisor_contract_matches_go_modules_and_asset_build`
-- `tests/test_native_go.py:291`
+- `tests/test_native_go.py:293`
   Prueffall: `test_cadvisor_refusal_logs_own_command_without_fetch_or_marker`
-- `tests/test_native_go.py:305`
+- `tests/test_native_go.py:307`
   Prueffall: `test_cadvisor_existing_go_avoids_bootstrap`
-- `tests/test_native_go.py:312`
+- `tests/test_native_go.py:314`
   Prueffall: `test_cadvisor_approval_validates_private_go_and_only_changes_child_path`
-- `tests/test_native_go.py:331`
+- `tests/test_native_go.py:333`
   Prueffall: `test_cadvisor_download_failure_never_fetches_sources_or_marks_success`
-- `tests/test_native_go.py:342`
+- `tests/test_native_go.py:344`
   Prueffall: `test_cadvisor_dry_run_never_downloads`
-- `tests/test_native_go.py:364`
+- `tests/test_native_go.py:366`
   Prueffall: `test_minio_version_contract_and_version_only_probe`
-- `tests/test_native_go.py:373`
+- `tests/test_native_go.py:375`
   Prueffall: `test_refusal_logs_minio_and_maintenance_warning_without_fetch`
-- `tests/test_native_go.py:388`
+- `tests/test_native_go.py:390`
   Prueffall: `test_existing_suitable_go_is_preferred`
-- `tests/test_native_go.py:395`
+- `tests/test_native_go.py:397`
   Prueffall: `test_approval_activates_private_go_without_parent_changes`
-- `tests/test_native_go.py:413`
+- `tests/test_native_go.py:415`
   Prueffall: `test_download_failure_never_fetches_sources_or_marks_success`
-- `tests/test_native_go.py:424`
+- `tests/test_native_go.py:426`
   Prueffall: `test_dry_run_never_downloads_or_creates_workspace`
 
 ## tests/test_native_node.py
@@ -4186,37 +4298,41 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 ## tests/test_operation_log.py
 
-- `tests/test_operation_log.py:38`
+- `tests/test_operation_log.py:39`
   Prueffall: `test_linux_space_rejection_has_own_log_not_old_one`
-- `tests/test_operation_log.py:54`
+- `tests/test_operation_log.py:55`
   Prueffall: `test_windows_space_rejection_is_logged`
-- `tests/test_operation_log.py:66`
+- `tests/test_operation_log.py:67`
   Prueffall: `test_installer_output_appends_and_names_are_unique`
-- `tests/test_operation_log.py:79`
-  Prueffall: `test_missing_log_does_not_resolve_to_history`
-- `tests/test_operation_log.py:87`
-  Prueffall: `test_writer_failure_not_reported_as_success`
-- `tests/test_operation_log.py:96`
-  Prueffall: `test_child_failure_exit_code_preserved`
+- `tests/test_operation_log.py:80`
+  Prueffall: `test_system_identity_is_in_new_logs_before_installer`
+- `tests/test_operation_log.py:88`
+  Prueffall: `test_real_diagnostic_wrapper_isolated_python_and_persisted_header`
 - `tests/test_operation_log.py:100`
+  Prueffall: `test_missing_log_does_not_resolve_to_history`
+- `tests/test_operation_log.py:108`
+  Prueffall: `test_writer_failure_not_reported_as_success`
+- `tests/test_operation_log.py:117`
+  Prueffall: `test_child_failure_exit_code_preserved`
+- `tests/test_operation_log.py:121`
   Prueffall: `test_failed_creation_clears_old_log_reference`
-- `tests/test_operation_log.py:113`
+- `tests/test_operation_log.py:134`
   Prueffall: `test_begin_creates_log_before_preflight_and_runner_does_not_truncate`
-- `tests/test_operation_log.py:119`
-  Prueffall: `test_tool_name_is_highlighted_on_screen_but_plain_in_log`
-- `tests/test_operation_log.py:130`
-  Prueffall: `test_redirected_output_has_plain_tool_name`
 - `tests/test_operation_log.py:140`
+  Prueffall: `test_tool_name_is_highlighted_on_screen_but_plain_in_log`
+- `tests/test_operation_log.py:151`
+  Prueffall: `test_redirected_output_has_plain_tool_name`
+- `tests/test_operation_log.py:161`
   Prueffall: `test_no_color_and_dumb_terminal_disable_forced_color`
-- `tests/test_operation_log.py:146`
+- `tests/test_operation_log.py:167`
   Prueffall: `test_historical_log_without_tool_line_gets_colored_heading`
-- `tests/test_operation_log.py:159`
+- `tests/test_operation_log.py:180`
   Prueffall: `test_non_tool_operations_are_not_mislabelled_and_unsafe_names_rejected`
-- `tests/test_operation_log.py:169`
+- `tests/test_operation_log.py:190`
   Prueffall: `test_tool_label_stays_visible_when_log_tail_omits_header`
-- `tests/test_operation_log.py:181`
+- `tests/test_operation_log.py:202`
   Prueffall: `test_live_history_and_post_action_views_use_tool_heading`
-- `tests/test_operation_log.py:185`
+- `tests/test_operation_log.py:206`
   Prueffall: `test_native_installer_log_header_also_identifies_tool`
 
 ## tests/test_orchestration_docs.py
@@ -4232,6 +4348,21 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_orchestration_docs.py:48`
   Prueffall: `test_performance_alerts_separate_ram_gpu_and_gateway`
 
+## tests/test_outlines_private_python.py
+
+- `tests/test_outlines_private_python.py:20`
+  Prueffall: `test_refusal_does_not_download_or_create_files`
+- `tests/test_outlines_private_python.py:32`
+  Prueffall: `test_private_install_is_reusable_and_detects_mutation`
+- `tests/test_outlines_private_python.py:63`
+  Prueffall: `test_failed_download_removes_only_new_slot`
+- `tests/test_outlines_private_python.py:76`
+  Prueffall: `test_ubuntu26_preflight_uses_private_python_not_ubuntu24_packages`
+- `tests/test_outlines_private_python.py:89`
+  Prueffall: `test_songrec_and_espeak_allow_ubuntu26_package_phase`
+- `tests/test_outlines_private_python.py:98`
+  Prueffall: `test_other_debian_bases_require_successful_simulation`
+
 ## tests/test_outlines_python_selection.py
 
 - `tests/test_outlines_python_selection.py:18`
@@ -4244,9 +4375,13 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_relative_override_rejected_without_execution`
 - `tests/test_outlines_python_selection.py:63`
   Prueffall: `test_missing_compatible_python_precedes_uv_bootstrap`
-- `tests/test_outlines_python_selection.py:72`
-  Prueffall: `test_espeak_missing_build_tools_gives_actionable_ubuntu_command`
-- `tests/test_outlines_python_selection.py:79`
+- `tests/test_outlines_python_selection.py:74`
+  Prueffall: `test_espeak_prepares_build_tools_before_checks`
+- `tests/test_outlines_python_selection.py:83`
+  Prueffall: `test_outlines_missing_python_is_prepared_and_rechecked`
+- `tests/test_outlines_python_selection.py:94`
+  Prueffall: `test_outlines_explicit_bad_override_never_installs_python`
+- `tests/test_outlines_python_selection.py:105`
   Prueffall: `test_malformed_and_failed_version_probes_are_not_accepted`
 
 ## tests/test_p0_safety.py
@@ -4827,6 +4962,25 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_pyannote_audio.py:179`
   Prueffall: `test_start_and_unsafe_path_blocked`
 
+## tests/test_python_reviewed_native.py
+
+- `tests/test_python_reviewed_native.py:23`
+  Prueffall: `test_exact_candidate_contracts`
+- `tests/test_python_reviewed_native.py:35`
+  Prueffall: `test_environment_drops_credentials_and_python_injection`
+- `tests/test_python_reviewed_native.py:45`
+  Prueffall: `test_source_mismatch_prevents_execution`
+- `tests/test_python_reviewed_native.py:55`
+  Prueffall: `test_incomplete_wheels_fail_closed`
+- `tests/test_python_reviewed_native.py:64`
+  Prueffall: `test_probe_is_bounded_and_never_cli_execution`
+- `tests/test_python_reviewed_native.py:78`
+  Prueffall: `test_explicit_unsupported_python_never_downloads`
+- `tests/test_python_reviewed_native.py:87`
+  Prueffall: `test_missing_python_requires_explicit_consent`
+- `tests/test_python_reviewed_native.py:94`
+  Prueffall: `test_build_rejects_wrong_source_layout`
+
 ## tests/test_queue_safety.py
 
 - `tests/test_queue_safety.py:44`
@@ -5270,6 +5424,33 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_security_audit_docs.py:53`
   Prueffall: `test_examples_are_not_added_to_active_kustomization`
 
+## tests/test_security_data_native.py
+
+- `tests/test_security_data_native.py:21`
+  Prueffall: `test_manifest_and_hooks`
+- `tests/test_security_data_native.py:30`
+  Prueffall: `test_bad_paths`
+- `tests/test_security_data_native.py:35`
+  Prueffall: `test_missing_contract_rejected`
+- `tests/test_security_data_native.py:41`
+  Prueffall: `test_source_hash_failure_precedes_build`
+- `tests/test_security_data_native.py:51`
+  Prueffall: `test_version_runner_bounded_no_stdin`
+- `tests/test_security_data_native.py:59`
+  Prueffall: `test_rust_no_implicit_bootstrap`
+- `tests/test_security_data_native.py:64`
+  Prueffall: `test_elf_probe_no_subprocess`
+- `tests/test_security_data_native.py:79`
+  Prueffall: `test_zap_jar_probe`
+- `tests/test_security_data_native.py:89`
+  Prueffall: `test_doctor_detects_modified_files`
+- `tests/test_security_data_native.py:101`
+  Prueffall: `test_external_artifact_link_rejected`
+- `tests/test_security_data_native.py:112`
+  Prueffall: `test_write_never_overwrites`
+- `tests/test_security_data_native.py:119`
+  Prueffall: `test_vaultwarden_command_and_scope`
+
 ## tests/test_setup_shell_contracts.py
 
 - `tests/test_setup_shell_contracts.py:36`
@@ -5506,13 +5687,25 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_songrec_build_deps.py:101`
   Prueffall: `test_non_ubuntu_explicit_install_is_refused`
 - `tests/test_songrec_build_deps.py:107`
+  Prueffall: `test_unsupported_system_reports_actual_release_before_missing_cargo`
+- `tests/test_songrec_build_deps.py:116`
+  Prueffall: `test_missing_package_manager_is_not_misreported_as_other_distribution`
+- `tests/test_songrec_build_deps.py:124`
+  Prueffall: `test_unreadable_os_release_is_not_assumed_supported`
+- `tests/test_songrec_build_deps.py:128`
+  Prueffall: `test_os_release_uses_standard_parser_without_shell`
+- `tests/test_songrec_build_deps.py:135`
   Prueffall: `test_apt_failure_never_becomes_success`
-- `tests/test_songrec_build_deps.py:115`
+- `tests/test_songrec_build_deps.py:143`
   Prueffall: `test_plan_status_and_doctor_never_prepare_packages`
-- `tests/test_songrec_build_deps.py:127`
+- `tests/test_songrec_build_deps.py:155`
   Prueffall: `test_storage_failure_precedes_package_phase_and_fetch`
-- `tests/test_songrec_build_deps.py:139`
+- `tests/test_songrec_build_deps.py:167`
   Prueffall: `test_preflight_passes_explicit_approval_to_package_phase`
+- `tests/test_songrec_build_deps.py:177`
+  Prueffall: `test_supported_ubuntu_point_release`
+- `tests/test_songrec_build_deps.py:182`
+  Prueffall: `test_other_or_unknown_releases_are_not_implicitly_approved`
 
 ## tests/test_source_preservation.py
 
@@ -5614,6 +5807,25 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_deactivation_preserves_models_and_sources`
 - `tests/test_supir_source.py:160`
   Prueffall: `test_start_blocked_and_unsafe_workspace_rejected`
+
+## tests/test_system_diagnostics.py
+
+- `tests/test_system_diagnostics.py:18`
+  Prueffall: `test_gvisor_kernel_check_does_not_require_kvm_or_claim_runtime_success`
+- `tests/test_system_diagnostics.py:32`
+  Prueffall: `test_kvm_permissions_are_only_metadata_never_opened`
+- `tests/test_system_diagnostics.py:42`
+  Prueffall: `test_old_kernel_or_unreadable_kvm_is_not_assumed_ready`
+- `tests/test_system_diagnostics.py:53`
+  Prueffall: `test_non_linux_or_32bit_is_not_assumed_compatible`
+- `tests/test_system_diagnostics.py:62`
+  Prueffall: `test_ubuntu_and_wsl_are_reported_without_environment_secrets`
+- `tests/test_system_diagnostics.py:76`
+  Prueffall: `test_debian_and_dietpi_base_are_distinguished`
+- `tests/test_system_diagnostics.py:86`
+  Prueffall: `test_derivatives_and_unknown_systems_are_not_mislabeled_ubuntu`
+- `tests/test_system_diagnostics.py:94`
+  Prueffall: `test_missing_release_and_tools_are_explicit`
 
 ## tests/test_tgi.py
 
@@ -5794,6 +6006,21 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_opentelemetry_uses_same_host_reserve_as_its_native_recipe`
 - `tests/test_traefik_storage.py:76`
   Prueffall: `test_measurements_never_lower_the_native_minimum`
+
+## tests/test_valkey_native.py
+
+- `tests/test_valkey_native.py:32`
+  Prueffall: `test_recipe_is_pinned_tls_native_and_has_no_service_start`
+- `tests/test_valkey_native.py:46`
+  Prueffall: `test_source_hash_failure_precedes_any_build_probe`
+- `tests/test_valkey_native.py:57`
+  Prueffall: `test_receipts_only_probe_versions_with_timeout_and_record_scope`
+- `tests/test_valkey_native.py:76`
+  Prueffall: `test_wrong_version_does_not_create_receipts`
+- `tests/test_valkey_native.py:86`
+  Prueffall: `test_plan_and_missing_status_never_fetch_or_install_dependencies`
+- `tests/test_valkey_native.py:97`
+  Prueffall: `test_unit_and_menu_keep_runtime_activation_explicit`
 
 ## tests/test_veo_api.py
 
@@ -6283,4 +6510,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2808**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2905**. Kein Nachweis bestandener Tests.

@@ -489,7 +489,7 @@ def main(argv=None):
     parser.add_argument("tool", choices=SPECS)
     parser.add_argument("action", nargs="?", default="install", choices=("install", "update", "repair", "uninstall", "status", "check", "doctor", "plan"))
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument('--install-build-deps', action='store_true', help='SongRec/Outlines/Browser_Use/Perplexity/OpenAPI: explicit consent for approved prerequisites; no application start')
+    parser.add_argument('--install-build-deps', action='store_true', help='SongRec/Outlines/eSpeak/Browser_Use/Perplexity/OpenAPI: explicit consent for approved prerequisites; no application start')
     parser.add_argument("--source-only", action="store_true", help="MuseTalk/Outlines/eSpeak/SongRec: bisherigen Quellcheckout statt Runtime verwalten")
     parser.add_argument('--smoke', action='store_true', help='Expliziter lokaler 30s-Smoke-Check fuer Outlines/eSpeak/SongRec; keine Modelle/Provider')
     parser.add_argument('--resume-uninstall', action='store_true', help='Perplexity SDKs: explicit removal of unchanged inventoried remnants after a partial uninstall')
@@ -501,8 +501,8 @@ def main(argv=None):
         if opts.action not in ("install", opts.override):
             parser.error("Widerspruechliche Aktionen.")
         opts.action = opts.override
-    if opts.install_build_deps and (opts.tool not in ('songrec', 'outlines', 'openapi_servers', 'browser_use', 'perplexity_mcp', 'perplexity_python', 'perplexity_node') or opts.action not in ('install', 'update', 'repair', 'plan')):
-        parser.error('--install-build-deps hier nur fuer SongRec/Outlines/Browser_Use/Perplexity/OpenAPI bei Install/Update/Repair oder Plan.')
+    if opts.install_build_deps and (opts.tool not in ('songrec', 'outlines', 'espeak_ng', 'openapi_servers', 'browser_use', 'perplexity_mcp', 'perplexity_python', 'perplexity_node') or opts.action not in ('install', 'update', 'repair', 'plan')):
+        parser.error('--install-build-deps hier nur fuer SongRec/Outlines/eSpeak/Browser_Use/Perplexity/OpenAPI bei Install/Update/Repair oder Plan.')
     if opts.resume_uninstall and (opts.tool not in ('perplexity_python', 'perplexity_node') or opts.action != 'uninstall'):
         parser.error('--resume-uninstall nur fuer ausdrueckliche Deinstallation der Perplexity SDKs.')
     from gap_native_build import TOOLS as native_tools, specification
@@ -523,6 +523,10 @@ def main(argv=None):
     base, runtime, marker = paths(opts.tool)
     if opts.dry_run or opts.action == "plan":
         print(json.dumps(dict(tool=opts.tool, **spec, target=str(runtime)), indent=2))
+        if spec.get('native_tool') in ('outlines', 'espeak_ng'):
+            print('Ubuntu 24.04: fehlende Voraussetzungen nur nach Zustimmung oder --install-build-deps. '
+                  'Outlines: Python 3.12/venv nur falls kein geeignetes Python vorhanden; uv privat SHA256-geprueft. '
+                  'eSpeak NG: cmake/build-essential. Kein System-Python-Wechsel; dieser Plan fuehrt kein apt aus.')
         if spec.get('native_tool') == 'songrec':
             print('Ubuntu 24.04: fehlende Cargo/Rust-/Buildpakete nur nach Zustimmung; '
                   '--install-build-deps ist die explizite Freigabe. Bestehende Compiler bleiben. '
@@ -587,7 +591,7 @@ def main(argv=None):
                 marker.unlink()
             print("Privater unveraenderter Bestand entfernt; Nutzerdaten ausserhalb, Logs und Basiswerkzeuge bleiben.")
         else:
-            if opts.tool in ('songrec', 'outlines', 'openapi_servers', 'browser_use', 'perplexity_mcp', 'perplexity_python', 'perplexity_node'):
+            if opts.tool in ('songrec', 'outlines', 'espeak_ng', 'openapi_servers', 'browser_use', 'perplexity_mcp', 'perplexity_python', 'perplexity_node'):
                 install(runtime, marker, base, spec, install_build_deps=opts.install_build_deps)
             else:
                 install(runtime, marker, base, spec)

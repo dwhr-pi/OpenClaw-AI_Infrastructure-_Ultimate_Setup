@@ -1,7 +1,7 @@
 # Native statt Docker: Rollback und Ubuntu-Releasewechsel
 
-Stand: 2026-11-05. Geltungsbereich dieser Matrix sind die **53 Eintraege** in
-`config/docker_to_github.json`: 49 implementierte native Buildrezepte und vier ausdruecklich
+Stand: 2026-11-16. Geltungsbereich dieser Matrix sind die **75 Eintraege** in
+`config/docker_to_github.json`: 71 implementierte native Buildrezepte und vier ausdruecklich
 blockierte Gesamtplattformen. Andere Installer-Engines und Ansible- Deployments brauchen ihre
 eigenen Nachweise; diese Matrix behauptet keine vollstaendige Rollback-Abnahme aller Werkzeuge des
 Gesamtkatalogs.
@@ -90,6 +90,28 @@ keine Behauptung, dass der Build-Installer diese Dienste startet.
 | `xerj`               | A / B                  | Lokale Indizes, Corpus-Daten und Konfiguration separat sichern; Reinstall startet weder Server noch Hub-Synchronisation |
 | `zigbee2mqtt`        | A / B                  | data/, Coordinator-Backup, Netzwerk-Keys; kein Funkreset                         |
 | `pyairbyte`          | A / B                  | Lokale SDK-Projekte, Datenquellen und Konnektorzustand; kein Airbyte-Core-Ersatz |
+| `cert_manager` | A / B | CRDs, Issuer/Certificates, CA-/TLS-Secrets und Webhook-Vertrag getrennt sichern; kein CRD-/Zertifikat-Loeschen durch Uninstall |
+| `external_dns` | A / B | DNS-Zonenstand, Domain-Filter, TXT-Owner, Providerrechte und bisherige Policy; keine automatische DNS-Ruecknahme |
+| `kyverno` | A / B | Policies, Ausnahmen, Webhook-Zertifikate und Admission-/Report-Rollen; Clusterwirkung separat abnehmen |
+| `gatekeeper` | A / B | ConstraintTemplates, Constraints, Rego und Webhook-Konfiguration; nicht ungeprueft parallel zu Kyverno aktivieren |
+| `keda` | A / B | ScaledObjects, TriggerAuthentication, Queue-Vertraege und APIService-TLS; kein automatisches Scale-to-zero |
+| `phoenix` | A / B | Datenbank, Traces, Redaction-/Retention- und Authkonfiguration; Schema und Frontend passend zum alten Backend erhalten |
+| `valkey` | A / B | Konsistente RDB-/AOF-Sicherung, ACL/TLS und externe Datenverzeichnisse; Format-/Versionskompatibilitaet separat pruefen |
+| `gvisor` | A / B | Zusammengehoeriges runsc-/Shim-/Sidecar-Bundle und CRI-Konfiguration erhalten; kein automatischer Runtime-Neustart |
+| `kata_containers` | A / B | Go-Hostkomponenten, Hypervisor, Gast-Kernel/rootfs und Agent-ABI getrennt erhalten; Hostbuild ist keine komplette Kata-Installation |
+| `firecracker` | A / B | Gast-Kernel/rootfs, Snapshots, Jailer-Konfiguration und Hostrechte; kein VM-Start oder ungeprueftes Snapshot-Downgrade |
+| `milvus` | A / B | Konsistente Daten-/Objektspeicher- und etcd-Sicherungen, Schema und Library-Vertrag; externe Betriebsdienste bleiben unberuehrt |
+| `kube_bench` | A / B | Eigene Benchmark-Konfiguration und geschuetzte Auditberichte extern sichern; kein automatischer CIS-Audit oder Clusterzugriff |
+| `kubescape` | A / B | Rulesets, Ausnahmen und geschuetzte Berichte; keine Kubeconfig-Uebernahme oder Cluster-/Cloudpruefung durch Recovery |
+| `nuclei` | A / B | Freigegebener Template-Pin, Workflow-/Targetfreigaben und Berichte; keine automatischen Template-Updates oder Scans |
+| `testssl` | A / B | Auditberichte, Aufrufprofile und beobachtete System-OpenSSL-Version erhalten; kein Netztest beim Wiederaufbau |
+| `owasp_zap` | A / B | Sitzungen, Kontexte, Add-on-/Ruleset-Versionen und CA-Vertrag; Core-Build allein stellt keine Add-ons oder Proxy-Sitzung wieder her |
+| `checkov` | A / B | Baselines, eigene Policies, Ausnahmen und Berichte; kein automatischer IaC-Scan oder Plattformzugriff |
+| `ragas` | A / B | Evaluationsdaten, Prompt-/Metrikversionen und Providerbudgets; keine LLM-Judge-/Provideraufrufe bei Recovery |
+| `temporal` | A / B | Konsistente History-/Visibility-Datenbanken, Schemastaende, TLS/Auth und Dynamicconfig; kein automatisches Schema-Downgrade |
+| `trufflehog` | A / B | Filter-/Targetfreigaben und verschluesselte Berichte separat erhalten; keine Secret-Verifikation oder Live-Scans |
+| `vaultwarden` | A / B | Konsistente SQLite-/Daten-/Schluesselsicherung und passender Web-Vault-Stand; Backend-only-Build ersetzt keinen getesteten Restore |
+| `argo_workflows` | A / B | Workflow-/CRD-Versionen, Artefaktspeicher, PVCs und RBAC erhalten; Controller/Executor allein sind kein UI-/API-Server |
 
 ## Abnahme auf einem neuen Ubuntu-Release
 

@@ -15,15 +15,36 @@ Der Setup-Installer baut jetzt eine **private Python-Basisumgebung aus GitHub**,
 mit dem upstream `uv.lock`, ohne optionale Modell-Backends. Linux/WSL,
 Python >=3.10 und <3.14, Git und 4096 MiB Diskreserve erforderlich.
 Eine vorhandene geeignete uv-Basis wird bevorzugt. Fehlt sie, darf die bestehende
-gepruefte private uv-Bereitstellung nur mit `--install-build-deps` herunterladen.
+gepruefte private uv-Bereitstellung nur nach Zustimmung herunterladen.
 Keine Modelle, API-/Inferenz-/Dienststarts oder Docker-Fallbacks.
 
 Der Installer-Interpreter darf neuer sein: Die Folgekorrektur waehlt fuer Outlines
 ein bereits vorhandenes Python >=3.10 und <3.14. Bei ungeeignetem Dispatcher
 werden die vorhandenen versionierten Interpreter (zuerst Python 3.12) geprueft.
-Kein System-Python-/PATH-Umbau und kein Python-Download. Explizite Auswahl im
+Fehlt ein geeignetes Python, bietet das Setup unter Ubuntu 24.04 die Installation
+von `python3.12` und `python3.12-venv` als Basisabhaengigkeiten an. Danach wird der
+Interpreter erneut geprueft. Der feste Pfad `/usr/bin/python3.12` wird auch bei
+eingeschraenktem PATH beruecksichtigt. Kein System-Python-/PATH-Umbau und kein
+unbemerkter uv-Python-Download. Auf anderen Basen wie Ubuntu 26.04 kann der Installer
+stattdessen nach ausdruecklicher Zustimmung eine **private Python-3.13-Laufzeit**
+via uv / Astral python-build-standalone bereitstellen. Kein PPA, kein Downgrade,
+kein Austausch von Python 3.14; 1024 MiB Zusatzreserve.
+Der uv-Resolver bestimmt die konkrete 3.13-Patchversion, kein separat gepinnter
+Python-Archivvertrag. Die Laufzeit wird lokal auf SSL/venv/Version geprueft und
+als Dateiinventar dokumentiert; veraenderte Bestaende werden nicht ueberschrieben.
+Diese Inventarpruefung ersetzt keinen unabhaengigen Ursprungsnachweis des Python-Archivs.
+Die private Basis bleibt bei App-Deinstallation erhalten. Nach Einrichtung sind
+weitere automatische Python-Downloads im eigentlichen Outlines-Build deaktiviert.
+Explizite Auswahl im
 korrigierten Checkout: `OUTLINES_PYTHON_BIN=/usr/bin/python3.12`.
 Ein inkompatibler expliziter Pfad wird nicht stillschweigend durch einen anderen ersetzt.
+
+Das Hauptmenue fragt vor Install/Update, ob fehlende Voraussetzungen eingerichtet
+werden duerfen. Nach Zustimmung erledigt der Installer die Paket-/uv-Einrichtung
+und anschliessend den GitHub-Build im selben Lauf. Direkter CLI-Aufruf:
+`bash scripts/tools/outlines_install.sh --install-build-deps`.
+Plan, Status und Doctor installieren keine Voraussetzungen. Ohne Freigabe bleibt
+der Build bei fehlender Basis gesperrt; bestehende geeignete Interpreter bleiben erhalten.
 
 ### Bisheriger PR-28-Checkout mit Python-Versionsfehler
 
