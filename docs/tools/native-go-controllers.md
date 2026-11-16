@@ -23,13 +23,20 @@ Pins sind reproduzierbare Ausgangspunkte, keine Zusage einer dauerhaft aktuellen
 
 Offizielle Quellen mit Build-/Versionsvertraegen:
 
-- [cert-manager am Pin](https://github.com/cert-manager/cert-manager/tree/925c22283de556172d48d96a165dc2fa27f7a6ff): `make/server.mk`, `cmd/*/go.mod`, `pkg/util/version.go`.
-- [ExternalDNS am Pin](https://github.com/kubernetes-sigs/external-dns/tree/c40894ac060e0920b2b49035df18005954f83a7a): `Makefile`, `main.go`, `pkg/apis/externaldns/types.go`.
-- [Kyverno am Pin](https://github.com/kyverno/kyverno/tree/f666af06e9bd310c7e730f1523c0430e90371a89): `Makefile`, `cmd/internal/version.go`, `pkg/version/version.go`.
-- [Gatekeeper am Pin](https://github.com/open-policy-agent/gatekeeper/tree/2d0b6ad97cf3a8b8436a00a1f4b07b3a56b92ca0): `Makefile`, `main.go`.
-- [KEDA am Pin](https://github.com/kedacore/keda/tree/43b5dfcd7a0a8a08e328b65667464986f60ee12c): `Makefile`, `go.mod`, `cmd/*/main.go`, `version/version.go`.
-- [Temporal am Pin](https://github.com/temporalio/temporal/tree/6d085822273f4336796e6959c73ab1d14a23eb77): `Makefile`, `cmd/server/main.go`, `go.mod`.
-- [Argo Workflows am Pin](https://github.com/argoproj/argo-workflows/tree/43021573c5a35cbafae009043c132dfcef43a112): `Makefile`, `cmd/workflow-controller/main.go`, `cmd/argoexec/main.go`.
+- [cert-manager am Pin](https://github.com/cert-manager/cert-manager/tree/925c22283de556172d48d96a165dc2fa27f7a6ff):
+  `make/server.mk`, `cmd/*/go.mod`, `pkg/util/version.go`.
+- [ExternalDNS am Pin](https://github.com/kubernetes-sigs/external-dns/tree/c40894ac060e0920b2b49035df18005954f83a7a):
+  `Makefile`, `main.go`, `pkg/apis/externaldns/types.go`.
+- [Kyverno am Pin](https://github.com/kyverno/kyverno/tree/f666af06e9bd310c7e730f1523c0430e90371a89):
+  `Makefile`, `cmd/internal/version.go`, `pkg/version/version.go`.
+- [Gatekeeper am Pin](https://github.com/open-policy-agent/gatekeeper/tree/2d0b6ad97cf3a8b8436a00a1f4b07b3a56b92ca0):
+  `Makefile`, `main.go`.
+- [KEDA am Pin](https://github.com/kedacore/keda/tree/43b5dfcd7a0a8a08e328b65667464986f60ee12c):
+  `Makefile`, `go.mod`, `cmd/*/main.go`, `version/version.go`.
+- [Temporal am Pin](https://github.com/temporalio/temporal/tree/6d085822273f4336796e6959c73ab1d14a23eb77):
+  `Makefile`, `cmd/server/main.go`, `go.mod`.
+- [Argo Workflows am Pin](https://github.com/argoproj/argo-workflows/tree/43021573c5a35cbafae009043c132dfcef43a112):
+  `Makefile`, `cmd/workflow-controller/main.go`, `cmd/argoexec/main.go`.
 
 ## Hook-Vertrag fuer die Integration
 
@@ -51,13 +58,22 @@ Disk-/RAM-Gates, Logs, Transaktion/Rollback, SHA256-Buildmarker, Status und Unin
 
 Integrationsanforderungen:
 
-- Helper nur fuer die sieben IDs dieses Fragments freigeben, keine frei waehlbaren Python-Imports oder Shell-Schritte. `contract()` vergleicht alle vorgeschlagenen Rezeptfelder gegen das lokale Fragment.
-- `candidate-native` vor `native_go.prepare/activate` behandeln: deren gemeinsame ID-Allowlist wird nicht veraendert. Der Helper prueft Go selbst und nutzt den geprueften privaten Bootstrap.
-- Subprozess-Allowlist: `git` fuer HEAD/Status und das ausgewaehlte `go` fuer `version`, `build`, `mod verify`, `version -m`. Keine Ausfuehrung von `bin/*`, kein `go run`, `make`, Helm oder kubectl.
-- Paket-Allowlist und Modulverzeichnisse entsprechen exakt `recipe.builds`; cert-manager hat fuenf verschachtelte Module. `recipe.ldflags` uebernimmt die jeweiligen Upstream-Versionvariablen, Argo einschliesslich Git-Metadaten.
-- Kein generischer Binaer-Probe-Fallback bei leerem `recipe.probe`. `probe_mode=go-buildinfo` ist ausschliesslich statische Go-Tool-Inspektion, nicht `binary --version` oder `binary` ohne Argumente.
-- Zurueckgegebene Artefakte inklusive Receipts in die zentrale Hash-/Besitzpruefung aufnehmen; erst danach Buildmarker schreiben. `check` prueft offline diese Hashes. `doctor`/Smoke ohne explizite Runtime-Abnahme bleibt unvollstaendig (Exit 3), kein Controllerstart als Diagnose.
-- Idempotenter Uninstall entfernt nur belegte eigene Buildartefakte gemaess zentralem Besitzmarker. Kein Namespace-/CRD-/Datenbank-/DNS-/Zertifikat-Loeschen; bei geaenderten oder unbekannten Dateien Vorschau/Exit 3 statt destruktiver Entfernung.
+- Helper nur fuer die sieben IDs dieses Fragments freigeben, keine frei waehlbaren Python-Imports oder
+  Shell-Schritte. `contract()` vergleicht alle vorgeschlagenen Rezeptfelder gegen das lokale Fragment.
+- `candidate-native` vor `native_go.prepare/activate` behandeln: deren gemeinsame ID-Allowlist wird nicht
+  veraendert. Der Helper prueft Go selbst und nutzt den geprueften privaten Bootstrap.
+- Subprozess-Allowlist: `git` fuer HEAD/Status und das ausgewaehlte `go` fuer `version`, `build`, `mod verify`,
+  `version -m`. Keine Ausfuehrung von `bin/*`, kein `go run`, `make`, Helm oder kubectl.
+- Paket-Allowlist und Modulverzeichnisse entsprechen exakt `recipe.builds`; cert-manager hat fuenf verschachtelte
+  Module. `recipe.ldflags` uebernimmt die jeweiligen Upstream-Versionvariablen, Argo einschliesslich Git-Metadaten.
+- Kein generischer Binaer-Probe-Fallback bei leerem `recipe.probe`. `probe_mode=go-buildinfo` ist ausschliesslich
+  statische Go-Tool-Inspektion, nicht `binary --version` oder `binary` ohne Argumente.
+- Zurueckgegebene Artefakte inklusive Receipts in die zentrale Hash-/Besitzpruefung aufnehmen; erst danach
+  Buildmarker schreiben. `check` prueft offline diese Hashes. `doctor`/Smoke ohne explizite Runtime-Abnahme bleibt
+  unvollstaendig (Exit 3), kein Controllerstart als Diagnose.
+- Idempotenter Uninstall entfernt nur belegte eigene Buildartefakte gemaess zentralem Besitzmarker. Kein
+  Namespace-/CRD-/Datenbank-/DNS-/Zertifikat-Loeschen; bei geaenderten oder unbekannten Dateien Vorschau/Exit 3
+  statt destruktiver Entfernung.
 
 ## Toolchain, Locks und Receipts
 
@@ -87,9 +103,13 @@ Dateien sowie SHA256 der primaeren Quellenvertraege. Root- und Untermodul-`go.mo
 werden unveraendert nach `locks/` kopiert; abschliessend prueft `go mod verify` den Modulcache.
 Ein Clone allein, eine leere Ausgabe oder ein geaenderter Lock wird nicht akzeptiert.
 
-- `receipts/controller-build-lock.json`: Repo, Pin, Version, Go-Version, Buildbefehle, Quell-/Lock-/Artefakt-SHA256; Runtime-/Deployment-Abnahme ausdruecklich false.
-- `receipts/controller-version-probe.json`: Ausgaben von `go version -m FILE`, passende VCS-Revision und sauberer VCS-Status; keine ausgefuehrte Anwendungsdatei.
-- `receipts/controller-sbom.cdx.json`: CycloneDX 1.5 aus den im gebauten Binary eingebetteten Go-Abhaengigkeiten einschliesslich Replacement-Hinweisen. Keine Behauptung ueber Images, OS-Pakete, Cluster oder vollstaendige Runtime-Abhaengigkeiten.
+- `receipts/controller-build-lock.json`: Repo, Pin, Version, Go-Version, Buildbefehle,
+  Quell-/Lock-/Artefakt-SHA256; Runtime-/Deployment-Abnahme ausdruecklich false.
+- `receipts/controller-version-probe.json`: Ausgaben von `go version -m FILE`, passende VCS-Revision und sauberer
+  VCS-Status; keine ausgefuehrte Anwendungsdatei.
+- `receipts/controller-sbom.cdx.json`: CycloneDX 1.5 aus den im gebauten Binary eingebetteten Go-Abhaengigkeiten
+  einschliesslich Replacement-Hinweisen. Keine Behauptung ueber Images, OS-Pakete, Cluster oder vollstaendige
+  Runtime-Abhaengigkeiten.
 
 Upstream-Versionsschnittstellen wurden nicht blind vereinheitlicht: ExternalDNS registriert
 `--version`; Temporal verwendet urfave/cli mit `app.Version` (`--version`); Argo-Controller hat

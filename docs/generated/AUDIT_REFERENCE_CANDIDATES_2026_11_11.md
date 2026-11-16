@@ -265,10 +265,14 @@ Nur Nachpruefkandidaten; Status TOT wird fuer keinen dieser Pfade behauptet.
 - `scripts/tools/espeak_ng_check.sh`
 - `scripts/tools/ffmpeg_check.sh`
 - `scripts/tools/gpt_oss_120b_check.sh`
+- `scripts/tools/helpers/candidate_go_controllers.py`
+- `scripts/tools/helpers/candidate_security_native.py`
 - `scripts/tools/helpers/cargo_build_tools.py`
 - `scripts/tools/helpers/gap_native_build.py`
 - `scripts/tools/helpers/kube_bench_native.py`
+- `scripts/tools/helpers/native_sandbox_toolchains.py`
 - `scripts/tools/helpers/outlines_python.py`
+- `scripts/tools/helpers/python_reviewed_native.py`
 - `scripts/tools/helpers/valkey_native.py`
 - `scripts/tools/kube_bench_check.sh`
 - `scripts/tools/levo_2_check.sh`

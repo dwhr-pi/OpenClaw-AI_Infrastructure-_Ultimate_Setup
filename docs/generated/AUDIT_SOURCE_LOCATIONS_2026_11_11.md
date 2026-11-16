@@ -14,7 +14,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Bewegliches Wort latest/main/master (lexikalisch)
 
-621 Fundstellen, keine automatische Risikoeinstufung.
+653 Fundstellen, keine automatische Risikoeinstufung.
 
 - `.github/workflows/build-and-push.yml:4`
 - `.github/workflows/build-and-push.yml:16`
@@ -105,6 +105,32 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `config/legal/sources.json:36`
 - `config/legal/sources.json:37`
 - `config/models.yaml:16`
+- `config/native-candidates/go-controllers.json:65`
+- `config/native-candidates/go-controllers.json:68`
+- `config/native-candidates/go-controllers.json:71`
+- `config/native-candidates/go-controllers.json:74`
+- `config/native-candidates/go-controllers.json:77`
+- `config/native-candidates/go-controllers.json:199`
+- `config/native-candidates/go-controllers.json:308`
+- `config/native-candidates/go-controllers.json:309`
+- `config/native-candidates/go-controllers.json:310`
+- `config/native-candidates/go-controllers.json:311`
+- `config/native-candidates/go-controllers.json:312`
+- `config/native-candidates/go-controllers.json:313`
+- `config/native-candidates/go-controllers.json:522`
+- `config/native-candidates/go-controllers.json:638`
+- `config/native-candidates/go-controllers.json:639`
+- `config/native-candidates/go-controllers.json:640`
+- `config/native-candidates/go-controllers.json:725`
+- `config/native-candidates/go-controllers.json:726`
+- `config/native-candidates/go-controllers.json:727`
+- `config/native-candidates/go-controllers.json:969`
+- `config/native-candidates/go-controllers.json:970`
+- `config/native-candidates/security-data.json:87`
+- `config/native-candidates/security-data.json:134`
+- `config/native-candidates/security.json:40`
+- `config/native-candidates/security.json:89`
+- `config/native-candidates/security.json:135`
 - `config/paperless_ngx.env.example:5`
 - `config/tools.yml:1598`
 - `config/tools.yml:2962`
@@ -122,6 +148,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `examples/docker-compose/monitoring.yml:21`
 - `examples/docker-compose/vps-control-plane.yml:17`
 - `examples/docker-compose/vps-control-plane.yml:33`
+- `examples/kubernetes/hardened-services.yaml:250`
 - `examples/manus-ci-cd/go-ci.yml.example:4`
 - `examples/manus-ci-cd/go-release.yml.example:6`
 - `examples/manus-ci-cd/go-release.yml.example:17`
@@ -276,10 +303,6 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/install/install_cad_tools.sh:58`
 - `scripts/install/install_cad_tools.sh:67`
 - `scripts/install_local_only.sh:63`
-- `scripts/k8s_deployments.yaml:24`
-- `scripts/k8s_deployments.yaml:73`
-- `scripts/k8s_deployments.yaml:111`
-- `scripts/k8s_deployments.yaml:160`
 - `scripts/lang/ar.sh:38`
 - `scripts/lang/ar.sh:47`
 - `scripts/lang/de.sh:100`
@@ -388,6 +411,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/quality/repository_audit.py:284`
 - `scripts/quality/run_master_audit_tests.py:27`
 - `scripts/quality/run_master_audit_tests.py:75`
+- `scripts/quality/sync_native_candidates.py:141`
+- `scripts/quality/sync_native_candidates.py:158`
+- `scripts/quality/sync_native_candidates.py:177`
 - `scripts/quality/tool_ssh_docs.py:212`
 - `scripts/quality/tool_ssh_docs.py:223`
 - `scripts/quality/tool_truth_table.py:80`
@@ -503,6 +529,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/browser_desktop_common.sh:18`
 - `scripts/tools/helpers/browseros_study.py:121`
 - `scripts/tools/helpers/browseros_study.py:174`
+- `scripts/tools/helpers/candidate_security_native.py:169`
+- `scripts/tools/helpers/candidate_security_native.py:287`
+- `scripts/tools/helpers/candidate_security_native.py:288`
 - `scripts/tools/helpers/cargo_build_tools.py:16`
 - `scripts/tools/helpers/cargo_build_tools.py:50`
 - `scripts/tools/helpers/chattts_common.sh:236`
@@ -569,6 +598,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/script_quality.py:90`
 - `scripts/tools/helpers/script_quality.py:171`
 - `scripts/tools/helpers/sdnext_common.sh:152`
+- `scripts/tools/helpers/security_data_native.py:22`
+- `scripts/tools/helpers/security_data_native.py:24`
+- `scripts/tools/helpers/security_data_native.py:245`
 - `scripts/tools/helpers/sfizz_common.sh:75`
 - `scripts/tools/helpers/stable_audio_open_common.sh:175`
 - `scripts/tools/helpers/tgi_common.sh:66`
@@ -640,15 +672,14 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Git-Clone (Pin kann separat folgen)
 
-61 Fundstellen, keine automatische Risikoeinstufung.
+60 Fundstellen, keine automatische Risikoeinstufung.
 
+- `examples/kubernetes/hardened-services.yaml:214`
 - `scripts/custom_source_manager.sh:179`
 - `scripts/custom_source_manager.sh:222`
 - `scripts/dev/audit_tool_installer_base_deps.sh:19`
 - `scripts/helpers/status_tracking.sh:303`
 - `scripts/install-openhiggsstack.sh:111`
-- `scripts/k8s_deployments.yaml:151`
-- `scripts/k8s_deployments.yaml:153`
 - `scripts/language_pack_manager.sh:108`
 - `scripts/lib/common.sh:208`
 - `scripts/lib/git_target_repair.sh:70`
@@ -881,7 +912,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Netz-/Port-Kandidat
 
-227 Fundstellen, keine automatische Risikoeinstufung.
+228 Fundstellen, keine automatische Risikoeinstufung.
 
 - `charts/monitoring-lite/templates/network-policy.yaml:26`
 - `charts/monitoring-lite/templates/network-policy.yaml:42`
@@ -917,6 +948,15 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `examples/hybrid-production-review/network-policy.yaml:77`
 - `examples/hybrid-production-review/private-ingress.yaml:2`
 - `examples/k3s/network-policies.yaml:26`
+- `examples/kubernetes/hardened-services.yaml:47`
+- `examples/kubernetes/hardened-services.yaml:112`
+- `examples/kubernetes/hardened-services.yaml:128`
+- `examples/kubernetes/hardened-services.yaml:163`
+- `examples/kubernetes/hardened-services.yaml:251`
+- `examples/kubernetes/hardened-services.yaml:271`
+- `examples/kubernetes/hardened-services.yaml:309`
+- `examples/kubernetes/hardened-services.yaml:344`
+- `examples/kubernetes/hardened-services.yaml:420`
 - `examples/manus-ci-cd/kubernetes.yml.example:32`
 - `examples/manus-ci-cd/kubernetes.yml.example:80`
 - `examples/manus-ci-cd/kubernetes.yml.example:99`
@@ -1012,16 +1052,6 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/home-watcher/gpu_health_gate.py:21`
 - `scripts/home-watcher/gpu_health_gate.py:22`
 - `scripts/home-watcher/gpu_health_gate.py:24`
-- `scripts/k8s_deployments.yaml:25`
-- `scripts/k8s_deployments.yaml:77`
-- `scripts/k8s_deployments.yaml:89`
-- `scripts/k8s_deployments.yaml:112`
-- `scripts/k8s_deployments.yaml:161`
-- `scripts/k8s_deployments.yaml:177`
-- `scripts/k8s_deployments.yaml:203`
-- `scripts/k8s_deployments.yaml:228`
-- `scripts/k8s_deployments.yaml:232`
-- `scripts/k8s_deployments.yaml:290`
 - `scripts/lib/gitops_artifacts.py:86`
 - `scripts/lib/gitops_artifacts.py:87`
 - `scripts/lib/gitops_artifacts.py:88`
@@ -1073,7 +1103,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/gitops_bootstrap_install.sh:53`
 - `scripts/tools/gitops_bootstrap_install.sh:56`
 - `scripts/tools/gitops_bootstrap_install.sh:57`
+- `scripts/tools/helpers/candidate_security_native.py:310`
 - `scripts/tools/helpers/freellmapi_common.sh:147`
+- `scripts/tools/helpers/python_reviewed_native.py:223`
 - `scripts/wireguard/create-home-peer.sh:33`
 - `scripts/wireguard/create-vps-peer.sh:33`
 - `services/inference-gateway/local_policy.py:26`
@@ -1113,7 +1145,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Privilegien-/Host-Kandidat
 
-661 Fundstellen, keine automatische Risikoeinstufung.
+673 Fundstellen, keine automatische Risikoeinstufung.
 
 - `.github/workflows/next-level-health.yml:17`
 - `.github/workflows/next-level-health.yml:18`
@@ -1135,6 +1167,17 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `examples/hybrid-production-review/gpu-values.yaml:3`
 - `examples/hybrid-production-review/velero-values.yaml:35`
 - `examples/hybrid-production-review/velero-values.yaml:46`
+- `examples/kubernetes/hardened-services.yaml:33`
+- `examples/kubernetes/hardened-services.yaml:43`
+- `examples/kubernetes/hardened-services.yaml:98`
+- `examples/kubernetes/hardened-services.yaml:108`
+- `examples/kubernetes/hardened-services.yaml:151`
+- `examples/kubernetes/hardened-services.yaml:162`
+- `examples/kubernetes/hardened-services.yaml:209`
+- `examples/kubernetes/hardened-services.yaml:219`
+- `examples/kubernetes/hardened-services.yaml:249`
+- `examples/kubernetes/hardened-services.yaml:297`
+- `examples/kubernetes/hardened-services.yaml:307`
 - `examples/manus-ci-cd/kubernetes.yml.example:24`
 - `examples/manus-ci-cd/kubernetes.yml.example:45`
 - `examples/open-webui/openwebui-oidc.patch.yaml:14`
@@ -1446,6 +1489,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/basic_pitch_common.sh:302`
 - `scripts/tools/helpers/browseros_study.py:86`
 - `scripts/tools/helpers/browseros_study.py:89`
+- `scripts/tools/helpers/candidate_go_controllers.py:105`
 - `scripts/tools/helpers/cargo_build_tools.py:28`
 - `scripts/tools/helpers/cargo_build_tools.py:38`
 - `scripts/tools/helpers/chattts_common.sh:193`
@@ -1779,7 +1823,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Ressourcen-/Persistenz-Kandidat
 
-67 Fundstellen, keine automatische Risikoeinstufung.
+76 Fundstellen, keine automatische Risikoeinstufung.
 
 - `charts/monitoring-lite/templates/namespace.yaml:16`
 - `charts/monitoring-lite/templates/workloads.yaml:9`
@@ -1794,6 +1838,15 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `config/docker_to_github.json:2653`
 - `config/docker_to_github.json:2771`
 - `config/docker_to_github.json:2772`
+- `config/native-candidates/go-controllers.json:88`
+- `config/native-candidates/go-controllers.json:107`
+- `config/native-candidates/go-controllers.json:125`
+- `config/native-candidates/go-controllers.json:377`
+- `config/native-candidates/go-controllers.json:391`
+- `config/native-candidates/go-controllers.json:403`
+- `config/native-candidates/go-controllers.json:432`
+- `config/native-candidates/go-controllers.json:550`
+- `config/native-candidates/go-controllers.json:551`
 - `deploy/kustomize/optional/open-webui/workload.yaml:9`
 - `deploy/kustomize/optional/open-webui/workload.yaml:92`
 - `deploy/kustomize/overlays/vps-cpu-local-storage/kustomization.yaml:10`
@@ -1809,6 +1862,10 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `examples/hybrid-production-review/gpu-sharing.yaml:18`
 - `examples/hybrid-production-review/gpu-sharing.yaml:21`
 - `examples/hybrid-production-review/gpu-sharing.yaml:22`
+- `examples/kubernetes/hardened-services.yaml:63`
+- `examples/kubernetes/hardened-services.yaml:68`
+- `examples/kubernetes/hardened-services.yaml:174`
+- `examples/kubernetes/hardened-services.yaml:178`
 - `k8s/base/namespace.yml:11`
 - `k8s/base/namespace.yml:25`
 - `k8s/gitops/agents/budgets.yaml:2`
@@ -1843,10 +1900,6 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `k8s/platform/nvidia-device-plugin-values.yml:6`
 - `k8s/platform/openclaw-hardening-patch.yml:39`
 - `scripts/home-watcher/gpu_health_gate.py:104`
-- `scripts/k8s_deployments.yaml:39`
-- `scripts/k8s_deployments.yaml:44`
-- `scripts/k8s_deployments.yaml:119`
-- `scripts/k8s_deployments.yaml:123`
 - `scripts/lib/platform_helm.py:86`
 
 ## Getrackte ENV-Pfade (nur Dateinamen)

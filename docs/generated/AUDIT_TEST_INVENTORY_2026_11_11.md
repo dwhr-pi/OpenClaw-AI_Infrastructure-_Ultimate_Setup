@@ -726,6 +726,45 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_caddy_recovery.py:141`
   Prueffall: `test_option_rejects_other_tools_and_uninstall_before_any_operation`
 
+## tests/test_candidate_go_controllers.py
+
+- `tests/test_candidate_go_controllers.py:74`
+  Prueffall: `test_fragment_schema_and_all_pins`
+- `tests/test_candidate_go_controllers.py:90`
+  Prueffall: `test_changed_recipe_rejected_before_processes`
+- `tests/test_candidate_go_controllers.py:99`
+  Prueffall: `test_path_traversal_rejected`
+- `tests/test_candidate_go_controllers.py:104`
+  Prueffall: `test_environment_drops_credentials_user_flags_and_crossbuild`
+- `tests/test_candidate_go_controllers.py:115`
+  Prueffall: `test_missing_go_never_downloads_without_consent`
+- `tests/test_candidate_go_controllers.py:123`
+  Prueffall: `test_keda_has_current_private_pin_but_needs_download_consent`
+- `tests/test_candidate_go_controllers.py:135`
+  Prueffall: `test_existing_go_no_bootstrap`
+- `tests/test_candidate_go_controllers.py:144`
+  Prueffall: `test_wrong_platform_fails_before_download`
+- `tests/test_candidate_go_controllers.py:151`
+  Prueffall: `test_low_disk_fails_before_download`
+- `tests/test_candidate_go_controllers.py:161`
+  Prueffall: `test_build_creates_binaries_locks_static_files_and_honest_receipts`
+- `tests/test_candidate_go_controllers.py:181`
+  Prueffall: `test_dirty_source_fails_before_compile`
+- `tests/test_candidate_go_controllers.py:189`
+  Prueffall: `test_changed_source_hash_fails_before_compile`
+- `tests/test_candidate_go_controllers.py:198`
+  Prueffall: `test_no_artifact_not_accepted`
+- `tests/test_candidate_go_controllers.py:206`
+  Prueffall: `test_metadata_must_match_commit_and_clean_tree`
+- `tests/test_candidate_go_controllers.py:213`
+  Prueffall: `test_existing_artifact_is_preserved`
+- `tests/test_candidate_go_controllers.py:225`
+  Prueffall: `test_output_inside_source_rejected`
+- `tests/test_candidate_go_controllers.py:229`
+  Prueffall: `test_component_replacements_are_recorded`
+- `tests/test_candidate_go_controllers.py:235`
+  Prueffall: `test_cert_manager_nested_modules_and_temporal_tags`
+
 ## tests/test_cargo_build_tools.py
 
 - `tests/test_cargo_build_tools.py:31`
@@ -2158,6 +2197,17 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_grok_tooling_docs.py:68`
   Prueffall: `test_markdown_tables_have_consistent_columns`
 
+## tests/test_hardened_kubernetes_examples.py
+
+- `tests/test_hardened_kubernetes_examples.py:16`
+  Prueffall: `test_no_old_executable_path_and_every_container_is_restricted`
+- `tests/test_hardened_kubernetes_examples.py:51`
+  Prueffall: `test_proxy_authentication_and_non_ascii_headers_fail_closed`
+- `tests/test_hardened_kubernetes_examples.py:61`
+  Prueffall: `test_invalid_json_never_contacts_provider`
+- `tests/test_hardened_kubernetes_examples.py:68`
+  Prueffall: `test_credentials_are_not_in_urls_or_exception_logs`
+
 ## tests/test_hardening_preflight.py
 
 - `tests/test_hardening_preflight.py:22`
@@ -3555,6 +3605,30 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_native_build_process.py:71`
   Prueffall: `test_signal_is_reported_without_claiming_oom`
 
+## tests/test_native_candidate_dispatch.py
+
+- `tests/test_native_candidate_dispatch.py:19`
+  Prueffall: `test_every_requested_adapter_is_wired_to_exact_reviewed_recipe`
+- `tests/test_native_candidate_dispatch.py:35`
+  Prueffall: `test_all_backends_reject_windows_before_packages_or_network`
+- `tests/test_native_candidate_dispatch.py:45`
+  Prueffall: `test_unreviewed_adapter_path_is_never_imported`
+- `tests/test_native_candidate_dispatch.py:54`
+  Prueffall: `test_generic_resources_fail_before_adapter_or_download`
+- `tests/test_native_candidate_dispatch.py:63`
+  Prueffall: `test_adapter_needs_real_owned_artifacts_not_a_clone_or_success_message`
+- `tests/test_native_candidate_dispatch.py:73`
+  Prueffall: `test_doctor_does_not_turn_build_receipts_into_runtime_acceptance`
+
+## tests/test_native_candidate_sync.py
+
+- `tests/test_native_candidate_sync.py:16`
+  Prueffall: `test_allowlist_covers_every_remaining_requested_tool_once`
+- `tests/test_native_candidate_sync.py:22`
+  Prueffall: `test_unknown_fragment_cannot_change_catalog`
+- `tests/test_native_candidate_sync.py:30`
+  Prueffall: `test_render_is_read_only_and_wrappers_use_native_lifecycle`
+
 ## tests/test_native_cleanup.py
 
 - `tests/test_native_cleanup.py:44`
@@ -4886,6 +4960,25 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_pyannote_audio.py:179`
   Prueffall: `test_start_and_unsafe_path_blocked`
 
+## tests/test_python_reviewed_native.py
+
+- `tests/test_python_reviewed_native.py:23`
+  Prueffall: `test_exact_candidate_contracts`
+- `tests/test_python_reviewed_native.py:35`
+  Prueffall: `test_environment_drops_credentials_and_python_injection`
+- `tests/test_python_reviewed_native.py:45`
+  Prueffall: `test_source_mismatch_prevents_execution`
+- `tests/test_python_reviewed_native.py:55`
+  Prueffall: `test_incomplete_wheels_fail_closed`
+- `tests/test_python_reviewed_native.py:64`
+  Prueffall: `test_probe_is_bounded_and_never_cli_execution`
+- `tests/test_python_reviewed_native.py:78`
+  Prueffall: `test_explicit_unsupported_python_never_downloads`
+- `tests/test_python_reviewed_native.py:87`
+  Prueffall: `test_missing_python_requires_explicit_consent`
+- `tests/test_python_reviewed_native.py:94`
+  Prueffall: `test_build_rejects_wrong_source_layout`
+
 ## tests/test_queue_safety.py
 
 - `tests/test_queue_safety.py:44`
@@ -5328,6 +5421,33 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_network_examples_have_both_gateway_backend_directions`
 - `tests/test_security_audit_docs.py:53`
   Prueffall: `test_examples_are_not_added_to_active_kustomization`
+
+## tests/test_security_data_native.py
+
+- `tests/test_security_data_native.py:21`
+  Prueffall: `test_manifest_and_hooks`
+- `tests/test_security_data_native.py:30`
+  Prueffall: `test_bad_paths`
+- `tests/test_security_data_native.py:35`
+  Prueffall: `test_missing_contract_rejected`
+- `tests/test_security_data_native.py:41`
+  Prueffall: `test_source_hash_failure_precedes_build`
+- `tests/test_security_data_native.py:51`
+  Prueffall: `test_version_runner_bounded_no_stdin`
+- `tests/test_security_data_native.py:59`
+  Prueffall: `test_rust_no_implicit_bootstrap`
+- `tests/test_security_data_native.py:64`
+  Prueffall: `test_elf_probe_no_subprocess`
+- `tests/test_security_data_native.py:79`
+  Prueffall: `test_zap_jar_probe`
+- `tests/test_security_data_native.py:89`
+  Prueffall: `test_doctor_detects_modified_files`
+- `tests/test_security_data_native.py:101`
+  Prueffall: `test_external_artifact_link_rejected`
+- `tests/test_security_data_native.py:112`
+  Prueffall: `test_write_never_overwrites`
+- `tests/test_security_data_native.py:119`
+  Prueffall: `test_vaultwarden_command_and_scope`
 
 ## tests/test_setup_shell_contracts.py
 
@@ -6388,4 +6508,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2853**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2904**. Kein Nachweis bestandener Tests.
