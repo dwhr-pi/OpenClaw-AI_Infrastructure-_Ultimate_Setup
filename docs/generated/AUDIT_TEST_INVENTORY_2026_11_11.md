@@ -2267,6 +2267,15 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_hybrid_production_examples.py:107`
   Prueffall: `test_bash_examples_parse_without_execution`
 
+## tests/test_infrastructure_candidates.py
+
+- `tests/test_infrastructure_candidates.py:20`
+  Prueffall: `test_unique_registry_and_complete_trailing_block`
+- `tests/test_infrastructure_candidates.py:34`
+  Prueffall: `test_tail_is_after_xerj_and_stable_without_duplicates`
+- `tests/test_infrastructure_candidates.py:43`
+  Prueffall: `test_blocked_actions_and_status_do_not_touch_user_data`
+
 ## tests/test_infrastructure_increment.py
 
 - `tests/test_infrastructure_increment.py:29`
@@ -5395,26 +5404,67 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_backup_and_verification_precede_fetch_and_checkout`
 - `tests/test_signed_release.py:189`
   Prueffall: `test_tag_mismatch_preserves_backup_and_never_checks_out`
-- `tests/test_signed_release.py:199`
+- `tests/test_signed_release.py:197`
+  Prueffall: `test_discovery_head_change_refuses_before_backup_or_checkout`
+- `tests/test_signed_release.py:206`
   Prueffall: `test_export_reads_only_local_tag_and_produces_no_signature`
-- `tests/test_signed_release.py:222`
+- `tests/test_signed_release.py:229`
   Prueffall: `test_export_refuses_existing_or_inside_repository_destination`
-- `tests/test_signed_release.py:235`
+- `tests/test_signed_release.py:242`
   Prueffall: `test_git_environment_cannot_redirect_repository_or_inject_config`
-- `tests/test_signed_release.py:256`
+- `tests/test_signed_release.py:263`
   Prueffall: `test_platform_examples_do_not_mix_shell_syntax`
-- `tests/test_signed_release.py:299`
-  Prueffall: `test_ubuntu_clone_example_preserves_spaces_and_url_as_arguments`
 - `tests/test_signed_release.py:306`
+  Prueffall: `test_ubuntu_clone_example_preserves_spaces_and_url_as_arguments`
+- `tests/test_signed_release.py:313`
   Prueffall: `test_failed_clone_does_not_execute_log`
-- `tests/test_signed_release.py:312`
+- `tests/test_signed_release.py:319`
   Prueffall: `test_existing_target_is_not_reused_or_deleted`
-- `tests/test_signed_release.py:317`
+- `tests/test_signed_release.py:324`
   Prueffall: `test_current_setup_and_catalogue_versions_are_11_18`
-- `tests/test_signed_release.py:323`
+- `tests/test_signed_release.py:330`
   Prueffall: `test_guide_is_ordered_and_does_not_claim_an_unpublished_release`
-- `tests/test_signed_release.py:335`
+- `tests/test_signed_release.py:342`
   Prueffall: `test_all_documented_bash_blocks_parse_without_execution`
+
+## tests/test_signed_update_discovery.py
+
+- `tests/test_signed_update_discovery.py:62`
+  Prueffall: `test_check_verifies_but_never_updates_or_uses_api_asset_urls`
+- `tests/test_signed_update_discovery.py:72`
+  Prueffall: `test_apply_passes_only_verified_manifest_and_expected_local_head`
+- `tests/test_signed_update_discovery.py:79`
+  Prueffall: `test_incomplete_newer_release_is_reported_not_installed`
+- `tests/test_signed_update_discovery.py:85`
+  Prueffall: `test_no_signed_candidate_never_downloads_or_calls_updater`
+- `tests/test_signed_update_discovery.py:92`
+  Prueffall: `test_signature_failure_blocks_without_trying_an_older_candidate`
+- `tests/test_signed_update_discovery.py:101`
+  Prueffall: `test_same_older_or_current_commit_never_updates`
+- `tests/test_signed_update_discovery.py:110`
+  Prueffall: `test_missing_trust_key_stops_before_network`
+- `tests/test_signed_update_discovery.py:116`
+  Prueffall: `test_network_failure_bad_main_or_empty_asset_never_updates`
+- `tests/test_signed_update_discovery.py:129`
+  Prueffall: `test_numeric_sort_and_exclusion_of_drafts_prereleases_and_nonversions`
+- `tests/test_signed_update_discovery.py:137`
+  Prueffall: `test_duplicate_tags_assets_and_oversized_lists_are_rejected`
+- `tests/test_signed_update_discovery.py:144`
+  Prueffall: `test_only_official_https_urls_are_allowed`
+- `tests/test_signed_update_discovery.py:151`
+  Prueffall: `test_local_version_uses_exact_patch_tag_without_running_setup`
+- `tests/test_signed_update_discovery.py:169`
+  Prueffall: `test_startup_only_checks_with_a_global_timeout_and_sanitized_environment`
+- `tests/test_signed_update_discovery.py:180`
+  Prueffall: `test_timeout_kills_the_check_and_never_reports_up_to_date`
+- `tests/test_signed_update_discovery.py:192`
+  Prueffall: `test_missing_key_skips_network_and_signature_failures_remain_unknown`
+- `tests/test_signed_update_discovery.py:202`
+  Prueffall: `test_current_release_is_quiet_and_cli_startup_does_not_apply`
+- `tests/test_signed_update_discovery.py:212`
+  Prueffall: `test_malformed_or_unverified_startup_report_never_claims_current`
+- `tests/test_signed_update_discovery.py:218`
+  Prueffall: `test_headless_setup_exits_before_startup_check_and_no_unsigned_menu_repair`
 
 ## tests/test_social_avatar_docs.py
 
@@ -6227,4 +6277,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2783**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2805**. Kein Nachweis bestandener Tests.

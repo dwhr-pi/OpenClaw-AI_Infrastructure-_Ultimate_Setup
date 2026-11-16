@@ -2,7 +2,7 @@
 # Standard-Update ausschliesslich ueber signierte Release-Metadaten; Repair bleibt separat.
 set -Eeuo pipefail
 ROOT="$(cd "${BASH_SOURCE[0]%/*}/.." && pwd)"
-if (($# == 0)) || [[ $# == 1 && $1 == --dry-run ]] || [[ $# == 1 && $1 == --check-online ]]; then
+if (($# == 0)) || [[ $# == 1 && $1 == --dry-run ]] || [[ $# == 1 && $1 == --check-online ]] || [[ $# == 1 && $1 == --apply ]]; then
   mode=${1:---apply}
   key=${OPENCLAW_RELEASE_PUBLIC_KEY:-$HOME/.config/openclaw-trust/release.pub}
   if [[ -n ${OPENCLAW_RELEASE_TAG:-} || -n ${OPENCLAW_RELEASE_ARTIFACTS:-} ]]; then

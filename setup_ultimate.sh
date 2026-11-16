@@ -5079,7 +5079,8 @@ TOOL_SCRIPT_NAMES["Argo_Workflows"]="argo_workflows_candidate"
 TOOLS["Argo_Workflows"]="GEPLANT / NICHT INSTALLIERBAR: bisher nur Installationsplatzhalter. docs/tools/infrastructure-candidates.md"
 
 # Check once per interactive launch; offline/headless entrypoints exited above.
-if [[ "${OPENCLAW_UPDATE_CHECK:-1}" != 0 ]]; then
+if [[ "${BASH_SOURCE[0]}" == "$0" && -t 0 && "${OPENCLAW_UPDATE_CHECK:-1}" != 0 ]]; then
+  printf '%s\n' 'Pruefe signierte Setup-Updates (max. 20 Sekunden, keine Installation)...'
   startup_update_notice="$(python3 -I -B "$INSTALL_DIR/scripts/security/discover_signed_update.py" \
     --startup-check --public-key "${OPENCLAW_RELEASE_PUBLIC_KEY:-$HOME/.config/openclaw-trust/release.pub}")"
   if [[ -n "$startup_update_notice" ]]; then

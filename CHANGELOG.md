@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### 2026-11-16: Signierte Update-Suche und Hinweis beim Start
+
+- Stabile GitHub-Releases automatisch finden, Minisign/SHA256 mit unabhaengiger release.pub pruefen.
+- Unvollstaendige Releases nur melden; Signaturfehler abbrechen, kein main- oder Downgrade-Fallback.
+- Einmalige Startpruefung mit 20-Sekunden-Limit, Hinweis statt automatischer Installation; offline abschaltbar.
+- Bestehende Release-Auswahl und Sicherungen erhalten; unsignierte Quellreparatur aus Standardmenue entfernt.
+- Offline-Fixtures pruefen Auswahl, Fehlersperren, Versionsgrenzen und rein hinweisenden Startpfad.
+
 ### 2026-11-16: Infrastruktur-Kandidaten als Schlussblock hinter XERJ
 
 - 18 dokumentierte Kandidaten in Registry und Tools-Menue aufgenommen, ausdruecklich nicht installierbar.

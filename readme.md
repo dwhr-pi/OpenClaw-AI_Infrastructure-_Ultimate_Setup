@@ -73,6 +73,7 @@ Hinweise auf Unterstuetzung sind keine zusaetzliche Lizenzbedingung.
 - **Betrieb:** [Installation, Neustart und Update](#installation-und-betrieb), [Backup und Restore](docs/INSTALLATION_STATUS_BACKUP.md).
   [Umzug auf den neuen Repository-Namen](docs/REPOSITORY_RENAME.md).
 - **Sicherheit:** [Signierte Releases](docs/SIGNED_RELEASES.md), [sicherer Kernpfad](docs/SECURE_CORE_REFACTOR.md).
+  [Startpruefung und ausschliesslich signierte Updates](docs/SIGNED_UPDATES.md).
 - **Tools und Profile:** [Tool-Matrix](docs/generated/TOOL_MATRIX.md), [Profil-Matrix](docs/generated/PROFILE_MATRIX.md).
   [Tool-Monitoring und Grafana](docs/monitoring/ALL_TOOLS_OBSERVABILITY.md).
 - **Dokumentation und Historie:** [Wegweiser](docs/readme.md), [historische Langfassung](docs/legacy/README_FULL_2026_11_01.md).

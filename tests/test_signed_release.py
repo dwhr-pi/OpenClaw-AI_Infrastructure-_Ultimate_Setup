@@ -194,6 +194,13 @@ class UpdateTests(unittest.TestCase):
         self.assertEqual(self.calls, ['backup', 'verify', 'fetch'])
         self.fake.collision_check.assert_not_called()
 
+    def test_discovery_head_change_refuses_before_backup_or_checkout(self):
+        with patch.object(updater.os, 'name', 'posix'):
+            with self.assertRaisesRegex(ValueError, 'seit Update-Suche'):
+                updater.update('fixture', 'backups', self.manifest, apply=True, fetch=True,
+                               expected_head='b' * 40)
+        self.assertEqual(self.calls, [])
+
 
 class ExportTests(unittest.TestCase):
     def test_export_reads_only_local_tag_and_produces_no_signature(self):

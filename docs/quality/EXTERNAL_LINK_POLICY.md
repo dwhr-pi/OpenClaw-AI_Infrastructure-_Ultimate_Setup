@@ -2,6 +2,15 @@
 
 Stand: 31.10.2026. Keine Merge- oder Produktionsfreigabe.
 
+## Nachpruefung 16.11.2026: BashDB und HTTP 502
+
+Im [Lauf 43787138722](https://github.com/dwhr-pi/OpenClaw-AI_Infrastructure-_Ultimate_Setup/actions/runs/43787138722)
+scheiterte der Verweis auf [BashDB](https://github.com/Trepan-Debuggers/bashdb) mit HTTP 502 nach
+dem vorhandenen begrenzten Retry. Das offizielle Repository war bei der separaten Nachpruefung
+erreichbar und zeigte den Bash-Debugger. Das ist kein Nachweis, dass der fehlgeschlagene CI-Abruf
+erfolgreich war. Keine Ignore-Regel, kein behandeltes 502 als Erfolg und keine abgeschaltete Pruefung.
+Ein erneuter CI-Lauf muss die Adresse wirklich erfolgreich abrufen; ein dauerhafter Fehler bleibt rot.
+
 ## Verbindlicher Check
 
 Weiterer Nachtrag PR 27 nach Commit `05abbed` vom 12.11.2026: Die PR- und

@@ -17,7 +17,7 @@ safety = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(safety)
 
 
-def update(repo, backup_root, manifest, *, apply=False, fetch=False):
+def update(repo, backup_root, manifest, *, apply=False, fetch=False, expected_head=None):
     repo = safety.repository(repo)
     risky = safety.git(repo, 'config', '--local', '--get-regexp',
                        r'^(http\.|url\.|credential\.|filter\.|include|core\.(sshcommand|gitproxy|worktree|attributesfile|sparsecheckout))', allowed=(0, 1))
@@ -33,17 +33,23 @@ def update(repo, backup_root, manifest, *, apply=False, fetch=False):
         raise ValueError('Apply nur unter Linux/WSL; keine Windows-Backupabnahme.')
     backup_root = safety.backup_path(repo, backup_root)
     with safety.operation_lock(backup_root):
+        if expected_head is not None and safety.git(repo, 'rev-parse', 'HEAD').stdout.decode().strip() != expected_head:
+            raise ValueError('Checkout seit Update-Suche geaendert; keine automatische Uebernahme.')
         # Sicherung vor Fetch: auch bewegte Tags und Git-Metadaten bleiben wiederherstellbar.
         snapshot = safety.backup(repo, backup_root)
         safety.verify(snapshot)
         if fetch:
-            safety.git(repo, '-c', 'credential.helper=', 'fetch', '--tags', '--no-recurse-submodules', 'origin')
+            ref = 'refs/tags/' + manifest['tag']
+            safety.git(repo, '-c', 'credential.helper=', 'fetch', '--no-tags', '--no-recurse-submodules',
+                       'origin', ref + ':' + ref)
         ref = 'refs/tags/' + manifest['tag']
         target = safety.git(repo, 'rev-parse', '--verify', '--end-of-options', ref + '^{commit}').stdout.decode().strip()
         if target != manifest['commit']:
             raise ValueError('Tag/Commit-Abweichung; Sicherung bleibt erhalten, kein Checkout.')
         if safety.git(repo, 'status', '--porcelain').stdout.strip():
             raise ValueError('Checkout parallel geaendert; nichts ueberschreiben.')
+        if expected_head is not None and safety.git(repo, 'rev-parse', 'HEAD').stdout.decode().strip() != expected_head:
+            raise ValueError('Checkout parallel geaendert; Sicherung bleibt erhalten.')
         safety.collision_check(repo, target)
         # Keine Force-Option: selbst nach Pruefung neu entstandene Aenderungen blockieren Git.
         safety.git(repo, 'checkout', '--detach', target)

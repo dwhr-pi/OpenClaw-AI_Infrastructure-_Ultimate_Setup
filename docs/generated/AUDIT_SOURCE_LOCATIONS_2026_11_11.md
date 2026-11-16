@@ -14,7 +14,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Bewegliches Wort latest/main/master (lexikalisch)
 
-586 Fundstellen, keine automatische Risikoeinstufung.
+588 Fundstellen, keine automatische Risikoeinstufung.
 
 - `.github/workflows/build-and-push.yml:4`
 - `.github/workflows/build-and-push.yml:16`
@@ -201,7 +201,6 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/benchmarks/rag_evaluate.py:60`
 - `scripts/blender_ai_asset_pipeline.py:85`
 - `scripts/blender_ai_asset_pipeline.py:97`
-- `scripts/check_setup_updates.sh:2`
 - `scripts/ci/install_qa_tools.sh:7`
 - `scripts/ci/install_qa_tools.sh:8`
 - `scripts/ci/install_qa_tools.sh:9`
@@ -379,6 +378,12 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/security/credentials_backup.py:356`
 - `scripts/security/decrypt_sops_env.py:132`
 - `scripts/security/decrypt_sops_env.py:154`
+- `scripts/security/discover_signed_update.py:138`
+- `scripts/security/discover_signed_update.py:139`
+- `scripts/security/discover_signed_update.py:141`
+- `scripts/security/discover_signed_update.py:208`
+- `scripts/security/discover_signed_update.py:227`
+- `scripts/security/discover_signed_update.py:236`
 - `scripts/security/env_vault.py:282`
 - `scripts/security/env_vault.py:297`
 - `scripts/security/history_secret_triage.py:29`
@@ -405,8 +410,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/security/release_manifest.py:90`
 - `scripts/security/risk_consent.py:32`
 - `scripts/security/risk_consent.py:44`
-- `scripts/security/update_verified_release.py:53`
-- `scripts/security/update_verified_release.py:75`
+- `scripts/security/update_verified_release.py:59`
+- `scripts/security/update_verified_release.py:81`
 - `scripts/tool_commands.py:133`
 - `scripts/tool_commands.py:176`
 - `scripts/tool_log_diagnostics.sh:311`
@@ -562,11 +567,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/opa_install.sh:6`
 - `scripts/tools/trivy_install.sh:27`
 - `setup_ultimate.sh:179`
-- `setup_ultimate.sh:2314`
-- `setup_ultimate.sh:2376`
-- `setup_ultimate.sh:2397`
-- `setup_ultimate.sh:2409`
-- `setup_ultimate.sh:2824`
+- `setup_ultimate.sh:2375`
+- `setup_ultimate.sh:2810`
 - `stacks/llmops-platform/docker-compose.yml:24`
 - `stacks/llmops-platform/docker-compose.yml:50`
 - `stacks/llmops-platform/docker-compose.yml:88`
@@ -838,7 +840,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/yara_install.sh:7`
 - `scripts/tools/zenbot_trader_install.sh:39`
 - `scripts/tools/zenbot_trader_install.sh:40`
-- `setup_ultimate.sh:2760`
+- `setup_ultimate.sh:2746`
 - `tools/websitefactory/scripts/check-build.sh:29`
 - `tools/websitefactory/scripts/check-build.sh:37`
 
@@ -1033,7 +1035,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `services/inference-gateway/local_policy.py:27`
 - `services/inference-gateway/local_policy.py:28`
 - `setup_ultimate.sh:1631`
-- `setup_ultimate.sh:3019`
+- `setup_ultimate.sh:3005`
 - `stacks/freellmapi/compose.yml:8`
 - `stacks/freellmapi/compose.yml:10`
 - `stacks/llmops-platform/docker-compose.yml:20`
@@ -1724,9 +1726,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/zotero_uninstall.sh:24`
 - `scripts/tools/zotero_uninstall.sh:25`
 - `setup_ultimate.sh:1303`
-- `setup_ultimate.sh:2760`
-- `setup_ultimate.sh:4744`
-- `setup_ultimate.sh:5281`
+- `setup_ultimate.sh:2746`
+- `setup_ultimate.sh:4730`
+- `setup_ultimate.sh:5278`
 - `systemd/openclaw-workspace-backup.service.example:9`
 - `systemd/openclaw-workspace-backup.service.example:14`
 

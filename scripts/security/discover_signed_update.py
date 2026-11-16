@@ -185,6 +185,12 @@ def startup_check(repo, key):
         if process.returncode != 0:
             return 'Update-Pruefung nicht erfolgreich (Netzwerk, Minisign oder Release). Kein Update ausgefuehrt.'
         report = json.loads(stdout.splitlines()[-1])
+        statuses = {'new-signed-release-available', 'already-at-verified-release',
+                    'not-newer-no-downgrade-or-same-version-replacement'}
+        if (not isinstance(report, dict) or report.get('status') not in statuses or
+                report.get('signature_verified') is not True or
+                not isinstance(report.get('tag'), str) or not STABLE.fullmatch(report['tag'])):
+            raise ValueError('Ungueltige Startpruefungs-Antwort.')
         if report.get('status') == 'new-signed-release-available' and report.get('signature_verified') is True:
             return ('Neues signiertes Setup-Update verfuegbar: ' + report['tag'] + '\n'
                     'Minisign und SHA256 mit deiner release.pub geprueft.\n'
