@@ -18,6 +18,7 @@ SONGREC_PACKAGES = ('cargo', 'rustc', 'build-essential', 'pkg-config', 'gettext'
 SONGREC_COMMANDS = ('cargo', 'rustc', 'cc', 'c++', 'make', 'pkg-config', 'msgfmt')
 ESPEAK_PACKAGES = ('cmake', 'build-essential')
 OUTLINES_PACKAGES = ('python3.12', 'python3.12-venv')
+VALKEY_PACKAGES = ('build-essential', 'pkg-config', 'libssl-dev')
 
 
 def os_release():
@@ -49,6 +50,7 @@ def prepare(spec, approved=False):
     packages = spec["recipe"].get("apt_build_deps", [])
     name, slug = "Mosquitto", "mosquitto"
     extra = {
+        'valkey': ('Valkey', VALKEY_PACKAGES, ('make', 'cc', 'c++', 'pkg-config')),
         'espeak_ng': ('eSpeak NG', ESPEAK_PACKAGES, ('cmake', 'make', 'cc')),
         'outlines': ('Outlines', OUTLINES_PACKAGES, ()),
     }
@@ -70,7 +72,7 @@ def prepare(spec, approved=False):
             return
     if not packages:
         return
-    if (spec["id"] not in ("mosquitto", "litellm", "songrec", "espeak_ng", "outlines") or
+    if (spec["id"] not in ("mosquitto", "litellm", "songrec", "espeak_ng", "outlines", "valkey") or
             (spec["id"] == "mosquitto" and tuple(packages) != MOSQUITTO_PACKAGES)):
         raise ValueError("Nicht freigegebene Systempaketliste; keine apt-Aktion.")
     release = os_release()

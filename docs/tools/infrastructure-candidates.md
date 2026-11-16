@@ -12,7 +12,10 @@ abgefangen (Exit 3, unveraenderter Status). Das gilt auch fuer cert-manager,
 External_DNS und Kyverno. Keine Wiederholung desselben gesperrten Installationslaufs erforderlich.
 Die zugrunde liegenden direkten CLI-Guards bleiben weiterhin gesperrt.
 
-**GEPLANT / NICHT INSTALLIERBAR** ist kein fertiger Installer. Die neuen Eintraege laden nichts herunter,
+**Valkey hat inzwischen ein [natives Buildrezept](valkey.md)**; Linux-Build- und Betriebsabnahme bleiben offen.
+Die folgenden Grenzen gelten fuer die weiterhin geplanten Eintraege, nicht fuer diesen Valkey-Build.
+
+**GEPLANT / NICHT INSTALLIERBAR** ist kein fertiger Installer. Die gesperrten Eintraege laden nichts herunter,
 bauen nichts und starten weder Dienste noch Cluster, Modelle oder Sicherheitspruefungen.
 Install/Update/Doctor/Uninstall enden fuer die neuen Kandidaten mit Exit 3 statt einem falschen Erfolg.
 Ein expliziter `--dry-run` zeigt nur den Plan (Exit 0). Status liefert `installed: null`:
@@ -45,7 +48,7 @@ zulaessig sind. Kein Providerzugang, DNS-Aufruf oder Clusterstart durch diese Ko
 | Gatekeeper | [GitHub](https://github.com/open-policy-agent/gatekeeper) | Alternative zu Kyverno | Nicht parallel als Default; Controller-Build und Rego-Abnahme offen. |
 | KEDA | [GitHub](https://github.com/kedacore/keda) | Queue-basierte Skalierung | CRDs, Auth, nativer Build und Kapazitaetstest offen. |
 | Arize_Phoenix | [GitHub](https://github.com/arize-ai/phoenix) | Alternative zu Langfuse | Native Installation, Persistenz, Auth und Trace-Redaction offen. |
-| Valkey | [GitHub](https://github.com/valkey-io/valkey) | Cache und Betriebsabhaengigkeit | Nativer Build, ACL/TLS und Gateway-Kompatibilitaet offen. |
+| [Valkey](valkey.md) | [GitHub](https://github.com/valkey-io/valkey) | Cache und Betriebsabhaengigkeit | Nativer Server-/CLI-Build implementiert; Linux-/ACL-/TLS-/Gateway-Abnahme offen. |
 | gVisor | [GitHub](https://github.com/google/gvisor) | Sandbox-Runtime | runsc-/CRI-Integration, Kernel- und GPU-Vertrag offen. |
 | Kata_Containers | [GitHub](https://github.com/kata-containers/kata-containers) | VM-basierte Sandbox | Virtualisierung, CRI und native Runtime-Abnahme offen. |
 | Firecracker | [GitHub](https://github.com/firecracker-microvm/firecracker) | MicroVM-Baustein | KVM, Jailer und Kubernetes-Runtime-Anbindung offen. |
@@ -124,7 +127,6 @@ python3 -I -B scripts/tool_commands.py show owasp_zap
 python3 -I -B scripts/tool_commands.py show phoenix
 python3 -I -B scripts/tool_commands.py show ragas
 python3 -I -B scripts/tool_commands.py show testssl
-python3 -I -B scripts/tool_commands.py show valkey
 ```
 
 ### SSH-Aktionen: `cert_manager`
@@ -328,18 +330,6 @@ tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
 Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
 VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
 `Testssl` (ID `testssl`) waehlen und die Einzelfreigaben lesen.
-Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
-Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
-
-### SSH-Aktionen: `valkey`
-
-Kein freigegebener unbeaufsichtigter Docker-freier Adapter. Der Plan nennt
-vorhandene Skriptpfade; diese nicht ungeprueft ausfuehren. Die
-tool-spezifischen Plattform-, Lizenz- und Laufzeitgrenzen oben gelten weiterhin.
-
-Fuer die interaktive Installation nach Pruefung `bash setup_ultimate.sh` im
-VPS-Terminal oeffnen, dort im Tool-Management das gewuenschte Tool
-`Valkey` (ID `valkey`) waehlen und die Einzelfreigaben lesen.
 Fehlt der Eintrag oder ist der native Weg gesperrt, hier stoppen: keine
 Legacy-/Docker-Ausweichinstallation und kein automatischer Plattformwechsel.
 

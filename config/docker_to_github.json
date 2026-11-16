@@ -4,6 +4,40 @@
   "scope": "46 ehemalige Containerpfade plus PyAirbyte-SDK und Kubeseal-CLI; offene Gesamtplattformen ohne Docker-Fallback",
   "tools": [
     {
+      "id": "valkey",
+      "name": "Valkey",
+      "tool_key": "Valkey",
+      "repo": "valkey-io/valkey",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/valkey_candidate_install.sh",
+      "blocked_reason": null,
+      "recipe": {
+        "repo": "valkey-io/valkey",
+        "pin": "29173b67508b2de4c0f0ed551f3b47cf19fc3ca8",
+        "version": "9.1.3",
+        "kind": "pipeline",
+        "disk_mb": 4096,
+        "ram_mb": 1024,
+        "tools": ["make", "cc", "c++", "pkg-config"],
+        "apt_build_deps": ["build-essential", "pkg-config", "libssl-dev"],
+        "build_env": {"NATIVE_BUILD_STREAM": "1"},
+        "steps": [
+          {"args": ["make", "-j1", "BUILD_TLS=yes", "MALLOC=libc", "OPT=-O2", "valkey-server", "valkey-cli"]}
+        ],
+        "artifacts": ["source/src/valkey-server", "source/src/valkey-cli"],
+        "probe": ["--version"],
+        "source_sha256": {
+          "COPYING": "1a53dca3aab7ce048e91e77b03c0342f3075366f9dede8ec4d19d0cf229e12a0",
+          "README.md": "0eb2a325ce5addca49994f82e28fc302d0c8d60d8813d76cbd967d12379ee8d4",
+          "Makefile": "40c10731c0a3004838e076a640c88cada701d7389f0bbcd9692a3d16ab5d38b0",
+          "src/Makefile": "59413b7733c661a6b4bc2a4d9cb0d0373aef36dee70eee92c4f1b407ff04776a",
+          "deps/Makefile": "8475ca6fcc119ad0babb815474f242ebb821370b903547d3e30e242dca0878f4",
+          "src/version.h": "3918f121d9a4fba835805531400a5af5afdb2b7cf3616ad0ece43d4a2d6a1b86"
+        },
+        "note": "Valkey 9.1.3 mit TLS und libc-Allocator, privater GitHub-Source-Build. Nur Versionsproben, kein Serverstart/Port/Redis-Ersatz. Gemeinsame Buildpakete nach Zustimmung; ACL/TLS-Konfiguration, Persistenz und Gateway-Abnahme separat."
+      }
+    },
+    {
       "id": "argocd_cli",
       "name": "ArgoCD CLI",
       "tool_key": "ArgoCD_CLI",

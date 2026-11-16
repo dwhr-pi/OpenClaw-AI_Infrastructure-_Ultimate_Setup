@@ -1,0 +1,21 @@
+# Optional user unit. Installing/building Valkey never copies or enables this file.
+[Unit]
+Description=OpenClaw private Valkey (Unix socket only)
+
+[Service]
+Type=simple
+RuntimeDirectory=openclaw-valkey
+RuntimeDirectoryMode=0700
+StateDirectory=openclaw-valkey
+StateDirectoryMode=0700
+ExecStart=%h/.openclaw_ultimate_user_data/tools/valkey/native-github/source/src/valkey-server --port 0 --unixsocket %t/openclaw-valkey/valkey.sock --unixsocketperm 600 --protected-mode yes --dir %S/openclaw-valkey --appendonly yes
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+UMask=0077
+
+[Install]
+WantedBy=default.target

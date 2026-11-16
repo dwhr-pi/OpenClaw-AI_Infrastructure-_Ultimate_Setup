@@ -420,7 +420,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | unstructured | [SSH-Installation](../tools/registry/unstructured.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | uptime_kuma | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | uvr5 | [SSH-Installation](../tools/local-audio-chain.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
-| valkey | [SSH-Installation](../tools/infrastructure-candidates.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| valkey | [SSH-Installation](../tools/valkey.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | vault | [SSH-Installation](../DOCKER_TO_GITHUB.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | vaultwarden | [SSH-Installation](../tools/registry/vaultwarden.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | velero | [SSH-Installation](../VELERO_INSTALLATION_NOTES.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |

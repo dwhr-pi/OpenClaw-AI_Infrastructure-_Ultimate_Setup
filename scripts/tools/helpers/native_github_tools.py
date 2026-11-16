@@ -426,10 +426,13 @@ def build(prefix, spec):
             artifacts.append(entry)
     else:
         raise ValueError("Unbekanntes Buildrezept.")
+    if spec['id'] == 'valkey':
+        from valkey_native import receipts
+        artifacts.extend(receipts(prefix, spec, env))
     for name in artifacts:
         if not common.checked(prefix / name).is_file():
             raise ValueError("Erwartetes Buildartefakt fehlt: " + name)
-    if recipe.get("probe"):
+    if recipe.get("probe") and spec['id'] != 'valkey':
         run([str(binary)] + recipe["probe"], prefix, env)
     remove_native_tree(prefix, cache_only=True)
     return artifacts

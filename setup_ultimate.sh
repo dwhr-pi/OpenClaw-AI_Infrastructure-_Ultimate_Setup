@@ -3601,10 +3601,12 @@ run_tool_script() {
   fi
 
   # Only the interactive setup opts into the documentation approval dialog.
-  if [[ "$tool_key" =~ ^(Outlines|eSpeak_NG|SongRec)$ && "$action" =~ ^(install|update)$ ]]; then
+  if [[ "$tool_key" =~ ^(Outlines|eSpeak_NG|SongRec|Valkey)$ && "$action" =~ ^(install|update)$ ]]; then
     local prerequisites='eSpeak NG: cmake und build-essential aus Debian-/Ubuntu-Paketen. Abweichende Release-Basis wird vor Installation mit apt simuliert.'
     if [ "$tool_key" = Outlines ]; then
       prerequisites='Outlines: geeignetes vorhandenes Python bevorzugen. Falls keines vorhanden: Ubuntu 24.04 bekommt Python 3.12/venv per apt; andere Systeme wie Ubuntu 26.04 bekommen eine private Python-3.13-Laufzeit via uv/GitHub (1024 MiB Zusatzreserve). uv bestimmt die Patchversion; Dateiinventar wird erfasst. Kein System-Python-Wechsel. Fehlendes uv aus SHA256-geprueftem GitHub-Release.'
+    elif [ "$tool_key" = Valkey ]; then
+      prerequisites='Valkey: Compiler, make, pkg-config und OpenSSL-Entwicklungsbibliotheken aus Debian-/Ubuntu-Paketen. Gepinnter privater GitHub-Build, kein Server-/Portstart und kein Austausch einer Redis-Installation.'
     elif [ "$tool_key" = SongRec ]; then
       prerequisites='SongRec: fehlendes Cargo/Rust, Compiler, pkg-config, gettext sowie ALSA-/GLib-/OpenSSL-Entwicklungsbibliotheken aus Debian-/Ubuntu-Paketen. Abweichende Basis wird mit apt simuliert. Vorhandene private Cargo-/Rust-Werkzeuge bleiben. SongRec aus gepinntem GitHub-Stand; kein Mikrofon-/Shazam-Aufruf.'
     fi
@@ -5053,7 +5055,7 @@ TOOL_SCRIPT_NAMES["Zigbee2MQTT"]="zigbee2mqtt"
 register_native_github_tool_keys
 
 # Append documented candidates without installing or starting any component.
-TOOL_KEYS+=("cert-manager" "External_DNS" "Kyverno" "Gatekeeper" "KEDA" "Arize_Phoenix" "Valkey" "gVisor" "Kata_Containers" "Firecracker" "Milvus" "Kube_Bench" "Kubescape" "Nuclei" "Testssl" "OWASP_ZAP" "Checkov" "Ragas" "Temporal" "Vaultwarden" "Argo_Workflows")
+TOOL_KEYS+=("cert-manager" "External_DNS" "Kyverno" "Gatekeeper" "KEDA" "Arize_Phoenix" "gVisor" "Kata_Containers" "Firecracker" "Milvus" "Kube_Bench" "Kubescape" "Nuclei" "Testssl" "OWASP_ZAP" "Checkov" "Ragas" "Temporal" "Vaultwarden" "Argo_Workflows")
 TOOL_SCRIPT_NAMES["cert-manager"]="cert_manager_candidate"
 TOOLS["cert-manager"]="GEPLANT / NICHT INSTALLIERBAR: Issuer vorhanden; nativer Controller-Build und CRD-Abnahme offen. docs/tools/infrastructure-candidates.md"
 TOOL_SCRIPT_NAMES["External_DNS"]="external_dns_candidate"
@@ -5066,8 +5068,8 @@ TOOL_SCRIPT_NAMES["KEDA"]="keda_candidate"
 TOOLS["KEDA"]="GEPLANT / NICHT INSTALLIERBAR: CRDs, Auth, nativer Build und Kapazitaetstest offen. docs/tools/infrastructure-candidates.md"
 TOOL_SCRIPT_NAMES["Arize_Phoenix"]="phoenix_candidate"
 TOOLS["Arize_Phoenix"]="GEPLANT / NICHT INSTALLIERBAR: Native Installation, Persistenz, Auth und Trace-Redaction offen. docs/tools/infrastructure-candidates.md"
-TOOL_SCRIPT_NAMES["Valkey"]="valkey_candidate"
-TOOLS["Valkey"]="GEPLANT / NICHT INSTALLIERBAR: Nativer Build, ACL/TLS und Gateway-Kompatibilitaet offen. docs/tools/infrastructure-candidates.md"
+TOOL_SCRIPT_NAMES["Valkey"]="valkey"
+TOOLS["Valkey"]="Nativer GitHub-Build mit TLS: Server/CLI privat, Buildwerkzeuge nach Zustimmung. Kein Serverstart; Linux-/ACL-/Gateway-Abnahme offen. docs/tools/valkey.md"
 TOOL_SCRIPT_NAMES["gVisor"]="gvisor_candidate"
 TOOLS["gVisor"]="GEPLANT / NICHT INSTALLIERBAR: runsc-/CRI-Integration, Kernel- und GPU-Vertrag offen. docs/tools/infrastructure-candidates.md"
 TOOL_SCRIPT_NAMES["Kata_Containers"]="kata_containers_candidate"

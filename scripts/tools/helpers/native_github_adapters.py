@@ -60,6 +60,10 @@ def download_asset(prefix, asset):
 
 
 def prepare(prefix, spec, env):
+    if spec['id'] == 'valkey':
+        from valkey_native import prepare as prepare_valkey
+        prepare_valkey(prefix, spec, env)
+        return
     if spec["id"] == "penpot":
         version = common.run(["rustc", "--version"], prefix, env)
         if not version.startswith("rustc 1.99.0 "):

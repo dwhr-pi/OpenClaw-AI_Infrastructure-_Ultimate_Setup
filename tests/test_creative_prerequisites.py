@@ -18,7 +18,8 @@ import gap_tools as tools
 
 class CreativePrerequisites(unittest.TestCase):
     def test_missing_packages_need_consent_and_install_only_allowlist(self):
-        for key, packages in (('espeak_ng', deps.ESPEAK_PACKAGES), ('outlines', deps.OUTLINES_PACKAGES)):
+        for key, packages in (('espeak_ng', deps.ESPEAK_PACKAGES), ('outlines', deps.OUTLINES_PACKAGES),
+                              ('valkey', deps.VALKEY_PACKAGES)):
             spec = {'id': key, 'recipe': {'apt_build_deps': list(packages)}}
             state = {'installed': False}
 
@@ -44,7 +45,7 @@ class CreativePrerequisites(unittest.TestCase):
                 self.assertEqual(calls.call_count, 2)
 
     def test_unapproved_package_lists_rejected(self):
-        for key in ('outlines', 'espeak_ng'):
+        for key in ('outlines', 'espeak_ng', 'valkey'):
             with self.subTest(key=key), patch.object(deps.common, 'run') as run:
                 with self.assertRaisesRegex(ValueError, 'Nicht freigegebene'):
                     deps.prepare({'id': key, 'recipe': {'apt_build_deps': ['untrusted']}}, approved=True)
@@ -76,7 +77,7 @@ class CreativePrerequisites(unittest.TestCase):
     def test_setup_consent_and_songsage_guard_precede_transaction(self):
         text = (ROOT / 'setup_ultimate.sh').read_text(encoding='utf-8')
         dispatcher = text.split('run_tool_script() {', 1)[1].split('remove_tool_from_autostart_script()', 1)[0]
-        self.assertIn('^(Outlines|eSpeak_NG|SongRec)$', dispatcher)
+        self.assertIn('^(Outlines|eSpeak_NG|SongRec|Valkey)$', dispatcher)
         self.assertIn('tool_args+=(--install-build-deps)', dispatcher)
         self.assertIn('--defaultno', dispatcher)
         install = text.split('install_tool() {', 1)[1].split('uninstall_tool() {', 1)[0]
@@ -92,14 +93,14 @@ class CreativePrerequisites(unittest.TestCase):
         text = (ROOT / 'setup_ultimate.sh').read_text(encoding='utf-8')
         dispatcher = 'run_tool_script() {' + text.split('run_tool_script() {', 1)[1].split('remove_tool_from_autostart_script()', 1)[0]
         stubs = '''
-declare -A TOOL_SCRIPT_NAMES=([Outlines]=outlines [eSpeak_NG]=espeak_ng [SongRec]=songrec)
+declare -A TOOL_SCRIPT_NAMES=([Outlines]=outlines [eSpeak_NG]=espeak_ng [SongRec]=songrec [Valkey]=valkey)
 INSTALL_DIR=/fixture
 validate_tool_source_policy() { return 0; }
 dialog() { return "$DIALOG_RESULT"; }
 run_bash_script() { printf '%s\\n' "$@"; }
 '''
         env = {k: v for k, v in os.environ.items() if k.upper() in ('PATH', 'SYSTEMROOT', 'TEMP', 'TMP')}
-        for tool in ('Outlines', 'eSpeak_NG', 'SongRec'):
+        for tool in ('Outlines', 'eSpeak_NG', 'SongRec', 'Valkey'):
             for action, answer in (('install', 0), ('install', 1), ('update', 0), ('doctor', 0)):
                 command = stubs + dispatcher + '\nDIALOG_RESULT=' + str(answer) + '\nrun_tool_script ' + tool + ' ' + action
                 result = subprocess.run([bash, '--noprofile', '--norc', '-c', command],

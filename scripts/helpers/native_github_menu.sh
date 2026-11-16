@@ -9,6 +9,7 @@ NATIVE_GITHUB_TOOL_KEYS+=("Traefik")
 NATIVE_GITHUB_TOOL_KEYS+=("ArgoCD_CLI" "Cloudflared")
 NATIVE_GITHUB_TOOL_KEYS+=("XERJ")
 NATIVE_GITHUB_TOOL_KEYS+=("FFmpeg")
+NATIVE_GITHUB_TOOL_KEYS+=("Valkey")
 
 register_native_github_tool_keys() {
   local key

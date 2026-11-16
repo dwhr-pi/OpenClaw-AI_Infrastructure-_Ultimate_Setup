@@ -27,6 +27,7 @@ native_tool_marker() {
     "Traefik") marker=traefik/native-github/build-ready.json ;;
     XERJ) marker=xerj/native-github/build-ready.json ;;
     FFmpeg) marker=ffmpeg/native-github/build-ready.json ;;
+    Valkey) marker=valkey/native-github/build-ready.json ;;
     OpenUtau) marker=openutau/ready.json ;;
     DiffSinger) marker=diffsinger/ready.json ;;
     Seed_VC) marker=seed_vc/ready.json ;;
