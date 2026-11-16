@@ -4,4 +4,3 @@ set -euo pipefail
 ROOT="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd)"
 printf '%s\n' 'Kyverno: GEPLANT / NICHT INSTALLIERBAR. Native Build- und Lifecycle-Abnahme offen.'
 exec "$BASH" "$ROOT/scripts/tools/infrastructure_candidate_blocked.sh" "$@"
-

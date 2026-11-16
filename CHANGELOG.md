@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### 2026-11-16: shfmt-Dateiende der Infrastruktur-Kandidaten korrigieren
+
+- Zusaetzliche Leerzeile am Ende von 20 Kandidaten-/Hinweisskripten entfernt, gemaess CI-shfmt-Diff.
+- Keine Aenderung an Installationsaktionen, Signaturpflicht oder Sicherheitspruefungen.
+- Offline-Formatregression fuer Kandidatenskripte ergaenzt; keine Formatierungspruefung deaktiviert.
+
 ### 2026-11-16: Offline-Regression fuer Startpruefung und Monitoring korrigieren
 
 - Interaktive Update-Pruefung vom separat auswertbaren Tool-Menue-Metadatenblock getrennt.

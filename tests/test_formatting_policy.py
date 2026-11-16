@@ -34,5 +34,22 @@ class FormattingPolicy(unittest.TestCase):
         self.assertNotIn('disable=', global_settings)
 
 
+    def test_infrastructure_candidate_scripts_have_one_final_newline(self):
+        checked = []
+        directory = ROOT / 'scripts/tools'
+        paths = [*directory.glob('*_candidate_install.sh'),
+                 directory / 'infrastructure_candidate_blocked.sh',
+                 directory / 'infrastructure_candidate_status.sh']
+        for path in paths:
+            text = path.read_text(encoding='utf-8')
+            if ('infrastructure_candidate_blocked.sh' not in text and
+                    path.name not in ('infrastructure_candidate_blocked.sh', 'infrastructure_candidate_status.sh')):
+                continue
+            self.assertTrue(text.endswith('\n'), path.name)
+            self.assertFalse(text.endswith('\n\n'), path.name)
+            checked.append(path.name)
+        self.assertGreaterEqual(len(checked), 24)
+
+
 if __name__ == '__main__':
     unittest.main()

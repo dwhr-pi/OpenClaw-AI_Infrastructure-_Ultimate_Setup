@@ -1796,6 +1796,8 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_shell_formatters_use_the_same_options`
 - `tests/test_formatting_policy.py:27`
   Prueffall: `test_translation_exception_is_narrow_and_documented`
+- `tests/test_formatting_policy.py:37`
+  Prueffall: `test_infrastructure_candidate_scripts_have_one_final_newline`
 
 ## tests/test_free_tier_sources_docs.py
 
@@ -6279,4 +6281,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2806**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2807**. Kein Nachweis bestandener Tests.

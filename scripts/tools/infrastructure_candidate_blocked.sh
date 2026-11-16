@@ -8,4 +8,3 @@ if [[ "$#" -eq 1 && "$1" == "--dry-run" ]]; then
   exit 0
 fi
 exit 3
-
