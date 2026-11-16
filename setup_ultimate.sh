@@ -2394,7 +2394,7 @@ show_options_menu() {
       12)
         show_operation_intro \
           "Nur auf Setup-Updates prüfen" \
-          "Prüft den lokalen Git-Stand gegen origin/main, ohne direkt Updates oder Systempakete zu installieren." \
+          "Sucht stabile Releases und prueft Minisign/SHA256 mit der lokalen release.pub. Kein main-Fallback." \
           "Wenige Sekunden bis ca. 1 Minute, je nach Netzwerk und Git-Status" \
           "$(get_operation_storage_estimate_label "main_menu_update_check" "${MIN_FREE_GB_ABSOLUTE}-${MIN_FREE_GB_RECOMMENDED} GB")" \
           "Dabei werden keine Paket-Updates installiert und keine lokalen Aenderungen automatisch verworfen."
@@ -2406,7 +2406,7 @@ show_options_menu() {
         local_update_rc=0
         show_operation_intro \
           "Jetzt nur das Setup aktualisieren" \
-          "Aktualisiert nur dieses Setup-Repository gegen origin/main. Betriebssystem und pnpm bleiben dabei unberuehrt." \
+          "Uebernimmt nur ein neueres, mit release.pub verifiziertes Release. Betriebssystem und pnpm bleiben unberuehrt." \
           "Wenige Sekunden bis einige Minuten, je nach Netzwerk und Git-Stand" \
           "$(get_operation_storage_estimate_label "main_menu_setup_only_update" "${MIN_FREE_GB_ABSOLUTE}-${MIN_FREE_GB_RECOMMENDED} GB")" \
           "Bei lokalen Aenderungen im Setup wird das Repo-Update bewusst uebersprungen, damit nichts ueberschrieben wird."
