@@ -948,6 +948,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `examples/hybrid-production-review/network-policy.yaml:77`
 - `examples/hybrid-production-review/private-ingress.yaml:2`
 - `examples/k3s/network-policies.yaml:26`
+- `examples/kubernetes/gemini_proxy.py:65`
 - `examples/kubernetes/hardened-services.yaml:47`
 - `examples/kubernetes/hardened-services.yaml:112`
 - `examples/kubernetes/hardened-services.yaml:128`
@@ -955,8 +956,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `examples/kubernetes/hardened-services.yaml:251`
 - `examples/kubernetes/hardened-services.yaml:271`
 - `examples/kubernetes/hardened-services.yaml:309`
-- `examples/kubernetes/hardened-services.yaml:344`
-- `examples/kubernetes/hardened-services.yaml:420`
+- `examples/kubernetes/hardened-services.yaml:338`
 - `examples/manus-ci-cd/kubernetes.yml.example:32`
 - `examples/manus-ci-cd/kubernetes.yml.example:80`
 - `examples/manus-ci-cd/kubernetes.yml.example:99`

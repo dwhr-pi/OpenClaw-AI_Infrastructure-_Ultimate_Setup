@@ -3,13 +3,13 @@ import ast
 import os
 from pathlib import Path
 import sys
-import textwrap
 from types import ModuleType, SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / 'examples/kubernetes/hardened-services.yaml'
+SOURCE = ROOT / 'examples/kubernetes/gemini_proxy.py'
 
 
 class HardenedExamples(unittest.TestCase):
@@ -28,8 +28,7 @@ class HardenedExamples(unittest.TestCase):
         self.assertIn('test "${#OPENMANUS_COMMIT}" -eq 40', text)
 
     def load_proxy(self):
-        text = MANIFEST.read_text(encoding='utf-8').split('  proxy.py: |\n', 1)[1]
-        source = textwrap.dedent(text)
+        source = SOURCE.read_text(encoding='utf-8')
         ast.parse(source)
         app = SimpleNamespace(config={}, logger=Mock())
         app.before_request = lambda function: function
@@ -66,11 +65,22 @@ class HardenedExamples(unittest.TestCase):
         requests.post.assert_not_called()
 
     def test_credentials_are_not_in_urls_or_exception_logs(self):
-        source = MANIFEST.read_text(encoding='utf-8').split('  proxy.py: |\n', 1)[1]
+        source = SOURCE.read_text(encoding='utf-8')
         self.assertNotIn('?key=', source)
         self.assertNotIn('print(', source)
         self.assertIn('"x-goog-api-key": GEMINI_API_KEY', source)
         self.assertIn('"stream": False', source)
+
+    def test_source_is_packaged_in_image_not_embedded_as_configmap_data(self):
+        text = MANIFEST.read_text(encoding='utf-8')
+        self.assertNotIn('  proxy.py: |', text)
+        self.assertNotIn('gemini-ollama-proxy-config', text)
+        self.assertNotIn('name: proxy-code', text)
+        self.assertIn('command: ["python", "/app/proxy.py"]', text)
+        self.assertIn('secretKeyRef: {name: gemini-secrets, key: proxy-auth-token}', text)
+        self.assertIn('secretKeyRef:', text)
+        self.assertIn('key: api-key', text)
+        self.assertIn('gemini_proxy.py', (MANIFEST.parent / 'README.md').read_text(encoding='utf-8'))
 
 
 if __name__ == '__main__':

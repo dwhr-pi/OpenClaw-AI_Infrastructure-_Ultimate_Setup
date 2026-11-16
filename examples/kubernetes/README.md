@@ -29,7 +29,8 @@ Vor dem Erhoehen der Replikazahl sind insbesondere abzunehmen:
 2. Bestehende PVC-Daten sichern und UID-/Migrationsvertrag pruefen; nichts automatisch chownen oder loeschen.
 3. MongoDB-Benutzer, Auth/TLS, Secret-Provisionierung und Zenbot-Zugang getrennt einrichten.
 4. OpenManus-Abhaengigkeiten und Entrypoint pruefen; `openmanus-reviewed-source` enthaelt `repository` und `commit`.
-5. Proxy-Image mit Flask/Requests und eigenem Produktions-WSGI-Server bereitstellen, kein Flask-Entwicklungsserver.
+5. [Proxy-Quelltext](gemini_proxy.py) als `/app/proxy.py` ins gepruefte Image aufnehmen, nicht als ConfigMap.
+   Flask/Requests und eigenen Produktions-WSGI-Server bereitstellen, kein Flask-Entwicklungsserver.
 6. `gemini-secrets` mit `api-key` und `proxy-auth-token` sowie `gemini-reviewed-config` mit `model` bereitstellen.
 7. Interne Ollama-Service-Aufloesung, TLS/Authentifizierung, NetworkPolicies und minimale Egress-Ziele festlegen.
 8. Ressourcenlimits, Probes, Backup/Restore, autorisierte Provider-Datenuebermittlung und Monitoring abnehmen.

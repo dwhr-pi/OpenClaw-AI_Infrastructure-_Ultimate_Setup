@@ -2201,12 +2201,14 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 - `tests/test_hardened_kubernetes_examples.py:16`
   Prueffall: `test_no_old_executable_path_and_every_container_is_restricted`
-- `tests/test_hardened_kubernetes_examples.py:51`
+- `tests/test_hardened_kubernetes_examples.py:50`
   Prueffall: `test_proxy_authentication_and_non_ascii_headers_fail_closed`
-- `tests/test_hardened_kubernetes_examples.py:61`
+- `tests/test_hardened_kubernetes_examples.py:60`
   Prueffall: `test_invalid_json_never_contacts_provider`
-- `tests/test_hardened_kubernetes_examples.py:68`
+- `tests/test_hardened_kubernetes_examples.py:67`
   Prueffall: `test_credentials_are_not_in_urls_or_exception_logs`
+- `tests/test_hardened_kubernetes_examples.py:74`
+  Prueffall: `test_source_is_packaged_in_image_not_embedded_as_configmap_data`
 
 ## tests/test_hardening_preflight.py
 
@@ -6508,4 +6510,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2904**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2905**. Kein Nachweis bestandener Tests.
