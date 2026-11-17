@@ -6,6 +6,8 @@ Native GitHub-Source-Builds bleiben Vorgabe; kein Docker-Fallback.
 
 ## Navigation
 
+- [Eigenes Lyrics-/MIDI-Modell: SongSage-Einordnung und Forschungsplan](SONGSAGE_MIDI_RESEARCH.md)
+- [Wan2.2: MIDI/Vocoder-Quellpruefung und Musikwerkzeuge](WAN22_AUDIO_MIDI_TOOLCHAIN.md)
 - [Modell-Detailseiten-Vorlage](MODEL_PAGE_TEMPLATE.md)
 - [Offline-Routing, GGUF-Exportplan und Monitoring](../MODEL_ROUTING_EXPORT_AND_MONITORING.md)
 

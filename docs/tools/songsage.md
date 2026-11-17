@@ -1,5 +1,8 @@
 # SongSage: geplanter Forschungs-Eintrag, keine Installation
 
+Eigener Entwicklungsweg: [Lyrics- und MIDI-Modell mit Forschungsplan](../models/SONGSAGE_MIDI_RESEARCH.md).
+Eigene Markdown-Tabellen und lokale Architekturzeichnung, keine Kopie des Originalpapers.
+
 Gemeint ist [SongSage: Lyric Generative Pre-training](https://arxiv.org/abs/2601.01153),
 nicht ein gleichnamiger BirdNET-/MCP-Server, Hit-Song-Predictor oder Webdienst.
 Gezielte Quellenpruefung: **11.11.2026**, erneut am **16.11.2026** anhand des

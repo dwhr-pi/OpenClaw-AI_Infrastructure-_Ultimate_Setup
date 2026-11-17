@@ -1,5 +1,8 @@
 # Musik- und Lyrics-Forschungswerkzeuge: Abdeckung und Grenzen
 
+[Eigener Lyrics-/MIDI-Modellbau: Forschungsplan und Architektur](models/SONGSAGE_MIDI_RESEARCH.md).
+[Wan2.2-Audioanalyse und ergaenzende Open-Source-Musikwerkzeuge](models/WAN22_AUDIO_MIDI_TOOLCHAIN.md).
+
 Stand **11.11.2026**. Alle angefragten Namen sind hier eingeordnet. Ein
 Menueeintrag ist weder Gewichtsinstallation noch Musik-/GPU-/Sprachabnahme.
 Native GitHub-Quellen bleiben Vorgabe; kein Docker-Fallback und kein

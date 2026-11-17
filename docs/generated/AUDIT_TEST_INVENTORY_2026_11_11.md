@@ -3550,18 +3550,22 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 ## tests/test_music_research_catalog.py
 
-- `tests/test_music_research_catalog.py:21`
+- `tests/test_music_research_catalog.py:22`
   Prueffall: `test_each_verified_project_is_unique_pinned_and_source_only`
-- `tests/test_music_research_catalog.py:40`
+- `tests/test_music_research_catalog.py:41`
   Prueffall: `test_songsage_cannot_report_a_successful_install`
-- `tests/test_music_research_catalog.py:54`
+- `tests/test_music_research_catalog.py:55`
   Prueffall: `test_songsage_source_is_not_a_guessed_same_named_repository`
-- `tests/test_music_research_catalog.py:63`
+- `tests/test_music_research_catalog.py:64`
   Prueffall: `test_musicgen_keeps_its_registry_identity_without_dispatching_legacy`
-- `tests/test_music_research_catalog.py:75`
+- `tests/test_music_research_catalog.py:76`
   Prueffall: `test_licenses_and_runtime_limits_are_not_replaced_by_open_source_claims`
-- `tests/test_music_research_catalog.py:86`
+- `tests/test_music_research_catalog.py:87`
   Prueffall: `test_catalog_local_navigation_is_complete`
+- `tests/test_music_research_catalog.py:97`
+  Prueffall: `test_musiclab_plan_has_local_assets_and_no_runtime_claim`
+- `tests/test_music_research_catalog.py:117`
+  Prueffall: `test_wan_review_distinguishes_dependencies_from_installed_music_tools`
 
 ## tests/test_native_build_deps.py
 
@@ -6540,4 +6544,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2920**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2922**. Kein Nachweis bestandener Tests.
