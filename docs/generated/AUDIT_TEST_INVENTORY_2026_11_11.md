@@ -4350,17 +4350,29 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 ## tests/test_outlines_private_python.py
 
-- `tests/test_outlines_private_python.py:20`
-  Prueffall: `test_refusal_does_not_download_or_create_files`
-- `tests/test_outlines_private_python.py:32`
-  Prueffall: `test_private_install_is_reusable_and_detects_mutation`
-- `tests/test_outlines_private_python.py:63`
-  Prueffall: `test_failed_download_removes_only_new_slot`
-- `tests/test_outlines_private_python.py:76`
-  Prueffall: `test_ubuntu26_preflight_uses_private_python_not_ubuntu24_packages`
+- `tests/test_outlines_private_python.py:83`
+  Prueffall: `test_internal_directory_alias_is_resolved_and_inventory_checked`
+- `tests/test_outlines_private_python.py:86`
+  Prueffall: `test_internal_leaf_alias_is_resolved_and_inventory_checked`
 - `tests/test_outlines_private_python.py:89`
-  Prueffall: `test_songrec_and_espeak_allow_ubuntu26_package_phase`
+  Prueffall: `test_external_alias_never_executes_and_preserves_external_file`
+- `tests/test_outlines_private_python.py:92`
+  Prueffall: `test_broken_alias_never_executes`
+- `tests/test_outlines_private_python.py:95`
+  Prueffall: `test_alias_loop_never_executes`
 - `tests/test_outlines_private_python.py:98`
+  Prueffall: `test_resolved_entry_boundary_without_host_symlink_privileges`
+- `tests/test_outlines_private_python.py:126`
+  Prueffall: `test_refusal_does_not_download_or_create_files`
+- `tests/test_outlines_private_python.py:138`
+  Prueffall: `test_private_install_is_reusable_and_detects_mutation`
+- `tests/test_outlines_private_python.py:169`
+  Prueffall: `test_failed_download_removes_only_new_slot`
+- `tests/test_outlines_private_python.py:182`
+  Prueffall: `test_ubuntu26_preflight_uses_private_python_not_ubuntu24_packages`
+- `tests/test_outlines_private_python.py:195`
+  Prueffall: `test_songrec_and_espeak_allow_ubuntu26_package_phase`
+- `tests/test_outlines_private_python.py:204`
   Prueffall: `test_other_debian_bases_require_successful_simulation`
 
 ## tests/test_outlines_python_selection.py
@@ -6518,4 +6530,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2909**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2915**. Kein Nachweis bestandener Tests.
