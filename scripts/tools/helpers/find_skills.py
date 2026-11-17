@@ -83,9 +83,33 @@ def git(source, *args):
         if '--progress' not in options:
             options.insert(0, '--progress')
         command = ['git', '-c', 'core.hooksPath=' + os.devnull, '-c', 'credential.helper=',
-                   '-c', 'core.fsmonitor=false', '-C', str(source), 'fetch', *options]
-        print('Git-Download: Zeitbudget', timeout, 'Sekunden; kein automatischer Wiederholungsversuch.', flush=True)
-        return native_build_process.run(command, source, env, timeout=timeout, label='Git-Download')
+                   '-c', 'core.fsmonitor=false', '-c', 'http.version=HTTP/1.1',
+                   '-c', 'http.lowSpeedLimit=1024', '-c', 'http.lowSpeedTime=120',
+                   '-C', str(source), 'fetch', *options]
+        print('Git-Download: Gesamtzeitbudget', timeout,
+              'Sekunden; HTTP/1.1; unter 1 KiB/s fuer 120s gilt als Transportstillstand;'
+              ' hoechstens ein Wiederholungsversuch, kein anderer Pin/Host.', flush=True)
+        deadline = time.monotonic() + timeout
+        for attempt in range(2):
+            remaining = deadline - time.monotonic()
+            budget = remaining
+            if budget <= 0:
+                raise subprocess.TimeoutExpired(command, timeout)
+            print('Git-Download: Versuch', attempt + 1, 'von 2; Restbudget:', round(remaining), 's.', flush=True)
+            try:
+                return native_build_process.run(command, source, env, timeout=budget, label='Git-Download')
+            except (subprocess.TimeoutExpired, subprocess.CalledProcessError) as error:
+                output = '\n'.join(value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value
+                                   for value in (error.output, error.stderr) if value).lower()
+                transient = isinstance(error, subprocess.TimeoutExpired) or (
+                    error.returncode == 128 and any(message in output for message in (
+                        'curl 18', 'curl 28', 'curl 35', 'curl 52', 'curl 55', 'curl 56',
+                        'curl 92', 'operation too slow', 'connection reset',
+                        'remote end hung up unexpectedly', 'early eof')))
+                if attempt or not transient or time.monotonic() >= deadline:
+                    raise
+                print('Git-Transport fehlgeschlagen; begrenzter Neuversuch am identischen Pin.'
+                      ' Keine Checkout-/Installationsfreigabe aus diesem Fehler.', flush=True)
     result = subprocess.run(["git", "-c", "core.hooksPath=" + os.devnull,
                              "-c", "credential.helper=", "-C", str(source), *args], check=True,
                             capture_output=True, text=True, timeout=180,

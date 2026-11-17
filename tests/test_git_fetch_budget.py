@@ -25,7 +25,9 @@ class GitFetchBudget(unittest.TestCase):
             self.assertEqual(self.fetch(), 'ok')
         command = run.call_args.args[0]
         self.assertEqual(command[-5:], ['fetch', '--progress', '--depth=1', 'origin', PIN])
-        self.assertEqual(run.call_args.kwargs, dict(timeout=900, label='Git-Download'))
+        self.assertAlmostEqual(run.call_args.kwargs['timeout'], 900, delta=1)
+        for option in ('http.version=HTTP/1.1', 'http.lowSpeedLimit=1024', 'http.lowSpeedTime=120'):
+            self.assertIn(option, command)
         self.assertIn('credential.helper=', command)
         self.assertIn('core.fsmonitor=false', command)
         capture.assert_not_called()
@@ -35,7 +37,7 @@ class GitFetchBudget(unittest.TestCase):
             with patch.dict(os.environ, {'OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS': budget}), \
                     patch.object(runner, 'run') as run, redirect_stdout(io.StringIO()):
                 self.fetch()
-            self.assertEqual(run.call_args.kwargs['timeout'], int(budget))
+            self.assertAlmostEqual(run.call_args.kwargs['timeout'], int(budget), delta=1)
 
     def test_invalid_budget_stops_before_process(self):
         for budget in ('0', '179', '3601', '-1', '900.5', 'infinite', ' 900', '900;echo bad'):
@@ -45,13 +47,53 @@ class GitFetchBudget(unittest.TestCase):
                     self.fetch()
                 run.assert_not_called()
 
-    def test_errors_are_not_retried_or_reported_success(self):
-        for error in (subprocess.TimeoutExpired('fixture', 900), subprocess.CalledProcessError(128, 'fixture')):
+    def test_nontransport_errors_are_not_retried_or_reported_success(self):
+        for text in ('', 'fatal: not our ref', 'Authentication failed', 'certificate verify failed'):
+            error = subprocess.CalledProcessError(128, 'fixture', output=text)
             with patch.dict(os.environ, {}, clear=True), patch.object(runner, 'run', side_effect=error) as run, \
                     redirect_stdout(io.StringIO()):
                 with self.assertRaises(type(error)):
                     self.fetch()
                 run.assert_called_once()
+
+    def test_transient_failure_retries_identical_command_with_remaining_budget(self):
+        for error in (subprocess.TimeoutExpired('fixture', 450),
+                      subprocess.CalledProcessError(128, 'fixture', output=b'error: RPC failed; curl 56'),
+                      subprocess.CalledProcessError(128, 'fixture', stderr='Operation too slow')):
+            with patch.dict(os.environ, {}, clear=True), \
+                    patch.object(helper.time, 'monotonic', side_effect=[0, 0, 450, 450]), \
+                    patch.object(runner, 'run', side_effect=[error, 'ok']) as run, \
+                    redirect_stdout(io.StringIO()):
+                self.assertEqual(self.fetch(), 'ok')
+            self.assertEqual(run.call_count, 2)
+            first, second = run.call_args_list
+            self.assertEqual(first.args, second.args)
+            self.assertEqual(first.kwargs['timeout'], 900)
+            self.assertEqual(second.kwargs['timeout'], 450)
+
+    def test_second_failure_is_final_and_never_reports_success(self):
+        error = subprocess.TimeoutExpired('fixture', 450)
+        with patch.dict(os.environ, {}, clear=True), patch.object(runner, 'run', side_effect=error) as run, \
+                redirect_stdout(io.StringIO()):
+            with self.assertRaises(subprocess.TimeoutExpired):
+                self.fetch()
+        self.assertEqual(run.call_count, 2)
+
+    def test_expired_total_budget_prevents_retry(self):
+        with patch.dict(os.environ, {}, clear=True), \
+                patch.object(helper.time, 'monotonic', side_effect=[0, 0, 901]), \
+                patch.object(runner, 'run', side_effect=subprocess.TimeoutExpired('fixture', 450)) as run, \
+                redirect_stdout(io.StringIO()):
+            with self.assertRaises(subprocess.TimeoutExpired):
+                self.fetch()
+        run.assert_called_once()
+
+    def test_user_interrupt_never_retries(self):
+        with patch.dict(os.environ, {}, clear=True), patch.object(runner, 'run', side_effect=KeyboardInterrupt) as run, \
+                redirect_stdout(io.StringIO()):
+            with self.assertRaises(KeyboardInterrupt):
+                self.fetch()
+        run.assert_called_once()
 
     def test_provider_secrets_and_git_injection_not_inherited(self):
         with patch.dict(os.environ, {'OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS': '900',

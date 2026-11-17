@@ -78,6 +78,28 @@ class GapToolTests(unittest.TestCase):
                 git.assert_not_called()
             self.assertFalse(runtime.exists())
 
+    def test_failed_fetch_never_checks_out_or_marks_success(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base, runtime, marker = self.fixture(temporary)
+            keep = base / 'keep.txt'
+            keep.write_text('unchanged')
+            calls = []
+
+            def git(directory, *args):
+                calls.append(args[0])
+                if args[0] == 'fetch':
+                    raise subprocess.TimeoutExpired('git fetch', 900)
+                return self.fake_git(directory, *args)
+
+            with patch.object(tool, 'git', side_effect=git), patch.object(tool, 'reserve'), \
+                    redirect_stdout(io.StringIO()):
+                with self.assertRaises(subprocess.TimeoutExpired):
+                    tool.install(runtime, marker, base, self.spec)
+            self.assertNotIn('checkout', calls)
+            self.assertFalse(runtime.exists())
+            self.assertFalse(marker.exists())
+            self.assertEqual(keep.read_text(), 'unchanged')
+
     def test_marker_write_failure_rolls_back_without_partial_status(self):
         with tempfile.TemporaryDirectory() as temporary:
             base, runtime, marker = self.fixture(temporary)

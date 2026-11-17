@@ -2013,38 +2013,40 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_gap_tools.py:72`
   Prueffall: `test_storage_failure_never_fetches`
 - `tests/test_gap_tools.py:81`
+  Prueffall: `test_failed_fetch_never_checks_out_or_marks_success`
+- `tests/test_gap_tools.py:103`
   Prueffall: `test_marker_write_failure_rolls_back_without_partial_status`
-- `tests/test_gap_tools.py:91`
-  Prueffall: `test_unmanaged_existing_directory_is_preserved`
-- `tests/test_gap_tools.py:100`
-  Prueffall: `test_changed_files_block_removal_validation`
 - `tests/test_gap_tools.py:113`
+  Prueffall: `test_unmanaged_existing_directory_is_preserved`
+- `tests/test_gap_tools.py:122`
+  Prueffall: `test_changed_files_block_removal_validation`
+- `tests/test_gap_tools.py:135`
   Prueffall: `test_uninstall_removes_owned_source_keeps_logs`
-- `tests/test_gap_tools.py:124`
+- `tests/test_gap_tools.py:146`
   Prueffall: `test_current_failure_log_contains_disk_error`
-- `tests/test_gap_tools.py:132`
+- `tests/test_gap_tools.py:154`
   Prueffall: `test_build_environment_excludes_provider_secrets`
-- `tests/test_gap_tools.py:139`
+- `tests/test_gap_tools.py:161`
   Prueffall: `test_hermes_frozen_core_without_agent_start`
-- `tests/test_gap_tools.py:149`
+- `tests/test_gap_tools.py:171`
   Prueffall: `test_hermes_missing_python_declined_before_checkout`
-- `tests/test_gap_tools.py:159`
+- `tests/test_gap_tools.py:181`
   Prueffall: `test_hermes_private_python_download_is_explicit_and_contained`
-- `tests/test_gap_tools.py:172`
+- `tests/test_gap_tools.py:194`
   Prueffall: `test_hermes_private_python_rejects_external_result`
-- `tests/test_gap_tools.py:177`
+- `tests/test_gap_tools.py:199`
   Prueffall: `test_hermes_noninteractive_never_implicitly_downloads`
-- `tests/test_gap_tools.py:183`
+- `tests/test_gap_tools.py:205`
   Prueffall: `test_hermes_prompt_decline_or_eof_never_downloads`
-- `tests/test_gap_tools.py:192`
+- `tests/test_gap_tools.py:214`
   Prueffall: `test_hermes_failed_python_download_rolls_back_new_runtime`
-- `tests/test_gap_tools.py:209`
+- `tests/test_gap_tools.py:231`
   Prueffall: `test_qwen_build_uses_native_unsigned_package_commands`
-- `tests/test_gap_tools.py:225`
+- `tests/test_gap_tools.py:247`
   Prueffall: `test_registry_pins_wrappers_and_documentation_match`
-- `tests/test_gap_tools.py:262`
+- `tests/test_gap_tools.py:284`
   Prueffall: `test_menu_fallbacks_match_all_gap_tool_reserves`
-- `tests/test_gap_tools.py:272`
+- `tests/test_gap_tools.py:294`
   Prueffall: `test_qwen_host_shortage_is_rejected_by_menu_before_installer`
 
 ## tests/test_gemini_desktop_clients.py
@@ -2083,15 +2085,23 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 - `tests/test_git_fetch_budget.py:22`
   Prueffall: `test_default_streaming_fetch_preserves_exact_pin`
-- `tests/test_git_fetch_budget.py:33`
+- `tests/test_git_fetch_budget.py:35`
   Prueffall: `test_explicit_bounded_budget`
-- `tests/test_git_fetch_budget.py:40`
+- `tests/test_git_fetch_budget.py:42`
   Prueffall: `test_invalid_budget_stops_before_process`
-- `tests/test_git_fetch_budget.py:48`
-  Prueffall: `test_errors_are_not_retried_or_reported_success`
-- `tests/test_git_fetch_budget.py:56`
+- `tests/test_git_fetch_budget.py:50`
+  Prueffall: `test_nontransport_errors_are_not_retried_or_reported_success`
+- `tests/test_git_fetch_budget.py:59`
+  Prueffall: `test_transient_failure_retries_identical_command_with_remaining_budget`
+- `tests/test_git_fetch_budget.py:74`
+  Prueffall: `test_second_failure_is_final_and_never_reports_success`
+- `tests/test_git_fetch_budget.py:82`
+  Prueffall: `test_expired_total_budget_prevents_retry`
+- `tests/test_git_fetch_budget.py:91`
+  Prueffall: `test_user_interrupt_never_retries`
+- `tests/test_git_fetch_budget.py:98`
   Prueffall: `test_provider_secrets_and_git_injection_not_inherited`
-- `tests/test_git_fetch_budget.py:69`
+- `tests/test_git_fetch_budget.py:111`
   Prueffall: `test_local_git_commands_keep_short_budget_and_stdout`
 
 ## tests/test_gitlab_openforge_docs.py
@@ -6530,4 +6540,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2915**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2920**. Kein Nachweis bestandener Tests.
