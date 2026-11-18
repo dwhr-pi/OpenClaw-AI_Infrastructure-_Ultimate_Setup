@@ -108,13 +108,26 @@ def git(source, *args):
                 if dns_failure:
                     print('DNS-/Namensaufloesung fuer Git-Ziel oder Proxy fehlgeschlagen;'
                           ' kein Modell-/Python-/Buildfehler. Keine Aenderung an DNS, WSL oder TLS.', flush=True)
-                transient = dns_failure or isinstance(error, subprocess.TimeoutExpired) or (
+                permanent = any(message in output for message in (
+                    'authentication failed', 'could not read username', 'certificate',
+                    'not our ref', "couldn't find remote ref", 'repository not found',
+                    'permission denied', 'access denied'))
+                slow_transfer = (isinstance(error, subprocess.CalledProcessError)
+                                 and error.returncode == 128 and 'operation too slow' in output)
+                transient = not permanent and (dns_failure or isinstance(error, subprocess.TimeoutExpired) or (
                     error.returncode == 128 and any(message in output for message in (
                         'curl 18', 'curl 28', 'curl 35', 'curl 52', 'curl 55', 'curl 56',
                         'curl 92', 'operation too slow', 'connection reset',
-                        'remote end hung up unexpectedly', 'early eof')))
+                        'remote end hung up unexpectedly', 'early eof'))))
                 if attempt or not transient or time.monotonic() >= deadline:
                     raise
+                if slow_transfer:
+                    # Relax only the throughput floor, never the total deadline or trust checks.
+                    command = ['http.lowSpeedLimit=128' if value == 'http.lowSpeedLimit=1024' else value
+                               for value in command]
+                    print('Langsame Git-Uebertragung: letzter Versuch mit mindestens 128 Bytes/s'
+                          ' statt 1024 Bytes/s; Stillstandsfenster bleibt 120s.'
+                          ' Identischer Pin/Host, unveraendertes Gesamtzeitbudget und TLS-Pruefung.', flush=True)
                 if dns_failure:
                     # Back off only within the same total budget; never replace the resolver.
                     delay = min(2.0, max(0.0, deadline - time.monotonic()))

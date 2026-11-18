@@ -2120,23 +2120,29 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_nontransport_errors_are_not_retried_or_reported_success`
 - `tests/test_git_fetch_budget.py:60`
   Prueffall: `test_transient_failure_retries_identical_command_with_remaining_budget`
-- `tests/test_git_fetch_budget.py:75`
+- `tests/test_git_fetch_budget.py:74`
+  Prueffall: `test_slow_transfer_retry_changes_only_floor_with_same_deadline`
+- `tests/test_git_fetch_budget.py:94`
+  Prueffall: `test_slow_second_attempt_is_final_and_expiry_never_retries`
+- `tests/test_git_fetch_budget.py:108`
+  Prueffall: `test_permanent_errors_override_transport_words_without_relaxation`
+- `tests/test_git_fetch_budget.py:119`
   Prueffall: `test_second_failure_is_final_and_never_reports_success`
-- `tests/test_git_fetch_budget.py:83`
+- `tests/test_git_fetch_budget.py:127`
   Prueffall: `test_expired_total_budget_prevents_retry`
-- `tests/test_git_fetch_budget.py:92`
+- `tests/test_git_fetch_budget.py:136`
   Prueffall: `test_user_interrupt_never_retries`
-- `tests/test_git_fetch_budget.py:99`
+- `tests/test_git_fetch_budget.py:143`
   Prueffall: `test_dns_retries_same_command_after_delay_within_total_budget`
-- `tests/test_git_fetch_budget.py:117`
+- `tests/test_git_fetch_budget.py:161`
   Prueffall: `test_persistent_dns_failure_stops_after_two_attempts`
-- `tests/test_git_fetch_budget.py:126`
+- `tests/test_git_fetch_budget.py:170`
   Prueffall: `test_dns_at_expired_deadline_never_sleeps_or_retries`
-- `tests/test_git_fetch_budget.py:137`
+- `tests/test_git_fetch_budget.py:181`
   Prueffall: `test_interrupt_during_dns_backoff_never_starts_second_attempt`
-- `tests/test_git_fetch_budget.py:146`
+- `tests/test_git_fetch_budget.py:190`
   Prueffall: `test_provider_secrets_and_git_injection_not_inherited`
-- `tests/test_git_fetch_budget.py:159`
+- `tests/test_git_fetch_budget.py:203`
   Prueffall: `test_local_git_commands_keep_short_budget_and_stdout`
 
 ## tests/test_gitlab_openforge_docs.py
@@ -6804,4 +6810,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3043**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3046**. Kein Nachweis bestandener Tests.

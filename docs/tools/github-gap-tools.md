@@ -71,6 +71,25 @@ Ein Neustart eines alten WSL-Checkouts uebernimmt keine gepushten GitHub-Dateien
 Der korrigierte Helfer protokolliert `Gesamtzeitbudget` und `Versuch 1 von 2`.
 Keine stille Aktualisierung unsignierter Teststaende oder signierter Releases.
 
+### Mousai: langsame Uebertragung und curl 28
+
+Das Protokoll vom 18.11.2026 meldete `Operation too slow`, danach `early EOF`.
+Dies ist ein abgebrochener Git-Transport, kein nachgewiesener Compilerfehler.
+Die bestehende Grenze von insgesamt zwei Versuchen wird nicht erhoeht.
+Nur nach explizit erkannter zu langsamer Uebertragung wird beim letzten Versuch
+die Mindestdatenrate von 1024 auf 128 Bytes/s gesenkt. Das Stillstandsfenster
+bleibt 120 Sekunden; beide Versuche teilen weiterhin das Gesamtbudget von
+standardmaessig 900 Sekunden. Kein neuer Host, Mirror oder Commit, keine neue
+TLS-/Credentialfreigabe. Anmelde-, Zertifikats- und Pinfehler bleiben blockierend,
+auch wenn ihre Ausgabe zusaetzlich Transportfehler enthaelt.
+
+Die Anpassung kann langsame Verbindungen tolerieren, repariert aber keine
+unterbrochene Internetverbindung. Bei erneutem Fehler bleiben Checkout und
+Erfolgsmarker gesperrt; nur neue Dateien des Versuchs werden zurueckgerollt.
+Mousai bleibt beim bisherigen Quellenmodus: Erfolgreicher Fetch ist keine
+gebaute oder gestartete Desktopanwendung. Offline-Tests verwenden nur Mocks;
+ein echter Download-/Build-/Runtime-Nachweis wird daraus nicht abgeleitet.
+
 ## Qwen Code Desktop: Download oder eigener Build
 
 **Qwen_Desktop** bleibt der bisherige manuelle Windows-Download mit Browser und Bestaetigungspause:

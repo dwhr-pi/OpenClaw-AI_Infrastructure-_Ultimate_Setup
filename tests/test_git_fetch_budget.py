@@ -59,8 +59,7 @@ class GitFetchBudget(unittest.TestCase):
 
     def test_transient_failure_retries_identical_command_with_remaining_budget(self):
         for error in (subprocess.TimeoutExpired('fixture', 450),
-                      subprocess.CalledProcessError(128, 'fixture', output=b'error: RPC failed; curl 56'),
-                      subprocess.CalledProcessError(128, 'fixture', stderr='Operation too slow')):
+                      subprocess.CalledProcessError(128, 'fixture', output=b'error: RPC failed; curl 56')):
             with patch.dict(os.environ, {}, clear=True), \
                     patch.object(helper.time, 'monotonic', side_effect=[0, 0, 450, 450]), \
                     patch.object(runner, 'run', side_effect=[error, 'ok']) as run, \
@@ -71,6 +70,51 @@ class GitFetchBudget(unittest.TestCase):
             self.assertEqual(first.args, second.args)
             self.assertEqual(first.kwargs['timeout'], 900)
             self.assertEqual(second.kwargs['timeout'], 450)
+
+    def test_slow_transfer_retry_changes_only_floor_with_same_deadline(self):
+        error = subprocess.CalledProcessError(128, 'fixture', output=(
+            b'error: RPC failed; curl 28 Operation too slow. '
+            b'Less than 1024 bytes/sec transferred the last 120 seconds\nfatal: early EOF'))
+        with patch.dict(os.environ, {}, clear=True), \
+                patch.object(helper.time, 'monotonic', side_effect=[0, 0, 128, 128]), \
+                patch.object(runner, 'run', side_effect=[error, 'ok']) as run, \
+                redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(self.fetch(), 'ok')
+        first, second = run.call_args_list
+        expected = ['http.lowSpeedLimit=128' if item == 'http.lowSpeedLimit=1024' else item
+                    for item in first.args[0]]
+        self.assertEqual(second.args[0], expected)
+        self.assertIn('http.lowSpeedLimit=1024', first.args[0])
+        self.assertIn('http.lowSpeedTime=120', second.args[0])
+        self.assertEqual(second.args[0][-1], PIN)
+        self.assertEqual(first.args[1:], second.args[1:])
+        self.assertEqual(second.kwargs['timeout'], 772)
+        self.assertIn('128 Bytes/s', output.getvalue())
+
+    def test_slow_second_attempt_is_final_and_expiry_never_retries(self):
+        error = subprocess.CalledProcessError(128, 'fixture', stderr='Operation too slow')
+        with patch.dict(os.environ, {}, clear=True), patch.object(runner, 'run', side_effect=error) as run, \
+                redirect_stdout(io.StringIO()):
+            with self.assertRaises(subprocess.CalledProcessError):
+                self.fetch()
+        self.assertEqual(run.call_count, 2)
+        with patch.dict(os.environ, {}, clear=True), \
+                patch.object(helper.time, 'monotonic', side_effect=[0, 0, 901]), \
+                patch.object(runner, 'run', side_effect=error) as run, redirect_stdout(io.StringIO()):
+            with self.assertRaises(subprocess.CalledProcessError):
+                self.fetch()
+        run.assert_called_once()
+
+    def test_permanent_errors_override_transport_words_without_relaxation(self):
+        for text in ('Authentication failed', 'SSL certificate problem', 'not our ref',
+                     'Permission denied', 'Repository not found'):
+            error = subprocess.CalledProcessError(128, 'fixture', output=text + '\nOperation too slow; curl 28')
+            with self.subTest(text=text), patch.dict(os.environ, {}, clear=True), \
+                    patch.object(runner, 'run', side_effect=error) as run, redirect_stdout(io.StringIO()):
+                with self.assertRaises(subprocess.CalledProcessError):
+                    self.fetch()
+            run.assert_called_once()
+            self.assertIn('http.lowSpeedLimit=1024', run.call_args.args[0])
 
     def test_second_failure_is_final_and_never_reports_success(self):
         error = subprocess.TimeoutExpired('fixture', 450)
