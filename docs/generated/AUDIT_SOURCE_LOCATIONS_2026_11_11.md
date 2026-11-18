@@ -1817,8 +1817,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/zotero_uninstall.sh:25`
 - `setup_ultimate.sh:1326`
 - `setup_ultimate.sh:2769`
-- `setup_ultimate.sh:4786`
-- `setup_ultimate.sh:5335`
+- `setup_ultimate.sh:4788`
+- `setup_ultimate.sh:5337`
 - `systemd/openclaw-workspace-backup.service.example:9`
 - `systemd/openclaw-workspace-backup.service.example:14`
 

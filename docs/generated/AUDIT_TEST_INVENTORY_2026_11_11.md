@@ -1257,7 +1257,11 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_setup_consent_and_songsage_guard_precede_transaction`
 - `tests/test_creative_prerequisites.py:89`
   Prueffall: `test_menu_forwards_consent_only_for_approved_mutations`
-- `tests/test_creative_prerequisites.py:113`
+- `tests/test_creative_prerequisites.py:134`
+  Prueffall: `test_prerequisite_buttons_follow_all_setup_languages_not_system_locale`
+- `tests/test_creative_prerequisites.py:148`
+  Prueffall: `test_prerequisite_buttons_preserve_overrides_and_missing_key_fallback`
+- `tests/test_creative_prerequisites.py:158`
   Prueffall: `test_planned_infrastructure_is_rejected_before_installer_or_log`
 
 ## tests/test_credentials_backup.py
@@ -6552,4 +6556,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2926**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2928**. Kein Nachweis bestandener Tests.

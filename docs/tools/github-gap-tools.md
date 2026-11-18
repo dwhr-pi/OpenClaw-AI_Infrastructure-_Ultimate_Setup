@@ -33,6 +33,17 @@ nativem Windows-Python/PowerShell und aendern nicht den Linux-Status. Die benoet
 MSVC-Developer-Umgebung muss dort bereits verfuegbar sein; andernfalls den unten beschriebenen
 Developer-PowerShell-Weg nutzen.
 
+## Schaltflaechen im Voraussetzungen-Dialog
+
+Die Ja-/Nein-Schaltflaechen des gemeinsamen Voraussetzungen-Fensters verwenden
+die ausgewaehlte Setup-Sprache und deren Sprachpaketwerte, nicht die Sprache
+des installierten `dialog`-Pakets. Deutsch zeigt `Ja` und `Nein`, Englisch
+`Yes` und `No`; die uebrigen Setup-Sprachen nutzen ihre vorhandenen Uebersetzungen.
+Die Voreinstellung bleibt Nein. Nur eine ausdrueckliche Ja-Antwort gibt
+`--install-build-deps` frei; Nein oder Escape erteilt keine solche Freigabe.
+Der technische Beschreibungstext dieses Fensters ist damit nicht vollstaendig
+in alle Sprachen uebersetzt. Diese Korrektur betrifft gezielt die Schaltflaechen.
+
 ## Git-Downloads und DNS-Ausfaelle
 
 Der gemeinsame Git-Downloadhelfer gilt unter anderem fuer Mousai, Dejavu, QwQ,

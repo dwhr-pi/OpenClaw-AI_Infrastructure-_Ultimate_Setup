@@ -110,6 +110,51 @@ run_bash_script() { printf '%s\\n' "$@"; }
                 self.assertEqual('--install-build-deps' in result.stdout,
                                  answer == 0 and action in ('install', 'update'))
 
+    def prerequisite_dialog(self, language, answer, override=''):
+        bash = 'C:/Program Files/Git/bin/bash.exe' if os.name == 'nt' else shutil.which('bash')
+        if not bash or (os.name == 'nt' and not Path(bash).is_file()):
+            self.skipTest('Bash not available for offline language fixture')
+        text = (ROOT / 'setup_ultimate.sh').read_text(encoding='utf-8')
+        dispatcher = 'run_tool_script() {' + text.split('run_tool_script() {', 1)[1].split('remove_tool_from_autostart_script()', 1)[0]
+        stubs = '''
+declare -A TOOL_SCRIPT_NAMES=([Arize_Phoenix]=phoenix)
+INSTALL_DIR=/fixture
+validate_tool_source_policy() { return 0; }
+dialog() { printf 'DIALOG_ARG:%s\\n' "$@"; return "$ANSWER"; }
+run_bash_script() { printf 'RUN_ARG:%s\\n' "$@"; }
+source "scripts/lang/$1.sh"
+'''
+        env = {k: v for k, v in os.environ.items() if k.upper() in ('PATH', 'SYSTEMROOT', 'TEMP', 'TMP')}
+        env.update(LANG='C', LC_ALL='C')
+        command = stubs + dispatcher + '\n' + override + '\nANSWER=' + str(answer) + '\nrun_tool_script Arize_Phoenix install'
+        result = subprocess.run([bash, '--noprofile', '--norc', '-c', command, 'fixture', language],
+                                cwd=ROOT, env=env, capture_output=True, encoding='utf-8', timeout=15, check=True)
+        return result.stdout.splitlines()
+
+    def test_prerequisite_buttons_follow_all_setup_languages_not_system_locale(self):
+        labels = {'de': ('Ja', 'Nein'), 'en': ('Yes', 'No'), 'fr': ('Oui', 'Non'),
+                  'es': ('S\u00ed', 'No'), 'eo': ('Jes', 'Ne'), 'zh': ('\u662f', '\u5426'),
+                  'ja': ('\u306f\u3044', '\u3044\u3044\u3048'), 'ru': ('\u0414\u0430', '\u041d\u0435\u0442'),
+                  'ar': ('\u0646\u0639\u0645', '\u0644\u0627'), 'he': ('\u05db\u05df', '\u05dc\u05d0')}
+        for language, (yes, no) in labels.items():
+            for answer in (0, 1, 255):
+                with self.subTest(language=language, answer=answer):
+                    lines = self.prerequisite_dialog(language, answer)
+                    self.assertEqual(lines[lines.index('DIALOG_ARG:--yes-label') + 1], 'DIALOG_ARG:' + yes)
+                    self.assertEqual(lines[lines.index('DIALOG_ARG:--no-label') + 1], 'DIALOG_ARG:' + no)
+                    self.assertIn('DIALOG_ARG:--defaultno', lines)
+                    self.assertEqual('RUN_ARG:--install-build-deps' in lines, answer == 0)
+
+    def test_prerequisite_buttons_preserve_overrides_and_missing_key_fallback(self):
+        for override, labels in (("TXT_YES_LABEL='Custom accept'; TXT_NO_LABEL='Custom decline'",
+                                  ('Custom accept', 'Custom decline')),
+                                 ('unset TXT_YES_LABEL TXT_NO_LABEL', ('Ja', 'Nein'))):
+            with self.subTest(override=override):
+                lines = self.prerequisite_dialog('en', 1, override)
+                self.assertEqual(lines[lines.index('DIALOG_ARG:--yes-label') + 1], 'DIALOG_ARG:' + labels[0])
+                self.assertEqual(lines[lines.index('DIALOG_ARG:--no-label') + 1], 'DIALOG_ARG:' + labels[1])
+                self.assertNotIn('RUN_ARG:--install-build-deps', lines)
+
     def test_planned_infrastructure_is_rejected_before_installer_or_log(self):
         bash = 'C:/Program Files/Git/bin/bash.exe' if os.name == 'nt' else shutil.which('bash')
         if not bash or (os.name == 'nt' and not Path(bash).is_file()):
