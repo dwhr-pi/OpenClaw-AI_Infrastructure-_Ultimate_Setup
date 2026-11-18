@@ -1332,6 +1332,29 @@ show_operation_intro() {
   sleep 4
 }
 
+format_tool_action_list() {
+  local tool
+  local index=0
+  local total="$#"
+
+  if [ "$total" -eq 0 ]; then
+    printf '%s' '(keine)'
+    return 0
+  fi
+
+  for tool in "$@"; do
+    if [ "$index" -gt 0 ]; then
+      if [ "$index" -eq "$((total - 1))" ]; then
+        printf '%s' ' und '
+      else
+        printf '%s' ', '
+      fi
+    fi
+    printf '%b%s%b' "$GREEN" "$tool" "$NC"
+    index=$((index + 1))
+  done
+}
+
 show_tool_action_plan_intro() {
   local context_label="$1"
   local uninstall_items="$2"
@@ -1355,8 +1378,12 @@ show_tool_action_plan_intro() {
   echo
   echo -e "${YELLOW}Was passiert:${NC} Das Setup fuehrt ausgewaehlte Tool-Aenderungen in einer sicheren Reihenfolge aus."
   echo -e "${YELLOW}Geplante Reihenfolge:${NC}"
-  echo -e "${YELLOW}1. Deinstallationen zuerst:${NC} ${uninstall_items:-${GREEN}(keine)${NC}}"
-  echo -e "${YELLOW}2. Installationen danach:${NC} ${install_items:-${GREEN}(keine)${NC}}"
+  printf '%b1. Deinstallationen zuerst:%b ' "$YELLOW" "$NC"
+  format_tool_action_list "${uninstall_array[@]}"
+  printf '\n'
+  printf '%b2. Installationen danach:%b ' "$YELLOW" "$NC"
+  format_tool_action_list "${install_array[@]}"
+  printf '\n'
   echo
   echo -e "${YELLOW}Ermittelte Werte:${NC}"
   echo -e "${YELLOW}Deinstallationen gesamt:${NC} ${uninstall_summary}"

@@ -1,5 +1,9 @@
 # Ressourcenschonende GitOps-Basis: fuenf konkrete Bausteine
 
+Die [Anbieterwahl und der separate VPS-Adapter](VPS_PROVIDER_ADAPTER.md) sind
+keine Freigabe fuer diesen GitOps-/K3s-Apply. Konto, vorhandener Host und Clusterbeitritt
+bleiben getrennte Schritte; insbesondere erfolgt kein automatischer globaler etcd-Cluster.
+
 ## Planung verschieben und Eingabefehler
 
 Der Tools-Eintrag `GitOps_Bootstrap` fuehrt nur einen Offline-Plan aus, keine Installation. Bei

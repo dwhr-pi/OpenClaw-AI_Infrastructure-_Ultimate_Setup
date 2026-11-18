@@ -14,7 +14,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Bewegliches Wort latest/main/master (lexikalisch)
 
-653 Fundstellen, keine automatische Risikoeinstufung.
+655 Fundstellen, keine automatische Risikoeinstufung.
 
 - `.github/workflows/build-and-push.yml:4`
 - `.github/workflows/build-and-push.yml:16`
@@ -97,11 +97,11 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `config/docker_to_github.json:2948`
 - `config/docker_to_github.json:3190`
 - `config/docker_to_github.json:3191`
-- `config/docker_to_github.json:3616`
-- `config/docker_to_github.json:3663`
-- `config/docker_to_github.json:3707`
-- `config/docker_to_github.json:3756`
-- `config/docker_to_github.json:3802`
+- `config/docker_to_github.json:3617`
+- `config/docker_to_github.json:3664`
+- `config/docker_to_github.json:3708`
+- `config/docker_to_github.json:3757`
+- `config/docker_to_github.json:3803`
 - `config/legal/sources.json:36`
 - `config/legal/sources.json:37`
 - `config/models.yaml:16`
@@ -631,9 +631,11 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/opa_install.sh:6`
 - `scripts/tools/trivy_install.sh:27`
 - `scripts/tools/valkey_update.sh:2`
+- `scripts/vps_adapter.py:106`
+- `scripts/vps_adapter.py:123`
 - `setup_ultimate.sh:179`
-- `setup_ultimate.sh:2398`
-- `setup_ultimate.sh:2833`
+- `setup_ultimate.sh:2425`
+- `setup_ultimate.sh:2860`
 - `stacks/llmops-platform/docker-compose.yml:24`
 - `stacks/llmops-platform/docker-compose.yml:50`
 - `stacks/llmops-platform/docker-compose.yml:88`
@@ -906,7 +908,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/yara_install.sh:7`
 - `scripts/tools/zenbot_trader_install.sh:39`
 - `scripts/tools/zenbot_trader_install.sh:40`
-- `setup_ultimate.sh:2769`
+- `setup_ultimate.sh:2796`
 - `tools/websitefactory/scripts/check-build.sh:29`
 - `tools/websitefactory/scripts/check-build.sh:37`
 
@@ -1112,8 +1114,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `services/inference-gateway/local_policy.py:26`
 - `services/inference-gateway/local_policy.py:27`
 - `services/inference-gateway/local_policy.py:28`
-- `setup_ultimate.sh:1654`
-- `setup_ultimate.sh:3028`
+- `setup_ultimate.sh:1681`
+- `setup_ultimate.sh:3055`
 - `stacks/freellmapi/compose.yml:8`
 - `stacks/freellmapi/compose.yml:10`
 - `stacks/llmops-platform/docker-compose.yml:20`
@@ -1816,9 +1818,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/zotero_uninstall.sh:24`
 - `scripts/tools/zotero_uninstall.sh:25`
 - `setup_ultimate.sh:1326`
-- `setup_ultimate.sh:2769`
-- `setup_ultimate.sh:4788`
-- `setup_ultimate.sh:5337`
+- `setup_ultimate.sh:2796`
+- `setup_ultimate.sh:4815`
+- `setup_ultimate.sh:5364`
 - `systemd/openclaw-workspace-backup.service.example:9`
 - `systemd/openclaw-workspace-backup.service.example:14`
 

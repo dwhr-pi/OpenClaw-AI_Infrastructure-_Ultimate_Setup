@@ -3438,7 +3438,8 @@
           "build-essential",
           "musl-tools",
           "python3",
-          "ca-certificates"
+          "ca-certificates",
+          "libclang-dev"
         ],
         "service_applicability": "CLI/build components only; no unit, service start or cluster registration",
         "external_toolchain_assets": [

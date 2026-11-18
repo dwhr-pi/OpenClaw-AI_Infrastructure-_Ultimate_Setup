@@ -23,7 +23,7 @@ TESTSSL_PACKAGES = ('bash', 'openssl', 'bsdextrautils', 'coreutils', 'gawk', 'gr
                     'sed', 'procps', 'findutils', 'util-linux')
 SANDBOX_PACKAGES = {
     'gvisor': ('build-essential', 'python3', 'ca-certificates', 'bzip2'),
-    'firecracker': ('build-essential', 'musl-tools', 'python3', 'ca-certificates'),
+    'firecracker': ('build-essential', 'musl-tools', 'python3', 'ca-certificates', 'libclang-dev'),
     'kata_containers': ('build-essential', 'pkg-config', 'libseccomp-dev', 'ca-certificates'),
 }
 

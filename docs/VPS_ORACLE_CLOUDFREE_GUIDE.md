@@ -7,6 +7,10 @@ Automationen dienen. Schwere KI-/GPU-/Kubernetes-Pfade sind nicht automatisch ge
 
 ## Anbieterrecherche vor dem Setup
 
+Neu: [Anbieterkatalog, begrenzter VPS-Adapter und sichere Freigaben](VPS_PROVIDER_ADAPTER.md).
+Die [Quellenreview vom 18.11.2026](vps/PROVIDER_REVIEW_2026_11_18.md) trennt
+VMs, Systemcontainer, Trials und CI-Angebote. Keine automatische Kontoregistrierung oder VM-Buchung.
+
 [Free-VPS von dwhr-pi](https://github.com/dwhr-pi/Free-VPS) bietet eine externe
 Sammlung als Einstieg in die Recherche kostenloser VPS-Angebote und Testkontingente,
 auch ausserhalb von Oracle. Link am **18.11.2026** geprueft; die einzelnen

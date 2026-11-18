@@ -253,6 +253,7 @@ Jedes getrackte Unterverzeichnis wird erfasst; ein Verzeichnis kann mehrere Tool
 
 Nur Nachpruefkandidaten; Status TOT wird fuer keinen dieser Pfade behauptet.
 
+- `examples/vps/authorization.template.json`
 - `scripts/config_templates/openclaw/.env-Original-(Manus).template`
 - `scripts/research/crawl4ai_adapter.py`
 - `scripts/research/web_research.py`

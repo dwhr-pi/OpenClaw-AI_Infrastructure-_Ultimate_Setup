@@ -1850,6 +1850,29 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_find_skills.py:207`
   Prueffall: `test_registry_docs_links_and_menu`
 
+## tests/test_firecracker_libclang.py
+
+- `tests/test_firecracker_libclang.py:32`
+  Prueffall: `test_fragment_manifest_and_package_allowlist_match`
+- `tests/test_firecracker_libclang.py:39`
+  Prueffall: `test_loadable_host_library_sets_private_build_environment`
+- `tests/test_firecracker_libclang.py:48`
+  Prueffall: `test_llvm_and_arm64_system_layouts_supported`
+- `tests/test_firecracker_libclang.py:55`
+  Prueffall: `test_invalid_probe_results_are_redacted_and_do_not_set_path`
+- `tests/test_firecracker_libclang.py:67`
+  Prueffall: `test_timeout_and_failed_loading_stop_with_fixed_error`
+- `tests/test_firecracker_libclang.py:76`
+  Prueffall: `test_probe_uses_twenty_second_captured_command_contract`
+- `tests/test_firecracker_libclang.py:82`
+  Prueffall: `test_dependency_decline_stops_before_probe_or_toolchain_download`
+- `tests/test_firecracker_libclang.py:97`
+  Prueffall: `test_ubuntu26_dependency_setup_simulates_and_installs_only_libclang`
+- `tests/test_firecracker_libclang.py:119`
+  Prueffall: `test_missing_library_stops_before_rust_or_cargo`
+- `tests/test_firecracker_libclang.py:126`
+  Prueffall: `test_failed_library_preflight_stops_before_compiler_activation`
+
 ## tests/test_formatting_policy.py
 
 - `tests/test_formatting_policy.py:10`
@@ -2708,6 +2731,33 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_low_disk_blocks_before_writes`
 - `tests/test_karaoke_install.py:122`
   Prueffall: `test_repo_workspace_rejected`
+
+## tests/test_kata_go_download.py
+
+- `tests/test_kata_go_download.py:45`
+  Prueffall: `test_defaults_and_valid_phase_overrides`
+- `tests/test_kata_go_download.py:54`
+  Prueffall: `test_invalid_timeouts_redacted_before_any_process`
+- `tests/test_kata_go_download.py:64`
+  Prueffall: `test_invalid_config_fails_preflight_before_dependencies`
+- `tests/test_kata_go_download.py:75`
+  Prueffall: `test_invalid_config_fails_build_before_source_or_toolchain`
+- `tests/test_kata_go_download.py:84`
+  Prueffall: `test_delegates_all_phases_to_shared_heartbeat_runner`
+- `tests/test_kata_go_download.py:103`
+  Prueffall: `test_injected_runner_retains_three_argument_contract`
+- `tests/test_kata_go_download.py:113`
+  Prueffall: `test_each_phase_timeout_or_failure_stops_without_retry_and_redacts`
+- `tests/test_kata_go_download.py:127`
+  Prueffall: `test_changed_lock_stops_before_next_phase`
+- `tests/test_kata_go_download.py:146`
+  Prueffall: `test_missing_or_changed_initial_lock_never_downloads`
+- `tests/test_kata_go_download.py:153`
+  Prueffall: `test_shared_runner_emits_silent_process_heartbeat_without_real_process`
+- `tests/test_kata_go_download.py:167`
+  Prueffall: `test_shared_runner_timeout_delegates_process_group_cleanup`
+- `tests/test_kata_go_download.py:184`
+  Prueffall: `test_build_download_timeout_never_copies_artifacts_or_writes_receipts`
 
 ## tests/test_kiwi_edit.py
 
@@ -5913,6 +5963,17 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_token8341_docs.py:67`
   Prueffall: `test_host_uncertainty_does_not_enable_cloud_or_automatic_fallback`
 
+## tests/test_tool_action_list.py
+
+- `tests/test_tool_action_list.py:32`
+  Prueffall: `test_zero_one_two_three_and_four_tools`
+- `tests/test_tool_action_list.py:41`
+  Prueffall: `test_only_names_are_colored_not_punctuation_or_conjunction`
+- `tests/test_tool_action_list.py:47`
+  Prueffall: `test_names_are_literal_printf_data`
+- `tests/test_tool_action_list.py:51`
+  Prueffall: `test_both_action_rows_use_the_formatter_without_changing_order`
+
 ## tests/test_tool_commands.py
 
 - `tests/test_tool_commands.py:43`
@@ -6173,6 +6234,193 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_sparse_policy_on_unborn_repo`
 - `tests/test_void_model.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
+
+## tests/test_vps_adapter.py
+
+- `tests/test_vps_adapter.py:113`
+  Prueffall: `test_valid_plan_decimal_estimate_and_no_execution_approval`
+- `tests/test_vps_adapter.py:122`
+  Prueffall: `test_unknown_or_missing_fields_rejected`
+- `tests/test_vps_adapter.py:128`
+  Prueffall: `test_nested_unknown_fields_rejected`
+- `tests/test_vps_adapter.py:135`
+  Prueffall: `test_invalid_identifiers_and_types_rejected`
+- `tests/test_vps_adapter.py:146`
+  Prueffall: `test_offer_mismatch_and_non_vm_rejected`
+- `tests/test_vps_adapter.py:151`
+  Prueffall: `test_money_rejects_unknown_negative_nonfinite_and_float_prices`
+- `tests/test_vps_adapter.py:156`
+  Prueffall: `test_price_components_and_hours_are_all_budgeted`
+- `tests/test_vps_adapter.py:167`
+  Prueffall: `test_review_date_window_and_https_sources`
+- `tests/test_vps_adapter.py:179`
+  Prueffall: `test_duplicate_and_nonfinite_json_rejected`
+- `tests/test_vps_adapter.py:184`
+  Prueffall: `test_hash_is_order_independent_but_binds_plan_changes`
+- `tests/test_vps_adapter.py:190`
+  Prueffall: `test_exact_start_valid_and_expiry_exclusive`
+- `tests/test_vps_adapter.py:198`
+  Prueffall: `test_invalid_or_unbounded_authorization_window`
+- `tests/test_vps_adapter.py:205`
+  Prueffall: `test_authorization_schema_version_and_plan_binding`
+- `tests/test_vps_adapter.py:210`
+  Prueffall: `test_action_scope_is_mandatory`
+- `tests/test_vps_adapter.py:215`
+  Prueffall: `test_budget_hours_and_single_resource_must_match`
+- `tests/test_vps_adapter.py:222`
+  Prueffall: `test_equivalent_decimal_budget_is_accepted`
+- `tests/test_vps_adapter.py:227`
+  Prueffall: `test_no_apply_and_plans_never_read_environment_or_call_provider`
+- `tests/test_vps_adapter.py:236`
+  Prueffall: `test_provision_is_blocked_before_environment_and_provider_construction`
+- `tests/test_vps_adapter.py:243`
+  Prueffall: `test_missing_or_expired_authorization_never_contacts_provider`
+- `tests/test_vps_adapter.py:250`
+  Prueffall: `test_all_inspection_and_configure_actions_require_existing_account`
+- `tests/test_vps_adapter.py:260`
+  Prueffall: `test_configure_requires_allowed_usage_and_dedicated_host`
+- `tests/test_vps_adapter.py:271`
+  Prueffall: `test_status_redacts_provider_body_and_only_reads_named_token`
+- `tests/test_vps_adapter.py:282`
+  Prueffall: `test_unknown_provider_state_is_not_echoed`
+- `tests/test_vps_adapter.py:286`
+  Prueffall: `test_verify_dispatches_with_injected_runner`
+- `tests/test_vps_adapter.py:291`
+  Prueffall: `test_teardown_apply_and_unknown_actions_never_contact_provider`
+- `tests/test_vps_adapter.py:305`
+  Prueffall: `test_exact_project_zone_instance_url_and_bounded_request`
+- `tests/test_vps_adapter.py:314`
+  Prueffall: `test_transient_failures_retry_once_only`
+- `tests/test_vps_adapter.py:323`
+  Prueffall: `test_permanent_failure_never_retries`
+- `tests/test_vps_adapter.py:331`
+  Prueffall: `test_repeated_transient_failure_stops_after_two_calls`
+- `tests/test_vps_adapter.py:337`
+  Prueffall: `test_deadline_prevents_request_and_clamps_remaining_timeout`
+- `tests/test_vps_adapter.py:346`
+  Prueffall: `test_invalid_token_never_reaches_transport`
+- `tests/test_vps_adapter.py:353`
+  Prueffall: `test_wrong_resource_owner_plan_location_or_sku_fail_without_retry`
+- `tests/test_vps_adapter.py:368`
+  Prueffall: `test_non_object_response_fails_closed`
+- `tests/test_vps_adapter.py:390`
+  Prueffall: `test_two_pinned_connections_use_separate_users_keys_and_no_agent`
+- `tests/test_vps_adapter.py:408`
+  Prueffall: `test_host_not_in_provider_response_blocks_before_file_reference`
+- `tests/test_vps_adapter.py:416`
+  Prueffall: `test_missing_duplicate_or_mismatched_host_pin_blocks_ssh`
+- `tests/test_vps_adapter.py:424`
+  Prueffall: `test_oversized_host_key_file_rejected_before_read`
+- `tests/test_vps_adapter.py:430`
+  Prueffall: `test_extra_wildcard_host_key_must_not_expand_ssh_trust`
+- `tests/test_vps_adapter.py:437`
+  Prueffall: `test_same_file_recovery_key_is_rejected_before_ssh`
+- `tests/test_vps_adapter.py:443`
+  Prueffall: `test_same_user_or_same_environment_reference_rejected_in_plan`
+- `tests/test_vps_adapter.py:452`
+  Prueffall: `test_failed_recovery_never_reports_success`
+- `tests/test_vps_adapter.py:458`
+  Prueffall: `test_wrong_remote_os_or_architecture_rejected`
+- `tests/test_vps_adapter.py:465`
+  Prueffall: `test_arm64_plan_accepts_aarch64_metadata`
+- `tests/test_vps_adapter.py:497`
+  Prueffall: `test_first_configuration_checks_applies_checks_recovery_then_commits`
+- `tests/test_vps_adapter.py:528`
+  Prueffall: `test_repeat_configured_skips_existing_account_guard_and_apply`
+- `tests/test_vps_adapter.py:536`
+  Prueffall: `test_first_configuration_requires_explicit_absence_of_existing_llmops`
+- `tests/test_vps_adapter.py:548`
+  Prueffall: `test_source_hash_mismatch_blocks_before_journal_or_process`
+- `tests/test_vps_adapter.py:555`
+  Prueffall: `test_dedicated_host_and_recovery_required_before_writes`
+- `tests/test_vps_adapter.py:564`
+  Prueffall: `test_incomplete_or_wrong_plan_journal_never_runs_ansible`
+- `tests/test_vps_adapter.py:573`
+  Prueffall: `test_ansible_failures_leave_intent_and_block_replay`
+- `tests/test_vps_adapter.py:588`
+  Prueffall: `test_missing_or_failed_post_recovery_does_not_mark_configured`
+- `tests/test_vps_adapter.py:596`
+  Prueffall: `test_runner_exception_cleans_lock_but_preserves_intent`
+- `tests/test_vps_adapter.py:602`
+  Prueffall: `test_journal_lock_blocks_reentry_and_releases_after_exception`
+- `tests/test_vps_adapter.py:613`
+  Prueffall: `test_journal_rejects_repo_local_or_relative_state`
+- `tests/test_vps_adapter.py:619`
+  Prueffall: `test_execute_configure_wires_post_verification_without_real_ssh`
+
+## tests/test_vps_catalog.py
+
+- `tests/test_vps_catalog.py:52`
+  Prueffall: `test_all_56_records_preserved_with_conservative_families`
+- `tests/test_vps_catalog.py:77`
+  Prueffall: `test_provenance_exact_bytes_and_no_mutable_aliases`
+- `tests/test_vps_catalog.py:91`
+  Prueffall: `test_registration_api_is_not_signup_permission`
+- `tests/test_vps_catalog.py:98`
+  Prueffall: `test_ambiguous_families_remain_unverified`
+- `tests/test_vps_catalog.py:103`
+  Prueffall: `test_unrecognized_metadata_types_do_not_grant_classification`
+- `tests/test_vps_catalog.py:111`
+  Prueffall: `test_directory_input_and_invalid_head_rejected`
+- `tests/test_vps_catalog.py:119`
+  Prueffall: `test_missing_review_dates_stay_null_even_with_http_200`
+- `tests/test_vps_catalog.py:129`
+  Prueffall: `test_bad_source_review_dates_rejected`
+- `tests/test_vps_catalog.py:141`
+  Prueffall: `test_retrieval_timestamp_validation_and_utc_normalization`
+- `tests/test_vps_catalog.py:150`
+  Prueffall: `test_invalid_json_duplicate_keys_nonfinite_and_depth`
+- `tests/test_vps_catalog.py:162`
+  Prueffall: `test_size_limit_on_source_and_snapshot`
+- `tests/test_vps_catalog.py:171`
+  Prueffall: `test_source_shape_and_duplicate_ids`
+- `tests/test_vps_catalog.py:179`
+  Prueffall: `test_snapshot_roundtrip_and_lookup`
+- `tests/test_vps_catalog.py:190`
+  Prueffall: `test_snapshot_tampering_rejected`
+- `tests/test_vps_catalog.py:214`
+  Prueffall: `test_no_network_execution_or_writes_during_import`
+
+## tests/test_vps_cli.py
+
+- `tests/test_vps_cli.py:60`
+  Prueffall: `test_catalog_exclusive_output_and_optional_head`
+- `tests/test_vps_cli.py:74`
+  Prueffall: `test_catalog_existing_symlink_never_overwrites_target`
+- `tests/test_vps_cli.py:85`
+  Prueffall: `test_catalog_protects_absolute_output_before_exclusive_creation`
+- `tests/test_vps_cli.py:94`
+  Prueffall: `test_catalog_parent_link_metadata_rejected_before_create`
+- `tests/test_vps_cli.py:110`
+  Prueffall: `test_catalog_parent_traversal_rejected_before_create`
+- `tests/test_vps_cli.py:118`
+  Prueffall: `test_catalog_real_symlink_parent_never_creates_in_target`
+- `tests/test_vps_cli.py:130`
+  Prueffall: `test_all_actions_forward_imported_offer_and_dry_run`
+- `tests/test_vps_cli.py:145`
+  Prueffall: `test_apply_reads_protected_external_authorization`
+- `tests/test_vps_cli.py:158`
+  Prueffall: `test_apply_without_authorization_is_rejected_before_execute`
+- `tests/test_vps_cli.py:163`
+  Prueffall: `test_real_adapter_preview_never_authorizes_or_contacts_provider`
+- `tests/test_vps_cli.py:183`
+  Prueffall: `test_inside_repo_relative_and_directory_authorization_rejected`
+- `tests/test_vps_cli.py:190`
+  Prueffall: `test_authorization_posix_exact_mode_owner_and_regular_file`
+- `tests/test_vps_cli.py:200`
+  Prueffall: `test_authorization_world_readable_rejected_before_content_read`
+- `tests/test_vps_cli.py:206`
+  Prueffall: `test_authorization_size_duplicate_json_and_type_guards`
+- `tests/test_vps_cli.py:214`
+  Prueffall: `test_descriptor_permissions_checked_before_read`
+- `tests/test_vps_cli.py:221`
+  Prueffall: `test_argparse_errors_never_echo_argument_values`
+- `tests/test_vps_cli.py:232`
+  Prueffall: `test_runtime_errors_are_fixed_and_redacted`
+- `tests/test_vps_cli.py:242`
+  Prueffall: `test_invalid_catalog_plan_missing_offer_and_no_output_on_failure`
+- `tests/test_vps_cli.py:252`
+  Prueffall: `test_direct_script_root_import_from_unrelated_directory`
 
 ## tests/test_vps_delivery.py
 
@@ -6556,4 +6804,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2928**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3043**. Kein Nachweis bestandener Tests.
