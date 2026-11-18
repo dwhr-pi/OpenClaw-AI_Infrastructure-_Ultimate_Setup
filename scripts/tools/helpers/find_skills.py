@@ -101,13 +101,25 @@ def git(source, *args):
             except (subprocess.TimeoutExpired, subprocess.CalledProcessError) as error:
                 output = '\n'.join(value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value
                                    for value in (error.output, error.stderr) if value).lower()
-                transient = isinstance(error, subprocess.TimeoutExpired) or (
+                dns_failure = isinstance(error, subprocess.CalledProcessError) and error.returncode == 128 and (
+                    any(message in output for message in ('could not resolve host', 'could not resolve proxy',
+                                                          'temporary failure in name resolution'))
+                    or re.search(r'\bcurl (?:5|6)\b', output) is not None)
+                if dns_failure:
+                    print('DNS-/Namensaufloesung fuer Git-Ziel oder Proxy fehlgeschlagen;'
+                          ' kein Modell-/Python-/Buildfehler. Keine Aenderung an DNS, WSL oder TLS.', flush=True)
+                transient = dns_failure or isinstance(error, subprocess.TimeoutExpired) or (
                     error.returncode == 128 and any(message in output for message in (
                         'curl 18', 'curl 28', 'curl 35', 'curl 52', 'curl 55', 'curl 56',
                         'curl 92', 'operation too slow', 'connection reset',
                         'remote end hung up unexpectedly', 'early eof')))
                 if attempt or not transient or time.monotonic() >= deadline:
                     raise
+                if dns_failure:
+                    # Back off only within the same total budget; never replace the resolver.
+                    delay = min(2.0, max(0.0, deadline - time.monotonic()))
+                    print('DNS-Neuversuch nach kurzer Pause:', round(delay, 2), 's.', flush=True)
+                    time.sleep(delay)
                 print('Git-Transport fehlgeschlagen; begrenzter Neuversuch am identischen Pin.'
                       ' Keine Checkout-/Installationsfreigabe aus diesem Fehler.', flush=True)
     result = subprocess.run(["git", "-c", "core.hooksPath=" + os.devnull,

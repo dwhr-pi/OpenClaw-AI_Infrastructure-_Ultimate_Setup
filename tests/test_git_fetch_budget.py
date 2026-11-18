@@ -48,7 +48,8 @@ class GitFetchBudget(unittest.TestCase):
                 run.assert_not_called()
 
     def test_nontransport_errors_are_not_retried_or_reported_success(self):
-        for text in ('', 'fatal: not our ref', 'Authentication failed', 'certificate verify failed'):
+        for text in ('', 'fatal: not our ref', 'Authentication failed', 'certificate verify failed',
+                     'curl 60: SSL certificate problem', 'curl 65: send failed'):
             error = subprocess.CalledProcessError(128, 'fixture', output=text)
             with patch.dict(os.environ, {}, clear=True), patch.object(runner, 'run', side_effect=error) as run, \
                     redirect_stdout(io.StringIO()):
@@ -91,6 +92,53 @@ class GitFetchBudget(unittest.TestCase):
     def test_user_interrupt_never_retries(self):
         with patch.dict(os.environ, {}, clear=True), patch.object(runner, 'run', side_effect=KeyboardInterrupt) as run, \
                 redirect_stdout(io.StringIO()):
+            with self.assertRaises(KeyboardInterrupt):
+                self.fetch()
+        run.assert_called_once()
+
+    def test_dns_retries_same_command_after_delay_within_total_budget(self):
+        for message in (b'Could not resolve host: github.com',
+                        b'Could not resolve proxy: fixture.invalid',
+                        b'Temporary failure in name resolution', b'curl 6', b'curl 5'):
+            error = subprocess.CalledProcessError(128, 'fixture', stderr=message)
+            with self.subTest(message=message), patch.dict(os.environ, {}, clear=True), \
+                    patch.object(helper.time, 'monotonic', side_effect=[0, 0, 10, 10, 12]), \
+                    patch.object(helper.time, 'sleep') as sleep, \
+                    patch.object(runner, 'run', side_effect=[error, 'ok']) as run, \
+                    redirect_stdout(io.StringIO()) as output:
+                self.assertEqual(self.fetch(), 'ok')
+            first, second = run.call_args_list
+            self.assertEqual(first.args, second.args)
+            self.assertEqual(second.kwargs['timeout'], 888)
+            sleep.assert_called_once_with(2.0)
+            self.assertIn('DNS-/Namensaufloesung', output.getvalue())
+            self.assertIn('Keine Aenderung an DNS, WSL oder TLS', output.getvalue())
+
+    def test_persistent_dns_failure_stops_after_two_attempts(self):
+        error = subprocess.CalledProcessError(128, 'fixture', output='Could not resolve host: github.com')
+        with patch.dict(os.environ, {}, clear=True), patch.object(helper.time, 'sleep') as sleep, \
+                patch.object(runner, 'run', side_effect=error) as run, redirect_stdout(io.StringIO()):
+            with self.assertRaises(subprocess.CalledProcessError):
+                self.fetch()
+        self.assertEqual(run.call_count, 2)
+        sleep.assert_called_once()
+
+    def test_dns_at_expired_deadline_never_sleeps_or_retries(self):
+        error = subprocess.CalledProcessError(128, 'fixture', output='Could not resolve host: github.com')
+        with patch.dict(os.environ, {}, clear=True), \
+                patch.object(helper.time, 'monotonic', side_effect=[0, 0, 901]), \
+                patch.object(helper.time, 'sleep') as sleep, patch.object(runner, 'run', side_effect=error) as run, \
+                redirect_stdout(io.StringIO()):
+            with self.assertRaises(subprocess.CalledProcessError):
+                self.fetch()
+        run.assert_called_once()
+        sleep.assert_not_called()
+
+    def test_interrupt_during_dns_backoff_never_starts_second_attempt(self):
+        error = subprocess.CalledProcessError(128, 'fixture', output='Could not resolve host: github.com')
+        with patch.dict(os.environ, {}, clear=True), \
+                patch.object(helper.time, 'sleep', side_effect=KeyboardInterrupt), \
+                patch.object(runner, 'run', side_effect=error) as run, redirect_stdout(io.StringIO()):
             with self.assertRaises(KeyboardInterrupt):
                 self.fetch()
         run.assert_called_once()

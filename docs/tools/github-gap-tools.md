@@ -33,6 +33,33 @@ nativem Windows-Python/PowerShell und aendern nicht den Linux-Status. Die benoet
 MSVC-Developer-Umgebung muss dort bereits verfuegbar sein; andernfalls den unten beschriebenen
 Developer-PowerShell-Weg nutzen.
 
+## Git-Downloads und DNS-Ausfaelle
+
+Der gemeinsame Git-Downloadhelfer gilt unter anderem fuer Mousai, Dejavu, QwQ,
+Qwen3 und GPT-OSS. Ein Fehler `Could not resolve host: github.com` bedeutet,
+dass Git die Namensaufloesung nicht erfolgreich abschliessen konnte; er ist kein
+Nachweis einer Modell-, Python-, GPU- oder Speicherinkompatibilitaet.
+Ein Proxy kann ebenfalls an der Namensaufloesung scheitern.
+
+Der Installer erkennt diese Meldungen sowie die passenden curl-Fehler 5/6,
+protokolliert die DNS-Kategorie und versucht denselben Fetch-Befehl am selben
+Pin hoechstens einmal erneut. Vor dem DNS-Neuversuch wartet er bis zu zwei
+Sekunden; Pause und Neuversuch verbrauchen das bisherige Gesamtbudget
+(standardmaessig 900 Sekunden), statt ein neues Budget zu eroeffnen.
+Bei wiederholtem DNS-Fehler bleibt die Installation fehlgeschlagen, ohne
+Checkout oder Installiert-Marker. Benutzerabbruch wird nicht wiederholt.
+
+Keine automatische Bearbeitung von `/etc/resolv.conf`, `/etc/wsl.conf`,
+Windows-/VPN-/Proxy-Einstellungen, keine festen Ersatz-IP-Adressen, kein
+DNS-Serverwechsel und kein Abschalten der TLS-Pruefung. Ein dauerhaft gestoerter
+Resolver benoetigt eine separate Systemdiagnose; ein Retry ist keine DNS-Reparatur.
+
+Der GPT-OSS-Fehlerbericht vom 18.11.2026 enthielt noch den alten Hinweis
+`kein automatischer Wiederholungsversuch`. Er prueft damit nicht diese Korrektur.
+Ein Neustart eines alten WSL-Checkouts uebernimmt keine gepushten GitHub-Dateien.
+Der korrigierte Helfer protokolliert `Gesamtzeitbudget` und `Versuch 1 von 2`.
+Keine stille Aktualisierung unsignierter Teststaende oder signierter Releases.
+
 ## Qwen Code Desktop: Download oder eigener Build
 
 **Qwen_Desktop** bleibt der bisherige manuelle Windows-Download mit Browser und Bestaetigungspause:

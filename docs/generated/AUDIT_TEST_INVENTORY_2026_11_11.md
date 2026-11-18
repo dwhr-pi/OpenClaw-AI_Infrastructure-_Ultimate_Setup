@@ -2091,17 +2091,25 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_invalid_budget_stops_before_process`
 - `tests/test_git_fetch_budget.py:50`
   Prueffall: `test_nontransport_errors_are_not_retried_or_reported_success`
-- `tests/test_git_fetch_budget.py:59`
+- `tests/test_git_fetch_budget.py:60`
   Prueffall: `test_transient_failure_retries_identical_command_with_remaining_budget`
-- `tests/test_git_fetch_budget.py:74`
+- `tests/test_git_fetch_budget.py:75`
   Prueffall: `test_second_failure_is_final_and_never_reports_success`
-- `tests/test_git_fetch_budget.py:82`
+- `tests/test_git_fetch_budget.py:83`
   Prueffall: `test_expired_total_budget_prevents_retry`
-- `tests/test_git_fetch_budget.py:91`
+- `tests/test_git_fetch_budget.py:92`
   Prueffall: `test_user_interrupt_never_retries`
-- `tests/test_git_fetch_budget.py:98`
+- `tests/test_git_fetch_budget.py:99`
+  Prueffall: `test_dns_retries_same_command_after_delay_within_total_budget`
+- `tests/test_git_fetch_budget.py:117`
+  Prueffall: `test_persistent_dns_failure_stops_after_two_attempts`
+- `tests/test_git_fetch_budget.py:126`
+  Prueffall: `test_dns_at_expired_deadline_never_sleeps_or_retries`
+- `tests/test_git_fetch_budget.py:137`
+  Prueffall: `test_interrupt_during_dns_backoff_never_starts_second_attempt`
+- `tests/test_git_fetch_budget.py:146`
   Prueffall: `test_provider_secrets_and_git_injection_not_inherited`
-- `tests/test_git_fetch_budget.py:111`
+- `tests/test_git_fetch_budget.py:159`
   Prueffall: `test_local_git_commands_keep_short_budget_and_stdout`
 
 ## tests/test_gitlab_openforge_docs.py
@@ -6544,4 +6552,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **2922**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **2926**. Kein Nachweis bestandener Tests.

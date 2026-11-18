@@ -548,9 +548,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/enki_browser_study.py:126`
 - `scripts/tools/helpers/enki_browser_study.py:178`
 - `scripts/tools/helpers/fal_client_common.sh:189`
-- `scripts/tools/helpers/find_skills.py:141`
-- `scripts/tools/helpers/find_skills.py:276`
-- `scripts/tools/helpers/find_skills.py:334`
+- `scripts/tools/helpers/find_skills.py:153`
+- `scripts/tools/helpers/find_skills.py:288`
+- `scripts/tools/helpers/find_skills.py:346`
 - `scripts/tools/helpers/gap_tools.py:426`
 - `scripts/tools/helpers/gap_tools.py:487`
 - `scripts/tools/helpers/gap_tools.py:514`
