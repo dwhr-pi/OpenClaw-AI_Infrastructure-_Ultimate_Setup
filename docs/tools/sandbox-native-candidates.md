@@ -174,6 +174,17 @@ VM-/CRI-Laufzeitnachweis.
 
 ## Nachweise und Grenzen
 
+Korrektur vom 19.11.2026: Ein fehlgeschlagener Git-Fetch konnte zuvor durch
+`Bereinigung nur fuer den privaten Runtime-Ordner erlaubt` verdeckt werden.
+Native Quellen liegen in `native-github/source`, nicht im separaten `runtime`.
+Der innere Quellenhelfer delegiert deshalb seinen Rollback an den aufrufenden
+nativen Installer. Dieser darf weiterhin nur seinen in diesem Versuch neu
+angelegten nativen Prefix entfernen; Toolchainbasis, alte Installationen und
+Benutzerdaten bleiben erhalten. Der Runtime-Loeschhelfer wird nicht erweitert.
+Scheitert auch die Bereinigung, bleibt der urspruengliche Fetch-/Buildfehler
+massgeblich; Restbestand und unvollstaendiger Rollback werden separat gemeldet.
+Das behebt die Fehlerbehandlung, nicht eine gestoerte Netzwerkverbindung.
+
 gVisor baut exakt `//debian:gvisor-release-tar-bz2`, optimiert mit nativer
 Architekturkonfiguration. Nur das komplette Bundle mit sieben Sidecars wird
 akzeptiert. Es wird ohne `extractall` entpackt; Links, Traversal, Duplikate,

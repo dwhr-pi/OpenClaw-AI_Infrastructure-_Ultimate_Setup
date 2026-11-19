@@ -2028,6 +2028,8 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_nonruntime_tree_is_never_changed`
 - `tests/test_gap_runtime_cleanup.py:113`
   Prueffall: `test_foreign_owner_blocks_permission_changes_and_removal`
+- `tests/test_gap_runtime_cleanup.py:124`
+  Prueffall: `test_install_cleanup_failure_keeps_original_download_error`
 
 ## tests/test_gap_tools.py
 
@@ -3730,8 +3732,12 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_native_cleanup.py:128`
   Prueffall: `test_rollback_failure_does_not_mask_original_build_error`
 - `tests/test_native_cleanup.py:145`
+  Prueffall: `test_real_source_fetch_failure_preserves_error_and_uses_outer_cleanup`
+- `tests/test_native_cleanup.py:171`
+  Prueffall: `test_failed_outer_cleanup_does_not_mask_source_fetch_error`
+- `tests/test_native_cleanup.py:191`
   Prueffall: `test_build_failure_rolls_back_readonly_cache_without_losing_original_error`
-- `tests/test_native_cleanup.py:159`
+- `tests/test_native_cleanup.py:205`
   Prueffall: `test_success_after_readonly_cache_cleanup_gets_a_valid_build_marker`
 
 ## tests/test_native_coding_clis.py
@@ -6810,4 +6816,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3046**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3049**. Kein Nachweis bestandener Tests.

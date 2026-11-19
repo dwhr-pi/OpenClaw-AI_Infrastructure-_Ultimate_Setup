@@ -552,9 +552,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/find_skills.py:301`
 - `scripts/tools/helpers/find_skills.py:359`
 - `scripts/tools/helpers/gap_tools.py:426`
-- `scripts/tools/helpers/gap_tools.py:487`
-- `scripts/tools/helpers/gap_tools.py:514`
-- `scripts/tools/helpers/gap_tools.py:603`
+- `scripts/tools/helpers/gap_tools.py:496`
+- `scripts/tools/helpers/gap_tools.py:523`
+- `scripts/tools/helpers/gap_tools.py:612`
 - `scripts/tools/helpers/hf_datasets_common.sh:96`
 - `scripts/tools/helpers/hf_hub_common.sh:42`
 - `scripts/tools/helpers/hf_hub_common.sh:97`
