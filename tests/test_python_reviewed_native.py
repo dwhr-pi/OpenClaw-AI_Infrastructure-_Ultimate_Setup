@@ -53,6 +53,55 @@ class ReviewedPythonTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'Quellhash'):
                     helper.verify_source(source, recipe)
 
+    def test_ragas_compatibility_is_explicit_and_does_not_affect_other_tools(self):
+        for spec in self.specs():
+            requirements = helper.runtime_compatibility_requirements(spec)
+            if spec['id'] == 'ragas':
+                self.assertEqual(requirements, ['langchain-community==0.3.31', 'langchain>=0.3.27,<1.0',
+                                                'langchain-core>=0.3.78,<1.0', 'langchain-openai>=0.3,<1.0'])
+                changed = copy.deepcopy(spec)
+                changed['recipe']['version'] = '0.4.0'
+                with self.assertRaisesRegex(ValueError, 'nur fuer'):
+                    helper.runtime_compatibility_requirements(changed)
+            else:
+                self.assertEqual(requirements, [])
+
+    def test_ragas_runtime_compatibility_flows_through_hash_lock_and_guarded_probe(self):
+        spec = next(spec for spec in self.specs() if spec['id'] == 'ragas')
+        with tempfile.TemporaryDirectory() as directory:
+            prefix = Path(directory) / 'native'
+            source = prefix / 'source'
+            source.mkdir(parents=True)
+            calls = []
+            def run(args, cwd, env):
+                calls.append(args)
+                if '-m' in args and 'build' in args:
+                    (prefix / 'wheels/ragas-fixture.whl').write_bytes(b'synthetic, never imported')
+                if args[1:3] == ['pip', 'compile']:
+                    self.assertIn('--generate-hashes', args)
+                    if Path(args[3]).name == 'runtime-requirements.in':
+                        lines = Path(args[3]).read_text(encoding='utf-8').splitlines()
+                        self.assertEqual(lines[1:], list(helper.RAGAS_COMPATIBILITY))
+                if args[1:3] == ['pip', 'install']:
+                    self.assertIn('--require-hashes', args)
+                    self.assertIn('--only-binary', args)
+                    self.assertIn('https://pypi.org/simple', args)
+                    cli = prefix / 'venv/bin/ragas'
+                    cli.parent.mkdir(parents=True, exist_ok=True)
+                    cli.write_bytes(b'fixture')
+            report = {'distributions': [{'name': 'ragas', 'version': '0.3.9'}]}
+            with patch.object(helper, 'verify_source'), patch.object(helper, 'inspect_wheel'), \
+                    patch.object(helper.native_uv, 'select', return_value='/uv'), \
+                    patch.object(helper, 'select_python', return_value='/python'), \
+                    patch.object(helper, 'execute', return_value=json.dumps(report)) as probe:
+                helper.build(source, prefix, spec, {}, run=run)
+                self.assertEqual(probe.call_args.args[-1], 45)
+                self.assertIn('sys.addaudithook(audit_runtime)', probe.call_args.args[0][-1])
+            receipt = json.loads((prefix / 'python-build-receipt.json').read_text(encoding='utf-8'))
+            self.assertEqual(receipt['runtime_compatibility_requirements'], list(helper.RAGAS_COMPATIBILITY))
+            self.assertFalse(receipt['application_tested'])
+            self.assertEqual(sum(args[1:3] == ['pip', 'install'] for args in calls), 2)
+
     def test_download_budgets_are_fixed_and_do_not_inherit_unsafe_uv_settings(self):
         injected = {'UV_HTTP_TIMEOUT': '999999', 'UV_HTTP_CONNECT_TIMEOUT': '0',
                     'UV_HTTP_RETRIES': '9999', 'UV_CONCURRENT_DOWNLOADS': '1000',

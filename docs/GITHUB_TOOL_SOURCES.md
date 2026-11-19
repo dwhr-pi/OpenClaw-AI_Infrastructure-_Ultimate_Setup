@@ -255,7 +255,8 @@ Agentic-Coding-Quellen und konkrete Installationsgrenzen: [Tool-Leitfaden](tools
 Aider, Continue, OpenHands, LangGraph, CrewAI und AutoGen behalten ihre vorhandenen Installer.
 OpenCode wird unter der aktuellen Quelle [anomalyco/opencode](https://github.com/anomalyco/opencode)
 gefuehrt, bleibt aber planned; kein automatisches Aktivieren des alten Scaffolds.
-[microsoft/agent-framework](https://github.com/microsoft/agent-framework) ist neu als planned/MIT
+microsoft/agent-framework
+(`https://github.com/microsoft/agent-framework`; unverifiziert, CI HTTP 404, 19.11.2026) ist neu als planned/MIT
 registriert, ohne Download oder Provideraktivierung.
 
 Personalakten-Workflow:

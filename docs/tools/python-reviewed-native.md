@@ -36,6 +36,39 @@ Phoenix startet keinen HTTP-/Tracing-Dienst. Auth, Datenbank, Trace-Redaction un
 
 ## Pruefung und Lifecycle
 
+### Ragas 0.3.9 und LangChain-Kompatibilitaet (19.11.2026)
+
+Der erneute WSL-Lauf konnte `hf-xet` und alle 95 Pakete laden. Erst die geschuetzte
+Importprobe scheiterte: Ragas importiert `langchain_community.chat_models.vertexai`,
+das im installierten Community-Paket 0.4.2 fehlt. `uv pip check` prueft deklarierte
+Paketmetadaten, nicht die Existenz jedes importierten Moduls. Der
+[gepruefte Ragas-Quellstand][ragas-legacy-source]
+importiert diese alte API ohne passende obere LangChain-Versionsgrenzen.
+
+Nur fuer Ragas 0.3.9 ergaenzt der Installer deshalb vor der Hash-Lock-Erzeugung:
+
+```text
+langchain-community==0.3.31
+langchain>=0.3.27,<1.0
+langchain-core>=0.3.78,<1.0
+langchain-openai>=0.3,<1.0
+```
+
+Das [offizielle Community-Wheel 0.3.31](https://pypi.org/project/langchain-community/0.3.31/)
+wurde ohne Installation oder Ausfuehrung nach Groesse und SHA256 geprueft;
+es enthaelt das benoetigte Modul. SHA256:
+`1c727e3ebbacd4d891b07bd440647668001cea3e39cbe732499ad655ec5cb569`.
+Die Quelle von Ragas bleibt unveraendert gepinnt; kein Import-Shim, kein Ausblenden von Fehlern.
+Hashes fuer die tatsaechlich aufgeloesten Pakete werden weiterhin vor Installation erzeugt
+und erzwungen. Der Buildnachweis erfasst die zusaetzlichen Anforderungen; die Offline-Importprobe
+bleibt 45 Sekunden begrenzt und sperrt Netzwerk-/Prozessaufrufe. Andere Tools erhalten diese Grenzen nicht.
+
+**Legacy-Kompatibilitaet, keine Sicherheitsfreigabe:** LangChain Community ist laut PyPI archiviert.
+Dieser Bereich repariert die belegte API-Unvertraeglichkeit des bestehenden experimentellen Pins,
+beweist aber weder einen erfolgreichen kompletten WSL-Build noch Schwachstellenfreiheit.
+Ein spaeteres Ragas-Upgrade mit gepflegten Providerpaketen und eigener Abnahme bleibt erforderlich.
+Keine Evaluation, Cloudanmeldung oder LLM-Anfrage wird dabei gestartet.
+
 ### Langsame Paketdownloads (19.11.2026)
 
 Der gemeldete Ragas-Lauf scheiterte beim Wheel-Download von `hf-xet==1.8.0`
@@ -67,6 +100,8 @@ kein stilles Wechseln auf einen aktuellen Branch. Deinstallation entfernt nur un
 belegte eigene Programmdateien, keine fremden Installationen, Laufzeitdaten oder gemeinsame Toolchains.
 Ein bestandener Offline-Test ist kein erfolgreicher Ubuntu-/WSL-Build und kein Betriebsnachweis.
 Die echte Linux-Build- und Dienstabnahme steht noch aus.
+
+[ragas-legacy-source]: https://github.com/vibrantlabsai/ragas/blob/8b4653c41abf6c8f86f63397f1a960d6411c0ca9/src/ragas/llms/base.py
 
 Quellen: [Phoenix](https://github.com/Arize-ai/phoenix),
 [Checkov](https://github.com/bridgecrewio/checkov), [Ragas](https://github.com/vibrantlabsai/ragas).

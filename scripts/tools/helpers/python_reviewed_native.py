@@ -25,6 +25,16 @@ PYTHON = '3.12.12'
 BUILD_REQUIREMENTS = ['build==1.3.0', 'hatchling==1.27.0', 'setuptools==80.9.0',
                       'setuptools-scm==9.2.0', 'wheel==0.45.1', 'PyYAML==6.0.3']
 PNPM_SHA256 = '72f1630812107c8723eb5be4517725f3e13f09cfd8f71571cf29f23ce318bdb7'
+RAGAS_COMPATIBILITY = ('langchain-community==0.3.31', 'langchain>=0.3.27,<1.0',
+                       'langchain-core>=0.3.78,<1.0', 'langchain-openai>=0.3,<1.0')
+
+
+def runtime_compatibility_requirements(spec):
+    if spec['id'] != 'ragas':
+        return []
+    if spec['recipe']['version'] != '0.3.9':
+        raise ValueError('Ragas-Kompatibilitaetsbereich nur fuer den geprueften Pin 0.3.9 freigegeben.')
+    return list(RAGAS_COMPATIBILITY)
 
 
 def frontend(outer, spec, approved=False):
@@ -322,7 +332,8 @@ def build(source, prefix, spec, env, run=None):
     wheel = common.checked(wheels[0])
     inspect_wheel(wheel, recipe)
     runtime_input = prefix / 'runtime-requirements.in'
-    runtime_input.write_text(str(wheel) + '\n', encoding='utf-8')
+    compatibility = runtime_compatibility_requirements(spec)
+    runtime_input.write_text('\n'.join([str(wheel), *compatibility]) + '\n', encoding='utf-8')
     locked_install(runtime_input, prefix / 'runtime-requirements.lock', vpython)
     runner([uv, 'pip', 'check', '--python', str(vpython), '--no-config'], prefix, child)
     cli = common.checked(prefix / 'venv/bin' / recipe['cli'])
@@ -336,6 +347,7 @@ def build(source, prefix, spec, env, run=None):
     receipt = dict(commit=recipe['pin'], source_sha256=recipe['source_sha256'],
                    wheel=wheel_name, wheel_sha256=hashlib.sha256(wheel.read_bytes()).hexdigest(),
                    python=python, probe=report, application_tested=False,
+                   runtime_compatibility_requirements=compatibility,
                    dependency_scope='resolved-at-install; hashes enforced; not an upstream audited dependency lock')
     (prefix / 'python-build-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n', encoding='utf-8')
     components = [dict(type='library', name=row['name'], version=row['version'],

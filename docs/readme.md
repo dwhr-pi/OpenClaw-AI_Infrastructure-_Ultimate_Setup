@@ -32,6 +32,10 @@ MCP-/WebUI-/SSO-/Wartungs-Vorlagen, Make-Einstieg und sichere Backup-Grenzen.
 [Modell-Routing, Export und Monitoring](MODEL_ROUTING_EXPORT_AND_MONITORING.md):
 Offline-Vorschlaege statt automatischer Gewichtsinstallation oder Konfigurationsaenderung.
 
+[ESP32-KI: Speicher, Linux-Tests und Ollama](research/ESP32_AI_LINUX_AND_OLLAMA.md):
+On-Device-Modelle gegen externe Modellserver, PSRAM/Flash und Grenzen von Hosttests und QEMU.
+Reines Hintergrundthema: Die genannten ESP-Projekte sind nicht Bestandteil des Setups und werden nicht aufgenommen.
+
 [Ollama-Log-Monitor](OLLAMA_LOG_MONITOR.md): begrenzte opt-in Kubernetes-Abfragen,
 redigierte Kategorien, optionaler Discord-Versand und nicht-root systemd-Vorlage.
 

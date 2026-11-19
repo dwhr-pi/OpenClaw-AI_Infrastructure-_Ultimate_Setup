@@ -30,6 +30,23 @@ class Response:
 
 
 class ExternalLinkPolicyTests(unittest.TestCase):
+    def test_approved_ci_references_keep_originals_without_checker_exceptions(self):
+        evidence = json.loads((ROOT / 'docs/quality/CI_SOURCE_REFERENCES_2026-11-19.json').read_text(encoding='utf-8'))
+        self.assertTrue(evidence['user_approved_reclassification'])
+        self.assertEqual(evidence['review_date'], '2026-11-19')
+        self.assertEqual(len(evidence['references']), 15)
+        self.assertEqual(len({row['original_url'] for row in evidence['references']}), 15)
+        for row in evidence['references']:
+            url = row['original_url']
+            self.assertFalse(self.ignored(url), url)
+            self.assertIn(row['ci_status'], (0, 403, 404))
+            self.assertEqual(row['classification'], 'unverified-original-reference')
+            self.assertTrue(row['files'])
+            for file in row['files']:
+                text = (ROOT / file).read_text(encoding='utf-8')
+                self.assertIn('`' + url + '`', text)
+                self.assertNotIn('](' + url + ')', text)
+
     def test_vllm_metric_reference_keeps_original_and_pinned_primary_sources(self):
         evidence = json.loads((ROOT / 'docs/quality/VLLM_METRICS_REFERENCE_2026-11-12.json').read_text(encoding='utf-8'))
         text = (ROOT / 'docs/architecture/ENTERPRISE_HARDENING_ROADMAP.md').read_text(encoding='utf-8')

@@ -239,8 +239,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/audio/openclaw_dejavu_mcp_server.py:228`
 - `scripts/audio/run_full_song.py:57`
 - `scripts/audio/run_full_song.py:84`
-- `scripts/audit_tool_coverage.py:205`
-- `scripts/audit_tool_coverage.py:220`
+- `scripts/audit_tool_coverage.py:226`
+- `scripts/audit_tool_coverage.py:241`
 - `scripts/auto_update.sh:39`
 - `scripts/benchmarks/install_lab.py:315`
 - `scripts/benchmarks/install_lab.py:382`
@@ -1107,8 +1107,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/gitops_bootstrap_install.sh:57`
 - `scripts/tools/helpers/candidate_security_native.py:310`
 - `scripts/tools/helpers/freellmapi_common.sh:147`
-- `scripts/tools/helpers/python_reviewed_native.py:251`
-- `scripts/tools/helpers/python_reviewed_native.py:259`
+- `scripts/tools/helpers/python_reviewed_native.py:261`
+- `scripts/tools/helpers/python_reviewed_native.py:269`
 - `scripts/wireguard/create-home-peer.sh:33`
 - `scripts/wireguard/create-vps-peer.sh:33`
 - `services/inference-gateway/local_policy.py:26`

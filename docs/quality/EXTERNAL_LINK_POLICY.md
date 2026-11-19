@@ -2,6 +2,23 @@
 
 Stand: 31.10.2026. Keine Merge- oder Produktionsfreigabe.
 
+## Nachpruefung 19.11.2026: Microsoft- und VPS-Referenzen
+
+Der Linkcheck zu `56964fe` scheiterte an 15 unterschiedlichen Originaladressen:
+Microsoft Agent Framework (HTTP 404) sowie einzelne VPS-/Community-Seiten (0/403/404).
+Die [datierte Einzelreferenzliste](CI_SOURCE_REFERENCES_2026-11-19.json) enthaelt Original-URLs,
+betroffene Dateien, CI-Lauf/Job und den begrenzten unabhaengigen Pruefumfang.
+Auf ausdrueckliche Nutzerfreigabe bleiben genau diese Adressen als Code mit Datum und Befund erhalten.
+Das reduziert bewusst den Live-Link-Pruefumfang, nicht die Fehlerkriterien des Checkers.
+Keine Domain-Ausnahme, kein 403/404 als Erfolg und kein Ersatz durch beliebige Startseiten.
+Der Quellen-Auditgenerator darf die genehmigten Referenzen nicht wieder als aktive Links ausgeben.
+Nicht erneut gelesene Inhalte, Lizenzbedingungen und VPS-Konditionen bleiben unbestaetigt.
+Suchindex-Treffer belegen keine aktuelle Erreichbarkeit; die Installer-Quellenpins bleiben unveraendert.
+
+Die Offline-Regression desselben Commits meldete genau einen Fehler: Die Cargo-Fixture erwartete
+noch `verify(root, cwd)` statt des ausdruecklichen Versionsvertrags `verify(root, cwd, version=...)`.
+Die korrigierte Assertion prueft diesen Pin weiterhin, statt den Mockaufruf unspezifisch zu akzeptieren.
+
 ## Nachpruefung 16.11.2026: rustfmt und AMD HIP
 
 Am Commit `246680c` scheiterte der PR-Linkcheck an HTTP 502 fuer rustfmt in der

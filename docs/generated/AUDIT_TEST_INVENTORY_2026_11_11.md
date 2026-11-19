@@ -1640,6 +1640,15 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_env_vault.py:114`
   Prueffall: `test_noninteractive_secrets_refused`
 
+## tests/test_esp32_research_docs.py
+
+- `tests/test_esp32_research_docs.py:13`
+  Prueffall: `test_documentation_is_linked_and_explicitly_excluded_from_setup`
+- `tests/test_esp32_research_docs.py:23`
+  Prueffall: `test_research_projects_are_not_registered_as_installers`
+- `tests/test_esp32_research_docs.py:30`
+  Prueffall: `test_host_emulator_model_and_client_boundaries_remain_explicit`
+
 ## tests/test_evidence_inventory.py
 
 - `tests/test_evidence_inventory.py:28`
@@ -1664,48 +1673,50 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 ## tests/test_external_link_policy.py
 
 - `tests/test_external_link_policy.py:33`
+  Prueffall: `test_approved_ci_references_keep_originals_without_checker_exceptions`
+- `tests/test_external_link_policy.py:50`
   Prueffall: `test_vllm_metric_reference_keeps_original_and_pinned_primary_sources`
-- `tests/test_external_link_policy.py:60`
+- `tests/test_external_link_policy.py:77`
   Prueffall: `test_only_exact_account_entries_are_exempt`
-- `tests/test_external_link_policy.py:72`
+- `tests/test_external_link_policy.py:89`
   Prueffall: `test_public_failures_are_not_exempt_or_alive`
-- `tests/test_external_link_policy.py:87`
+- `tests/test_external_link_policy.py:104`
   Prueffall: `test_rate_limit_backoff_is_bounded_without_accepting_429`
-- `tests/test_external_link_policy.py:97`
+- `tests/test_external_link_policy.py:114`
   Prueffall: `test_ci_link_gates_use_the_same_explicit_configuration`
-- `tests/test_external_link_policy.py:122`
+- `tests/test_external_link_policy.py:139`
   Prueffall: `test_status_failures_stay_failures_after_bounded_retries`
-- `tests/test_external_link_policy.py:134`
-  Prueffall: `test_transport_failure_never_becomes_success`
-- `tests/test_external_link_policy.py:141`
-  Prueffall: `test_retry_can_recover_without_weakening_success_codes`
 - `tests/test_external_link_policy.py:151`
+  Prueffall: `test_transport_failure_never_becomes_success`
+- `tests/test_external_link_policy.py:158`
+  Prueffall: `test_retry_can_recover_without_weakening_success_codes`
+- `tests/test_external_link_policy.py:168`
   Prueffall: `test_local_examples_are_syntax_only`
-- `tests/test_external_link_policy.py:161`
+- `tests/test_external_link_policy.py:178`
   Prueffall: `test_history_is_preserved_at_original_locations`
-- `tests/test_external_link_policy.py:181`
+- `tests/test_external_link_policy.py:198`
   Prueffall: `test_equivalent_primary_records_keep_original_addresses`
-- `tests/test_external_link_policy.py:215`
+- `tests/test_external_link_policy.py:232`
   Prueffall: `test_unavailable_card_is_not_silently_replaced`
-- `tests/test_external_link_policy.py:220`
+- `tests/test_external_link_policy.py:237`
   Prueffall: `test_probe_excludes_code_not_public_links`
-- `tests/test_external_link_policy.py:224`
+- `tests/test_external_link_policy.py:241`
   Prueffall: `test_approved_original_references_are_exact_evidence_not_ignore_rules`
-- `tests/test_external_link_policy.py:245`
+- `tests/test_external_link_policy.py:262`
   Prueffall: `test_official_supplements_do_not_claim_equivalent_unverified_content`
-- `tests/test_external_link_policy.py:253`
+- `tests/test_external_link_policy.py:270`
   Prueffall: `test_gnu_followup_preserves_only_observed_transport_failures`
-- `tests/test_external_link_policy.py:271`
+- `tests/test_external_link_policy.py:288`
   Prueffall: `test_notebooklm_reference_uses_official_rename_with_original_preserved`
-- `tests/test_external_link_policy.py:283`
+- `tests/test_external_link_policy.py:300`
   Prueffall: `test_mosquitto_reference_uses_exact_pinned_upstream_source`
-- `tests/test_external_link_policy.py:294`
+- `tests/test_external_link_policy.py:311`
   Prueffall: `test_south_africa_reference_is_individual_evidence_not_domain_ignore`
-- `tests/test_external_link_policy.py:306`
+- `tests/test_external_link_policy.py:323`
   Prueffall: `test_godot_sources_preserve_originals_and_exact_upstream_documents`
-- `tests/test_external_link_policy.py:320`
+- `tests/test_external_link_policy.py:337`
   Prueffall: `test_pinokio_html_release_never_substitutes_digest_verification`
-- `tests/test_external_link_policy.py:329`
+- `tests/test_external_link_policy.py:346`
   Prueffall: `test_pr24_metadata_errors_are_exact_dated_references_not_successes`
 
 ## tests/test_f01_f07_hardening.py
@@ -5105,26 +5116,30 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_python_reviewed_native.py:46`
   Prueffall: `test_source_mismatch_prevents_execution`
 - `tests/test_python_reviewed_native.py:56`
+  Prueffall: `test_ragas_compatibility_is_explicit_and_does_not_affect_other_tools`
+- `tests/test_python_reviewed_native.py:69`
+  Prueffall: `test_ragas_runtime_compatibility_flows_through_hash_lock_and_guarded_probe`
+- `tests/test_python_reviewed_native.py:105`
   Prueffall: `test_download_budgets_are_fixed_and_do_not_inherit_unsafe_uv_settings`
-- `tests/test_python_reviewed_native.py:70`
+- `tests/test_python_reviewed_native.py:119`
   Prueffall: `test_resolver_timeout_does_not_retry_build_or_write_success_receipt`
-- `tests/test_python_reviewed_native.py:97`
+- `tests/test_python_reviewed_native.py:146`
   Prueffall: `test_incomplete_wheels_fail_closed`
-- `tests/test_python_reviewed_native.py:106`
+- `tests/test_python_reviewed_native.py:155`
   Prueffall: `test_probe_is_bounded_and_never_cli_execution`
-- `tests/test_python_reviewed_native.py:121`
+- `tests/test_python_reviewed_native.py:170`
   Prueffall: `test_import_guard_preserves_popen_types_and_blocks_cached_process_calls`
-- `tests/test_python_reviewed_native.py:150`
+- `tests/test_python_reviewed_native.py:199`
   Prueffall: `test_failed_probe_logs_traceback_without_credential_shaped_values`
-- `tests/test_python_reviewed_native.py:163`
+- `tests/test_python_reviewed_native.py:212`
   Prueffall: `test_timeout_diagnostics_are_bounded_and_decode_bytes`
-- `tests/test_python_reviewed_native.py:176`
+- `tests/test_python_reviewed_native.py:225`
   Prueffall: `test_build_runner_streams_with_shared_timeout`
-- `tests/test_python_reviewed_native.py:182`
+- `tests/test_python_reviewed_native.py:231`
   Prueffall: `test_explicit_unsupported_python_never_downloads`
-- `tests/test_python_reviewed_native.py:191`
+- `tests/test_python_reviewed_native.py:240`
   Prueffall: `test_missing_python_requires_explicit_consent`
-- `tests/test_python_reviewed_native.py:198`
+- `tests/test_python_reviewed_native.py:247`
   Prueffall: `test_build_rejects_wrong_source_layout`
 
 ## tests/test_queue_safety.py
@@ -6082,10 +6097,14 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_tool_coverage_audit.py:101`
   Prueffall: `test_read_only_scan_does_not_change_files`
 - `tests/test_tool_coverage_audit.py:107`
-  Prueffall: `test_native_registration_adds_allowlisted_keys_without_duplicate_existing`
+  Prueffall: `test_approved_exact_unverified_source_is_not_reactivated_by_regeneration`
 - `tests/test_tool_coverage_audit.py:117`
-  Prueffall: `test_unused_native_allowlist_does_not_change_menu_inventory`
+  Prueffall: `test_unapproved_review_never_reclassifies_sources`
 - `tests/test_tool_coverage_audit.py:122`
+  Prueffall: `test_native_registration_adds_allowlisted_keys_without_duplicate_existing`
+- `tests/test_tool_coverage_audit.py:132`
+  Prueffall: `test_unused_native_allowlist_does_not_change_menu_inventory`
+- `tests/test_tool_coverage_audit.py:137`
   Prueffall: `test_shell_expressions_are_not_menu_names_and_never_executed`
 
 ## tests/test_tool_menu_order.py
@@ -6872,4 +6891,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3077**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3085**. Kein Nachweis bestandener Tests.

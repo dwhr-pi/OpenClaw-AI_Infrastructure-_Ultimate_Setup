@@ -104,6 +104,21 @@ class ToolCoverageAuditTests(unittest.TestCase):
         after = {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
         self.assertEqual(before, after)
 
+    def test_approved_exact_unverified_source_is_not_reactivated_by_regeneration(self):
+        self.write('docs/quality/CI_SOURCE_REFERENCES_2026-11-19.json', json.dumps({
+            'user_approved_reclassification': True, 'review_date': '2026-11-19',
+            'references': [{'original_url': 'https://github.com/acme/app',
+                            'classification': 'unverified-original-reference'}]}))
+        report = AUDIT.markdown(AUDIT.audit(self.root), root=self.root)
+        self.assertIn('`https://github.com/acme/app` (unverifiziert, 2026-11-19)', report)
+        self.assertNotIn('](https://github.com/acme/app)', report)
+        self.assertIn('[acme/library](https://github.com/acme/library)', report)
+
+    def test_unapproved_review_never_reclassifies_sources(self):
+        self.write('docs/quality/CI_SOURCE_REFERENCES_2026-11-19.json', json.dumps({
+            'user_approved_reclassification': False}))
+        self.assertEqual(AUDIT.unverified_repositories(self.root), {})
+
     def test_native_registration_adds_allowlisted_keys_without_duplicate_existing(self):
         setup = self.root / 'setup_ultimate.sh'
         setup.write_text(setup.read_text() + 'register_native_github_tool_keys\n', encoding='utf-8')

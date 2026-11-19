@@ -1,10 +1,17 @@
 # Microsoft Agent Framework aus GitHub
 
+Quellen-Nachpruefung 19.11.2026: Die unten erhaltenen GitHub-Originaladressen liefern im CI HTTP 404;
+Repository und API wurden separat ebenfalls mit 404 abgerufen. Inhalte und Lizenz wurden dabei
+nicht erneut bestaetigt. Kein Nachweis einer dauerhaften Loeschung, keine neue Installationsfreigabe.
+Der bestehende Quellinstaller kann deshalb bereits beim Clone scheitern; Pin/Quelle bleiben erhalten.
+[Einzelreferenzen und Pruefgrenzen](../quality/CI_SOURCE_REFERENCES_2026-11-19.json).
+
 ## Zuerst: Voraussetzungen und Grenzen
 
 Optionaler, experimenteller Setup-Installer, kein Docker. Installiert wird die Python-Bibliothek
 **agent-framework-core 1.22.0** aus dem offiziellen
-[GitHub-Quellstand](https://github.com/microsoft/agent-framework/tree/17b1a14bd5b4c774c18d5b827b4f5b97bed3cbee/python/packages/core).
+GitHub-Quellstand (unverifiziert, CI HTTP 404, 19.11.2026):
+`https://github.com/microsoft/agent-framework/tree/17b1a14bd5b4c774c18d5b827b4f5b97bed3cbee/python/packages/core`.
 Das ist kein fertiger Coding-Assistent und kein Ersatz fuer Qwen Code. Python und .NET sind
 getrennte Implementierungen; .NET wird hier nicht installiert.
 
@@ -122,7 +129,8 @@ Auftragsdaten liefern, keine ungefilterten Shellbefehle. Zunaechst ein Auftrag g
 Timeouts und begrenzte Korrekturrunden; Schreibaktionen brauchen gesonderte Freigabe.
 
 Der Kern enthaelt nicht automatisch alle Provider-Adapter. Fuer Ollama gibt es ein
-[eigenes Upstream-Paket](https://github.com/microsoft/agent-framework/tree/17b1a14bd5b4c774c18d5b827b4f5b97bed3cbee/python/packages/ollama).
+eigenes Upstream-Paket (unverifiziert, CI HTTP 404, 19.11.2026):
+`https://github.com/microsoft/agent-framework/tree/17b1a14bd5b4c774c18d5b827b4f5b97bed3cbee/python/packages/ollama`.
 Dessen Einrichtung, Modellkompatibilitaet und Ende-zu-Ende-Test sind separat offen, ebenso
 Cloud-Adapter, .NET, MCP und AutoGen-Migration. Keine ungeprueften Beispiele als fertige Integration
 behandeln. Modell-APIs nur lokal/VPN, keine Admin-Panels oeffentlich. Keys ausschliesslich im

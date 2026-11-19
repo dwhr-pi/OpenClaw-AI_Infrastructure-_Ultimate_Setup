@@ -65,6 +65,8 @@ Hinweise auf Unterstuetzung sind keine zusaetzliche Lizenzbedingung.
 
 ## Orientierung
 
+- **Hintergrund, keine Setup-Aufnahme:**
+  [ESP32-KI, Speicher und Linux-/Ollama-Tests](docs/research/ESP32_AI_LINUX_AND_OLLAMA.md).
 - **Einstieg:** [Erste 60 Minuten](docs/FIRST_60_MINUTES.md), [aktueller Status](docs/CURRENT_STATUS.md).
 - **Architektur:** [Hybrid-Plattform](docs/architecture/), [Kubernetes-Baseline](docs/PRODUCTION_BASELINE.md).
   [Ressourcen, Storage und GitOps-Abnahme](docs/LLMOPS_ARCHITECTURE_INCREMENT_2026-11-03.md).
