@@ -482,12 +482,29 @@ is_wsl_environment() {
 
 get_windows_host_free_kb() {
   local drive_name="${WINDOWS_HOST_DRIVE:-C}"
+  local windows_mount
+  local free_kb
   local free_bytes
 
+  [[ "$drive_name" =~ ^[A-Za-z]$ ]] || return 0
+  windows_mount="/mnt/${drive_name,,}"
+  if command -v mountpoint >/dev/null 2>&1 && mountpoint -q -- "$windows_mount" 2>/dev/null; then
+    free_kb="$(df -Pk "$windows_mount" 2>/dev/null)" || free_kb=""
+    free_kb="$(printf '%s\n' "$free_kb" | awk 'NR==2 {print $4}')"
+    if [[ "$free_kb" =~ ^[0-9]{1,18}$ ]]; then
+      printf '%s' "$((10#$free_kb))"
+      return 0
+    fi
+  fi
+
   command -v powershell.exe >/dev/null 2>&1 || return 0
-  free_bytes="$(powershell.exe -NoProfile -Command "(Get-PSDrive -Name '${drive_name}').Free" 2>/dev/null | tr -d '\r' | awk 'NF {print int($1); exit}')"
-  if [ -n "$free_bytes" ] && [ "$free_bytes" -gt 0 ] 2>/dev/null; then
-    printf '%s' $((free_bytes / 1024))
+  command -v timeout >/dev/null 2>&1 || return 0
+  free_bytes="$(timeout --foreground --signal=TERM --kill-after=2s 10s \
+    powershell.exe -NoLogo -NoProfile -NonInteractive \
+    -Command "(Get-PSDrive -Name '${drive_name}').Free" 2>/dev/null)" || return 0
+  free_bytes="$(printf '%s\n' "$free_bytes" | tr -d '\r' | awk '/^[[:space:]]*[0-9]+[[:space:]]*$/ {gsub(/[[:space:]]/, ""); print; exit}')"
+  if [[ "$free_bytes" =~ ^[0-9]{1,18}$ ]]; then
+    printf '%s' "$((10#$free_bytes / 1024))"
   fi
 }
 
@@ -1127,6 +1144,7 @@ preflight_tool_install_storage() {
     windows_min_mb="$(get_tool_install_windows_min_free_mb "$min_mb")"
     case "$tool_key" in
       "Traefik" | "OpenTelemetry") windows_min_mb="$min_mb" ;;
+      "Firecracker" | "Kata_Containers" | "gVisor") windows_min_mb="$min_mb" ;;
       "PyAirbyte" | "Langfuse" | "NocoDB" | "Penpot" | "Grafana_Alloy" | "Apache_Tika" | "Appsmith" | "ArchiveBox" | "Argilla" | "Budibase" | "Forgejo" | "Caddy" | "cAdvisor" | "Changedetection_IO" | "CrowdSec" | "Directus" | "Grafana" | "Healthchecks" | "Home_Assistant" | "LiteLLM" | "Loki" | "Meilisearch" | "Metabase" | "MinIO" | "Mosquitto" | "Neo4j" | "Netdata" | "Nextcloud" | "Node_Exporter" | "Node_Red" | "Open_WebUI" | "Prometheus" | "Promtail" | "Qdrant" | "SearXNG" | "Stirling_PDF" | "Uptime_Kuma" | "Vault" | "Vikunja" | "Watchtower" | "Weaviate" | "Zigbee2MQTT") windows_min_mb="$min_mb" ;;
       Qwen_Desktop_Build | Hermes_Agent_Jarvis | Gradio | Streamlit | WanVideoWrapper | CogVideoX | LTX_Video | Video2Dataset | MuseTalk | LivePortrait | SadTalker | RVC | UVR5 | Audacity | OBS | Concat | Remotion | HyperFrames) windows_min_mb="$min_mb" ;;
     esac

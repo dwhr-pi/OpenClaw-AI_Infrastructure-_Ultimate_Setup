@@ -4422,6 +4422,24 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_live_history_and_post_action_views_use_tool_heading`
 - `tests/test_operation_log.py:206`
   Prueffall: `test_native_installer_log_header_also_identifies_tool`
+- `tests/test_operation_log.py:240`
+  Prueffall: `test_mounted_drive_uses_df_without_powershell`
+- `tests/test_operation_log.py:252`
+  Prueffall: `test_mounted_zero_is_known_and_alternate_drive_is_lowercased`
+- `tests/test_operation_log.py:261`
+  Prueffall: `test_powershell_preserves_large_decimal_bytes_and_crlf`
+- `tests/test_operation_log.py:272`
+  Prueffall: `test_powershell_zero_and_leading_zeros_are_decimal`
+- `tests/test_operation_log.py:278`
+  Prueffall: `test_timeout_failure_discards_even_numeric_partial_output`
+- `tests/test_operation_log.py:285`
+  Prueffall: `test_df_failure_or_invalid_value_falls_back`
+- `tests/test_operation_log.py:294`
+  Prueffall: `test_invalid_drive_does_not_run_any_probe`
+- `tests/test_operation_log.py:302`
+  Prueffall: `test_missing_timeout_never_runs_unbounded_powershell`
+- `tests/test_operation_log.py:312`
+  Prueffall: `test_invalid_or_missing_powershell_result_remains_unknown`
 
 ## tests/test_orchestration_docs.py
 
@@ -6125,6 +6143,8 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_opentelemetry_uses_same_host_reserve_as_its_native_recipe`
 - `tests/test_traefik_storage.py:76`
   Prueffall: `test_measurements_never_lower_the_native_minimum`
+- `tests/test_traefik_storage.py:84`
+  Prueffall: `test_sandbox_host_reserves_match_native_recipes_and_reported_shortfall`
 
 ## tests/test_valkey_native.py
 
@@ -6816,4 +6836,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3049**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3059**. Kein Nachweis bestandener Tests.
