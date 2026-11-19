@@ -110,7 +110,8 @@ def environment(base):
                XDG_CONFIG_HOME=str(base / 'home/config'), XDG_CACHE_HOME=str(base / 'cache'),
                UV_CACHE_DIR=str(base / 'cache/uv'), UV_NO_CONFIG='1', UV_KEYRING_PROVIDER='disabled',
                UV_PYTHON_DOWNLOADS='never', UV_NO_PROGRESS='1', UV_CONCURRENT_BUILDS='1',
-               UV_CONCURRENT_DOWNLOADS='4', PYTHONDONTWRITEBYTECODE='1',
+               UV_CONCURRENT_DOWNLOADS='2', UV_HTTP_TIMEOUT='300', UV_HTTP_CONNECT_TIMEOUT='30',
+               UV_HTTP_RETRIES='3', PYTHONDONTWRITEBYTECODE='1',
                DO_NOT_TRACK='1', RAGAS_DO_NOT_TRACK='true', HF_HUB_OFFLINE='1',
                HF_DATASETS_OFFLINE='1', AWS_EC2_METADATA_DISABLED='true',
                PIP_CONFIG_FILE=os.devnull, PIP_DISABLE_PIP_VERSION_CHECK='1',
@@ -292,6 +293,8 @@ def build(source, prefix, spec, env, run=None):
     index = ['--index-url', 'https://pypi.org/simple', '--no-config', '--keyring-provider', 'disabled']
 
     def locked_install(input_file, lock, target):
+        print('uv-Downloadbudget: HTTP-Lesen 300s, Verbindung 30s, hoechstens 3 HTTP-Wiederholungen, '
+              '2 parallele Downloads; Prozesslimit weiterhin 7200s. Kein Index-/TLS-/Hash-Fallback.', flush=True)
         runner([uv, 'pip', 'compile', str(input_file), '--python', str(target),
                 '--generate-hashes', '--only-binary', ':all:', '--output-file', str(lock), *index], prefix, child)
         runner([uv, 'pip', 'install', '--python', str(target), '--require-hashes',

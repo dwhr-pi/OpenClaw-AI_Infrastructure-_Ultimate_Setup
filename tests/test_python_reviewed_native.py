@@ -53,6 +53,47 @@ class ReviewedPythonTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'Quellhash'):
                     helper.verify_source(source, recipe)
 
+    def test_download_budgets_are_fixed_and_do_not_inherit_unsafe_uv_settings(self):
+        injected = {'UV_HTTP_TIMEOUT': '999999', 'UV_HTTP_CONNECT_TIMEOUT': '0',
+                    'UV_HTTP_RETRIES': '9999', 'UV_CONCURRENT_DOWNLOADS': '1000',
+                    'UV_INSECURE_HOST': 'files.pythonhosted.org', 'UV_NATIVE_TLS': '0',
+                    'HTTPS_PROXY': 'https://not-used', 'UV_EXTRA_INDEX_URL': 'https://not-used'}
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, injected):
+            env = helper.environment(Path(directory))
+        self.assertEqual(env['UV_HTTP_TIMEOUT'], '300')
+        self.assertEqual(env['UV_HTTP_CONNECT_TIMEOUT'], '30')
+        self.assertEqual(env['UV_HTTP_RETRIES'], '3')
+        self.assertEqual(env['UV_CONCURRENT_DOWNLOADS'], '2')
+        for key in ('UV_INSECURE_HOST', 'UV_NATIVE_TLS', 'HTTPS_PROXY', 'UV_EXTRA_INDEX_URL'):
+            self.assertNotIn(key, env)
+
+    def test_resolver_timeout_does_not_retry_build_or_write_success_receipt(self):
+        spec = next(spec for spec in self.specs() if spec['id'] == 'ragas')
+        calls = []
+        def run(args, cwd, env):
+            calls.append(args)
+            self.assertEqual(env['UV_HTTP_TIMEOUT'], '300')
+            self.assertEqual(env['UV_CONCURRENT_DOWNLOADS'], '2')
+            if args[1:3] == ['pip', 'compile']:
+                self.assertIn('--generate-hashes', args)
+                self.assertIn('--only-binary', args)
+                self.assertIn('https://pypi.org/simple', args)
+                self.assertNotIn('--allow-insecure-host', args)
+                raise subprocess.TimeoutExpired(args, 7200)
+        with tempfile.TemporaryDirectory() as directory:
+            prefix = Path(directory) / 'native'
+            source = prefix / 'source'
+            source.mkdir(parents=True)
+            with patch.object(helper, 'verify_source'), patch.object(helper.native_uv, 'select', return_value='/uv'), \
+                    patch.object(helper, 'select_python', return_value='/python'), \
+                    patch.object(helper, 'execute') as probe:
+                with self.assertRaises(subprocess.TimeoutExpired):
+                    helper.build(source, prefix, spec, {}, run=run)
+                probe.assert_not_called()
+            self.assertEqual(sum(args[1:3] == ['pip', 'compile'] for args in calls), 1)
+            self.assertFalse((prefix / 'python-build-receipt.json').exists())
+            self.assertFalse((prefix / 'python-sbom.cdx.json').exists())
+
     def test_incomplete_wheels_fail_closed(self):
         with tempfile.TemporaryDirectory() as directory:
             wheel = Path(directory) / 'fixture.whl'

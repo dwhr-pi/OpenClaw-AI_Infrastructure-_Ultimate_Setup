@@ -5093,22 +5093,26 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_python_reviewed_native.py:46`
   Prueffall: `test_source_mismatch_prevents_execution`
 - `tests/test_python_reviewed_native.py:56`
+  Prueffall: `test_download_budgets_are_fixed_and_do_not_inherit_unsafe_uv_settings`
+- `tests/test_python_reviewed_native.py:70`
+  Prueffall: `test_resolver_timeout_does_not_retry_build_or_write_success_receipt`
+- `tests/test_python_reviewed_native.py:97`
   Prueffall: `test_incomplete_wheels_fail_closed`
-- `tests/test_python_reviewed_native.py:65`
+- `tests/test_python_reviewed_native.py:106`
   Prueffall: `test_probe_is_bounded_and_never_cli_execution`
-- `tests/test_python_reviewed_native.py:80`
+- `tests/test_python_reviewed_native.py:121`
   Prueffall: `test_import_guard_preserves_popen_types_and_blocks_cached_process_calls`
-- `tests/test_python_reviewed_native.py:109`
-  Prueffall: `test_failed_probe_logs_traceback_without_credential_shaped_values`
-- `tests/test_python_reviewed_native.py:122`
-  Prueffall: `test_timeout_diagnostics_are_bounded_and_decode_bytes`
-- `tests/test_python_reviewed_native.py:135`
-  Prueffall: `test_build_runner_streams_with_shared_timeout`
-- `tests/test_python_reviewed_native.py:141`
-  Prueffall: `test_explicit_unsupported_python_never_downloads`
 - `tests/test_python_reviewed_native.py:150`
+  Prueffall: `test_failed_probe_logs_traceback_without_credential_shaped_values`
+- `tests/test_python_reviewed_native.py:163`
+  Prueffall: `test_timeout_diagnostics_are_bounded_and_decode_bytes`
+- `tests/test_python_reviewed_native.py:176`
+  Prueffall: `test_build_runner_streams_with_shared_timeout`
+- `tests/test_python_reviewed_native.py:182`
+  Prueffall: `test_explicit_unsupported_python_never_downloads`
+- `tests/test_python_reviewed_native.py:191`
   Prueffall: `test_missing_python_requires_explicit_consent`
-- `tests/test_python_reviewed_native.py:157`
+- `tests/test_python_reviewed_native.py:198`
   Prueffall: `test_build_rejects_wrong_source_layout`
 
 ## tests/test_queue_safety.py
@@ -6854,4 +6858,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3068**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3070**. Kein Nachweis bestandener Tests.

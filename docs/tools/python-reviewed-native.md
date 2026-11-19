@@ -36,6 +36,25 @@ Phoenix startet keinen HTTP-/Tracing-Dienst. Auth, Datenbank, Trace-Redaction un
 
 ## Pruefung und Lifecycle
 
+### Langsame Paketdownloads (19.11.2026)
+
+Der gemeldete Ragas-Lauf scheiterte beim Wheel-Download von `hf-xet==1.8.0`
+auf `files.pythonhosted.org` durch einen HTTP-Timeout, nicht durch einen belegten
+Python-Kompatibilitaetsfehler. Der gemeinsame Installer fuer Ragas, Phoenix und Checkov
+setzt jetzt feste uv-Budgets: 300 Sekunden HTTP-Lesezeitlimit, 30 Sekunden Verbindungsaufbau,
+hoechstens drei HTTP-Wiederholungen und zwei statt vier parallele Downloads.
+Die Werte erscheinen im Installationsprotokoll; geerbte uv-Netzwerkoptionen werden nicht uebernommen.
+Diese Parameter sind in der [offiziellen uv-Referenz](https://docs.astral.sh/uv/reference/environment/)
+dokumentiert. Das Prozesslimit bleibt 7200 Sekunden je Buildschritt, nicht je Gesamtinstallation.
+Keine zusaetzliche Wiederholung des gesamten Builds, kein unsicherer Mirror, TLS-Bypass
+oder Verzicht auf `--require-hashes` und reine Wheel-Abhaengigkeiten.
+Ein weiterhin nicht erreichbarer Paketserver bleibt ein Fehler; die Aenderung garantiert
+keinen Download bei DNS-/Netzausfall. Kein Modell-Download oder Provider-Aufruf.
+Offline-Tests pruefen die Budgets, Umgebungsfilterung und den Abbruch ohne Erfolgsnachweis;
+die erneute Installation unter WSL ist separat zu testen.
+
+### Lifecycle-Befehle
+
 ```bash
 bash scripts/tools/phoenix_status.sh
 bash scripts/tools/phoenix_doctor.sh
