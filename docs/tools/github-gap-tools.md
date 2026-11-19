@@ -71,17 +71,29 @@ Ein Neustart eines alten WSL-Checkouts uebernimmt keine gepushten GitHub-Dateien
 Der korrigierte Helfer protokolliert `Gesamtzeitbudget` und `Versuch 1 von 2`.
 Keine stille Aktualisierung unsignierter Teststaende oder signierter Releases.
 
-### Mousai: langsame Uebertragung und curl 28
+### Mousai/Phoenix: langsame Uebertragung und curl 28
 
 Das Protokoll vom 18.11.2026 meldete `Operation too slow`, danach `early EOF`.
 Dies ist ein abgebrochener Git-Transport, kein nachgewiesener Compilerfehler.
 Die bestehende Grenze von insgesamt zwei Versuchen wird nicht erhoeht.
 Nur nach explizit erkannter zu langsamer Uebertragung wird beim letzten Versuch
-die Mindestdatenrate von 1024 auf 128 Bytes/s gesenkt. Das Stillstandsfenster
-bleibt 120 Sekunden; beide Versuche teilen weiterhin das Gesamtbudget von
+die Mindestdatenrate von 1024 auf 128 Bytes/s gesenkt. Seit der Folgekorrektur
+vom 19.11.2026 erhaelt nur dieser letzte Versuch ein Stillstandsfenster von
+300 statt 120 Sekunden, begrenzt durch das verbleibende Prozessbudget.
+Beide Versuche teilen weiterhin das Gesamtbudget von
 standardmaessig 900 Sekunden. Kein neuer Host, Mirror oder Commit, keine neue
 TLS-/Credentialfreigabe. Anmelde-, Zertifikats- und Pinfehler bleiben blockierend,
 auch wenn ihre Ausgabe zusaetzlich Transportfehler enthaelt.
+
+Der Phoenix-Bericht vom 19.11.2026 zeigt, dass auch 128 Bytes/s mit 120 Sekunden
+nach serverseitiger Objektkomprimierung abbrachen (`curl 28`, `bad pack header`).
+Damit ist kein Phoenix-/Python-Buildfehler belegt. Das laengere letzte Fenster
+kann verzoegerte Pack-Uebertragung tolerieren, garantiert aber keine Reparatur.
+Die beiden Git-Optionen sind in der
+[offiziellen Git-Konfiguration](https://git-scm.com/docs/git-config#Documentation/git-config.txt-httplowSpeedLimit)
+beschrieben. Auch wenn weniger als 300 Sekunden uebrig sind, gilt nur das Restbudget.
+Bei erneutem Abbruch nennt das Log die Transportgrenze; kein dritter Versuch,
+kein unvollstaendiges Archiv als Ersatz und keine automatische DNS-/WSL-Aenderung.
 
 Die Anpassung kann langsame Verbindungen tolerieren, repariert aber keine
 unterbrochene Internetverbindung. Bei erneutem Fehler bleiben Checkout und

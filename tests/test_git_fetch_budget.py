@@ -71,7 +71,7 @@ class GitFetchBudget(unittest.TestCase):
             self.assertEqual(first.kwargs['timeout'], 900)
             self.assertEqual(second.kwargs['timeout'], 450)
 
-    def test_slow_transfer_retry_changes_only_floor_with_same_deadline(self):
+    def test_slow_transfer_retry_changes_only_floor_and_window_with_same_deadline(self):
         error = subprocess.CalledProcessError(128, 'fixture', output=(
             b'error: RPC failed; curl 28 Operation too slow. '
             b'Less than 1024 bytes/sec transferred the last 120 seconds\nfatal: early EOF'))
@@ -81,23 +81,39 @@ class GitFetchBudget(unittest.TestCase):
                 redirect_stdout(io.StringIO()) as output:
             self.assertEqual(self.fetch(), 'ok')
         first, second = run.call_args_list
-        expected = ['http.lowSpeedLimit=128' if item == 'http.lowSpeedLimit=1024' else item
+        fallback = {'http.lowSpeedLimit=1024': 'http.lowSpeedLimit=128',
+                    'http.lowSpeedTime=120': 'http.lowSpeedTime=300'}
+        expected = [fallback.get(item, item)
                     for item in first.args[0]]
         self.assertEqual(second.args[0], expected)
         self.assertIn('http.lowSpeedLimit=1024', first.args[0])
-        self.assertIn('http.lowSpeedTime=120', second.args[0])
+        self.assertIn('http.lowSpeedTime=120', first.args[0])
+        self.assertIn('http.lowSpeedTime=300', second.args[0])
         self.assertEqual(second.args[0][-1], PIN)
         self.assertEqual(first.args[1:], second.args[1:])
         self.assertEqual(second.kwargs['timeout'], 772)
         self.assertIn('128 Bytes/s', output.getvalue())
+        self.assertIn('300s im Restbudget', output.getvalue())
+
+    def test_extended_stall_window_never_extends_remaining_total_budget(self):
+        error = subprocess.CalledProcessError(128, 'fixture', stderr='curl 28 Operation too slow')
+        with patch.dict(os.environ, {}, clear=True), \
+                patch.object(helper.time, 'monotonic', side_effect=[0, 0, 700, 700]), \
+                patch.object(runner, 'run', side_effect=[error, 'ok']) as run, redirect_stdout(io.StringIO()):
+            self.assertEqual(self.fetch(), 'ok')
+        self.assertEqual(run.call_count, 2)
+        self.assertIn('http.lowSpeedTime=300', run.call_args.args[0])
+        self.assertEqual(run.call_args.kwargs['timeout'], 200)
+        self.assertEqual(run.call_args.args[0][-1], PIN)
 
     def test_slow_second_attempt_is_final_and_expiry_never_retries(self):
         error = subprocess.CalledProcessError(128, 'fixture', stderr='Operation too slow')
         with patch.dict(os.environ, {}, clear=True), patch.object(runner, 'run', side_effect=error) as run, \
-                redirect_stdout(io.StringIO()):
+                redirect_stdout(io.StringIO()) as output:
             with self.assertRaises(subprocess.CalledProcessError):
                 self.fetch()
         self.assertEqual(run.call_count, 2)
+        self.assertIn('kein weiterer Versuch', output.getvalue())
         with patch.dict(os.environ, {}, clear=True), \
                 patch.object(helper.time, 'monotonic', side_effect=[0, 0, 901]), \
                 patch.object(runner, 'run', side_effect=error) as run, redirect_stdout(io.StringIO()):

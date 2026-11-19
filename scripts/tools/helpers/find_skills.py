@@ -120,13 +120,19 @@ def git(source, *args):
                         'curl 92', 'operation too slow', 'connection reset',
                         'remote end hung up unexpectedly', 'early eof'))))
                 if attempt or not transient or time.monotonic() >= deadline:
+                    if slow_transfer and not permanent:
+                        print('Git-Transport bleibt zu langsam/unterbrochen; kein weiterer Versuch.'
+                              ' Kein Python-/Modellfehler und kein Erfolgsnachweis.'
+                              ' Netzwerk/Proxy separat pruefen; keine Systemaenderung vorgenommen.', flush=True)
                     raise
                 if slow_transfer:
-                    # Relax only the throughput floor, never the total deadline or trust checks.
-                    command = ['http.lowSpeedLimit=128' if value == 'http.lowSpeedLimit=1024' else value
+                    # Tolerate delayed pack production without extending the shared deadline.
+                    fallback = {'http.lowSpeedLimit=1024': 'http.lowSpeedLimit=128',
+                                'http.lowSpeedTime=120': 'http.lowSpeedTime=300'}
+                    command = [fallback.get(value, value)
                                for value in command]
                     print('Langsame Git-Uebertragung: letzter Versuch mit mindestens 128 Bytes/s'
-                          ' statt 1024 Bytes/s; Stillstandsfenster bleibt 120s.'
+                          ' statt 1024 Bytes/s; Stillstandsfenster hoechstens 300s im Restbudget.'
                           ' Identischer Pin/Host, unveraendertes Gesamtzeitbudget und TLS-Pruefung.', flush=True)
                 if dns_failure:
                     # Back off only within the same total budget; never replace the resolver.
