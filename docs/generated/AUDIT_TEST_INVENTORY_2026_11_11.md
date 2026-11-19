@@ -2972,15 +2972,21 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 - `tests/test_litellm_rust_bootstrap.py:47`
   Prueffall: `test_no_consent_no_download_or_mutation`
-- `tests/test_litellm_rust_bootstrap.py:57`
+- `tests/test_litellm_rust_bootstrap.py:59`
   Prueffall: `test_explicit_invalid_path_never_bootstraps`
-- `tests/test_litellm_rust_bootstrap.py:63`
+- `tests/test_litellm_rust_bootstrap.py:65`
   Prueffall: `test_success_reuse_and_private_environment`
-- `tests/test_litellm_rust_bootstrap.py:72`
+- `tests/test_litellm_rust_bootstrap.py:74`
+  Prueffall: `test_vaultwarden_has_separate_pin_and_reuses_verified_private_toolchain`
+- `tests/test_litellm_rust_bootstrap.py:89`
+  Prueffall: `test_vaultwarden_changed_pin_is_not_bootstrapped`
+- `tests/test_litellm_rust_bootstrap.py:95`
+  Prueffall: `test_vaultwarden_invalid_explicit_path_never_downloads`
+- `tests/test_litellm_rust_bootstrap.py:103`
   Prueffall: `test_failed_download_cleans_only_its_staging`
-- `tests/test_litellm_rust_bootstrap.py:84`
+- `tests/test_litellm_rust_bootstrap.py:115`
   Prueffall: `test_partial_or_changed_slot_is_not_overwritten`
-- `tests/test_litellm_rust_bootstrap.py:94`
+- `tests/test_litellm_rust_bootstrap.py:125`
   Prueffall: `test_corrupt_payload_not_executed`
 
 ## tests/test_local_ai_benchmarks.py
@@ -3660,24 +3666,28 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_native_build_deps.py:109`
   Prueffall: `test_zap_jdk_decline_and_arbitrary_package_override`
 - `tests/test_native_build_deps.py:117`
+  Prueffall: `test_vaultwarden_installs_only_approved_build_packages`
+- `tests/test_native_build_deps.py:132`
+  Prueffall: `test_vaultwarden_package_override_is_rejected_without_apt`
+- `tests/test_native_build_deps.py:138`
   Prueffall: `test_non_ubuntu_explicit_apt_is_refused_but_manual_build_is_allowed`
-- `tests/test_native_build_deps.py:124`
+- `tests/test_native_build_deps.py:145`
   Prueffall: `test_dry_run_with_explicit_flag_does_not_prepare_anything`
-- `tests/test_native_build_deps.py:131`
+- `tests/test_native_build_deps.py:152`
   Prueffall: `test_storage_failure_is_logged_before_dependency_install_and_fetch`
-- `tests/test_native_build_deps.py:151`
+- `tests/test_native_build_deps.py:172`
   Prueffall: `test_rust_and_native_compilers_are_required_up_front`
-- `tests/test_native_build_deps.py:154`
+- `tests/test_native_build_deps.py:175`
   Prueffall: `test_missing_cc_requires_consent_before_any_apt`
-- `tests/test_native_build_deps.py:160`
+- `tests/test_native_build_deps.py:181`
   Prueffall: `test_existing_native_toolchain_never_installs_packages`
-- `tests/test_native_build_deps.py:167`
+- `tests/test_native_build_deps.py:188`
   Prueffall: `test_consent_installs_only_native_build_dependencies`
-- `tests/test_native_build_deps.py:184`
+- `tests/test_native_build_deps.py:205`
   Prueffall: `test_installed_packages_but_broken_path_fails_without_apt`
-- `tests/test_native_build_deps.py:190`
+- `tests/test_native_build_deps.py:211`
   Prueffall: `test_unknown_package_override_is_rejected`
-- `tests/test_native_build_deps.py:196`
+- `tests/test_native_build_deps.py:217`
   Prueffall: `test_refusal_stops_preflight_before_uv_or_source_download`
 
 ## tests/test_native_build_process.py
@@ -5572,31 +5582,33 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_version_runner_bounded_no_stdin`
 - `tests/test_security_data_native.py:59`
   Prueffall: `test_rust_no_implicit_bootstrap`
-- `tests/test_security_data_native.py:63`
+- `tests/test_security_data_native.py:64`
+  Prueffall: `test_vaultwarden_build_selects_exact_private_rust_without_bootstrap`
+- `tests/test_security_data_native.py:81`
   Prueffall: `test_gradle_requires_consent_before_download`
-- `tests/test_security_data_native.py:71`
+- `tests/test_security_data_native.py:89`
   Prueffall: `test_gradle_private_bootstrap_reuse_and_tamper`
-- `tests/test_security_data_native.py:95`
+- `tests/test_security_data_native.py:113`
   Prueffall: `test_gradle_failed_hash_does_not_publish`
-- `tests/test_security_data_native.py:104`
+- `tests/test_security_data_native.py:122`
   Prueffall: `test_gradle_contract_change_rejected_before_download`
-- `tests/test_security_data_native.py:112`
+- `tests/test_security_data_native.py:130`
   Prueffall: `test_gradle_existing_exact_version_without_download`
-- `tests/test_security_data_native.py:119`
+- `tests/test_security_data_native.py:137`
   Prueffall: `test_zap_java_prerequisites_use_consent_gated_package_path`
-- `tests/test_security_data_native.py:127`
-  Prueffall: `test_zap_existing_jdk_sets_private_build_environment_only`
 - `tests/test_security_data_native.py:145`
+  Prueffall: `test_zap_existing_jdk_sets_private_build_environment_only`
+- `tests/test_security_data_native.py:163`
   Prueffall: `test_elf_probe_no_subprocess`
-- `tests/test_security_data_native.py:160`
+- `tests/test_security_data_native.py:178`
   Prueffall: `test_zap_jar_probe`
-- `tests/test_security_data_native.py:170`
+- `tests/test_security_data_native.py:188`
   Prueffall: `test_doctor_detects_modified_files`
-- `tests/test_security_data_native.py:182`
-  Prueffall: `test_external_artifact_link_rejected`
-- `tests/test_security_data_native.py:193`
-  Prueffall: `test_write_never_overwrites`
 - `tests/test_security_data_native.py:200`
+  Prueffall: `test_external_artifact_link_rejected`
+- `tests/test_security_data_native.py:211`
+  Prueffall: `test_write_never_overwrites`
+- `tests/test_security_data_native.py:218`
   Prueffall: `test_vaultwarden_command_and_scope`
 
 ## tests/test_setup_shell_contracts.py
@@ -6858,4 +6870,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3070**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3076**. Kein Nachweis bestandener Tests.

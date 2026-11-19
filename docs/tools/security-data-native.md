@@ -8,8 +8,8 @@ Der zentrale Merger integriert die drei `candidate-native`-Rezepte.
 Modul: `scripts/tools/helpers/security_data_native.py`.
 
 - `preflight(outer, spec, approved=False)`: Linux x86_64, Disk/RAM und vorhandene
-  Werkzeuge pruefen; fuer ZAP erlaubt `approved` die unten beschriebene JDK-/Gradle-Buildbasis.
-  Milvus und Vaultwarden erhalten dadurch keinen zusaetzlichen Downloadpfad.
+  Werkzeuge pruefen; fuer ZAP und Vaultwarden erlaubt `approved` die unten beschriebene Buildbasis.
+  Milvus erhaelt dadurch keinen zusaetzlichen Downloadpfad.
 - `build(source, prefix, spec, env, run=None)`: `source == prefix/source`, voller
   Git-Pin/Origin und SHA256-Quellvertraege; Rueckgabe aller prefix-relativen
   Artefakt-/Konfigurations-/Nachweispfade. Optionaler Runner: `(args,cwd,env)`
@@ -22,8 +22,8 @@ Der Default-Buildrunner beendet nach 14400 Sekunden die Prozessgruppe. Ein
 injizierter Runner muss das gleiche begrenzte Fehler-/Abbruchverhalten bieten.
 Builds duerfen Quell-/Paketserver kontaktieren; Diagnose und Probes nicht.
 Kein Docker-, Podman-, rustup- oder Wrapper-Download-Fallback.
-Die ZAP-Buildbasis wird ausschliesslich im freigegebenen Vorbereitungsschritt eingerichtet;
-der Build selbst installiert keine Systempakete und laedt kein Gradle nach.
+Die ZAP-/Vaultwarden-Buildbasis wird ausschliesslich im freigegebenen Vorbereitungsschritt eingerichtet;
+der Build selbst installiert keine Systempakete und laedt keine Toolchain nach.
 Git-/Paket-Zugangsdaten und geerbte Anwendungsvariablen werden nicht uebernommen.
 
 ## Pins und Umfang
@@ -67,9 +67,28 @@ Commit `6ed6921cc2b0e03b4d74189574d2a5e71c512e97`, AGPL-3.0-only.
 [Rust-Pin](https://github.com/dani-garcia/vaultwarden/blob/6ed6921cc2b0e03b4d74189574d2a5e71c512e97/rust-toolchain.toml)
 und [Features](https://github.com/dani-garcia/vaultwarden/blob/6ed6921cc2b0e03b4d74189574d2a5e71c512e97/Cargo.toml).
 
-Rust 1.99.1 separat vorhanden, C-Compiler, pkg-config, Perl, OpenSSL-Entwicklung
-und System-C-Laufzeit; 12 GiB Disk und 4 GiB verfuegbarer RAM. Rust-Auswahl wie
-oben per absolutem `NATIVE_SOURCE_RUST_TOOLCHAIN`. `cargo build --locked --release
+Rust 1.99.1, C-Compiler, pkg-config, Perl, OpenSSL-Entwicklung und System-C-Laufzeit;
+12 GiB Disk und 4 GiB verfuegbarer RAM. Seit 19.11.2026 richtet der Installer fehlende
+Buildvoraussetzungen nach Zustimmung im Setup-Dialog selbst ein. CLI-Freigabe:
+`bash scripts/tools/vaultwarden_install.sh --install-build-deps`.
+Debian-/Ubuntu-Familie einschliesslich Ubuntu 26 und DietPi: ausschliesslich
+`build-essential`, `pkg-config`, `perl`, `libssl-dev` aus vorhandenen apt-Quellen;
+abweichende Basen erhalten vor der Installation eine Paketaufloesungssimulation.
+
+Ein vorhandenes passendes Rust wird bevorzugt. Sonst installiert der private Bootstrap
+Rust 1.99.1 unter `toolchain/rust-1.99.1-linux-amd64`, getrennt von Rust 1.98.0 anderer Tools.
+Quelle ist ausschliesslich `static.rust-lang.org`; der bestehende Bootstrap prueft
+Dateigroesse/SHA256 von `rustup-init` 1.29.2 vor Ausfuehrung, danach rustc-/Cargo-Version,
+sysroot und das lokale Dateiinventar. Rustup prueft die Distributionskomponenten beim Download;
+dies ersetzt keinen eigenen, vollstaendig vendorten Toolchain-Lock.
+Zusaetzliche Speicherreserve: 2 GiB, also 14 GiB vor dem Rust-Bootstrap, auch auf dem WSL-Host.
+Kein System-Rust-/Default-/Shell-PATH-Wechsel; `--no-modify-path` und private Cargo-/Rustup-Verzeichnisse.
+Ein explizites `NATIVE_SOURCE_RUST_TOOLCHAIN` muss gueltig sein und wird nie still ersetzt.
+Ohne Zustimmung, bei Hash-/Versionsfehlern oder veraendertem privatem Bestand wird abgebrochen.
+Buildwerkzeuge bleiben bei App-Deinstallation erhalten; vorhandene Daten werden nicht entfernt.
+Offline-Fixtures ersetzen keinen erfolgreichen WSL-Quellbuild.
+
+`cargo build --locked --release
 --no-default-features --features sqlite --bin vaultwarden`; SQLite wird gebuendelt.
 Kein PostgreSQL/MySQL, keine Datenbankanlage oder Migration.
 

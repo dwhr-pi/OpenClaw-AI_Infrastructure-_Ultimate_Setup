@@ -57,8 +57,26 @@ class CandidateTests(unittest.TestCase):
             self.assertEqual(run.call_args.kwargs['stdin'], native.subprocess.DEVNULL)
 
     def test_rust_no_implicit_bootstrap(self):
-        with patch.dict(os.environ, {'NATIVE_SOURCE_RUST_TOOLCHAIN': ''}), self.assertRaises(ValueError):
+        with patch.dict(os.environ, {'NATIVE_SOURCE_RUST_TOOLCHAIN': ''}), \
+                patch.object(native.litellm_rust, 'select', side_effect=ValueError('missing')), self.assertRaises(ValueError):
             native.rust_environment(SPECS['vaultwarden'], {}, Path.cwd())
+
+    def test_vaultwarden_build_selects_exact_private_rust_without_bootstrap(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            root = base / 'private-rust'
+            (root / 'bin').mkdir(parents=True)
+            for name in ('rustc', 'cargo'):
+                (root / 'bin' / name).write_bytes(b'fixture')
+            env = {'PATH': 'original'}
+            with patch.object(native.litellm_rust, 'select', return_value=root) as select, \
+                    patch.object(native, 'versions', return_value='rustc 1.99.1 (fixture)'), \
+                    patch.object(native.litellm_rust_bootstrap, 'prepare') as bootstrap:
+                native.rust_environment(SPECS['vaultwarden'], env, base / 'native-github', toolchain_base=base)
+                select.assert_called_once_with(base, version='1.99.1')
+                bootstrap.assert_not_called()
+                self.assertEqual(env['RUSTUP_AUTO_INSTALL'], '0')
+                self.assertEqual(env['RUSTUP_TOOLCHAIN'], str(root))
 
     def test_gradle_requires_consent_before_download(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(native.shutil, 'which', return_value=None), \

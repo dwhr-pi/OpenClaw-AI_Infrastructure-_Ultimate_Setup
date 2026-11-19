@@ -16,6 +16,8 @@ import gap_tools as common
 import native_build_process
 import native_build_deps
 import webinar_releases as releases
+import litellm_rust
+import litellm_rust_bootstrap
 
 IDS = {'milvus', 'vaultwarden', 'owasp_zap'}
 GRADLE_SHA256 = 'fba8464465835e74f7270bbf43d6d8a8d7709ab0a43ce1aa3323f73e9aa0c612'
@@ -74,8 +76,9 @@ def versions(args, cwd, env):
     return (result.stdout + result.stderr).strip()
 
 
-def rust_environment(spec, env, cwd):
-    root = Path(os.environ.get('NATIVE_SOURCE_RUST_TOOLCHAIN', ''))
+def rust_environment(spec, env, cwd, toolchain_base=None):
+    root = (litellm_rust.select(toolchain_base or cwd, version=spec['recipe']['rust_exact'])
+            if spec['id'] == 'vaultwarden' else Path(os.environ.get('NATIVE_SOURCE_RUST_TOOLCHAIN', '')))
     if not root.is_absolute() or not (root / 'bin/rustc').is_file() or not (root / 'bin/cargo').is_file():
         raise ValueError('NATIVE_SOURCE_RUST_TOOLCHAIN: vorhandene absolute Rust-Toolchain erforderlich; kein rustup-Download.')
     env.update(RUSTUP_TOOLCHAIN=str(root), RUSTUP_AUTO_INSTALL='0',
@@ -161,7 +164,7 @@ def zap_gradle(base, spec, env, approved=False, prepare=False):
     env['PATH'] = str(binary.parent) + os.pathsep + env.get('PATH', '')
 
 
-def tool_versions(outer, spec, env):
+def tool_versions(outer, spec, env, toolchain_base=None):
     value = recipe(spec)
     observed = {}
     for name in value['tools']:
@@ -173,7 +176,7 @@ def tool_versions(outer, spec, env):
             flag = 'version'
         observed[name] = versions([executable, flag], outer, env)
     if spec['id'] in ('milvus', 'vaultwarden'):
-        observed['rustc'] = rust_environment(spec, env, outer)
+        observed['rustc'] = rust_environment(spec, env, outer, toolchain_base)
     if spec['id'] == 'milvus':
         if 'Conan version 2.25.1' != observed['conan']:
             raise ValueError('Conan 2.25.1 erforderlich.')
@@ -215,10 +218,13 @@ def preflight(outer, spec, approved=False):
         raise ValueError('Dieser Milvus-x86_64-Build benoetigt AVX.')
     env = {k: v for k, v in os.environ.items() if k in ('PATH', 'LANG', 'LC_ALL')}
     env.update(GOTOOLCHAIN='local', GOENV='off', RUSTUP_AUTO_INSTALL='0')
+    if spec['id'] == 'vaultwarden':
+        native_build_deps.prepare(spec, approved=approved)
+        litellm_rust_bootstrap.prepare(outer, spec, approved=approved)
     if spec['id'] == 'owasp_zap':
         zap_java(outer, spec, env, approved=approved, prepare=True)
         zap_gradle(outer, spec, env, approved=approved, prepare=True)
-    return tool_versions(existing, spec, env)
+    return tool_versions(existing, spec, env, toolchain_base=outer)
 
 
 def verify_source(source, spec):
@@ -424,7 +430,7 @@ def build(source, prefix, spec, env, run=None):
     if spec['id'] == 'owasp_zap':
         zap_java(prefix.parent, spec, env)
         zap_gradle(prefix.parent, spec, env)
-    observed = tool_versions(prefix, spec, env)
+    observed = tool_versions(prefix, spec, env, toolchain_base=prefix.parent)
     executor = run or (lambda args, cwd, env: native_build_process.run(args, cwd, env, timeout=14400))
     entries, components = {'milvus': milvus, 'vaultwarden': vaultwarden, 'owasp_zap': zap}[spec['id']](
         source, prefix, spec, env, executor)

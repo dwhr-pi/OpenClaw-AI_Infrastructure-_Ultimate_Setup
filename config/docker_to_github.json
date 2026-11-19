@@ -3619,7 +3619,7 @@
           "LICENSE.txt": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef"
         },
         "scope": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation",
-        "note": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+        "note": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation. Vorhandenes Rust 1.99.1 bevorzugt; nach Zustimmung private offizielle Rust-Basis und Debian-/Ubuntu-Buildpakete, kein System-Rust-Wechsel. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
         "probe_strategy": "static-artifact-only; security_data_native.doctor(prefix,spec); runtime exit 3"
       }
     },

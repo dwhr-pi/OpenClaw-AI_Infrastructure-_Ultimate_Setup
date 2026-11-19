@@ -5672,7 +5672,7 @@
       "source_verified": true,
       "source_commit": "6ed6921cc2b0e03b4d74189574d2a5e71c512e97",
       "license": "AGPL-3.0-only",
-      "description": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+      "description": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation. Vorhandenes Rust 1.99.1 bevorzugt; nach Zustimmung private offizielle Rust-Basis und Debian-/Ubuntu-Buildpakete, kein System-Rust-Wechsel. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
       "check_script": "scripts/tools/vaultwarden_check.sh"
     },
     {

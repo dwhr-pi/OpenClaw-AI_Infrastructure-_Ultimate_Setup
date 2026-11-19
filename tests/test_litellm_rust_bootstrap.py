@@ -37,8 +37,8 @@ class PrivateRustTests(unittest.TestCase):
         if '--version' in args:
             return 'rustup-init 1.29.2 (fixture)'
         self.assertIn('--no-modify-path', args)
-        self.assertEqual(args[-1], bootstrap.rust.VERSION)
-        root = Path(env['RUSTUP_HOME']) / 'toolchains' / (bootstrap.rust.VERSION + '-x86_64-unknown-linux-gnu')
+        self.assertIn(args[-1], (bootstrap.rust.VERSION, '1.99.1'))
+        root = Path(env['RUSTUP_HOME']) / 'toolchains' / (args[-1] + '-x86_64-unknown-linux-gnu')
         (root / 'bin').mkdir(parents=True)
         for name in ('cargo', 'rustc'):
             (root / 'bin' / name).write_bytes(b'fixture')
@@ -47,6 +47,8 @@ class PrivateRustTests(unittest.TestCase):
     def test_no_consent_no_download_or_mutation(self):
         for key in bootstrap.SUPPORTED:
             spec = {**self.spec, 'id': key}
+            if key == 'vaultwarden':
+                spec['recipe'] = {**spec['recipe'], 'rust_exact': '1.99.1'}
             with self.subTest(tool=key), patch.object(bootstrap, 'download') as download, patch.object(bootstrap.common, 'run') as run:
                 with self.assertRaisesRegex(ValueError, 'nicht freigegeben'):
                     bootstrap.prepare(self.base, spec)
@@ -61,13 +63,42 @@ class PrivateRustTests(unittest.TestCase):
         download.assert_not_called()
 
     def test_success_reuse_and_private_environment(self):
-        with patch.object(bootstrap, 'download', side_effect=self.fake_download) as download, patch.object(bootstrap.common, 'run', side_effect=self.fake_run), patch.object(bootstrap.common, 'reserve') as reserve, patch.object(bootstrap.rust, 'verify', side_effect=lambda root, cwd: root.resolve()):
+        with patch.object(bootstrap, 'download', side_effect=self.fake_download) as download, patch.object(bootstrap.common, 'run', side_effect=self.fake_run), patch.object(bootstrap.common, 'reserve') as reserve, patch.object(bootstrap.rust, 'verify', side_effect=lambda root, cwd, **_: root.resolve()):
             root = bootstrap.prepare(self.base, self.spec, approved=True)
             self.assertTrue((root / 'bin/cargo').is_file())
             self.assertEqual(bootstrap.prepare(self.base, self.spec), root)
             self.assertEqual(download.call_count, 1)
             reserve.assert_called_once_with(self.base, {'reserve_mb': 10240})
             self.assertFalse(list((self.base / 'toolchain').glob('rust-bootstrap-*')))
+
+    def test_vaultwarden_has_separate_pin_and_reuses_verified_private_toolchain(self):
+        spec = {'id': 'vaultwarden', 'recipe': {'disk_mb': 12288, 'rust_exact': '1.99.1'}}
+        with patch.object(bootstrap, 'download', side_effect=self.fake_download) as download, \
+                patch.object(bootstrap.common, 'run', side_effect=self.fake_run) as run, \
+                patch.object(bootstrap.common, 'reserve') as reserve, \
+                patch.object(bootstrap.rust, 'verify', side_effect=lambda root, cwd, **_: root.resolve()) as verify:
+            root = bootstrap.prepare(self.base, spec, approved=True)
+            self.assertIn('rust-1.99.1-linux-amd64', str(root))
+            self.assertEqual(bootstrap.prepare(self.base, spec), root)
+            self.assertEqual(download.call_count, 1)
+            self.assertEqual(run.call_args.args[0][-1], '1.99.1')
+            self.assertTrue(all(call.kwargs['version'] == '1.99.1' for call in verify.call_args_list))
+            reserve.assert_called_once_with(self.base, {'reserve_mb': 14336})
+            self.assertEqual(bootstrap.rust.VERSION, '1.98.0')
+
+    def test_vaultwarden_changed_pin_is_not_bootstrapped(self):
+        with patch.object(bootstrap, 'download') as download:
+            with self.assertRaisesRegex(ValueError, 'Pin abweichend'):
+                bootstrap.prepare(self.base, {'id': 'vaultwarden', 'recipe': {'rust_exact': 'latest'}}, approved=True)
+            download.assert_not_called()
+
+    def test_vaultwarden_invalid_explicit_path_never_downloads(self):
+        spec = {'id': 'vaultwarden', 'recipe': {'disk_mb': 12288, 'rust_exact': '1.99.1'}}
+        with patch.dict(os.environ, {'NATIVE_SOURCE_RUST_TOOLCHAIN': '/explicit'}), \
+                patch.object(bootstrap, 'download') as download:
+            with self.assertRaises(ValueError):
+                bootstrap.prepare(self.base, spec, approved=True)
+            download.assert_not_called()
 
     def test_failed_download_cleans_only_its_staging(self):
         keep = self.base / 'keep.txt'

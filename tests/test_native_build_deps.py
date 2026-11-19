@@ -114,6 +114,27 @@ class BuildDependencies(unittest.TestCase):
                 deps.prepare({'id': 'owasp_zap', 'recipe': {'apt_build_deps': ['docker.io']}}, approved=True)
             run.assert_not_called()
 
+    def test_vaultwarden_installs_only_approved_build_packages(self):
+        state = {'installed': False}
+        def run(args, cwd, env):
+            if 'install' in args:
+                self.assertEqual(tuple(args[-4:]), deps.VAULTWARDEN_PACKAGES)
+                self.assertNotIn('rustc', args)
+                self.assertNotIn('cargo', args)
+                self.assertNotIn('vaultwarden', args)
+                state['installed'] = True
+        with patch.object(deps, 'installed', side_effect=lambda _: state['installed']), \
+                patch.object(deps.os, 'geteuid', return_value=0, create=True), \
+                patch.object(deps.common, 'run', side_effect=run) as calls:
+            deps.prepare(tools.TOOLS['vaultwarden'], approved=True)
+            self.assertEqual(calls.call_count, 2)
+
+    def test_vaultwarden_package_override_is_rejected_without_apt(self):
+        with patch.object(deps.common, 'run') as run:
+            with self.assertRaisesRegex(ValueError, 'Nicht freigegebene'):
+                deps.prepare({'id': 'vaultwarden', 'recipe': {'apt_build_deps': ['vaultwarden']}}, approved=True)
+            run.assert_not_called()
+
     def test_non_ubuntu_explicit_apt_is_refused_but_manual_build_is_allowed(self):
         with patch.object(deps, "ubuntu_release", return_value=False), patch.object(deps, 'debian_family', return_value=False), patch.object(deps.common, "run") as run, redirect_stdout(io.StringIO()):
             deps.prepare(self.spec)

@@ -19,6 +19,7 @@ SONGREC_COMMANDS = ('cargo', 'rustc', 'cc', 'c++', 'make', 'pkg-config', 'msgfmt
 ESPEAK_PACKAGES = ('cmake', 'build-essential')
 OUTLINES_PACKAGES = ('python3.12', 'python3.12-venv')
 VALKEY_PACKAGES = ('build-essential', 'pkg-config', 'libssl-dev')
+VAULTWARDEN_PACKAGES = ('build-essential', 'pkg-config', 'perl', 'libssl-dev')
 TESTSSL_PACKAGES = ('bash', 'openssl', 'bsdextrautils', 'coreutils', 'gawk', 'grep',
                     'sed', 'procps', 'findutils', 'util-linux')
 SANDBOX_PACKAGES = {
@@ -55,12 +56,15 @@ def installed(package):
 
 def prepare(spec, approved=False):
     packages = spec["recipe"].get("apt_build_deps", [])
+    if spec['id'] == 'vaultwarden' and not packages:
+        packages = VAULTWARDEN_PACKAGES
     name, slug = "Mosquitto", "mosquitto"
     extra = {
         'testssl': ('testssl', TESTSSL_PACKAGES, ('bash', 'openssl', 'hexdump', 'unshare')),
         'valkey': ('Valkey', VALKEY_PACKAGES, ('make', 'cc', 'c++', 'pkg-config')),
         'espeak_ng': ('eSpeak NG', ESPEAK_PACKAGES, ('cmake', 'make', 'cc')),
         'outlines': ('Outlines', OUTLINES_PACKAGES, ()),
+        'vaultwarden': ('Vaultwarden', VAULTWARDEN_PACKAGES, ('cc', 'pkg-config', 'perl')),
     }
     extra.update({key: (key, packages, ('cc', 'make')) for key, packages in SANDBOX_PACKAGES.items()})
     if spec['id'] == 'owasp_zap':
@@ -85,7 +89,7 @@ def prepare(spec, approved=False):
             return
     if not packages:
         return
-    if (spec["id"] not in ("mosquitto", "litellm", "songrec", "espeak_ng", "outlines", "valkey", 'testssl', 'owasp_zap', *SANDBOX_PACKAGES) or
+    if (spec["id"] not in ("mosquitto", "litellm", "songrec", "espeak_ng", "outlines", "valkey", 'testssl', 'owasp_zap', 'vaultwarden', *SANDBOX_PACKAGES) or
             (spec["id"] == "mosquitto" and tuple(packages) != MOSQUITTO_PACKAGES)):
         raise ValueError("Nicht freigegebene Systempaketliste; keine apt-Aktion.")
     release = os_release()

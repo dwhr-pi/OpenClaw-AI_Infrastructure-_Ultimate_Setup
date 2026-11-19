@@ -15,7 +15,7 @@ import litellm_rust as rust
 import webinar_releases as releases
 
 MANAGER_VERSION = '1.29.2'
-SUPPORTED = ('litellm', 'xerj', 'cargo_build_tools')
+SUPPORTED = ('litellm', 'xerj', 'cargo_build_tools', 'vaultwarden')
 ARTIFACTS = {
     'linux-amd64': ('x86_64-unknown-linux-gnu', 21139856,
                     '5be191e8c70a5007074254cb74d78dbfdd25cd5a61c27de7b8e5410122ec24f4'),
@@ -52,42 +52,47 @@ def download(url, target, size, digest):
     target.chmod(0o700)
 
 
-def location(base):
+def location(base, version=rust.VERSION):
     key = releases.host_key()
     if key not in ARTIFACTS:
         raise ValueError('Privates Rust nur fuer Linux amd64/arm64; Rust separat bereitstellen.')
     triple, size, digest = ARTIFACTS[key]
-    slot = common.checked(base / 'toolchain' / ('rust-' + rust.VERSION + '-' + key))
+    slot = common.checked(base / 'toolchain' / ('rust-' + version + '-' + key))
     return slot, triple, size, digest
 
 
-def existing(base):
+def existing(base, version=rust.VERSION):
     if releases.host_key() not in ARTIFACTS:
         return None
-    slot, triple, _, digest = location(base)
+    slot, triple, _, digest = location(base, version)
     if not slot.exists():
         return None
     marker = common.checked(slot / 'rust-ready.json')
     record = json.loads(marker.read_text(encoding='utf-8'))
     files = common.inventory(slot)
     files.pop('rust-ready.json', None)
-    if (record.get('version') != rust.VERSION or record.get('manager_sha256') != digest or
+    if (record.get('version') != version or record.get('manager_sha256') != digest or
             record.get('files') != files):
         raise ValueError('Private Rust-Basis veraendert/unvollstaendig; nichts ueberschreiben oder loeschen.')
-    return rust.verify(common.checked(slot / 'rustup/toolchains' / (rust.VERSION + '-' + triple)), base)
+    return rust.verify(common.checked(slot / 'rustup/toolchains' / (version + '-' + triple)), base, version=version)
 
 
 def prepare(base, spec, approved=False):
     if spec['id'] not in SUPPORTED:
         return None
+    version = rust.VERSION
+    if spec['id'] == 'vaultwarden':
+        version = '1.99.1'
+        if spec['recipe'].get('rust_exact') != version:
+            raise ValueError('Vaultwarden: Rust-Bootstrap-Pin abweichend; kein Download.')
     label = spec.get('name', spec['id'])
     retry = ('bash scripts/install_rust_build_tools.sh install --apply'
              if spec['id'] == 'cargo_build_tools' else
              'bash scripts/tools/' + spec['id'] + '_install.sh --install-build-deps')
     # Explicit user paths must never be silently replaced, even on download consent.
     if os.environ.get('NATIVE_SOURCE_RUST_TOOLCHAIN'):
-        return rust.select(base)
-    private = existing(base)
+        return rust.select(base, version=version)
+    private = existing(base, version)
     if private:
         print(label + ': gepruefte private Rust-Basis wiederverwendet:', private)
         return private
@@ -100,12 +105,12 @@ def prepare(base, spec, approved=False):
                 return private
     if spec['id'] != 'cargo_build_tools':
         try:
-            return rust.select(base)
+            return rust.select(base, version=version)
         except ValueError:
             pass
-    slot, triple, size, digest = location(base)
-    print(label + ': Rust ' + rust.VERSION + ' fehlt. Private Basis moeglich; keine System-/Default-/PATH-Aenderung.')
-    print('Quelle: static.rust-lang.org; rustup-init ' + MANAGER_VERSION + ', feste SHA256; Rust ' + rust.VERSION + '.')
+    slot, triple, size, digest = location(base, version)
+    print(label + ': Rust ' + version + ' fehlt. Private Basis moeglich; keine System-/Default-/PATH-Aenderung.')
+    print('Quelle: static.rust-lang.org; rustup-init ' + MANAGER_VERSION + ', feste SHA256; Rust ' + version + '.')
     print('Ziel:', slot, '; 2048 MiB Puffer zusaetzlich zur Toolreserve. Basis bleibt bei App-Deinstallation erhalten.')
     print('Gezielt erneut starten: ' + retry, flush=True)
     if not approved and sys.stdin.isatty():
@@ -133,19 +138,19 @@ def prepare(base, spec, approved=False):
                    RUSTUP_DIST_SERVER='https://static.rust-lang.org', RUSTUP_UPDATE_ROOT='https://static.rust-lang.org/rustup',
                    RUSTUP_AUTO_INSTALL='0', RUSTUP_IO_THREADS='1', RUSTUP_CONCURRENT_DOWNLOADS='1',
                    RUSTUP_UNPACK_RAM=str(512 * 1024**2))
-        version = common.run([installer, '--version'], stage, env)
-        if not re.fullmatch(r'rustup-init ' + re.escape(MANAGER_VERSION) + r'(?: \([^\n]*\))?', version):
+        manager_version = common.run([installer, '--version'], stage, env)
+        if not re.fullmatch(r'rustup-init ' + re.escape(MANAGER_VERSION) + r'(?: \([^\n]*\))?', manager_version):
             raise ValueError('rustup-init-Version stimmt nicht mit dem Pin ueberein.')
         common.run([installer, '-y', '--no-modify-path', '--profile', 'minimal',
-                    '--default-host', triple, '--default-toolchain', rust.VERSION], stage, env)
-        rust.verify(stage / 'rustup/toolchains' / (rust.VERSION + '-' + triple), stage)
+                    '--default-host', triple, '--default-toolchain', version], stage, env)
+        rust.verify(stage / 'rustup/toolchains' / (version + '-' + triple), stage, version=version)
         installer.unlink()
         if slot.exists():
             raise ValueError('Rust-Ziel inzwischen vorhanden; nichts ueberschreiben.')
         stage.rename(slot)
         published = True
-        root = rust.verify(slot / 'rustup/toolchains' / (rust.VERSION + '-' + triple), base)
-        record = {'version': rust.VERSION, 'manager_sha256': digest, 'files': common.inventory(slot)}
+        root = rust.verify(slot / 'rustup/toolchains' / (version + '-' + triple), base, version=version)
+        record = {'version': version, 'manager_sha256': digest, 'files': common.inventory(slot)}
         with (slot / 'rust-ready.json').open('x', encoding='utf-8') as stream:
             os.chmod(slot / 'rust-ready.json', 0o600)
             json.dump(record, stream)
