@@ -63,6 +63,10 @@ def prepare(spec, approved=False):
         'outlines': ('Outlines', OUTLINES_PACKAGES, ()),
     }
     extra.update({key: (key, packages, ('cc', 'make')) for key, packages in SANDBOX_PACKAGES.items()})
+    if spec['id'] == 'owasp_zap':
+        if packages and tuple(packages) != ('openjdk-21-jdk-headless',):
+            raise ValueError('Nicht freigegebene ZAP-Systempaketliste; keine apt-Aktion.')
+        name, slug, packages = 'OWASP ZAP', 'owasp_zap', ('openjdk-21-jdk-headless',)
     if spec['id'] in extra:
         name, expected, commands = extra[spec['id']]
         if tuple(packages) != expected:
@@ -81,7 +85,7 @@ def prepare(spec, approved=False):
             return
     if not packages:
         return
-    if (spec["id"] not in ("mosquitto", "litellm", "songrec", "espeak_ng", "outlines", "valkey", 'testssl', *SANDBOX_PACKAGES) or
+    if (spec["id"] not in ("mosquitto", "litellm", "songrec", "espeak_ng", "outlines", "valkey", 'testssl', 'owasp_zap', *SANDBOX_PACKAGES) or
             (spec["id"] == "mosquitto" and tuple(packages) != MOSQUITTO_PACKAGES)):
         raise ValueError("Nicht freigegebene Systempaketliste; keine apt-Aktion.")
     release = os_release()

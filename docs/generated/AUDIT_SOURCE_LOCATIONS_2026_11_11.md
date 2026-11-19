@@ -598,9 +598,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/script_quality.py:90`
 - `scripts/tools/helpers/script_quality.py:171`
 - `scripts/tools/helpers/sdnext_common.sh:152`
-- `scripts/tools/helpers/security_data_native.py:22`
-- `scripts/tools/helpers/security_data_native.py:24`
-- `scripts/tools/helpers/security_data_native.py:245`
+- `scripts/tools/helpers/security_data_native.py:27`
+- `scripts/tools/helpers/security_data_native.py:29`
+- `scripts/tools/helpers/security_data_native.py:328`
 - `scripts/tools/helpers/sfizz_common.sh:75`
 - `scripts/tools/helpers/stable_audio_open_common.sh:175`
 - `scripts/tools/helpers/tgi_common.sh:66`
@@ -1549,8 +1549,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/moss_tts_common.sh:260`
 - `scripts/tools/helpers/musetalk_runtime.py:47`
 - `scripts/tools/helpers/musetalk_runtime.py:48`
-- `scripts/tools/helpers/native_build_deps.py:133`
-- `scripts/tools/helpers/native_build_deps.py:151`
+- `scripts/tools/helpers/native_build_deps.py:137`
+- `scripts/tools/helpers/native_build_deps.py:155`
 - `scripts/tools/helpers/native_github_tools.py:124`
 - `scripts/tools/helpers/native_github_tools.py:228`
 - `scripts/tools/helpers/native_github_tools.py:230`

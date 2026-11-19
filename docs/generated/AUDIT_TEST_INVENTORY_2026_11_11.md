@@ -3656,24 +3656,28 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_native_build_deps.py:84`
   Prueffall: `test_other_tools_cannot_enable_arbitrary_apt_packages`
 - `tests/test_native_build_deps.py:91`
+  Prueffall: `test_zap_jdk_on_debian_family_simulates_before_install`
+- `tests/test_native_build_deps.py:109`
+  Prueffall: `test_zap_jdk_decline_and_arbitrary_package_override`
+- `tests/test_native_build_deps.py:117`
   Prueffall: `test_non_ubuntu_explicit_apt_is_refused_but_manual_build_is_allowed`
-- `tests/test_native_build_deps.py:98`
+- `tests/test_native_build_deps.py:124`
   Prueffall: `test_dry_run_with_explicit_flag_does_not_prepare_anything`
-- `tests/test_native_build_deps.py:105`
+- `tests/test_native_build_deps.py:131`
   Prueffall: `test_storage_failure_is_logged_before_dependency_install_and_fetch`
-- `tests/test_native_build_deps.py:125`
+- `tests/test_native_build_deps.py:151`
   Prueffall: `test_rust_and_native_compilers_are_required_up_front`
-- `tests/test_native_build_deps.py:128`
+- `tests/test_native_build_deps.py:154`
   Prueffall: `test_missing_cc_requires_consent_before_any_apt`
-- `tests/test_native_build_deps.py:134`
+- `tests/test_native_build_deps.py:160`
   Prueffall: `test_existing_native_toolchain_never_installs_packages`
-- `tests/test_native_build_deps.py:141`
+- `tests/test_native_build_deps.py:167`
   Prueffall: `test_consent_installs_only_native_build_dependencies`
-- `tests/test_native_build_deps.py:158`
+- `tests/test_native_build_deps.py:184`
   Prueffall: `test_installed_packages_but_broken_path_fails_without_apt`
-- `tests/test_native_build_deps.py:164`
+- `tests/test_native_build_deps.py:190`
   Prueffall: `test_unknown_package_override_is_rejected`
-- `tests/test_native_build_deps.py:170`
+- `tests/test_native_build_deps.py:196`
   Prueffall: `test_refusal_stops_preflight_before_uv_or_source_download`
 
 ## tests/test_native_build_process.py
@@ -5564,17 +5568,31 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_version_runner_bounded_no_stdin`
 - `tests/test_security_data_native.py:59`
   Prueffall: `test_rust_no_implicit_bootstrap`
-- `tests/test_security_data_native.py:64`
-  Prueffall: `test_elf_probe_no_subprocess`
-- `tests/test_security_data_native.py:79`
-  Prueffall: `test_zap_jar_probe`
-- `tests/test_security_data_native.py:89`
-  Prueffall: `test_doctor_detects_modified_files`
-- `tests/test_security_data_native.py:101`
-  Prueffall: `test_external_artifact_link_rejected`
+- `tests/test_security_data_native.py:63`
+  Prueffall: `test_gradle_requires_consent_before_download`
+- `tests/test_security_data_native.py:71`
+  Prueffall: `test_gradle_private_bootstrap_reuse_and_tamper`
+- `tests/test_security_data_native.py:95`
+  Prueffall: `test_gradle_failed_hash_does_not_publish`
+- `tests/test_security_data_native.py:104`
+  Prueffall: `test_gradle_contract_change_rejected_before_download`
 - `tests/test_security_data_native.py:112`
-  Prueffall: `test_write_never_overwrites`
+  Prueffall: `test_gradle_existing_exact_version_without_download`
 - `tests/test_security_data_native.py:119`
+  Prueffall: `test_zap_java_prerequisites_use_consent_gated_package_path`
+- `tests/test_security_data_native.py:127`
+  Prueffall: `test_zap_existing_jdk_sets_private_build_environment_only`
+- `tests/test_security_data_native.py:145`
+  Prueffall: `test_elf_probe_no_subprocess`
+- `tests/test_security_data_native.py:160`
+  Prueffall: `test_zap_jar_probe`
+- `tests/test_security_data_native.py:170`
+  Prueffall: `test_doctor_detects_modified_files`
+- `tests/test_security_data_native.py:182`
+  Prueffall: `test_external_artifact_link_rejected`
+- `tests/test_security_data_native.py:193`
+  Prueffall: `test_write_never_overwrites`
+- `tests/test_security_data_native.py:200`
   Prueffall: `test_vaultwarden_command_and_scope`
 
 ## tests/test_setup_shell_contracts.py
@@ -6836,4 +6854,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3059**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3068**. Kein Nachweis bestandener Tests.

@@ -8,7 +8,8 @@ Der zentrale Merger integriert die drei `candidate-native`-Rezepte.
 Modul: `scripts/tools/helpers/security_data_native.py`.
 
 - `preflight(outer, spec, approved=False)`: Linux x86_64, Disk/RAM und vorhandene
-  Werkzeuge pruefen; `approved` installiert hier absichtlich nichts.
+  Werkzeuge pruefen; fuer ZAP erlaubt `approved` die unten beschriebene JDK-/Gradle-Buildbasis.
+  Milvus und Vaultwarden erhalten dadurch keinen zusaetzlichen Downloadpfad.
 - `build(source, prefix, spec, env, run=None)`: `source == prefix/source`, voller
   Git-Pin/Origin und SHA256-Quellvertraege; Rueckgabe aller prefix-relativen
   Artefakt-/Konfigurations-/Nachweispfade. Optionaler Runner: `(args,cwd,env)`
@@ -20,7 +21,9 @@ Modul: `scripts/tools/helpers/security_data_native.py`.
 Der Default-Buildrunner beendet nach 14400 Sekunden die Prozessgruppe. Ein
 injizierter Runner muss das gleiche begrenzte Fehler-/Abbruchverhalten bieten.
 Builds duerfen Quell-/Paketserver kontaktieren; Diagnose und Probes nicht.
-Es gibt keinen apt-, Docker-, Podman-, rustup- oder Wrapper-Download-Fallback.
+Kein Docker-, Podman-, rustup- oder Wrapper-Download-Fallback.
+Die ZAP-Buildbasis wird ausschliesslich im freigegebenen Vorbereitungsschritt eingerichtet;
+der Build selbst installiert keine Systempakete und laedt kein Gradle nach.
 Git-/Paket-Zugangsdaten und geerbte Anwendungsvariablen werden nicht uebernommen.
 
 ## Pins und Umfang
@@ -91,10 +94,32 @@ Commit `8a1bff313f4d183dba5aa154ecbe89ad751c9153`, Apache-2.0.
 [Buildanleitung](https://github.com/zaproxy/zaproxy/blob/8a1bff313f4d183dba5aa154ecbe89ad751c9153/BUILDING.md)
 und [Distributionstasks](https://github.com/zaproxy/zaproxy/blob/8a1bff313f4d183dba5aa154ecbe89ad751c9153/buildSrc/src/main/kotlin/org/zaproxy/zap/distributions.gradle.kts).
 
-Vorhandenes JDK 21 (Compiler/Error Prone) und Gradle 8.13, 12 GiB Disk/4 GiB RAM.
-Die Gradle-Distribution ist zusaetzlich durch URL/SHA256 im Vorschlag dokumentiert,
-aber wird nicht heruntergeladen. Der Wrapper und automatische JDK-Provisionierung
-werden nicht benutzt. `:zap:distFiles` baut `zap-2.17.0.jar`, Runtime-JARs und
+JDK 21 (Compiler/Error Prone) und Gradle 8.13, 12 GiB Disk/4 GiB RAM.
+Seit der Installerkorrektur vom 19.11.2026 werden fehlende Voraussetzungen nach
+Zustimmung im Voraussetzungen-Dialog bereitgestellt. Ohne Zustimmung kein Download.
+CLI-Freigabe: `bash scripts/tools/owasp_zap_install.sh --install-build-deps`.
+Debian-/Ubuntu-Familie einschliesslich neuer Releases und DietPi: fehlendes JDK 21
+via `openjdk-21-jdk-headless`, ausschliesslich aus vorhandenen apt-Quellen, mit
+Paketaufloesungssimulation auf abweichenden Basen. apt kann gemeinsame Abhaengigkeiten
+und Java-Alternativen aktualisieren; kein erzwungenes `update-alternatives`.
+Ein passendes vorhandenes JDK wird bevorzugt, sonst wird JDK 21 nur fuer diesen Build
+per `JAVA_HOME`/Prozess-PATH ausgewaehlt. Keine Fremdquelle und kein Versions-Bypass.
+
+Fehlendes oder unpassendes Gradle wird privat unter `toolchain/gradle-8.13` eingerichtet:
+[offizielle Gradle-Distribution](https://github.com/gradle/gradle-distributions/releases/tag/v8.13.0),
+Archiv `gradle-8.13-all.zip`, 232036537 Bytes, SHA256
+`fba8464465835e74f7270bbf43d6d8a8d7709ab0a43ce1aa3323f73e9aa0c612`.
+Der Hash wurde gegen die
+[offizielle Gradle-Pruefsumme](https://services.gradle.org/distributions/gradle-8.13-all.zip.sha256)
+abgeglichen. Begrenztes Entpacken
+verwirft Links und unsichere Pfade; Wiederverwendung prueft das gesamte Dateiinventar.
+Ein beschaedigtes vorhandenes Ziel wird nicht ueberschrieben. Der Bootstrap verlangt
+zusaetzlich 1 GiB Speicherreserve und hinterlaesst bei Downloadfehlern keinen fertigen
+Installationsnachweis. Gemeinsame Buildwerkzeuge bleiben bei Deinstallation erhalten.
+Offline-Fixtures pruefen Zustimmung, Paketfreigabe, Hashfehler und Manipulation;
+ein erfolgreicher Linux-/WSL-Quellbuild ist damit noch nicht nachgewiesen.
+Wrapper und automatische Gradle-JDK-Provisionierung werden nicht benutzt.
+`:zap:distFiles` baut `zap-2.17.0.jar`, Runtime-JARs und
 vollstaendige Core-Ressourcen (`xml`, `lang`, `db`, Startskripte).
 Der upstream Runtime-CycloneDX-BOM wird ueber `jarWithBom` erzeugt.
 `--write-locks --write-verification-metadata sha256` erzeugt die lokalen

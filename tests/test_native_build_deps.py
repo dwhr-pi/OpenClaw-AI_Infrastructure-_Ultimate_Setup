@@ -88,6 +88,32 @@ class BuildDependencies(unittest.TestCase):
                 deps.prepare(spec, approved=True)
         run.assert_not_called()
 
+    def test_zap_jdk_on_debian_family_simulates_before_install(self):
+        for distro in ('ubuntu', 'debian', 'dietpi'):
+            state = {'installed': False}
+            def run(args, cwd, env):
+                self.assertNotIn('gradle', args)
+                self.assertNotIn('zaproxy', args)
+                if 'install' in args and '--simulate' not in args:
+                    state['installed'] = True
+            with self.subTest(distro=distro), patch.object(deps, 'ubuntu_release', return_value=False), \
+                    patch.object(deps, 'os_release', return_value={'ID': distro, 'ID_LIKE': 'debian'}), \
+                    patch.object(deps, 'installed', side_effect=lambda _: state['installed']), \
+                    patch.object(deps.os, 'geteuid', return_value=0, create=True), \
+                    patch.object(deps.common, 'run', side_effect=run) as calls:
+                deps.prepare(tools.TOOLS['owasp_zap'], approved=True)
+                self.assertEqual(calls.call_count, 3)
+                self.assertIn('--simulate', calls.call_args_list[1].args[0])
+                self.assertEqual(calls.call_args.args[0][-1], 'openjdk-21-jdk-headless')
+
+    def test_zap_jdk_decline_and_arbitrary_package_override(self):
+        with patch.object(deps, 'installed', return_value=False), patch.object(deps.common, 'run') as run:
+            with self.assertRaisesRegex(ValueError, 'Zustimmung'):
+                deps.prepare(tools.TOOLS['owasp_zap'])
+            with self.assertRaisesRegex(ValueError, 'Nicht freigegebene'):
+                deps.prepare({'id': 'owasp_zap', 'recipe': {'apt_build_deps': ['docker.io']}}, approved=True)
+            run.assert_not_called()
+
     def test_non_ubuntu_explicit_apt_is_refused_but_manual_build_is_allowed(self):
         with patch.object(deps, "ubuntu_release", return_value=False), patch.object(deps, 'debian_family', return_value=False), patch.object(deps.common, "run") as run, redirect_stdout(io.StringIO()):
             deps.prepare(self.spec)

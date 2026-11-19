@@ -372,7 +372,7 @@
       "readiness": "planned",
       "auto_install": false,
       "install_mode": "github-native-build",
-      "description": "ZAP Core-JAR mit Runtime-JARs, xml/lang/db-Konfiguration und Startskripten; ohne Add-ons/Browser/Installer/JRE; kein vollstaendiges Scanprofil. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+      "description": "ZAP Core-JAR mit Runtime-JARs, xml/lang/db-Konfiguration und Startskripten; ohne Add-ons/Browser/Installer/JRE; kein vollstaendiges Scanprofil. JDK 21 und Gradle 8.13 vorhandene Basis bevorzugt; nach Zustimmung JDK-Buildpaket via apt und privates SHA256-geprueftes Gradle aus offiziellem Release. Kein Wrapper oder automatischer JDK-Download durch Gradle. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
       "install_script": "scripts/tools/owasp_zap_install.sh",
       "update_script": "scripts/tools/owasp_zap_update.sh",
       "uninstall_script": "scripts/tools/owasp_zap_uninstall.sh",
