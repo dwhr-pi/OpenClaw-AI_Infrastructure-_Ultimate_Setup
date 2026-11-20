@@ -2,6 +2,17 @@
 
 Stand: 31.10.2026. Keine Merge- oder Produktionsfreigabe.
 
+## Folgepruefung 20.11.2026: Prepaid-Hoster HTTP 404
+
+Die beiden Linkchecks zu `f25b7fb` meldeten jeweils genau dieselbe alte Prepaid-Hoster-Testserverseite
+mit HTTP 404. Der unabhaengige GET bestaetigt 404; die gelesene offizielle FAQ liefert HTTP 200 und
+nennt Testserver nur noch auf Anfrage. Die Anbieteruebersicht verlinkt diese konkrete FAQ, nicht
+eine beliebige Startseite. Die alte Adresse und der datierte Befund bleiben dort als Code erhalten.
+Historische Sieben-Tage-Werbung aus Suchtreffern ist keine aktuelle Verfuegbarkeitszusage.
+[Beide CI-Jobs, Originaladresse, Ersatzbeleg und Grenzen](PREPAID_HOSTER_REFERENCE_2026-11-20.json).
+Die zuvor nachgeprueften 18 Adressen haben diese neuen Laeufe bestanden und bleiben aktiv.
+Keine neue Ignore-Regel, Quellenpauschalausnahme oder Retry-Erweiterung.
+
 ## Nachpruefung 20.11.2026: kanonischer Commit und Abrufsperren
 
 Am Commit `c88ef57` scheiterte der PR-Linkcheck an einem historischen Commit-Link mit dem alten

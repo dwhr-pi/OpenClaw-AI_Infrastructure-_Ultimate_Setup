@@ -30,6 +30,31 @@ class Response:
 
 
 class ExternalLinkPolicyTests(unittest.TestCase):
+    def test_prepaid_hoster_404_keeps_original_and_specific_read_faq(self):
+        evidence = json.loads((ROOT / 'docs/quality/PREPAID_HOSTER_REFERENCE_2026-11-20.json').read_text(encoding='utf-8'))
+        self.assertEqual(evidence['commit'], 'f25b7fb1506cab7151619acc0de9411a7cb953b2')
+        self.assertEqual(evidence['review_date'], '2026-11-20')
+        self.assertEqual({r['job_id'] for r in evidence['ci']}, {136299022631, 136299002099})
+        self.assertEqual({r['status'] for r in evidence['ci']}, {404})
+        self.assertEqual(evidence['independent_original_status'], 404)
+        self.assertEqual(evidence['replacement_status'], 200)
+        self.assertFalse(evidence['checker_changed'])
+        original = 'https://www.prepaid-hoster.de/vserver/vserver-testen-neu.html'
+        replacement = ('https://support.prepaid-hoster.de/faq/de/virtuelle-server/'
+                       'kann-ich-eure-server-vor-dem-kauf-testen.html')
+        self.assertEqual(evidence['original_url'], original)
+        self.assertEqual(evidence['replacement_url'], replacement)
+        text = (ROOT / evidence['file']).read_text(encoding='utf-8')
+        self.assertIn('`' + original + '`', text)
+        self.assertNotIn(original, PROBE.markdown_urls(text))
+        self.assertIn('[Prepaid-Hoster][prepaid-test-faq]', text)
+        self.assertIn('[prepaid-test-faq]: ' + replacement, text)
+        self.assertIn('nur auf Anfrage', text)
+        self.assertIn('**bezahlter Weg**, kein Free Tier', text)
+        self.assertIn('Keine Bestellung', text)
+        self.assertFalse(self.ignored(original))
+        self.assertFalse(self.ignored(replacement))
+
     def test_canonical_review_commit_preserves_pin_and_failed_original(self):
         evidence = json.loads((ROOT / 'docs/quality/CI_LINK_FOLLOWUP_2026-11-20.json').read_text(encoding='utf-8'))
         self.assertEqual(evidence['review_date'], '2026-11-20')
