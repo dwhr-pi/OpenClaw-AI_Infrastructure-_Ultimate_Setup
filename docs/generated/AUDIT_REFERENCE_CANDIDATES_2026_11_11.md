@@ -116,6 +116,7 @@ Koennen gemeinsame Helper, Aliase oder profilgebundene Tools sein; keine neue To
 - `scripts/tools/opa_install.sh`
 - `scripts/tools/openclaw_rl_install.sh`
 - `scripts/tools/opencv_python_install.sh`
+- `scripts/tools/openjarvis_candidate_install.sh`
 - `scripts/tools/openmanus_install.sh`
 - `scripts/tools/openwakeword_install.sh`
 - `scripts/tools/owasp_zap_candidate_install.sh`

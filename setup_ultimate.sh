@@ -928,6 +928,7 @@ get_tool_install_fallback_min_free_mb() {
     "KEDA") printf '24576' ;;
     "Temporal") printf '24576' ;;
     "Argo_Workflows") printf '24576' ;;
+    "OpenJarvis") printf '12288' ;;
     "Arize_Phoenix") printf '12288' ;;
     "Checkov") printf '8192' ;;
     "Ragas") printf '12288' ;;
@@ -3689,7 +3690,7 @@ run_tool_script() {
   fi
 
   # Only the interactive setup opts into the documentation approval dialog.
-  if [[ "$tool_key" =~ ^(Outlines|eSpeak_NG|SongRec|Valkey|Kube_Bench|cert-manager|External_DNS|Kyverno|Gatekeeper|KEDA|Arize_Phoenix|gVisor|Kata_Containers|Firecracker|Milvus|Kubescape|Nuclei|Testssl|OWASP_ZAP|Checkov|Ragas|Temporal|TruffleHog|Vaultwarden|Argo_Workflows)$ && "$action" =~ ^(install|update)$ ]]; then
+  if [[ "$tool_key" =~ ^(Outlines|eSpeak_NG|SongRec|Valkey|Kube_Bench|cert-manager|External_DNS|Kyverno|Gatekeeper|KEDA|Arize_Phoenix|gVisor|Kata_Containers|Firecracker|Milvus|Kubescape|Nuclei|Testssl|OWASP_ZAP|Checkov|Ragas|Temporal|TruffleHog|Vaultwarden|OpenJarvis|Argo_Workflows)$ && "$action" =~ ^(install|update)$ ]]; then
     local prerequisites='Gepinnter nativer GitHub-Build. Fehlende freigegebene Compiler, Laufzeiten und Entwicklungsbibliotheken werden nach Zustimmung eingerichtet, private Toolchains mit Integritaetsnachweis. Debian-/Ubuntu-Familie einschliesslich neuer Releases und DietPi: Paketaufloesung wird vor apt-Installation simuliert. Keine Fremdquelle, kein System-Python-Wechsel. Umfang und Ressourcen siehe Toolseite; keine automatische Aktivierung, Scans oder Zugangsdatenpruefung.'
     if [ "$tool_key" = Outlines ]; then
       prerequisites='Outlines: geeignetes vorhandenes Python bevorzugen. Falls keines vorhanden: Ubuntu 24.04 bekommt Python 3.12/venv per apt; andere Systeme wie Ubuntu 26.04 bekommen eine private Python-3.13-Laufzeit via uv/GitHub (1024 MiB Zusatzreserve). uv bestimmt die Patchversion; Dateiinventar wird erfasst. Kein System-Python-Wechsel. Fehlendes uv aus SHA256-geprueftem GitHub-Release.'
@@ -5168,6 +5169,8 @@ TOOL_SCRIPT_NAMES["Zigbee2MQTT"]="zigbee2mqtt"
 register_native_github_tool_keys
 
 # Append documented candidates without installing or starting any component.
+TOOL_SCRIPT_NAMES["OpenJarvis"]="openjarvis"
+TOOLS["OpenJarvis"]="Nativer CLI-/SDK-Basisbuild (experimentell); ohne Quickstart/Modelldownload. GUI, Desktop und Rust separat. docs/tools/openjarvis.md"
 TOOL_KEYS+=()
 TOOL_SCRIPT_NAMES["cert-manager"]="cert_manager"
 TOOLS["cert-manager"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-go-controllers.md"

@@ -3908,7 +3908,7 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 ## tests/test_native_github_tools.py
 
 - `tests/test_native_github_tools.py:49`
-  Prueffall: `test_inventory_has_75_paths_and_71_honest_build_recipes`
+  Prueffall: `test_inventory_has_76_paths_and_72_honest_build_recipes`
 - `tests/test_native_github_tools.py:60`
   Prueffall: `test_every_plan_and_status_are_read_only`
 - `tests/test_native_github_tools.py:69`
@@ -4395,6 +4395,19 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_only_finished_is_success`
 - `tests/test_openhands_worker.py:25`
   Prueffall: `test_sdk_exception_is_not_swallowed`
+
+## tests/test_openjarvis_native.py
+
+- `tests/test_openjarvis_native.py:23`
+  Prueffall: `test_exact_source_website_and_independent_identity`
+- `tests/test_openjarvis_native.py:44`
+  Prueffall: `test_lifecycle_wrappers_and_menu_include_prerequisite_consent`
+- `tests/test_openjarvis_native.py:55`
+  Prueffall: `test_plan_status_are_offline_and_create_no_workspace`
+- `tests/test_openjarvis_native.py:67`
+  Prueffall: `test_core_source_wheel_build_never_installs_extras_or_runs_jarvis`
+- `tests/test_openjarvis_native.py:115`
+  Prueffall: `test_docs_state_exact_scope_and_link_both_official_websites`
 
 ## tests/test_openmontage.py
 
@@ -5129,37 +5142,45 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 ## tests/test_python_reviewed_native.py
 
-- `tests/test_python_reviewed_native.py:24`
+- `tests/test_python_reviewed_native.py:25`
   Prueffall: `test_exact_candidate_contracts`
-- `tests/test_python_reviewed_native.py:36`
+- `tests/test_python_reviewed_native.py:37`
   Prueffall: `test_environment_drops_credentials_and_python_injection`
-- `tests/test_python_reviewed_native.py:46`
+- `tests/test_python_reviewed_native.py:47`
   Prueffall: `test_source_mismatch_prevents_execution`
-- `tests/test_python_reviewed_native.py:56`
+- `tests/test_python_reviewed_native.py:57`
   Prueffall: `test_ragas_compatibility_is_explicit_and_does_not_affect_other_tools`
-- `tests/test_python_reviewed_native.py:69`
+- `tests/test_python_reviewed_native.py:70`
   Prueffall: `test_ragas_runtime_compatibility_flows_through_hash_lock_and_guarded_probe`
-- `tests/test_python_reviewed_native.py:105`
+- `tests/test_python_reviewed_native.py:106`
   Prueffall: `test_download_budgets_are_fixed_and_do_not_inherit_unsafe_uv_settings`
-- `tests/test_python_reviewed_native.py:119`
-  Prueffall: `test_resolver_timeout_does_not_retry_build_or_write_success_receipt`
+- `tests/test_python_reviewed_native.py:125`
+  Prueffall: `test_wheel_download_timeout_retries_same_lock_and_cache_in_shared_budget`
 - `tests/test_python_reviewed_native.py:146`
-  Prueffall: `test_incomplete_wheels_fail_closed`
-- `tests/test_python_reviewed_native.py:155`
-  Prueffall: `test_probe_is_bounded_and_never_cli_execution`
-- `tests/test_python_reviewed_native.py:170`
-  Prueffall: `test_import_guard_preserves_popen_types_and_blocks_cached_process_calls`
-- `tests/test_python_reviewed_native.py:199`
-  Prueffall: `test_failed_probe_logs_traceback_without_credential_shaped_values`
+  Prueffall: `test_other_wheel_errors_never_relax_hash_tls_or_disk_failures`
+- `tests/test_python_reviewed_native.py:162`
+  Prueffall: `test_second_wheel_timeout_is_final_and_process_timeout_never_retries`
+- `tests/test_python_reviewed_native.py:174`
+  Prueffall: `test_expired_wheel_budget_keeps_original_error_without_retry`
+- `tests/test_python_reviewed_native.py:185`
+  Prueffall: `test_resolver_timeout_does_not_retry_build_or_write_success_receipt`
 - `tests/test_python_reviewed_native.py:212`
+  Prueffall: `test_incomplete_wheels_fail_closed`
+- `tests/test_python_reviewed_native.py:221`
+  Prueffall: `test_probe_is_bounded_and_never_cli_execution`
+- `tests/test_python_reviewed_native.py:236`
+  Prueffall: `test_import_guard_preserves_popen_types_and_blocks_cached_process_calls`
+- `tests/test_python_reviewed_native.py:265`
+  Prueffall: `test_failed_probe_logs_traceback_without_credential_shaped_values`
+- `tests/test_python_reviewed_native.py:278`
   Prueffall: `test_timeout_diagnostics_are_bounded_and_decode_bytes`
-- `tests/test_python_reviewed_native.py:225`
+- `tests/test_python_reviewed_native.py:291`
   Prueffall: `test_build_runner_streams_with_shared_timeout`
-- `tests/test_python_reviewed_native.py:231`
+- `tests/test_python_reviewed_native.py:297`
   Prueffall: `test_explicit_unsupported_python_never_downloads`
-- `tests/test_python_reviewed_native.py:240`
+- `tests/test_python_reviewed_native.py:306`
   Prueffall: `test_missing_python_requires_explicit_consent`
-- `tests/test_python_reviewed_native.py:247`
+- `tests/test_python_reviewed_native.py:313`
   Prueffall: `test_build_rejects_wrong_source_layout`
 
 ## tests/test_queue_safety.py
@@ -6911,4 +6932,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3095**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3104**. Kein Nachweis bestandener Tests.

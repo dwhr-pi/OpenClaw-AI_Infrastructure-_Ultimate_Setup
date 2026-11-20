@@ -3239,6 +3239,42 @@
       }
     },
     {
+      "id": "openjarvis",
+      "tool_key": "OpenJarvis",
+      "name": "OpenJarvis",
+      "repo": "open-jarvis/OpenJarvis",
+      "website": "https://openjarvis.stanford.edu/",
+      "previous_images": [],
+      "previous_installer": "scripts/tools/openjarvis_candidate_install.sh",
+      "blocked_reason": null,
+      "doc": "docs/tools/openjarvis.md",
+      "license": "Apache-2.0",
+      "recipe": {
+        "kind": "candidate-native",
+        "helper": "python_reviewed_native",
+        "repo": "open-jarvis/OpenJarvis",
+        "pin": "a9e59e8770f92dd8046c2e5fcc1246eef51bb96a",
+        "version": "0.0.0+openclaw.a9e59e8",
+        "distribution": "OpenJarvis",
+        "import_module": "openjarvis",
+        "cli": "jarvis",
+        "private_uv": "0.13.5",
+        "tools": [
+          "uv"
+        ],
+        "disk_mb": 12288,
+        "ram_mb": 2048,
+        "source_sha256": {
+          "pyproject.toml": "b7014094261d4cab90ddd1adffcf2d7025ec89a7c101c76ef1f27fb4a87fd47b",
+          "README.md": "6f8283bedf4704201229f08158f282b5786cd98ed75b4d2903e140763786b72a",
+          "LICENSE": "ac617ecddb7ffeb27a239c6c9c8145212306baa90e23ee694849bf3cefb10743",
+          "src/openjarvis/__init__.py": "a4a08db7633a218dc91ca0e257bb9eaeb7fad8c7f12f32e28a08d1f29200bd6f",
+          "src/openjarvis/cli/__init__.py": "b32ce55b3c7620246ab2ba40c919645edaf542e50d9fed6cae65a15095360209"
+        },
+        "note": "Gepinnter nativer Python-CLI-/SDK-Basisbuild mit Lifecycle; ohne Quickstart-Autostart oder automatische Modelldownloads. GUI, Desktop-Paket und Rust-Erweiterung sind getrennte Ausbaustufen. Linux-/WSL-Buildabnahme offen; keine Inferenz oder Agentenausfuehrung."
+      }
+    },
+    {
       "id": "phoenix",
       "tool_key": "Arize_Phoenix",
       "name": "Arize Phoenix",

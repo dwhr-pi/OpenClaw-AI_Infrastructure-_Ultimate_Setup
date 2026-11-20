@@ -28,6 +28,7 @@ native_tool_marker() {
     "KEDA") marker=keda/native-github/build-ready.json ;;
     "Temporal") marker=temporal/native-github/build-ready.json ;;
     "Argo_Workflows") marker=argo_workflows/native-github/build-ready.json ;;
+    "OpenJarvis") marker=openjarvis/native-github/build-ready.json ;;
     "Arize_Phoenix") marker=phoenix/native-github/build-ready.json ;;
     "Checkov") marker=checkov/native-github/build-ready.json ;;
     "Ragas") marker=ragas/native-github/build-ready.json ;;

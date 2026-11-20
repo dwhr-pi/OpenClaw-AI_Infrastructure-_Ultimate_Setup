@@ -1,4 +1,4 @@
-"""Reviewed source-wheel builds for Phoenix, Checkov and Ragas; no app starts."""
+"""Reviewed source-wheel builds for Phoenix, Checkov, Ragas and OpenJarvis; no app starts."""
 import hashlib
 import json
 import os
@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 from urllib.request import urlopen
 import zipfile
 
@@ -162,6 +163,38 @@ def build_execute(args, cwd, env):
     return native_build_process.run(args, cwd, env, timeout=7200, label='Python-/Frontend-Build')
 
 
+def install_locked_wheels(args, cwd, env, run=None):
+    deadline = time.monotonic() + 7200
+    child = dict(env)
+    for attempt in range(2):
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise subprocess.TimeoutExpired(args, 7200)
+        print('Hashgesperrte Wheel-Installation: Versuch', attempt + 1,
+              'von 2; Restbudget:', round(remaining), 's.', flush=True)
+        try:
+            if run is not None:
+                return run(args, cwd, child)
+            return native_build_process.run(args, cwd, child, timeout=remaining,
+                                            label='Hashgesperrte Wheel-Installation')
+        except subprocess.CalledProcessError as error:
+            output = '\n'.join(value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value
+                               for value in (error.output, error.stderr) if value).lower()
+            permanent = any(message in output for message in (
+                'hash mismatch', 'does not match the expected hash', 'certificate',
+                'unauthorized', 'forbidden', '401', '403', 'no space left',
+                'disk quota', 'permission denied'))
+            network_timeout = 'failed to download' in output and (
+                'network timeout' in output or 'timed out' in output)
+            if attempt or permanent or not network_timeout or time.monotonic() >= deadline:
+                raise
+            # Retry only installation against the same lock and cache, never resolution/build.
+            child = dict(child, UV_HTTP_TIMEOUT='900', UV_CONCURRENT_DOWNLOADS='1')
+            print('Wheel-Download durch Netzwerk-Timeout abgebrochen. Ein letzter Versuch mit'
+                  ' 900s HTTP-Lesefenster und einem parallelen Download im selben 7200s-Budget.'
+                  ' Gleiche Lockdatei, Hashpflicht, Paketquelle und TLS-Pruefung; kein neuer Build.', flush=True)
+
+
 def select_python(outer, spec, approved=False):
     slot = common.checked(outer / 'toolchain/python-reviewed-312')
     env = environment(common.checked(outer / 'toolchain/python-reviewed-state'))
@@ -249,6 +282,9 @@ def inspect_wheel(wheel, recipe):
             raise ValueError('Checkov-Wheel ohne generierte Graph-Policies.')
         if recipe['distribution'] == 'ragas' and 'ragas/_version.py' not in names:
             raise ValueError('Ragas-Wheel ohne erzeugte SCM-Version.')
+        if recipe['distribution'] == 'OpenJarvis' and not {
+                'openjarvis/__init__.py', 'openjarvis/cli/__init__.py'}.issubset(names):
+            raise ValueError('OpenJarvis-Wheel ohne CLI-/SDK-Basis.')
 
 
 def probe_script(recipe):
@@ -278,7 +314,9 @@ print(json.dumps({"version": m.version(%r), "module": module.__name__, "distribu
 ''' % (recipe['import_module'], recipe['distribution'], recipe['version'],
        {'ragas': 'assert callable(module.evaluate) and callable(module.aevaluate)',
         'arize-phoenix': 'assert callable(module.launch_app)',
-        'checkov': 'importlib.import_module("checkov.common.util.type_forcers")'}[recipe['distribution']],
+        'checkov': 'importlib.import_module("checkov.common.util.type_forcers")',
+        'OpenJarvis': 'assert any(e.name == "jarvis" and e.value == "openjarvis.cli:main" '
+                     'for e in m.distribution("OpenJarvis").entry_points)'}[recipe['distribution']],
        recipe['distribution'])
 
 
@@ -299,7 +337,8 @@ def build(source, prefix, spec, env, run=None):
     for venv in ('build-venv', 'venv'):
         runner([uv, 'venv', '--python', python, '--no-python-downloads', str(prefix / venv)], prefix, child)
     build_input = prefix / 'build-requirements.in'
-    build_input.write_text('\n'.join(BUILD_REQUIREMENTS) + '\n', encoding='ascii')
+    requirements = BUILD_REQUIREMENTS + (['hatch-vcs==0.5.0'] if spec['id'] == 'openjarvis' else [])
+    build_input.write_text('\n'.join(requirements) + '\n', encoding='ascii')
     index = ['--index-url', 'https://pypi.org/simple', '--no-config', '--keyring-provider', 'disabled']
 
     def locked_install(input_file, lock, target):
@@ -307,8 +346,8 @@ def build(source, prefix, spec, env, run=None):
               '2 parallele Downloads; Prozesslimit weiterhin 7200s. Kein Index-/TLS-/Hash-Fallback.', flush=True)
         runner([uv, 'pip', 'compile', str(input_file), '--python', str(target),
                 '--generate-hashes', '--only-binary', ':all:', '--output-file', str(lock), *index], prefix, child)
-        runner([uv, 'pip', 'install', '--python', str(target), '--require-hashes',
-                '--only-binary', ':all:', '-r', str(lock), *index], prefix, child)
+        install_locked_wheels([uv, 'pip', 'install', '--python', str(target), '--require-hashes',
+                               '--only-binary', ':all:', '-r', str(lock), *index], prefix, child, run=run)
 
     locked_install(build_input, prefix / 'build-requirements.lock', build_python)
     if spec['id'] == 'phoenix':
@@ -324,6 +363,8 @@ def build(source, prefix, spec, env, run=None):
             raise ValueError('Phoenix-UI-Build lieferte kein Vite-Manifest.')
     if spec['id'] == 'ragas':
         child['SETUPTOOLS_SCM_PRETEND_VERSION_FOR_RAGAS'] = recipe['version']
+    elif spec['id'] == 'openjarvis':
+        child['SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENJARVIS'] = recipe['version']
     runner([build_python, '-I', '-B', '-m', 'build', '--wheel', '--no-isolation',
             '--outdir', str(wheelhouse), str(source)], source, child)
     wheels = list(wheelhouse.glob('*.whl'))

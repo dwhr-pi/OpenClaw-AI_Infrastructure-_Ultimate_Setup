@@ -1,4 +1,8 @@
-# Phoenix, Checkov und Ragas nativ installieren
+# Phoenix, Checkov, Ragas und OpenJarvis nativ installieren
+
+[OpenJarvis](openjarvis.md) nutzt denselben geprueften Source-Wheel-Lifecycle,
+aber ausschliesslich fuer die CLI-/SDK-Basis. GUI, Desktop-Paket und Rust-Erweiterung
+sind getrennte Ausbaustufen; kein Quickstart-Autostart oder automatischer Modelldownload.
 
 Die drei Menueeintraege erhalten private Source-Wheel-Installer statt Dokumentations-Platzhalter.
 Quellen, vollstaendige Pins, Lizenz und SHA256-Vertraege stehen im
@@ -35,6 +39,31 @@ Im gemeldeten Phoenix-Versuch fehlte diese Ausgabe; die konkrete Importursache i
 Phoenix startet keinen HTTP-/Tracing-Dienst. Auth, Datenbank, Trace-Redaction und Betrieb sind separat abzunehmen.
 
 ## Pruefung und Lifecycle
+
+### Ragas: pyarrow-Download-Timeout (20.11.2026)
+
+Der Lauf `20261120_163907` scheiterte beim Download des etwa 52,5 MiB grossen
+`pyarrow==26.0.1`-Wheels nach dem 300s-HTTP-Lesefenster. Die verschachtelte
+Extraktionsmeldung nennt ausdruecklich einen Netzwerk-Timeout, nicht einen
+belegten Python-/Quellcodefehler. Ein allgemeiner I/O-Fehler reicht nicht fuer einen Retry.
+
+Nur bei ausdruecklichem Wheel-Download-Timeout wiederholt der Installer die
+hashgesperrte `uv pip install`-Phase hoechstens einmal. Der letzte Versuch nutzt
+900s HTTP-Lesezeitlimit und einen statt zwei paralleler Downloads. Beide
+Versuche teilen ein Installationsbudget von 7200s; die Aufloesung, der
+Source-Wheel-Build und die Lockdatei werden nicht wiederholt. Derselbe private
+Cache bleibt waehrend dieses Versuchs erhalten, ohne neue Persistenz ausserhalb
+des bisherigen Besitz-/Rollback-Bereichs. Kein garantierter Download-Resume.
+Verbindungsaufbau bleibt 30s, uv-interne HTTP-Wiederholungen bleiben auf drei begrenzt.
+
+Hash-, Zertifikats-, Zugriffs- und Speicherfehler bleiben sofort blockierend,
+auch wenn zusaetzlich ein Timeout genannt wird. Kein neuer Index/Mirror,
+kein Hash-/TLS-Fallback, keine Paketversionsaenderung und kein dritter Versuch.
+Ein Prozess-Timeout oder Benutzerabbruch wird nicht wiederholt. Ein erneuter
+Fehler verhindert Probe und Erfolgsmarker; bisherige Nutzerdaten bleiben erhalten.
+Die [offizielle uv-Referenz](https://docs.astral.sh/uv/reference/environment/)
+beschreibt HTTP-Lesezeitlimit und Downloadparallelitaet. Offline-Fixtures
+belegen die Grenzen, nicht eine erfolgreiche WSL-Installation oder Evaluation.
 
 ### Ragas 0.3.9 und LangChain-Kompatibilitaet (19.11.2026)
 

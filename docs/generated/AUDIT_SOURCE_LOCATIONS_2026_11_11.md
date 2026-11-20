@@ -14,7 +14,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Bewegliches Wort latest/main/master (lexikalisch)
 
-655 Fundstellen, keine automatische Risikoeinstufung.
+656 Fundstellen, keine automatische Risikoeinstufung.
 
 - `.github/workflows/build-and-push.yml:4`
 - `.github/workflows/build-and-push.yml:16`
@@ -97,11 +97,11 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `config/docker_to_github.json:2948`
 - `config/docker_to_github.json:3190`
 - `config/docker_to_github.json:3191`
-- `config/docker_to_github.json:3617`
-- `config/docker_to_github.json:3664`
-- `config/docker_to_github.json:3708`
-- `config/docker_to_github.json:3757`
-- `config/docker_to_github.json:3803`
+- `config/docker_to_github.json:3653`
+- `config/docker_to_github.json:3700`
+- `config/docker_to_github.json:3744`
+- `config/docker_to_github.json:3793`
+- `config/docker_to_github.json:3839`
 - `config/legal/sources.json:36`
 - `config/legal/sources.json:37`
 - `config/models.yaml:16`
@@ -411,9 +411,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/quality/repository_audit.py:284`
 - `scripts/quality/run_master_audit_tests.py:27`
 - `scripts/quality/run_master_audit_tests.py:75`
-- `scripts/quality/sync_native_candidates.py:141`
-- `scripts/quality/sync_native_candidates.py:158`
-- `scripts/quality/sync_native_candidates.py:177`
+- `scripts/quality/sync_native_candidates.py:150`
+- `scripts/quality/sync_native_candidates.py:167`
+- `scripts/quality/sync_native_candidates.py:186`
 - `scripts/quality/tool_ssh_docs.py:212`
 - `scripts/quality/tool_ssh_docs.py:223`
 - `scripts/quality/tool_truth_table.py:80`
@@ -587,6 +587,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/paperless_safe_common.sh:29`
 - `scripts/tools/helpers/perplexity_sdk_tools.py:142`
 - `scripts/tools/helpers/propainter_common.sh:155`
+- `scripts/tools/helpers/python_reviewed_native.py:318`
 - `scripts/tools/helpers/qwen3_tts_common.sh:55`
 - `scripts/tools/helpers/qwen3_tts_common.sh:237`
 - `scripts/tools/helpers/qwen_desktop_study.py:70`
@@ -634,8 +635,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/vps_adapter.py:106`
 - `scripts/vps_adapter.py:123`
 - `setup_ultimate.sh:179`
-- `setup_ultimate.sh:2443`
-- `setup_ultimate.sh:2898`
+- `setup_ultimate.sh:2444`
+- `setup_ultimate.sh:2899`
 - `stacks/llmops-platform/docker-compose.yml:24`
 - `stacks/llmops-platform/docker-compose.yml:50`
 - `stacks/llmops-platform/docker-compose.yml:88`
@@ -909,7 +910,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/yara_install.sh:7`
 - `scripts/tools/zenbot_trader_install.sh:39`
 - `scripts/tools/zenbot_trader_install.sh:40`
-- `setup_ultimate.sh:2834`
+- `setup_ultimate.sh:2835`
 - `tools/websitefactory/scripts/check-build.sh:29`
 - `tools/websitefactory/scripts/check-build.sh:37`
 
@@ -1108,15 +1109,15 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/gitops_bootstrap_install.sh:57`
 - `scripts/tools/helpers/candidate_security_native.py:310`
 - `scripts/tools/helpers/freellmapi_common.sh:147`
-- `scripts/tools/helpers/python_reviewed_native.py:261`
-- `scripts/tools/helpers/python_reviewed_native.py:269`
+- `scripts/tools/helpers/python_reviewed_native.py:297`
+- `scripts/tools/helpers/python_reviewed_native.py:305`
 - `scripts/wireguard/create-home-peer.sh:33`
 - `scripts/wireguard/create-vps-peer.sh:33`
 - `services/inference-gateway/local_policy.py:26`
 - `services/inference-gateway/local_policy.py:27`
 - `services/inference-gateway/local_policy.py:28`
-- `setup_ultimate.sh:1699`
-- `setup_ultimate.sh:3093`
+- `setup_ultimate.sh:1700`
+- `setup_ultimate.sh:3094`
 - `stacks/freellmapi/compose.yml:8`
 - `stacks/freellmapi/compose.yml:10`
 - `stacks/llmops-platform/docker-compose.yml:20`
@@ -1818,10 +1819,10 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/zotero_uninstall.sh:23`
 - `scripts/tools/zotero_uninstall.sh:24`
 - `scripts/tools/zotero_uninstall.sh:25`
-- `setup_ultimate.sh:1344`
-- `setup_ultimate.sh:2834`
-- `setup_ultimate.sh:4866`
-- `setup_ultimate.sh:5415`
+- `setup_ultimate.sh:1345`
+- `setup_ultimate.sh:2835`
+- `setup_ultimate.sh:4867`
+- `setup_ultimate.sh:5418`
 - `systemd/openclaw-workspace-backup.service.example:9`
 - `systemd/openclaw-workspace-backup.service.example:14`
 

@@ -33,7 +33,7 @@ CANDIDATE_BACKENDS = {
                      'temporal', 'argo_workflows'), 'candidate_go_controllers'),
     **dict.fromkeys(('kubescape', 'nuclei', 'trufflehog', 'testssl'), 'candidate_security_native'),
     **dict.fromkeys(('gvisor', 'kata_containers', 'firecracker'), 'native_sandbox_candidates'),
-    **dict.fromkeys(('phoenix', 'checkov', 'ragas'), 'python_reviewed_native'),
+    **dict.fromkeys(('phoenix', 'checkov', 'ragas', 'openjarvis'), 'python_reviewed_native'),
     **dict.fromkeys(('milvus', 'vaultwarden', 'owasp_zap'), 'security_data_native'),
 }
 

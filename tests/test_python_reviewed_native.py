@@ -1,4 +1,5 @@
 """Offline contracts only; these fixtures are not Linux runtime acceptance."""
+from contextlib import redirect_stdout
 import copy
 import hashlib
 import io
@@ -22,7 +23,7 @@ class ReviewedPythonTests(unittest.TestCase):
         return json.loads(helper.CANDIDATES.read_text())['tools']
 
     def test_exact_candidate_contracts(self):
-        self.assertEqual({s['id'] for s in self.specs()}, {'phoenix', 'checkov', 'ragas'})
+        self.assertEqual({s['id'] for s in self.specs()}, {'phoenix', 'checkov', 'ragas', 'openjarvis'})
         for spec in self.specs():
             self.assertEqual(helper.contract(spec), spec['recipe'])
             self.assertRegex(spec['recipe']['pin'], '^[a-f0-9]{40}$')
@@ -115,6 +116,71 @@ class ReviewedPythonTests(unittest.TestCase):
         self.assertEqual(env['UV_CONCURRENT_DOWNLOADS'], '2')
         for key in ('UV_INSECURE_HOST', 'UV_NATIVE_TLS', 'HTTPS_PROXY', 'UV_EXTRA_INDEX_URL'):
             self.assertNotIn(key, env)
+
+    def wheel_install_command(self):
+        return ['/uv', 'pip', 'install', '--python', '/venv/python', '--require-hashes',
+                '--only-binary', ':all:', '-r', '/private/runtime-requirements.lock',
+                '--index-url', 'https://pypi.org/simple', '--no-config', '--keyring-provider', 'disabled']
+
+    def test_wheel_download_timeout_retries_same_lock_and_cache_in_shared_budget(self):
+        args = self.wheel_install_command()
+        env = {'UV_HTTP_TIMEOUT': '300', 'UV_CONCURRENT_DOWNLOADS': '2',
+               'UV_CACHE_DIR': '/private/cache', 'UV_HTTP_CONNECT_TIMEOUT': '30', 'UV_HTTP_RETRIES': '3'}
+        error = subprocess.CalledProcessError(1, args, stderr=(
+            b'Failed to download `pyarrow==26.0.1`\nI/O operation failed during extraction\n'
+            b'Failed to download distribution due to network timeout'))
+        with patch.object(helper.time, 'monotonic', side_effect=[0, 0, 420, 420]), \
+                patch.object(helper.native_build_process, 'run', side_effect=[error, 'ok']) as run, \
+                redirect_stdout(io.StringIO()):
+            self.assertEqual(helper.install_locked_wheels(args, Path('/private'), env), 'ok')
+        first, second = run.call_args_list
+        self.assertEqual(run.call_count, 2)
+        self.assertEqual(first.args[:2], second.args[:2])
+        self.assertEqual(first.args[0], args)
+        self.assertEqual(first.kwargs['timeout'], 7200)
+        self.assertEqual(second.kwargs['timeout'], 6780)
+        self.assertEqual(first.args[2]['UV_HTTP_TIMEOUT'], '300')
+        self.assertEqual(second.args[2], dict(env, UV_HTTP_TIMEOUT='900', UV_CONCURRENT_DOWNLOADS='1'))
+        self.assertEqual(env['UV_HTTP_TIMEOUT'], '300')
+
+    def test_other_wheel_errors_never_relax_hash_tls_or_disk_failures(self):
+        args = self.wheel_install_command()
+        for message in ('Hash mismatch', 'certificate verify failed', 'No space left on device',
+                        'Disk quota exceeded', 'Permission denied', '401 Unauthorized', '403 Forbidden',
+                        'No solution found', 'I/O operation failed during extraction'):
+            error = subprocess.CalledProcessError(1, args, stderr=message)
+            if message not in ('No solution found', 'I/O operation failed during extraction'):
+                error.stderr += '\nFailed to download distribution due to network timeout'
+            with self.subTest(message=message), \
+                    patch.object(helper.native_build_process, 'run', side_effect=error) as run, \
+                    redirect_stdout(io.StringIO()):
+                with self.assertRaises(subprocess.CalledProcessError) as raised:
+                    helper.install_locked_wheels(args, Path('/private'), {})
+                self.assertIs(raised.exception, error)
+                run.assert_called_once()
+
+    def test_second_wheel_timeout_is_final_and_process_timeout_never_retries(self):
+        args = self.wheel_install_command()
+        for error, count in ((subprocess.CalledProcessError(1, args, stderr=(
+                'Failed to download distribution due to network timeout')), 2),
+                (subprocess.TimeoutExpired(args, 7200), 1), (KeyboardInterrupt(), 1)):
+            with self.subTest(error=type(error).__name__), \
+                    patch.object(helper.native_build_process, 'run', side_effect=error) as run, \
+                    redirect_stdout(io.StringIO()):
+                with self.assertRaises(type(error)):
+                    helper.install_locked_wheels(args, Path('/private'), {})
+                self.assertEqual(run.call_count, count)
+
+    def test_expired_wheel_budget_keeps_original_error_without_retry(self):
+        args = self.wheel_install_command()
+        error = subprocess.CalledProcessError(1, args, stderr='Failed to download due to network timeout')
+        with patch.object(helper.time, 'monotonic', side_effect=[0, 0, 7201]), \
+                patch.object(helper.native_build_process, 'run', side_effect=error) as run, \
+                redirect_stdout(io.StringIO()):
+            with self.assertRaises(subprocess.CalledProcessError) as raised:
+                helper.install_locked_wheels(args, Path('/private'), {})
+            self.assertIs(raised.exception, error)
+            run.assert_called_once()
 
     def test_resolver_timeout_does_not_retry_build_or_write_success_receipt(self):
         spec = next(spec for spec in self.specs() if spec['id'] == 'ragas')

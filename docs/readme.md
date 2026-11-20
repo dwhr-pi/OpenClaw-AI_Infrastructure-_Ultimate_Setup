@@ -7,6 +7,11 @@ produktionsreif.
 
 ## Hier beginnen
 
+[OpenJarvis: eigenstaendiger nativer CLI-/SDK-Build](tools/openjarvis.md):
+Originalprojekt und offizielle Website; ohne Quickstart-Autostart oder automatische
+Modelldownloads. GUI, Desktop-Paket und Rust-Erweiterung sind getrennte Ausbaustufen.
+Nicht mit Hermes_Agent_Jarvis oder Jarvis_Core gleichsetzen.
+
 [Projektformular und Prompt-Workflows](PROJECT_BRIEF_AND_PROMPT_WORKFLOWS.md):
 Film, Buch oder Betriebssystem schrittweise planen, im Browser bearbeiten und
 ueber Tage fortsetzen; Chat-/MCP-Uebergabe ohne automatische Ausfuehrung.

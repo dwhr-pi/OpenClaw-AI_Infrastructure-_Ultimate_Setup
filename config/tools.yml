@@ -8760,6 +8760,31 @@
       "safety": "Nur Loopback, freigegebene Quell-Momentaufnahme, kein Docker/PyPI/CDN/Autostart.",
       "security_note": "Install/Update/Uninstall und Start brauchen --apply. Schreibgeschuetzte Dokumentansicht, keine Shell-Ausfuehrung. Keine Produktionsabnahme.",
       "updated": "2026-11-05"
+    },
+    {
+      "id": "openjarvis",
+      "name": "OpenJarvis",
+      "category": "Agents / Local-first",
+      "ports": [],
+      "status": "experimental",
+      "readiness": "planned",
+      "auto_install": false,
+      "install_mode": "github-native-build",
+      "check_type": "path",
+      "check_value": "~/.openclaw_ultimate_user_data/tools/openjarvis/native-github/build-ready.json",
+      "source": "https://github.com/open-jarvis/OpenJarvis.git",
+      "source_verified": true,
+      "source_commit": "a9e59e8770f92dd8046c2e5fcc1246eef51bb96a",
+      "license": "Apache-2.0",
+      "description": "Gepinnter nativer Python-CLI-/SDK-Basisbuild mit Lifecycle; ohne Quickstart-Autostart oder automatische Modelldownloads. GUI, Desktop-Paket und Rust-Erweiterung sind getrennte Ausbaustufen. Linux-/WSL-Buildabnahme offen; keine Inferenz oder Agentenausfuehrung.",
+      "doc": "docs/tools/openjarvis.md",
+      "website": "https://openjarvis.stanford.edu/",
+      "install_script": "scripts/tools/openjarvis_install.sh",
+      "update_script": "scripts/tools/openjarvis_update.sh",
+      "uninstall_script": "scripts/tools/openjarvis_uninstall.sh",
+      "status_script": "scripts/tools/openjarvis_status.sh",
+      "doctor_script": "scripts/tools/openjarvis_doctor.sh",
+      "check_script": "scripts/tools/openjarvis_check.sh"
     }
   ],
   "voice_tools": [
