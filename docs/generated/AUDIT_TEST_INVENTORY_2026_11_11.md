@@ -1673,50 +1673,54 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 ## tests/test_external_link_policy.py
 
 - `tests/test_external_link_policy.py:33`
+  Prueffall: `test_canonical_review_commit_preserves_pin_and_failed_original`
+- `tests/test_external_link_policy.py:56`
+  Prueffall: `test_transient_ci_sources_remain_active_not_reclassified`
+- `tests/test_external_link_policy.py:83`
   Prueffall: `test_approved_ci_references_keep_originals_without_checker_exceptions`
-- `tests/test_external_link_policy.py:50`
+- `tests/test_external_link_policy.py:100`
   Prueffall: `test_vllm_metric_reference_keeps_original_and_pinned_primary_sources`
-- `tests/test_external_link_policy.py:77`
+- `tests/test_external_link_policy.py:127`
   Prueffall: `test_only_exact_account_entries_are_exempt`
-- `tests/test_external_link_policy.py:89`
-  Prueffall: `test_public_failures_are_not_exempt_or_alive`
-- `tests/test_external_link_policy.py:104`
-  Prueffall: `test_rate_limit_backoff_is_bounded_without_accepting_429`
-- `tests/test_external_link_policy.py:114`
-  Prueffall: `test_ci_link_gates_use_the_same_explicit_configuration`
 - `tests/test_external_link_policy.py:139`
+  Prueffall: `test_public_failures_are_not_exempt_or_alive`
+- `tests/test_external_link_policy.py:154`
+  Prueffall: `test_rate_limit_backoff_is_bounded_without_accepting_429`
+- `tests/test_external_link_policy.py:164`
+  Prueffall: `test_ci_link_gates_use_the_same_explicit_configuration`
+- `tests/test_external_link_policy.py:189`
   Prueffall: `test_status_failures_stay_failures_after_bounded_retries`
-- `tests/test_external_link_policy.py:151`
+- `tests/test_external_link_policy.py:201`
   Prueffall: `test_transport_failure_never_becomes_success`
-- `tests/test_external_link_policy.py:158`
+- `tests/test_external_link_policy.py:208`
   Prueffall: `test_retry_can_recover_without_weakening_success_codes`
-- `tests/test_external_link_policy.py:168`
+- `tests/test_external_link_policy.py:218`
   Prueffall: `test_local_examples_are_syntax_only`
-- `tests/test_external_link_policy.py:178`
+- `tests/test_external_link_policy.py:228`
   Prueffall: `test_history_is_preserved_at_original_locations`
-- `tests/test_external_link_policy.py:198`
+- `tests/test_external_link_policy.py:248`
   Prueffall: `test_equivalent_primary_records_keep_original_addresses`
-- `tests/test_external_link_policy.py:232`
+- `tests/test_external_link_policy.py:282`
   Prueffall: `test_unavailable_card_is_not_silently_replaced`
-- `tests/test_external_link_policy.py:237`
+- `tests/test_external_link_policy.py:287`
   Prueffall: `test_probe_excludes_code_not_public_links`
-- `tests/test_external_link_policy.py:241`
+- `tests/test_external_link_policy.py:291`
   Prueffall: `test_approved_original_references_are_exact_evidence_not_ignore_rules`
-- `tests/test_external_link_policy.py:262`
+- `tests/test_external_link_policy.py:312`
   Prueffall: `test_official_supplements_do_not_claim_equivalent_unverified_content`
-- `tests/test_external_link_policy.py:270`
+- `tests/test_external_link_policy.py:320`
   Prueffall: `test_gnu_followup_preserves_only_observed_transport_failures`
-- `tests/test_external_link_policy.py:288`
+- `tests/test_external_link_policy.py:338`
   Prueffall: `test_notebooklm_reference_uses_official_rename_with_original_preserved`
-- `tests/test_external_link_policy.py:300`
+- `tests/test_external_link_policy.py:350`
   Prueffall: `test_mosquitto_reference_uses_exact_pinned_upstream_source`
-- `tests/test_external_link_policy.py:311`
+- `tests/test_external_link_policy.py:361`
   Prueffall: `test_south_africa_reference_is_individual_evidence_not_domain_ignore`
-- `tests/test_external_link_policy.py:323`
+- `tests/test_external_link_policy.py:373`
   Prueffall: `test_godot_sources_preserve_originals_and_exact_upstream_documents`
-- `tests/test_external_link_policy.py:337`
+- `tests/test_external_link_policy.py:387`
   Prueffall: `test_pinokio_html_release_never_substitutes_digest_verification`
-- `tests/test_external_link_policy.py:346`
+- `tests/test_external_link_policy.py:396`
   Prueffall: `test_pr24_metadata_errors_are_exact_dated_references_not_successes`
 
 ## tests/test_f01_f07_hardening.py
@@ -6891,4 +6895,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3085**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3087**. Kein Nachweis bestandener Tests.

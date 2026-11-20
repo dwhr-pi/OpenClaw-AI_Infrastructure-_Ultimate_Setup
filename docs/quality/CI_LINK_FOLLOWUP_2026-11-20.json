@@ -1,0 +1,121 @@
+{
+  "review_date": "2026-11-20",
+  "commit": "c88ef5759f533aabee7ba357628041017d218913",
+  "ci": {
+    "pull_request": {"run_id": 44641396289, "job_id": 135973058630, "unique_failures": 1},
+    "push": {"run_id": 44641391614, "job_id": 135973041062, "unique_failures": 18}
+  },
+  "scope": "Anonymous individual HTTPS GETs after reading both CI job logs; no credentials, installer or provider inference.",
+  "checker_changed": false,
+  "reclassified_references": [],
+  "limitations": [
+    "Independent HTTP 200 does not retroactively pass CI or guarantee future runner reachability.",
+    "CI supplied 403 without response headers here; anonymous API quota exhaustion is not proven.",
+    "API responses were parsed; availability alone does not revalidate licenses, complete buildable source or asset integrity.",
+    "HAX and Woiden returned their provider landing pages; no current allocation, quota or cost acceptance was tested.",
+    "YouTube titles were read, not transcripts or playback. The yqsLvVz0Y44 title currently differs from the historical English label.",
+    "Instagram returned HTTP 200 with title Instagram; the actual Reel content remains unverified.",
+    "The canonical commit page showed the same full historical SHA. The mutable commits/main API is not proof of that historical HEAD."
+  ],
+  "references": [
+    {
+      "original_url": "https://github.com/dwhr-pi/VPS-_Kubernate-_Ollama_OpenClaw_installation/commit/cd0068a093c74ac95d468aac315104c95f7a3445",
+      "file": "docs/_API-Keys/reviews/2026-10-26.md",
+      "ci_event": "pull_request", "ci_status": 503,
+      "replacement_url": "https://github.com/dwhr-pi/OpenClaw-AI_Infrastructure-_Ultimate_Setup/commit/cd0068a093c74ac95d468aac315104c95f7a3445",
+      "independent_status": 200,
+      "decision": "canonical-name-same-commit"
+    },
+    {
+      "original_url": "https://api.github.com/repos/dwhr-pi/zenbot-trader-platform",
+      "file": "docs/AUDIT_2026-10-23.md",
+      "ci_event": "push", "ci_status": 403, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://api.github.com/repos/DeviaVir/zenbot",
+      "file": "docs/AUDIT_2026-10-23.md",
+      "ci_event": "push", "ci_status": 403, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://api.github.com/repos/Conway-Research/automaton",
+      "file": "docs/AUDIT_2026-10-23.md",
+      "ci_event": "push", "ci_status": 403, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://hax.co.id/",
+      "file": "docs/vps/PROVIDER_REVIEW_2026_11_18.md",
+      "ci_event": "push", "ci_status": 403, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://woiden.id/",
+      "file": "docs/vps/PROVIDER_REVIEW_2026_11_18.md",
+      "ci_event": "push", "ci_status": 403, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://www.youtube.com/watch?v=YnsN52hB8EY",
+      "file": "docs/vps/PROVIDER_REVIEW_2026_11_18.md",
+      "ci_event": "push", "ci_status": 429, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://www.youtube.com/watch?v=So0OCWLRvzk",
+      "file": "docs/vps/PROVIDER_REVIEW_2026_11_18.md",
+      "ci_event": "push", "ci_status": 429, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://www.youtube.com/watch?v=N4bfNefjBSw",
+      "file": "docs/vps/PROVIDER_REVIEW_2026_11_18.md",
+      "ci_event": "push", "ci_status": 429, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://www.youtube.com/watch?v=yqsLvVz0Y44",
+      "file": "docs/vps/PROVIDER_REVIEW_2026_11_18.md",
+      "ci_event": "push", "ci_status": 429, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://www.youtube.com/watch?v=XeAZI4io5t8",
+      "file": "docs/vps/PROVIDER_REVIEW_2026_11_18.md",
+      "ci_event": "push", "ci_status": 429, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://api.github.com/repos/anthropics/claude-code/git/trees/main?recursive=1",
+      "file": "docs/_API-Keys/reviews/2026-11-16.md",
+      "ci_event": "push", "ci_status": 403, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://api.github.com/repos/dwhr-pi/VPS-_Kubernate-_Ollama_OpenClaw_installation/commits/main",
+      "file": "docs/_API-Keys/reviews/2026-10-26.md",
+      "ci_event": "push", "ci_status": 403, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://www.instagram.com/reel/DeeOsB4qmNb/",
+      "file": "docs/media_studio/EDITABLE_VIDEO_WORKFLOWS.md",
+      "ci_event": "push", "ci_status": 429, "independent_status": 200, "decision": "keep-active",
+      "content_verified": false
+    },
+    {
+      "original_url": "https://api.github.com/repos/gitleaks/gitleaks-action/git/tags/dcedce43c6f43de0b836d1fe38946645c9c638dc",
+      "file": "docs/agents/CI_REPAIR_STATUS.md",
+      "ci_event": "push", "ci_status": 403, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://api.github.com/repos/Wan-Video/Wan2.2/git/trees/1ea34ff48f87168174e12956e200b1d908b1c5ff?recursive=1",
+      "file": "docs/models/WAN22_AUDIO_MIDI_TOOLCHAIN.md",
+      "ci_event": "push", "ci_status": 403, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://api.github.com/repos/windmill-labs/windmill/releases/tags/v1.837.0",
+      "file": "docs/tools/windmill.md",
+      "ci_event": "push", "ci_status": 403, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://api.github.com/repos/bwendell/gemini-desktop/releases/tags/v0.12.1",
+      "file": "docs/tools/gemini-desktop-clients.md",
+      "ci_event": "push", "ci_status": 403, "independent_status": 200, "decision": "keep-active"
+    },
+    {
+      "original_url": "https://api.github.com/repos/dortanes/gemini-desktop/releases/tags/v1.0.1",
+      "file": "docs/tools/gemini-desktop-clients.md",
+      "ci_event": "push", "ci_status": 403, "independent_status": 200, "decision": "keep-active"
+    }
+  ]
+}

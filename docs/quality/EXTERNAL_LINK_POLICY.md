@@ -2,6 +2,23 @@
 
 Stand: 31.10.2026. Keine Merge- oder Produktionsfreigabe.
 
+## Nachpruefung 20.11.2026: kanonischer Commit und Abrufsperren
+
+Am Commit `c88ef57` scheiterte der PR-Linkcheck an einem historischen Commit-Link mit dem alten
+Repositorynamen (HTTP 503). Der aktive Link nutzt jetzt den gelesenen kanonischen Repositorynamen
+und denselben vollstaendigen Commit; die Originaladresse bleibt im datierten Review erhalten.
+Kein Ersatz durch `main`, keinen neueren Commit oder eine beliebige Startseite.
+
+Der Push-Linkcheck meldete zehn GitHub-API-Adressen und acht Anbieter-/Medienseiten mit HTTP 403/429.
+Alle 18 Originaladressen lieferten beim unabhaengigen Einzel-GET wieder HTTP 200 und bleiben aktive Links.
+API-JSON wurde gelesen, YouTube nur auf Seitentitel geprueft. Instagram lieferte eine allgemeine
+HTML-Seite: Der Reel-Inhalt bleibt unbestaetigt. Ein erfolgreicher Einzelabruf ist keine nachtraegliche
+CI-Abnahme, keine Konditions-/Lizenzpruefung und kein Beweis fuer dauerhafte Erreichbarkeit.
+Mangels CI-Antwortheadern ist ein ausgeschoepftes API-Limit nur eine moegliche Ursache, kein Nachweis.
+[Alle 19 Einzelbefunde mit Lauf, Job, Fundstelle und Pruefgrenzen](CI_LINK_FOLLOWUP_2026-11-20.json).
+Keine neue Quellenumklassifizierung, Ignore-Regel, Statusfreigabe oder Retry-Aenderung.
+Die Offline-Regression desselben Commits war bei Push und PR erfolgreich; offen bleibt die erneute CI-Linkpruefung.
+
 ## Nachpruefung 19.11.2026: Microsoft- und VPS-Referenzen
 
 Der Linkcheck zu `56964fe` scheiterte an 15 unterschiedlichen Originaladressen:

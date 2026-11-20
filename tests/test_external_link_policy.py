@@ -30,6 +30,56 @@ class Response:
 
 
 class ExternalLinkPolicyTests(unittest.TestCase):
+    def test_canonical_review_commit_preserves_pin_and_failed_original(self):
+        evidence = json.loads((ROOT / 'docs/quality/CI_LINK_FOLLOWUP_2026-11-20.json').read_text(encoding='utf-8'))
+        self.assertEqual(evidence['review_date'], '2026-11-20')
+        self.assertEqual(evidence['commit'], 'c88ef5759f533aabee7ba357628041017d218913')
+        self.assertFalse(evidence['checker_changed'])
+        self.assertEqual(evidence['reclassified_references'], [])
+        canonical = [r for r in evidence['references'] if r['decision'] == 'canonical-name-same-commit']
+        self.assertEqual(len(canonical), 1)
+        row = canonical[0]
+        self.assertEqual(row['ci_status'], 503)
+        pin = 'cd0068a093c74ac95d468aac315104c95f7a3445'
+        self.assertEqual(row['original_url'], 'https://github.com/dwhr-pi/'
+                         'VPS-_Kubernate-_Ollama_OpenClaw_installation/commit/' + pin)
+        self.assertEqual(row['replacement_url'], 'https://github.com/dwhr-pi/'
+                         'OpenClaw-AI_Infrastructure-_Ultimate_Setup/commit/' + pin)
+        text = (ROOT / row['file']).read_text(encoding='utf-8')
+        self.assertIn('`' + row['original_url'] + '`', text)
+        self.assertNotIn(row['original_url'], PROBE.markdown_urls(text))
+        self.assertIn('[Commit][review-commit]', text)
+        self.assertIn('[review-commit]: ' + row['replacement_url'], text)
+        self.assertFalse(self.ignored(row['original_url']))
+        self.assertFalse(self.ignored(row['replacement_url']))
+
+    def test_transient_ci_sources_remain_active_not_reclassified(self):
+        evidence = json.loads((ROOT / 'docs/quality/CI_LINK_FOLLOWUP_2026-11-20.json').read_text(encoding='utf-8'))
+        rows = evidence['references']
+        self.assertEqual(len(rows), 19)
+        self.assertEqual(len({r['original_url'] for r in rows}), 19)
+        self.assertEqual(evidence['ci']['pull_request']['job_id'], 135973058630)
+        self.assertEqual(evidence['ci']['push']['job_id'], 135973041062)
+        active = [r for r in rows if r['decision'] == 'keep-active']
+        self.assertEqual(len(active), 18)
+        self.assertEqual(sum(r['ci_status'] == 403 for r in active), 12)
+        self.assertEqual(sum(r['ci_status'] == 429 for r in active), 6)
+        for row in active:
+            url = row['original_url']
+            self.assertEqual(row['independent_status'], 200)
+            self.assertFalse(self.ignored(url), url)
+            path = (ROOT / row['file']).resolve()
+            path.relative_to(ROOT)
+            text = path.read_text(encoding='utf-8')
+            if url not in PROBE.markdown_urls(text):
+                definitions = re.findall(r'^\[([^\]]+)\]:\s+(\S+)\s*$', text, re.MULTILINE)
+                labels = [label for label, target in definitions if target == url]
+                self.assertTrue(labels, url)
+                self.assertTrue(any(re.search(r'\[[^\]]+\]\[' + re.escape(label) + r'\]', text)
+                                    for label in labels), url)
+        instagram = next(r for r in active if 'instagram.com/' in r['original_url'])
+        self.assertFalse(instagram['content_verified'])
+
     def test_approved_ci_references_keep_originals_without_checker_exceptions(self):
         evidence = json.loads((ROOT / 'docs/quality/CI_SOURCE_REFERENCES_2026-11-19.json').read_text(encoding='utf-8'))
         self.assertTrue(evidence['user_approved_reclassification'])
