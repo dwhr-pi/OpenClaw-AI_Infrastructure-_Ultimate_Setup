@@ -3,6 +3,7 @@
 # shellcheck disable=SC2034
 TXT_YES_LABEL="是"
 TXT_NO_LABEL="否"
+TXT_OK_LABEL="确认"
 TXT_LOADING_NOTICE_TITLE="正在准备视图"
 TXT_LOADING_NOTICE_BODY='正在准备“%s”视图。\n\n%s\n\n根据 WSL 和存储设备的情况，加载可能需要几秒到几分钟。可选的时间和磁盘测量数据从本地摘要读取。\n\n继续？'
 TXT_LOADING_GAUGE_TITLE='正在加载 %s'

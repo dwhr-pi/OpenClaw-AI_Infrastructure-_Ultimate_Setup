@@ -66,6 +66,17 @@ class NativeGithubTests(unittest.TestCase):
         run.assert_not_called()
         git.assert_not_called()
 
+    def test_vaultwarden_plan_reports_bootstrap_reserve_without_toolchain_probe(self):
+        with patch.object(tool.common, 'git') as git, patch.object(tool, 'preflight') as preflight, \
+                patch.object(tool, 'build') as build, redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(tool.main(['vaultwarden', 'plan']), 0)
+        self.assertIn('Rust 1.99.1', output.getvalue())
+        self.assertIn('14336 MiB frei', output.getvalue())
+        self.assertIn('keine Toolchain-Probe', output.getvalue())
+        git.assert_not_called()
+        preflight.assert_not_called()
+        build.assert_not_called()
+
     def test_blocked_install_fails_and_logs_without_fetch_or_marker(self):
         with patch.object(tool.common, "install") as install, patch.object(tool, "build") as build, redirect_stdout(io.StringIO()):
             with self.assertRaisesRegex(ValueError, "noch OFFEN"):

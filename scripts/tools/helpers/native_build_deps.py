@@ -55,6 +55,9 @@ def installed(package):
 
 
 def prepare(spec, approved=False):
+    denied = os.environ.get('OPENCLAW_BUILD_DEPS_DENY') == '1'
+    if denied:
+        approved = False
     packages = spec["recipe"].get("apt_build_deps", [])
     if spec['id'] == 'vaultwarden' and not packages:
         packages = VAULTWARDEN_PACKAGES
@@ -127,7 +130,7 @@ def prepare(spec, approved=False):
     print("Nur freigegebene Basiswerkzeuge/Bibliotheken via apt; " + name + " selbst aus GitHub. "
           "apt kann Abhaengigkeiten aktualisieren. Basiswerkzeuge bleiben bei Deinstallation erhalten.")
     print("Gezielt erneut starten: bash scripts/tools/" + slug + "_install.sh --install-build-deps")
-    if not approved and sys.stdin.isatty():
+    if not approved and not denied and sys.stdin.isatty():
         try:
             print("Fehlende Buildpakete jetzt mit apt installieren? [j/N]", flush=True)
             print("Warte auf Ihre Eingabe und Enter. Nur [j/ja/y/yes] erlaubt die Aktion; Nur [Enter] bedeutet: Nein.", flush=True)

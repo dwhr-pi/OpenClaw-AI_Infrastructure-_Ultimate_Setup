@@ -1111,6 +1111,7 @@ confirm_heavy_or_experimental_tool() {
 
 preflight_tool_install_storage() {
   local tool_key="$1"
+  local bootstrap_min_kb=0
   local min_mb
   local min_kb
   local free_kb
@@ -1135,6 +1136,12 @@ preflight_tool_install_storage() {
   fi
   echo -e "${YELLOW}Aktuell frei Linux/WSL:${NC} $(format_kb_human "$free_kb")"
 
+  if [ "$tool_key" = Vaultwarden ]; then
+    bootstrap_min_kb=$(((fallback_mb + 2048) * 1024))
+    echo "Vaultwarden: Falls Rust 1.99.1 fehlt, braucht die private Basis zusaetzlich 2048 MiB; dann mindestens $(format_kb_human "$bootstrap_min_kb") vor dem Bootstrap, unter WSL auch auf dem Windows-Host."
+    echo "Hinweis: Bedingter Zusatzbedarf, keine pauschale Downloadfreigabe. Die passende vorhandene Rust-Basis wird bevorzugt; der Installer prueft den tatsaechlichen Bedarf."
+  fi
+
   if [ "$free_kb" -lt "$min_kb" ] 2>/dev/null; then
     echo -e "${RED}Abbruch vor der Installation:${NC} Fuer ${tool_key} sind mindestens $(format_kb_human "$min_kb") frei empfohlen, aktuell sind nur $(format_kb_human "$free_kb") frei."
     echo -e "${YELLOW}Tipp:${NC} Erst Speicher freigeben, z. B. mit: bash scripts/cleanup_installation_residues.sh --apply --all"
@@ -1153,6 +1160,9 @@ preflight_tool_install_storage() {
     windows_free_kb="$(get_windows_host_free_kb)"
     if [ -n "$windows_free_kb" ]; then
       echo -e "${YELLOW}Aktuell frei Windows-Host (${WINDOWS_HOST_DRIVE:-C}:):${NC} ${GREEN}$(format_kb_human "$windows_free_kb")${NC}"
+      if [ "$bootstrap_min_kb" -gt 0 ] && [ "$windows_free_kb" -lt "$bootstrap_min_kb" ]; then
+        echo "Vaultwarden: Fuer einen erforderlichen Rust-Bootstrap fehlen derzeit mindestens $(((bootstrap_min_kb - windows_free_kb + 1023) / 1024)) MiB auf dem Windows-Host. Die Basisreserve allein reicht dafuer nicht; kein automatisches Aufraeumen oder Absenken der Reserve."
+      fi
       if [ "$windows_free_kb" -lt "$windows_min_kb" ] 2>/dev/null; then
         echo -e "${RED}Abbruch vor der Installation:${NC} Unter WSL sollte ${WINDOWS_HOST_DRIVE:-C}: fuer ${tool_key} mindestens $(format_kb_human "$windows_min_kb") frei haben, aktuell sind nur $(format_kb_human "$windows_free_kb") frei."
         echo "Fehlend: mindestens $(((windows_min_kb - windows_free_kb + 1023) / 1024)) MiB auf dem Windows-Host. Kein Installer gestartet."
@@ -2643,10 +2653,12 @@ selection_contains() {
 
 select_tool_batch_build_deps_policy() {
   dialog --stdout --default-item ask \
+    --ok-label "${TXT_OK_LABEL:-OK}" --cancel-label "${TXT_BACK_LABEL:-Zurueck}" \
     --title "Stapelinstallation: Build-Voraussetzungen" \
-    --menu "Einmalige Auswahl nur fuer diesen Stapel. Alle: fehlende freigegebene Buildwerkzeuge, Laufzeiten und Entwicklungsbibliotheken fuer die ausgewaehlten Tools einrichten. apt kann Abhaengigkeiten aktualisieren; private Toolchains brauchen weiterhin Integritaetsnachweise und Speicherreserve. Kein System-Python-Wechsel, keine Fremdquellen. Lizenz-, Sicherheits-, Modell- und Dienststartfreigaben werden nicht ersetzt. Abbrechen: keine Stapelaktion ausfuehren." 20 90 2 \
+    --menu "Einmalige Auswahl nur fuer diesen Stapel. Alle: fehlende freigegebene Buildwerkzeuge, Laufzeiten und Entwicklungsbibliotheken fuer die ausgewaehlten Tools einrichten. apt kann Abhaengigkeiten aktualisieren; private Toolchains brauchen weiterhin Integritaetsnachweise und Speicherreserve. Nein: nur vorhandene Buildwerkzeuge nutzen; bei fehlender Basis scheitert das betreffende Tool ohne erneute Voraussetzungen-Frage. Kein System-Python-Wechsel, keine Fremdquellen. Lizenz-, Sicherheits-, Modell- und Dienststartfreigaben werden nicht ersetzt. Abbrechen: keine Stapelaktion ausfuehren." 22 90 3 \
     ask "Wie bisher: Voraussetzungen je Tool bestaetigen" \
-    all "Alle benoetigten freigegebenen Voraussetzungen installieren"
+    all "Alle benoetigten freigegebenen Voraussetzungen installieren" \
+    existing "Nein: keine zusaetzlichen Buildwerkzeuge installieren"
 }
 
 run_ordered_tool_actions() {
@@ -2673,7 +2685,7 @@ run_ordered_tool_actions() {
   if [ "${#install_queue_ref[@]}" -gt 1 ]; then
     TOOL_BATCH_BUILD_DEPS_POLICY="$(select_tool_batch_build_deps_policy)" || return 1
     case "$TOOL_BATCH_BUILD_DEPS_POLICY" in
-      ask | all) ;;
+      ask | all | existing) ;;
       *)
         printf '%s\n' 'Abbruch: Ungueltige Voraussetzungen-Auswahl. Keine Stapelaktion gestartet.'
         return 1
@@ -3679,6 +3691,8 @@ run_tool_script() {
   local action="$2"
   local script_name="${TOOL_SCRIPT_NAMES[$tool_key]}"
   local -a tool_args=()
+  local OPENCLAW_BUILD_DEPS_DENY="${OPENCLAW_BUILD_DEPS_DENY:-0}"
+  export OPENCLAW_BUILD_DEPS_DENY
 
   if [ -z "$script_name" ]; then
     echo -e "${RED}Fehler: Kein Skript-Mapping für Tool '$tool_key' gefunden.${NC}"
@@ -3702,6 +3716,8 @@ run_tool_script() {
       prerequisites='Valkey: Compiler, make, pkg-config und OpenSSL-Entwicklungsbibliotheken aus Debian-/Ubuntu-Paketen. Gepinnter privater GitHub-Build, kein Server-/Portstart und kein Austausch einer Redis-Installation.'
     elif [ "$tool_key" = SongRec ]; then
       prerequisites='SongRec: fehlendes Cargo/Rust, Compiler, pkg-config, gettext sowie ALSA-/GLib-/OpenSSL-Entwicklungsbibliotheken aus Debian-/Ubuntu-Paketen. Abweichende Basis wird mit apt simuliert. Vorhandene private Cargo-/Rust-Werkzeuge bleiben. SongRec aus gepinntem GitHub-Stand; kein Mikrofon-/Shazam-Aufruf.'
+    elif [ "$tool_key" = Vaultwarden ]; then
+      prerequisites='Vaultwarden: vorhandenes passendes Rust 1.99.1 bevorzugen. Falls es fehlt: private gepruefte Rust-Basis nach Zustimmung, ohne System-/Default-Aenderung. Zur 12-GiB-Buildreserve kommen beim Bootstrap 2 GiB hinzu: mindestens 14 GiB frei, unter WSL auch auf dem Windows-Host. Kein automatisches Aufraeumen, Serverstart oder Web-Vault-Download.'
     fi
     local prerequisite_policy=ask
     # Batch consent is dynamically scoped, never an ambient environment opt-in.
@@ -3713,11 +3729,17 @@ run_tool_script() {
         printf '%s\n' "$tool_key: Build-Voraussetzungen fuer diesen Stapel freigegeben."
         tool_args+=(--install-build-deps)
         ;;
+      existing)
+        OPENCLAW_BUILD_DEPS_DENY=1
+        printf '%s\n' "$tool_key: Keine zusaetzlichen Buildwerkzeuge freigegeben; nur vorhandene Basis verwenden."
+        ;;
       *)
         if dialog --defaultno \
           --yes-label "${TXT_YES_LABEL:-Ja}" --no-label "${TXT_NO_LABEL:-Nein}" \
           --title "$tool_key: Voraussetzungen" --yesno "$prerequisites\n\nFehlende Voraussetzungen im Setup einrichten? apt kann Abhaengigkeiten aktualisieren; Basiswerkzeuge bleiben erhalten. Kein System-Python-Wechsel, Modell- oder Dienststart. Nein: nur vorhandene Basis verwenden." 16 78; then
           tool_args+=(--install-build-deps)
+        else
+          OPENCLAW_BUILD_DEPS_DENY=1
         fi
         ;;
     esac

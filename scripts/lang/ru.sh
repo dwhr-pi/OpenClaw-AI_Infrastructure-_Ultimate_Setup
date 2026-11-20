@@ -3,6 +3,7 @@
 # shellcheck disable=SC2034
 TXT_YES_LABEL="Да"
 TXT_NO_LABEL="Нет"
+TXT_OK_LABEL="Подтвердить"
 TXT_LOADING_NOTICE_TITLE="ПОДГОТОВКА ОКНА"
 TXT_LOADING_NOTICE_BODY='Подготовка окна «%s».\n\n%s\n\nЗагрузка может занять от нескольких секунд до нескольких минут в зависимости от WSL и накопителя. Дополнительные измерения читаются из локальной сводки.\n\nПродолжить?'
 TXT_LOADING_GAUGE_TITLE='ЗАГРУЗКА: %s'

@@ -41,6 +41,17 @@ ersten Installation **oder Deinstallation** eine einmalige Voraussetzungen-Auswa
 - **Wie bisher:** Voraussetzungen je Tool bestaetigen (Voreinstellung).
 - **Alle:** fehlende freigegebene Build-Voraussetzungen fuer diesen Stapel einrichten,
   ohne den Voraussetzungen-Dialog bei jedem Tool erneut zu zeigen.
+- **Nein:** nur vorhandene Buildwerkzeuge verwenden. Fehlende Voraussetzungen
+  fuehren zum Fehler des betreffenden Tools, nicht zu einer erneuten Download-/apt-Frage.
+
+Die OK-/Zurueck-Schaltflaechen der Stapelauswahl nutzen die Werte der gewaehlten
+Setup-Sprache, nicht die Systemsprache von `dialog`. Die ausdrueckliche Nein-Wahl
+wird an die freigegebenen Paket-/uv-/Go-/Rust-Helfer als reine Sperre weitergegeben;
+sie erteilt nie eine Freigabe. Vorhandene passende Basiswerkzeuge duerfen weiter
+verwendet werden. Hauptprogramm und seine normalen Laufzeitpakete sind nicht
+pauschal abgelehnt; Lizenz-/Sicherheitsfragen bleiben getrennt.
+Auch Nein/Escape im einzelnen Voraussetzungen-Dialog erlaubt keine erneute
+Buildwerkzeug-Frage im nachgelagerten Helfer.
 
 Abbrechen fuehrt keine Stapelaktion aus. Die Wahl gilt nur fuer diesen Stapel,
 nicht fuer spaetere Stapel, Einzelinstallationen oder einen Setup-Neustart.
@@ -50,7 +61,7 @@ Integritaetspruefungen sowie Lizenz-/Sicherheitsfreigaben bleiben bestehen.
 Sudo kann weiterhin nach einem Passwort fragen. Optionale manuelle
 Schrittbestaetigungen und Fehlerdialoge werden dadurch nicht abgeschaltet.
 Die neue Auswahl verwendet wie die bisherigen technischen Voraussetzungen-Texte
-deutsche Beschreibungen; die folgenden Sprachpaketregeln betreffen die Ja-/Nein-Tasten.
+deutsche Beschreibungen; Schaltflaechen und die folgenden Ja-/Nein-Tasten folgen den Sprachpaketen.
 
 Die Ja-/Nein-Schaltflaechen des gemeinsamen Voraussetzungen-Fensters verwenden
 die ausgewaehlte Setup-Sprache und deren Sprachpaketwerte, nicht die Sprache

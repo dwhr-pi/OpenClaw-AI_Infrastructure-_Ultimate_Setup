@@ -3,6 +3,7 @@
 # shellcheck disable=SC2034
 TXT_YES_LABEL="Oui"
 TXT_NO_LABEL="Non"
+TXT_OK_LABEL="Valider"
 TXT_LOADING_NOTICE_TITLE="PRÉPARATION DE LA VUE"
 TXT_LOADING_NOTICE_BODY='Préparation de la vue « %s ».\n\n%s\n\nLe chargement peut durer quelques secondes à plusieurs minutes selon WSL et le stockage. Les mesures facultatives proviennent du résumé local.\n\nContinuer ?'
 TXT_LOADING_GAUGE_TITLE='CHARGEMENT : %s'

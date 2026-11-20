@@ -642,6 +642,8 @@ def main(argv=None):
     for action in ("repair", "uninstall", "status", "check"):
         alias.add_argument("--" + action, dest="override", action="store_const", const=action)
     args = parser.parse_args(argv)
+    if os.environ.get('OPENCLAW_BUILD_DEPS_DENY') == '1':
+        args.install_build_deps = False
     if args.override:
         if args.action not in ("install", args.override):
             parser.error("Widerspruechliche Aktionen.")
@@ -656,6 +658,12 @@ def main(argv=None):
         print(json.dumps(dict(tool=args.tool, target=str(prefix), **spec), indent=2))
         if args.tool in ('litellm', 'xerj'):
             print('Rust 1.98.0: vorhandene Basis bevorzugt; privater offizieller Bootstrap nur nach Zustimmung/--install-build-deps, 2048 MiB Zusatzpuffer. Kein Download in diesem Plan.')
+        if args.tool == 'vaultwarden':
+            print('Vaultwarden: Rust 1.99.1 erforderlich; passende vorhandene Basis bevorzugt. '
+                  'Falls privater Bootstrap erforderlich: 2048 MiB zusaetzlich, insgesamt '
+                  + str(spec['recipe']['disk_mb'] + 2048)
+                  + ' MiB frei, unter WSL auch auf dem Windows-Host. '
+                  'Nur bedingter Planbedarf, keine Toolchain-Probe oder Downloadfreigabe.')
         if args.quarantine_incomplete:
             print("Caddy-Reparaturplan: unmarkierten Altordner nach Vorpruefung im Tool-Verzeichnis erhalten/umbenennen; danach frischer GitHub-Build. Kein Platzgewinn.")
         print("Nur Plan. Kein Download/Build/Container/Hosteingriff; blocked_reason ist KEINE Installation.")

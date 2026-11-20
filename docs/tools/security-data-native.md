@@ -82,6 +82,18 @@ Dateigroesse/SHA256 von `rustup-init` 1.29.2 vor Ausfuehrung, danach rustc-/Carg
 sysroot und das lokale Dateiinventar. Rustup prueft die Distributionskomponenten beim Download;
 dies ersetzt keinen eigenen, vollstaendig vendorten Toolchain-Lock.
 Zusaetzliche Speicherreserve: 2 GiB, also 14 GiB vor dem Rust-Bootstrap, auch auf dem WSL-Host.
+
+Nachtrag 20.11.2026: Der gemeldete Lauf hatte auf C: 13946 MiB frei. Die
+12-GiB-Basispruefung bestand, fuer den erforderlichen Rust-Bootstrap galten
+jedoch 14336 MiB; es fehlten mindestens 390 MiB. Der Abbruch war korrekt,
+kein Rust-/Python-Buildfehler. Ein Setup-Update schafft keinen freien Host-Speicher.
+Menue-Vorpruefung, Voraussetzungen-Dialog und Plan nennen jetzt diesen
+bedingten Zusatzbedarf. Die Menueanzeige behauptet nicht, dass Rust fehlt;
+die verbindliche Toolchain-/Speicherpruefung bleibt im Installer.
+Eine passende vorhandene Basis wird weiterhin ohne neuen Bootstrap bevorzugt.
+Reserven werden nicht gesenkt, Daten nicht automatisch geloescht und ein
+Speicherabbruch nicht durch `--install-build-deps` umgangen. Der Mindestwert
+ist keine Garantie fuer den gesamten spaeteren Betrieb oder andere parallele Installationen.
 Kein System-Rust-/Default-/Shell-PATH-Wechsel; `--no-modify-path` und private Cargo-/Rustup-Verzeichnisse.
 Ein explizites `NATIVE_SOURCE_RUST_TOOLCHAIN` muss gueltig sein und wird nie still ersetzt.
 Ohne Zustimmung, bei Hash-/Versionsfehlern oder veraendertem privatem Bestand wird abgebrochen.

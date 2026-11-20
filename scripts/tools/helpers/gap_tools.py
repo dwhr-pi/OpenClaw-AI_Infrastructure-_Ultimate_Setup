@@ -506,6 +506,8 @@ def main(argv=None):
     for action in ("repair", "uninstall", "status", "check"):
         override.add_argument("--" + action, dest="override", action="store_const", const=action)
     opts = parser.parse_args(argv)
+    if os.environ.get('OPENCLAW_BUILD_DEPS_DENY') == '1':
+        opts.install_build_deps = False
     if opts.override:
         if opts.action not in ("install", opts.override):
             parser.error("Widerspruechliche Aktionen.")

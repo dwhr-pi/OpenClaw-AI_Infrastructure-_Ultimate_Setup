@@ -1245,33 +1245,43 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 ## tests/test_creative_prerequisites.py
 
-- `tests/test_creative_prerequisites.py:20`
+- `tests/test_creative_prerequisites.py:22`
   Prueffall: `test_missing_packages_need_consent_and_install_only_allowlist`
-- `tests/test_creative_prerequisites.py:47`
+- `tests/test_creative_prerequisites.py:49`
   Prueffall: `test_unapproved_package_lists_rejected`
-- `tests/test_creative_prerequisites.py:54`
+- `tests/test_creative_prerequisites.py:56`
   Prueffall: `test_unsupported_os_and_package_failure_stop`
-- `tests/test_creative_prerequisites.py:69`
+- `tests/test_creative_prerequisites.py:71`
   Prueffall: `test_espeak_plan_accepts_flag_without_apt`
-- `tests/test_creative_prerequisites.py:77`
+- `tests/test_creative_prerequisites.py:79`
   Prueffall: `test_setup_consent_and_songsage_guard_precede_transaction`
-- `tests/test_creative_prerequisites.py:89`
+- `tests/test_creative_prerequisites.py:91`
   Prueffall: `test_menu_forwards_consent_only_for_approved_mutations`
-- `tests/test_creative_prerequisites.py:173`
+- `tests/test_creative_prerequisites.py:176`
+  Prueffall: `test_batch_no_reuses_only_existing_basis_without_repeated_questions_or_leaking_denial`
+- `tests/test_creative_prerequisites.py:187`
+  Prueffall: `test_batch_buttons_use_all_ten_selected_language_packs`
+- `tests/test_creative_prerequisites.py:196`
+  Prueffall: `test_explicit_denial_blocks_apt_and_terminal_reprompt_even_if_approved_is_set`
+- `tests/test_creative_prerequisites.py:210`
+  Prueffall: `test_explicit_denial_blocks_missing_go_without_terminal_reprompt`
+- `tests/test_creative_prerequisites.py:226`
+  Prueffall: `test_explicit_denial_never_rebootstraps_disappearing_private_go`
+- `tests/test_creative_prerequisites.py:243`
   Prueffall: `test_batch_all_approves_only_supported_tools_without_repeated_dialogs`
-- `tests/test_creative_prerequisites.py:184`
+- `tests/test_creative_prerequisites.py:254`
   Prueffall: `test_batch_ask_keeps_individual_default_no_dialogs`
-- `tests/test_creative_prerequisites.py:189`
+- `tests/test_creative_prerequisites.py:259`
   Prueffall: `test_batch_cancel_or_invalid_choice_prevents_uninstall_and_install`
-- `tests/test_creative_prerequisites.py:197`
+- `tests/test_creative_prerequisites.py:267`
   Prueffall: `test_batch_consent_never_leaks_to_single_tool_or_readonly_action`
-- `tests/test_creative_prerequisites.py:209`
+- `tests/test_creative_prerequisites.py:279`
   Prueffall: `test_next_batch_requires_its_own_choice`
-- `tests/test_creative_prerequisites.py:216`
+- `tests/test_creative_prerequisites.py:286`
   Prueffall: `test_prerequisite_buttons_follow_all_setup_languages_not_system_locale`
-- `tests/test_creative_prerequisites.py:230`
+- `tests/test_creative_prerequisites.py:301`
   Prueffall: `test_prerequisite_buttons_preserve_overrides_and_missing_key_fallback`
-- `tests/test_creative_prerequisites.py:240`
+- `tests/test_creative_prerequisites.py:311`
   Prueffall: `test_planned_infrastructure_is_rejected_before_installer_or_log`
 
 ## tests/test_credentials_backup.py
@@ -3014,12 +3024,16 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_litellm_rust_bootstrap.py:89`
   Prueffall: `test_vaultwarden_changed_pin_is_not_bootstrapped`
 - `tests/test_litellm_rust_bootstrap.py:95`
+  Prueffall: `test_explicit_denial_never_prompts_or_downloads_a_missing_rust_toolchain`
+- `tests/test_litellm_rust_bootstrap.py:108`
+  Prueffall: `test_vaultwarden_storage_shortfall_stops_before_staging_or_download`
+- `tests/test_litellm_rust_bootstrap.py:119`
   Prueffall: `test_vaultwarden_invalid_explicit_path_never_downloads`
-- `tests/test_litellm_rust_bootstrap.py:103`
+- `tests/test_litellm_rust_bootstrap.py:127`
   Prueffall: `test_failed_download_cleans_only_its_staging`
-- `tests/test_litellm_rust_bootstrap.py:115`
+- `tests/test_litellm_rust_bootstrap.py:139`
   Prueffall: `test_partial_or_changed_slot_is_not_overwritten`
-- `tests/test_litellm_rust_bootstrap.py:125`
+- `tests/test_litellm_rust_bootstrap.py:149`
   Prueffall: `test_corrupt_payload_not_executed`
 
 ## tests/test_local_ai_benchmarks.py
@@ -3912,58 +3926,60 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_native_github_tools.py:60`
   Prueffall: `test_every_plan_and_status_are_read_only`
 - `tests/test_native_github_tools.py:69`
+  Prueffall: `test_vaultwarden_plan_reports_bootstrap_reserve_without_toolchain_probe`
+- `tests/test_native_github_tools.py:80`
   Prueffall: `test_blocked_install_fails_and_logs_without_fetch_or_marker`
-- `tests/test_native_github_tools.py:82`
+- `tests/test_native_github_tools.py:93`
   Prueffall: `test_platform_remainders_fail_before_any_build_or_download`
-- `tests/test_native_github_tools.py:94`
+- `tests/test_native_github_tools.py:105`
   Prueffall: `test_rhasspy_blocker_is_specific_and_never_downloads_or_marks_installed`
-- `tests/test_native_github_tools.py:111`
+- `tests/test_native_github_tools.py:122`
   Prueffall: `test_rhasspy_blocked_uninstall_preserves_legacy_data`
-- `tests/test_native_github_tools.py:123`
+- `tests/test_native_github_tools.py:134`
   Prueffall: `test_rhasspy_legacy_inventory_pins_sources_without_claiming_runtime`
-- `tests/test_native_github_tools.py:143`
+- `tests/test_native_github_tools.py:154`
   Prueffall: `test_rhasspy_doctor_is_offline_read_only_and_reports_missing_implementation`
-- `tests/test_native_github_tools.py:162`
+- `tests/test_native_github_tools.py:173`
   Prueffall: `test_rhasspy_doctor_handles_unavailable_inventory_without_enabling_install`
-- `tests/test_native_github_tools.py:169`
+- `tests/test_native_github_tools.py:180`
   Prueffall: `test_low_disk_fails_before_sources_and_keeps_legacy_data`
-- `tests/test_native_github_tools.py:182`
+- `tests/test_native_github_tools.py:193`
   Prueffall: `test_success_and_second_install_are_idempotent`
-- `tests/test_native_github_tools.py:192`
+- `tests/test_native_github_tools.py:203`
   Prueffall: `test_build_failure_removes_only_new_prefix`
-- `tests/test_native_github_tools.py:202`
+- `tests/test_native_github_tools.py:213`
   Prueffall: `test_mosquitto_example_is_loopback_denies_anonymous_and_keeps_old_config`
-- `tests/test_native_github_tools.py:214`
+- `tests/test_native_github_tools.py:225`
   Prueffall: `test_atomic_marker_failure_never_leaves_success`
-- `tests/test_native_github_tools.py:222`
+- `tests/test_native_github_tools.py:233`
   Prueffall: `test_unmanaged_directory_is_preserved`
-- `tests/test_native_github_tools.py:230`
+- `tests/test_native_github_tools.py:241`
   Prueffall: `test_added_files_block_uninstall`
-- `tests/test_native_github_tools.py:240`
+- `tests/test_native_github_tools.py:251`
   Prueffall: `test_uninstall_does_not_touch_sibling_legacy_data`
-- `tests/test_native_github_tools.py:250`
+- `tests/test_native_github_tools.py:261`
   Prueffall: `test_foreign_commit_is_rejected`
-- `tests/test_native_github_tools.py:256`
+- `tests/test_native_github_tools.py:267`
   Prueffall: `test_unsafe_artifact_marker_is_rejected`
-- `tests/test_native_github_tools.py:265`
+- `tests/test_native_github_tools.py:276`
   Prueffall: `test_all_build_kinds_only_compile_and_probe_in_fixtures`
-- `tests/test_native_github_tools.py:333`
+- `tests/test_native_github_tools.py:344`
   Prueffall: `test_environment_excludes_credentials_and_blocks_container_fallback`
-- `tests/test_native_github_tools.py:345`
+- `tests/test_native_github_tools.py:356`
   Prueffall: `test_every_lifecycle_wrapper_uses_native_dispatcher`
-- `tests/test_native_github_tools.py:353`
+- `tests/test_native_github_tools.py:364`
   Prueffall: `test_registry_uses_build_markers_and_never_calls_blocked_recipe_ready`
-- `tests/test_native_github_tools.py:363`
+- `tests/test_native_github_tools.py:374`
   Prueffall: `test_eol_archive_requires_explicit_ack_before_fetch`
-- `tests/test_native_github_tools.py:370`
+- `tests/test_native_github_tools.py:381`
   Prueffall: `test_python_version_check_is_before_fetch_and_does_not_expose_keys`
-- `tests/test_native_github_tools.py:377`
+- `tests/test_native_github_tools.py:388`
   Prueffall: `test_submodule_pin_mismatch_rolls_back_without_fetching_dependency`
-- `tests/test_native_github_tools.py:391`
+- `tests/test_native_github_tools.py:402`
   Prueffall: `test_missing_pipeline_output_is_failure_not_source_only_success`
-- `tests/test_native_github_tools.py:400`
+- `tests/test_native_github_tools.py:411`
   Prueffall: `test_every_recipe_declares_its_toolchain_without_key_errors`
-- `tests/test_native_github_tools.py:405`
+- `tests/test_native_github_tools.py:416`
   Prueffall: `test_official_codeberg_exception_does_not_mark_a_clone_as_installed`
 
 ## tests/test_native_go.py
@@ -4403,10 +4419,14 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_openjarvis_native.py:44`
   Prueffall: `test_lifecycle_wrappers_and_menu_include_prerequisite_consent`
 - `tests/test_openjarvis_native.py:55`
-  Prueffall: `test_plan_status_are_offline_and_create_no_workspace`
+  Prueffall: `test_actual_uv_contract_accepts_openjarvis_and_reuses_existing_uv_under_denial`
 - `tests/test_openjarvis_native.py:67`
+  Prueffall: `test_actual_uv_contract_rejects_new_bootstrap_under_explicit_denial`
+- `tests/test_openjarvis_native.py:82`
+  Prueffall: `test_plan_status_are_offline_and_create_no_workspace`
+- `tests/test_openjarvis_native.py:94`
   Prueffall: `test_core_source_wheel_build_never_installs_extras_or_runs_jarvis`
-- `tests/test_openjarvis_native.py:115`
+- `tests/test_openjarvis_native.py:142`
   Prueffall: `test_docs_state_exact_scope_and_link_both_official_websites`
 
 ## tests/test_openmontage.py
@@ -6241,6 +6261,8 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_measurements_never_lower_the_native_minimum`
 - `tests/test_traefik_storage.py:84`
   Prueffall: `test_sandbox_host_reserves_match_native_recipes_and_reported_shortfall`
+- `tests/test_traefik_storage.py:101`
+  Prueffall: `test_vaultwarden_shows_conditional_rust_reserve_without_false_toolchain_probe`
 
 ## tests/test_valkey_native.py
 
@@ -6932,4 +6954,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3104**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3115**. Kein Nachweis bestandener Tests.

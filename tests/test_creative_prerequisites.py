@@ -2,6 +2,7 @@
 from contextlib import redirect_stdout
 import io
 import os
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -13,6 +14,7 @@ from unittest.mock import Mock, patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts/tools/helpers'))
 import native_build_deps as deps
+import native_go
 import gap_tools as tools
 
 
@@ -121,7 +123,7 @@ declare -A TOOL_SCRIPT_NAMES=([Arize_Phoenix]=phoenix)
 INSTALL_DIR=/fixture
 validate_tool_source_policy() { return 0; }
 dialog() { printf 'DIALOG_ARG:%s\\n' "$@"; return "$ANSWER"; }
-run_bash_script() { printf 'RUN_ARG:%s\\n' "$@"; }
+run_bash_script() { printf 'RUN_DENY:%s\\n' "${OPENCLAW_BUILD_DEPS_DENY:-unset}"; printf 'RUN_ARG:%s\\n' "$@"; }
 source "scripts/lang/$1.sh"
 '''
         env = {k: v for k, v in os.environ.items() if k.upper() in ('PATH', 'SYSTEMROOT', 'TEMP', 'TMP')}
@@ -131,7 +133,7 @@ source "scripts/lang/$1.sh"
                                 cwd=ROOT, env=env, capture_output=True, encoding='utf-8', timeout=15, check=True)
         return result.stdout.splitlines()
 
-    def batch_prerequisites(self, choice='all', menu_rc=0, queue='Outlines eSpeak_NG Other', after=''):
+    def batch_prerequisites(self, choice='all', menu_rc=0, queue='Outlines eSpeak_NG Other', after='', language='de'):
         bash = 'C:/Program Files/Git/bin/bash.exe' if os.name == 'nt' else shutil.which('bash')
         if not bash or (os.name == 'nt' and not Path(bash).is_file()):
             self.skipTest('Bash not available for offline batch fixture')
@@ -150,7 +152,7 @@ format_tool_queue_preview() { :; }
 confirm_tool_batch_step() { return 0; }
 uninstall_tool() { printf 'UNINSTALL:%s\\n' "$1"; }
 install_tool() { run_tool_script "$1" install; }
-run_bash_script() { printf 'RUN_ARG:%s\\n' "$@"; }
+run_bash_script() { printf 'CHILD_DENY:%s\\n' "${OPENCLAW_BUILD_DEPS_DENY:-unset}"; printf 'RUN_ARG:%s\\n' "$@"; }
 dialog() {
   case " $* " in
     *" --menu "*)
@@ -161,14 +163,82 @@ dialog() {
     *) printf 'TOOL_QUESTION\\n'; return 1 ;;
   esac
 }
+source "scripts/lang/$1.sh"
 '''
         env = {k: v for k, v in os.environ.items() if k.upper() in ('PATH', 'SYSTEMROOT', 'TEMP', 'TMP')}
         env.update(BATCH_CHOICE=choice, MENU_RC=str(menu_rc))
         command = (stubs + batch + dispatcher + '\nuninstalls=(Old); installs=(' + queue + ')\n'
                    'rc=0; run_ordered_tool_actions fixture uninstalls installs || rc=$?\n'
                    'printf "BATCH_RC:%s\\n" "$rc"\n' + after)
-        return subprocess.run([bash, '--noprofile', '--norc', '-s'], input=command, cwd=ROOT,
+        return subprocess.run([bash, '--noprofile', '--norc', '-s', '--', language], input=command, cwd=ROOT,
                               env=env, capture_output=True, encoding='utf-8', timeout=15, check=True)
+
+    def test_batch_no_reuses_only_existing_basis_without_repeated_questions_or_leaking_denial(self):
+        result = self.batch_prerequisites(choice='existing', after=(
+            'printf "POLICY_AFTER:%s\\n" "${OPENCLAW_BUILD_DEPS_DENY:-unset}"\n'
+            'run_tool_script Outlines doctor\n'))
+        self.assertNotIn('RUN_ARG:--install-build-deps', result.stdout)
+        self.assertNotIn('TOOL_QUESTION', result.stdout)
+        self.assertEqual(result.stdout.count('CHILD_DENY:1'), 2)
+        self.assertIn('POLICY_AFTER:unset', result.stdout)
+        self.assertIn('RUN_ARG:/fixture/scripts/tools/outlines_doctor.sh', result.stdout)
+        self.assertIn('Nein: keine zusaetzlichen Buildwerkzeuge installieren', result.stderr)
+
+    def test_batch_buttons_use_all_ten_selected_language_packs(self):
+        for language in ('de', 'en', 'fr', 'es', 'eo', 'zh', 'ja', 'ru', 'ar', 'he'):
+            with self.subTest(language=language):
+                result = self.batch_prerequisites(language=language)
+                pack = (ROOT / 'scripts/lang' / (language + '.sh')).read_text(encoding='utf-8')
+                for option, key in (('--ok-label', 'TXT_OK_LABEL'), ('--cancel-label', 'TXT_BACK_LABEL')):
+                    value = re.search(r'^' + key + r'="([^"\n]*)"$', pack, re.MULTILINE).group(1)
+                    self.assertIn('MENU_ARG:' + option + '\nMENU_ARG:' + value, result.stderr)
+
+    def test_explicit_denial_blocks_apt_and_terminal_reprompt_even_if_approved_is_set(self):
+        spec = {'id': 'espeak_ng', 'recipe': {'apt_build_deps': list(deps.ESPEAK_PACKAGES)}}
+        with patch.dict(os.environ, {'OPENCLAW_BUILD_DEPS_DENY': '1'}), \
+                patch.object(deps, 'ubuntu_release', return_value=True), \
+                patch.object(deps.shutil, 'which', return_value='fixture'), \
+                patch.object(deps, 'installed', return_value=False), \
+                patch.object(deps.sys, 'stdin', Mock(isatty=Mock(return_value=True))), \
+                patch('builtins.input', side_effect=AssertionError('No repeated question')) as question, \
+                patch.object(deps.common, 'run') as run, redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(ValueError, 'Zustimmung'):
+                deps.prepare(spec, approved=True)
+            question.assert_not_called()
+            run.assert_not_called()
+
+    def test_explicit_denial_blocks_missing_go_without_terminal_reprompt(self):
+        key = next(iter(native_go.CONTRACTS))
+        spec = {'id': key, 'name': key, 'recipe': {'go_min': native_go.CONTRACTS[key][0]}}
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.dict(os.environ, {'OPENCLAW_BUILD_DEPS_DENY': '1'}), \
+                patch.object(native_go.shutil, 'which', return_value=None), \
+                patch.object(native_go.private_go, 'target', return_value=('linux-amd64', 1, 'a' * 64)), \
+                patch.object(native_go.sys.stdin, 'isatty', return_value=True), \
+                patch('builtins.input', side_effect=AssertionError('No repeated question')) as question, \
+                patch.object(native_go.private_go, 'ensure') as ensure, redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(ValueError, 'nicht freigegeben'):
+                native_go.select(Path(directory), spec, approved=True, allow_download=True)
+            question.assert_not_called()
+            ensure.assert_not_called()
+            self.assertEqual(list(Path(directory).iterdir()), [])
+
+    def test_explicit_denial_never_rebootstraps_disappearing_private_go(self):
+        key = next(iter(native_go.CONTRACTS))
+        spec = {'id': key, 'name': key, 'recipe': {'go_min': native_go.CONTRACTS[key][0]}}
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            (base / 'toolchain' / (native_go.private_go.VERSION + '-linux-amd64')).mkdir(parents=True)
+            with patch.dict(os.environ, {'OPENCLAW_BUILD_DEPS_DENY': '1'}), \
+                    patch.object(native_go.shutil, 'which', return_value=None), \
+                    patch.object(native_go.private_go, 'target', return_value=('linux-amd64', 'go.tar.gz', ('a' * 64, 1))), \
+                    patch.object(native_go.private_go, 'verify_private', side_effect=FileNotFoundError('fixture')), \
+                    patch.object(native_go.private_go, 'ensure') as ensure, \
+                    patch.object(native_go.private_go, 'download') as download:
+                with self.assertRaises(FileNotFoundError):
+                    native_go.select(base, spec, approved=True, allow_download=True)
+                ensure.assert_not_called()
+                download.assert_not_called()
 
     def test_batch_all_approves_only_supported_tools_without_repeated_dialogs(self):
         result = self.batch_prerequisites()
@@ -226,6 +296,7 @@ dialog() {
                     self.assertEqual(lines[lines.index('DIALOG_ARG:--no-label') + 1], 'DIALOG_ARG:' + no)
                     self.assertIn('DIALOG_ARG:--defaultno', lines)
                     self.assertEqual('RUN_ARG:--install-build-deps' in lines, answer == 0)
+                    self.assertIn('RUN_DENY:' + ('0' if answer == 0 else '1'), lines)
 
     def test_prerequisite_buttons_preserve_overrides_and_missing_key_fallback(self):
         for override, labels in (("TXT_YES_LABEL='Custom accept'; TXT_NO_LABEL='Custom decline'",

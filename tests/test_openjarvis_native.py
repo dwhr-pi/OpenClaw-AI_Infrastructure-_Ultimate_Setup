@@ -52,6 +52,33 @@ class OpenJarvisNative(unittest.TestCase):
         menu = (ROOT / 'scripts/helpers/native_github_menu.sh').read_text(encoding='utf-8')
         self.assertIn('"OpenJarvis"', menu)
 
+    def test_actual_uv_contract_accepts_openjarvis_and_reuses_existing_uv_under_denial(self):
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.dict(os.environ, {'OPENCLAW_BUILD_DEPS_DENY': '1'}), \
+                patch.object(python.native_uv.shutil, 'which', return_value='/existing/uv'), \
+                patch.object(python.native_uv.common, 'run', return_value='uv 0.13.5'), \
+                patch.object(python.native_uv.releases, 'download') as download, \
+                redirect_stdout(io.StringIO()):
+            result = python.native_uv.select(Path(directory), self.spec(), approved=True, allow_download=True)
+            self.assertEqual(result, '/existing/uv')
+            download.assert_not_called()
+            self.assertEqual(list(Path(directory).iterdir()), [])
+
+    def test_actual_uv_contract_rejects_new_bootstrap_under_explicit_denial(self):
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.dict(os.environ, {'OPENCLAW_BUILD_DEPS_DENY': '1'}), \
+                patch.object(python.native_uv.shutil, 'which', return_value=None), \
+                patch.object(python.native_uv.releases, 'host_key', return_value='linux-amd64'), \
+                patch.object(python.native_uv.sys.stdin, 'isatty', return_value=True), \
+                patch('builtins.input', side_effect=AssertionError('No repeated question')) as question, \
+                patch.object(python.native_uv.releases, 'download') as download, \
+                redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(ValueError, 'nicht freigegeben'):
+                python.native_uv.select(Path(directory), self.spec(), approved=True, allow_download=True)
+            question.assert_not_called()
+            download.assert_not_called()
+            self.assertEqual(list(Path(directory).iterdir()), [])
+
     def test_plan_status_are_offline_and_create_no_workspace(self):
         with tempfile.TemporaryDirectory() as directory, \
                 patch.dict(os.environ, {'OPENCLAW_USER_DATA_DIR': directory}), \

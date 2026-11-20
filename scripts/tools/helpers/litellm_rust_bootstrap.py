@@ -78,6 +78,9 @@ def existing(base, version=rust.VERSION):
 
 
 def prepare(base, spec, approved=False):
+    denied = os.environ.get('OPENCLAW_BUILD_DEPS_DENY') == '1'
+    if denied:
+        approved = False
     if spec['id'] not in SUPPORTED:
         return None
     version = rust.VERSION
@@ -113,7 +116,7 @@ def prepare(base, spec, approved=False):
     print('Quelle: static.rust-lang.org; rustup-init ' + MANAGER_VERSION + ', feste SHA256; Rust ' + version + '.')
     print('Ziel:', slot, '; 2048 MiB Puffer zusaetzlich zur Toolreserve. Basis bleibt bei App-Deinstallation erhalten.')
     print('Gezielt erneut starten: ' + retry, flush=True)
-    if not approved and sys.stdin.isatty():
+    if not approved and not denied and sys.stdin.isatty():
         print('Rust jetzt privat herunterladen/einrichten? [j/N]', flush=True)
         print('Warte auf Ihre Eingabe und Enter. Nur [j/ja/y/yes] erlaubt die Aktion; Nur [Enter] bedeutet: Nein.', flush=True)
         try:

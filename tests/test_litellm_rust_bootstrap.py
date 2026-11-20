@@ -92,6 +92,30 @@ class PrivateRustTests(unittest.TestCase):
                 bootstrap.prepare(self.base, {'id': 'vaultwarden', 'recipe': {'rust_exact': 'latest'}}, approved=True)
             download.assert_not_called()
 
+    def test_explicit_denial_never_prompts_or_downloads_a_missing_rust_toolchain(self):
+        with patch.dict(os.environ, {'OPENCLAW_BUILD_DEPS_DENY': '1'}), \
+                patch.object(bootstrap.sys.stdin, 'isatty', return_value=True), \
+                patch('builtins.input', side_effect=AssertionError('No repeated question')) as question, \
+                patch.object(bootstrap, 'download') as download, \
+                patch.object(bootstrap.common, 'run') as run:
+            with self.assertRaisesRegex(ValueError, 'nicht freigegeben'):
+                bootstrap.prepare(self.base, self.spec, approved=True)
+        question.assert_not_called()
+        download.assert_not_called()
+        run.assert_not_called()
+        self.assertEqual(list(self.base.iterdir()), [])
+
+    def test_vaultwarden_storage_shortfall_stops_before_staging_or_download(self):
+        spec = {'id': 'vaultwarden', 'recipe': {'disk_mb': 12288, 'rust_exact': '1.99.1'}}
+        with patch.object(bootstrap.common, 'reserve', side_effect=ValueError('390 MiB fehlen')) as reserve, \
+                patch.object(bootstrap, 'download') as download, patch.object(bootstrap.common, 'run') as run:
+            with self.assertRaisesRegex(ValueError, '390 MiB fehlen'):
+                bootstrap.prepare(self.base, spec, approved=True)
+        reserve.assert_called_once_with(self.base, {'reserve_mb': 14336})
+        download.assert_not_called()
+        run.assert_not_called()
+        self.assertEqual(list(self.base.iterdir()), [])
+
     def test_vaultwarden_invalid_explicit_path_never_downloads(self):
         spec = {'id': 'vaultwarden', 'recipe': {'disk_mb': 12288, 'rust_exact': '1.99.1'}}
         with patch.dict(os.environ, {'NATIVE_SOURCE_RUST_TOOLCHAIN': '/explicit'}), \
