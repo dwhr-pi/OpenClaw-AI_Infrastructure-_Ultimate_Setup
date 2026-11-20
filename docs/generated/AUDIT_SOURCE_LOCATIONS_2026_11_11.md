@@ -587,7 +587,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/paperless_safe_common.sh:29`
 - `scripts/tools/helpers/perplexity_sdk_tools.py:142`
 - `scripts/tools/helpers/propainter_common.sh:155`
-- `scripts/tools/helpers/python_reviewed_native.py:318`
+- `scripts/tools/helpers/python_reviewed_native.py:328`
 - `scripts/tools/helpers/qwen3_tts_common.sh:55`
 - `scripts/tools/helpers/qwen3_tts_common.sh:237`
 - `scripts/tools/helpers/qwen_desktop_study.py:70`
@@ -1109,8 +1109,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/gitops_bootstrap_install.sh:57`
 - `scripts/tools/helpers/candidate_security_native.py:310`
 - `scripts/tools/helpers/freellmapi_common.sh:147`
-- `scripts/tools/helpers/python_reviewed_native.py:297`
-- `scripts/tools/helpers/python_reviewed_native.py:305`
+- `scripts/tools/helpers/python_reviewed_native.py:307`
+- `scripts/tools/helpers/python_reviewed_native.py:315`
 - `scripts/wireguard/create-home-peer.sh:33`
 - `scripts/wireguard/create-vps-peer.sh:33`
 - `services/inference-gateway/local_policy.py:26`

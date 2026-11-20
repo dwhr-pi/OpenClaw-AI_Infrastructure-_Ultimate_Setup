@@ -92,6 +92,9 @@ class OpenJarvisNative(unittest.TestCase):
             build.assert_not_called()
 
     def test_core_source_wheel_build_never_installs_extras_or_runs_jarvis(self):
+        self.build_core_fixture()
+
+    def build_core_fixture(self, wheel_version=None):
         spec = self.spec()
         with tempfile.TemporaryDirectory() as directory:
             prefix = Path(directory) / 'native-github'
@@ -107,11 +110,17 @@ class OpenJarvisNative(unittest.TestCase):
                 self.assertNotIn('maturin', args)
                 self.assertNotIn('quickstart.sh', args)
                 if '-m' in args and 'build' in args:
+                    self.assertEqual(env['SETUPTOOLS_SCM_PRETEND_VERSION'], spec['recipe']['version'])
                     self.assertEqual(env['SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENJARVIS'],
                                      spec['recipe']['version'])
                     with zipfile.ZipFile(prefix / 'wheels/openjarvis-fixture.whl', 'w') as wheel:
                         wheel.writestr('openjarvis/__init__.py', '# fixture, never imported')
                         wheel.writestr('openjarvis/cli/__init__.py', '# fixture, never imported')
+                        wheel.writestr('openjarvis-0.0.0.dist-info/METADATA',
+                                       'Metadata-Version: 2.1\nName: OpenJarvis\nVersion: ' +
+                                       (wheel_version or spec['recipe']['version']) + '\n')
+                if wheel_version is not None and args[1:3] == ['pip', 'compile']:
+                    self.assertNotIn('runtime-requirements.in', ' '.join(args))
                 if args[1:3] == ['pip', 'install']:
                     self.assertIn('--require-hashes', args)
                     self.assertIn('--only-binary', args)
@@ -126,6 +135,13 @@ class OpenJarvisNative(unittest.TestCase):
                     patch.object(python, 'select_python', return_value='/python'), \
                     patch.object(python, 'execute', return_value=json.dumps(report)) as probe, \
                     redirect_stdout(io.StringIO()):
+                if wheel_version is not None:
+                    with self.assertRaisesRegex(ValueError, 'Buildversion abweichend'):
+                        python.build(source, prefix, spec, {}, run=run)
+                    probe.assert_not_called()
+                    self.assertFalse((prefix / 'python-build-receipt.json').exists())
+                    self.assertFalse((prefix / 'python-sbom.cdx.json').exists())
+                    return
                 artifacts = python.build(source, prefix, spec, {}, run=run)
                 self.assertEqual(probe.call_args.args[-1], 45)
                 script = probe.call_args.args[0][-1]
@@ -138,6 +154,24 @@ class OpenJarvisNative(unittest.TestCase):
             self.assertIn('venv/bin/jarvis', artifacts)
             self.assertEqual(sum(a[1:3] == ['pip', 'install'] for a in calls), 2)
             self.assertFalse(any(Path(a[0]).name == 'jarvis' for a in calls))
+
+    def test_wrong_scm_version_stops_before_runtime_resolution_and_probe(self):
+        self.build_core_fixture(wheel_version='0.0.1.dev1+unknown.ga9e59e877')
+
+    def test_wheel_metadata_is_required_and_checked_without_importing_upstream(self):
+        recipe = self.spec()['recipe']
+        for metadata in (None, 'Name: Other\nVersion: ' + recipe['version'] + '\n',
+                         'Name: OpenJarvis\nVersion: 0.1\n',
+                         'Name: OpenJarvis\nVersion: ' + recipe['version'] + '\nVersion: 0.1\n'):
+            with self.subTest(metadata=metadata), tempfile.TemporaryDirectory() as directory:
+                wheel = Path(directory) / 'fixture.whl'
+                with zipfile.ZipFile(wheel, 'w') as archive:
+                    archive.writestr('openjarvis/__init__.py', 'raise AssertionError("Never import")')
+                    archive.writestr('openjarvis/cli/__init__.py', 'raise AssertionError("Never import")')
+                    if metadata is not None:
+                        archive.writestr('openjarvis.dist-info/METADATA', metadata)
+                with self.assertRaisesRegex(ValueError, 'Paketmetadatei|Buildversion abweichend'):
+                    python.inspect_wheel(wheel, recipe)
 
     def test_docs_state_exact_scope_and_link_both_official_websites(self):
         text = (ROOT / 'docs/tools/openjarvis.md').read_text(encoding='utf-8')

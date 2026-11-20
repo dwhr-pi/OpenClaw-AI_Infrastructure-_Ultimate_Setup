@@ -1,4 +1,5 @@
 """Reviewed source-wheel builds for Phoenix, Checkov, Ragas and OpenJarvis; no app starts."""
+from email.parser import Parser
 import hashlib
 import json
 import os
@@ -285,6 +286,15 @@ def inspect_wheel(wheel, recipe):
         if recipe['distribution'] == 'OpenJarvis' and not {
                 'openjarvis/__init__.py', 'openjarvis/cli/__init__.py'}.issubset(names):
             raise ValueError('OpenJarvis-Wheel ohne CLI-/SDK-Basis.')
+        if recipe['distribution'] == 'OpenJarvis':
+            metadata_paths = [n for n in names if n.endswith('.dist-info/METADATA') and n.count('/') == 1]
+            if len(metadata_paths) != 1:
+                raise ValueError('OpenJarvis-Wheel braucht genau eine Paketmetadatei.')
+            metadata = Parser().parsestr(archive.read(metadata_paths[0]).decode('utf-8'))
+            if (metadata.get_all('Name') != [recipe['distribution']] or
+                    metadata.get_all('Version') != [recipe['version']]):
+                raise ValueError('OpenJarvis-Wheel: Paketname/Buildversion abweichend; '
+                                 'keine Runtime-Abhaengigkeiten installiert.')
 
 
 def probe_script(recipe):
@@ -364,6 +374,8 @@ def build(source, prefix, spec, env, run=None):
     if spec['id'] == 'ragas':
         child['SETUPTOOLS_SCM_PRETEND_VERSION_FOR_RAGAS'] = recipe['version']
     elif spec['id'] == 'openjarvis':
+        # hatch-vcs calls get_version without dist_name, so the generic override is required.
+        child['SETUPTOOLS_SCM_PRETEND_VERSION'] = recipe['version']
         child['SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENJARVIS'] = recipe['version']
     runner([build_python, '-I', '-B', '-m', 'build', '--wheel', '--no-isolation',
             '--outdir', str(wheelhouse), str(source)], source, child)

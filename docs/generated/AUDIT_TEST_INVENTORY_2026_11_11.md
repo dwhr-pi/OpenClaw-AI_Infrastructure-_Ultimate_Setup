@@ -4426,7 +4426,11 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_plan_status_are_offline_and_create_no_workspace`
 - `tests/test_openjarvis_native.py:94`
   Prueffall: `test_core_source_wheel_build_never_installs_extras_or_runs_jarvis`
-- `tests/test_openjarvis_native.py:142`
+- `tests/test_openjarvis_native.py:158`
+  Prueffall: `test_wrong_scm_version_stops_before_runtime_resolution_and_probe`
+- `tests/test_openjarvis_native.py:161`
+  Prueffall: `test_wheel_metadata_is_required_and_checked_without_importing_upstream`
+- `tests/test_openjarvis_native.py:176`
   Prueffall: `test_docs_state_exact_scope_and_link_both_official_websites`
 
 ## tests/test_openmontage.py
@@ -6954,4 +6958,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3115**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3117**. Kein Nachweis bestandener Tests.

@@ -23,6 +23,27 @@ Das ist ein gepruefter Entwicklungsstand, kein neu behaupteter stabiler Upstream
 Die private Buildversion `0.0.0+openclaw.a9e59e8` kennzeichnet genau diesen Setup-Build.
 Keine automatische Umstellung auf `main`, `latest` oder Desktop-Releases.
 
+### Buildversionskorrektur vom 20.11.2026
+
+Ein WSL-Test erreichte die vollstaendige Installation von 61 Paketen und eine erfolgreiche
+Paketkompatibilitaetspruefung, scheiterte danach jedoch an der Versionsprobe. Das Wheel meldete
+`0.0.1.dev1+unknown.ga9e59e877` statt der festgelegten privaten Buildversion.
+Dies war ein Fehler unserer SCM-Versionsuebergabe, kein erfolgreicher Installationsnachweis.
+Der [gepruefte OpenJarvis-Build][build-source] nutzt hatch-vcs;
+dessen [Versionsquelle in 0.5.0][hatch-vcs-source] ruft setuptools-scm ohne Paketnamen auf.
+Deshalb setzt der Installer nun auch `SETUPTOOLS_SCM_PRETEND_VERSION` ausschliesslich
+in seiner privaten Buildumgebung, nicht im System oder Benutzerprofil.
+Die erwartete Version und der Quellpin bleiben unveraendert.
+
+Die Wheel-Metadaten werden unmittelbar nach dem Build auf Paketname und exakte Version
+geprueft, noch vor der Aufloesung und Installation der Runtime-Abhaengigkeiten.
+Die abschliessende geschuetzte Importprobe bleibt verpflichtend. Es wird weder jede beliebige
+Entwicklungsversion akzeptiert noch ein fehlgeschlagener Build als installiert markiert.
+Offline-Regressionstests ersetzen weiterhin keinen erfolgreichen Linux-/WSL-Gesamtlauf.
+
+[build-source]: https://github.com/open-jarvis/OpenJarvis/blob/a9e59e8770f92dd8046c2e5fcc1246eef51bb96a/pyproject.toml
+[hatch-vcs-source]: https://github.com/ofek/hatch-vcs/blob/v0.5.0/hatch_vcs/version_source.py
+
 OpenJarvis ist ein Agenten-/SDK-Framework, kein mitgeliefertes LLM und kein Modellgewicht.
 Es kann bestehende Inferenz-Backends wie Ollama ansprechen. Die Website nennt weitere
 Engines, Werkzeuge, Speicher und Lernwege; deren vollstaendige Integration wird hier nicht behauptet.
