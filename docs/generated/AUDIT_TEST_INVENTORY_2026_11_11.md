@@ -1257,11 +1257,21 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_setup_consent_and_songsage_guard_precede_transaction`
 - `tests/test_creative_prerequisites.py:89`
   Prueffall: `test_menu_forwards_consent_only_for_approved_mutations`
-- `tests/test_creative_prerequisites.py:134`
+- `tests/test_creative_prerequisites.py:173`
+  Prueffall: `test_batch_all_approves_only_supported_tools_without_repeated_dialogs`
+- `tests/test_creative_prerequisites.py:184`
+  Prueffall: `test_batch_ask_keeps_individual_default_no_dialogs`
+- `tests/test_creative_prerequisites.py:189`
+  Prueffall: `test_batch_cancel_or_invalid_choice_prevents_uninstall_and_install`
+- `tests/test_creative_prerequisites.py:197`
+  Prueffall: `test_batch_consent_never_leaks_to_single_tool_or_readonly_action`
+- `tests/test_creative_prerequisites.py:209`
+  Prueffall: `test_next_batch_requires_its_own_choice`
+- `tests/test_creative_prerequisites.py:216`
   Prueffall: `test_prerequisite_buttons_follow_all_setup_languages_not_system_locale`
-- `tests/test_creative_prerequisites.py:148`
+- `tests/test_creative_prerequisites.py:230`
   Prueffall: `test_prerequisite_buttons_preserve_overrides_and_missing_key_fallback`
-- `tests/test_creative_prerequisites.py:158`
+- `tests/test_creative_prerequisites.py:240`
   Prueffall: `test_planned_infrastructure_is_rejected_before_installer_or_log`
 
 ## tests/test_credentials_backup.py
@@ -2131,39 +2141,43 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 - `tests/test_git_fetch_budget.py:22`
   Prueffall: `test_default_streaming_fetch_preserves_exact_pin`
-- `tests/test_git_fetch_budget.py:35`
+- `tests/test_git_fetch_budget.py:38`
+  Prueffall: `test_explicit_narrow_fetch_options_are_not_duplicated`
+- `tests/test_git_fetch_budget.py:48`
+  Prueffall: `test_truncated_ref_listing_remains_failed_after_bounded_slow_retry`
+- `tests/test_git_fetch_budget.py:67`
   Prueffall: `test_explicit_bounded_budget`
-- `tests/test_git_fetch_budget.py:42`
-  Prueffall: `test_invalid_budget_stops_before_process`
-- `tests/test_git_fetch_budget.py:50`
-  Prueffall: `test_nontransport_errors_are_not_retried_or_reported_success`
-- `tests/test_git_fetch_budget.py:60`
-  Prueffall: `test_transient_failure_retries_identical_command_with_remaining_budget`
 - `tests/test_git_fetch_budget.py:74`
+  Prueffall: `test_invalid_budget_stops_before_process`
+- `tests/test_git_fetch_budget.py:82`
+  Prueffall: `test_nontransport_errors_are_not_retried_or_reported_success`
+- `tests/test_git_fetch_budget.py:92`
+  Prueffall: `test_transient_failure_retries_identical_command_with_remaining_budget`
+- `tests/test_git_fetch_budget.py:106`
   Prueffall: `test_slow_transfer_retry_changes_only_floor_and_window_with_same_deadline`
-- `tests/test_git_fetch_budget.py:98`
+- `tests/test_git_fetch_budget.py:130`
   Prueffall: `test_extended_stall_window_never_extends_remaining_total_budget`
-- `tests/test_git_fetch_budget.py:109`
+- `tests/test_git_fetch_budget.py:141`
   Prueffall: `test_slow_second_attempt_is_final_and_expiry_never_retries`
-- `tests/test_git_fetch_budget.py:124`
+- `tests/test_git_fetch_budget.py:156`
   Prueffall: `test_permanent_errors_override_transport_words_without_relaxation`
-- `tests/test_git_fetch_budget.py:135`
+- `tests/test_git_fetch_budget.py:167`
   Prueffall: `test_second_failure_is_final_and_never_reports_success`
-- `tests/test_git_fetch_budget.py:143`
+- `tests/test_git_fetch_budget.py:175`
   Prueffall: `test_expired_total_budget_prevents_retry`
-- `tests/test_git_fetch_budget.py:152`
+- `tests/test_git_fetch_budget.py:184`
   Prueffall: `test_user_interrupt_never_retries`
-- `tests/test_git_fetch_budget.py:159`
+- `tests/test_git_fetch_budget.py:191`
   Prueffall: `test_dns_retries_same_command_after_delay_within_total_budget`
-- `tests/test_git_fetch_budget.py:177`
+- `tests/test_git_fetch_budget.py:209`
   Prueffall: `test_persistent_dns_failure_stops_after_two_attempts`
-- `tests/test_git_fetch_budget.py:186`
+- `tests/test_git_fetch_budget.py:218`
   Prueffall: `test_dns_at_expired_deadline_never_sleeps_or_retries`
-- `tests/test_git_fetch_budget.py:197`
+- `tests/test_git_fetch_budget.py:229`
   Prueffall: `test_interrupt_during_dns_backoff_never_starts_second_attempt`
-- `tests/test_git_fetch_budget.py:206`
+- `tests/test_git_fetch_budget.py:238`
   Prueffall: `test_provider_secrets_and_git_injection_not_inherited`
-- `tests/test_git_fetch_budget.py:219`
+- `tests/test_git_fetch_budget.py:251`
   Prueffall: `test_local_git_commands_keep_short_budget_and_stdout`
 
 ## tests/test_gitlab_openforge_docs.py
@@ -6897,4 +6911,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3088**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3095**. Kein Nachweis bestandener Tests.

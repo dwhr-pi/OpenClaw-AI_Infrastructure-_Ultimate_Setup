@@ -548,9 +548,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/enki_browser_study.py:126`
 - `scripts/tools/helpers/enki_browser_study.py:178`
 - `scripts/tools/helpers/fal_client_common.sh:189`
-- `scripts/tools/helpers/find_skills.py:172`
-- `scripts/tools/helpers/find_skills.py:307`
-- `scripts/tools/helpers/find_skills.py:365`
+- `scripts/tools/helpers/find_skills.py:176`
+- `scripts/tools/helpers/find_skills.py:311`
+- `scripts/tools/helpers/find_skills.py:369`
 - `scripts/tools/helpers/gap_tools.py:426`
 - `scripts/tools/helpers/gap_tools.py:496`
 - `scripts/tools/helpers/gap_tools.py:523`
@@ -635,7 +635,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/vps_adapter.py:123`
 - `setup_ultimate.sh:179`
 - `setup_ultimate.sh:2443`
-- `setup_ultimate.sh:2878`
+- `setup_ultimate.sh:2898`
 - `stacks/llmops-platform/docker-compose.yml:24`
 - `stacks/llmops-platform/docker-compose.yml:50`
 - `stacks/llmops-platform/docker-compose.yml:88`
@@ -674,7 +674,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Git-Clone (Pin kann separat folgen)
 
-60 Fundstellen, keine automatische Risikoeinstufung.
+61 Fundstellen, keine automatische Risikoeinstufung.
 
 - `examples/kubernetes/hardened-services.yaml:214`
 - `scripts/custom_source_manager.sh:179`
@@ -715,6 +715,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/flowise_install.sh:135`
 - `scripts/tools/gamedev_3d_studio_install.sh:80`
 - `scripts/tools/gbox_install.sh:44`
+- `scripts/tools/helpers/find_skills.py:95`
 - `scripts/tools/helpers/freellmapi_common.sh:219`
 - `scripts/tools/helpers/github_docker_stack_common.sh:50`
 - `scripts/tools/helpers/node_tool_common.sh:74`
@@ -908,7 +909,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/yara_install.sh:7`
 - `scripts/tools/zenbot_trader_install.sh:39`
 - `scripts/tools/zenbot_trader_install.sh:40`
-- `setup_ultimate.sh:2814`
+- `setup_ultimate.sh:2834`
 - `tools/websitefactory/scripts/check-build.sh:29`
 - `tools/websitefactory/scripts/check-build.sh:37`
 
@@ -1115,7 +1116,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `services/inference-gateway/local_policy.py:27`
 - `services/inference-gateway/local_policy.py:28`
 - `setup_ultimate.sh:1699`
-- `setup_ultimate.sh:3073`
+- `setup_ultimate.sh:3093`
 - `stacks/freellmapi/compose.yml:8`
 - `stacks/freellmapi/compose.yml:10`
 - `stacks/llmops-platform/docker-compose.yml:20`
@@ -1818,9 +1819,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/zotero_uninstall.sh:24`
 - `scripts/tools/zotero_uninstall.sh:25`
 - `setup_ultimate.sh:1344`
-- `setup_ultimate.sh:2814`
-- `setup_ultimate.sh:4833`
-- `setup_ultimate.sh:5382`
+- `setup_ultimate.sh:2834`
+- `setup_ultimate.sh:4866`
+- `setup_ultimate.sh:5415`
 - `systemd/openclaw-workspace-backup.service.example:9`
 - `systemd/openclaw-workspace-backup.service.example:14`
 

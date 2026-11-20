@@ -2640,6 +2640,14 @@ selection_contains() {
   return 1
 }
 
+select_tool_batch_build_deps_policy() {
+  dialog --stdout --default-item ask \
+    --title "Stapelinstallation: Build-Voraussetzungen" \
+    --menu "Einmalige Auswahl nur fuer diesen Stapel. Alle: fehlende freigegebene Buildwerkzeuge, Laufzeiten und Entwicklungsbibliotheken fuer die ausgewaehlten Tools einrichten. apt kann Abhaengigkeiten aktualisieren; private Toolchains brauchen weiterhin Integritaetsnachweise und Speicherreserve. Kein System-Python-Wechsel, keine Fremdquellen. Lizenz-, Sicherheits-, Modell- und Dienststartfreigaben werden nicht ersetzt. Abbrechen: keine Stapelaktion ausfuehren." 20 90 2 \
+    ask "Wie bisher: Voraussetzungen je Tool bestaetigen" \
+    all "Alle benoetigten freigegebenen Voraussetzungen installieren"
+}
+
 run_ordered_tool_actions() {
   local context_label="$1"
   local -n uninstall_queue_ref="$2"
@@ -2649,6 +2657,7 @@ run_ordered_tool_actions() {
   local upcoming_preview
   local -a remaining_tools=()
   local index
+  local TOOL_BATCH_BUILD_DEPS_POLICY=ask
 
   if [ "${#uninstall_queue_ref[@]}" -eq 0 ] && [ "${#install_queue_ref[@]}" -eq 0 ]; then
     echo -e "${YELLOW}Keine Tool-Aenderungen fuer ${context_label} ausgewaehlt.${NC}"
@@ -2659,6 +2668,17 @@ run_ordered_tool_actions() {
     "$context_label" \
     "${uninstall_queue_ref[*]}" \
     "${install_queue_ref[*]}"
+
+  if [ "${#install_queue_ref[@]}" -gt 1 ]; then
+    TOOL_BATCH_BUILD_DEPS_POLICY="$(select_tool_batch_build_deps_policy)" || return 1
+    case "$TOOL_BATCH_BUILD_DEPS_POLICY" in
+      ask | all) ;;
+      *)
+        printf '%s\n' 'Abbruch: Ungueltige Voraussetzungen-Auswahl. Keine Stapelaktion gestartet.'
+        return 1
+        ;;
+    esac
+  fi
 
   for index in "${!uninstall_queue_ref[@]}"; do
     tool_key="${uninstall_queue_ref[$index]}"
@@ -3682,11 +3702,24 @@ run_tool_script() {
     elif [ "$tool_key" = SongRec ]; then
       prerequisites='SongRec: fehlendes Cargo/Rust, Compiler, pkg-config, gettext sowie ALSA-/GLib-/OpenSSL-Entwicklungsbibliotheken aus Debian-/Ubuntu-Paketen. Abweichende Basis wird mit apt simuliert. Vorhandene private Cargo-/Rust-Werkzeuge bleiben. SongRec aus gepinntem GitHub-Stand; kein Mikrofon-/Shazam-Aufruf.'
     fi
-    if dialog --defaultno \
-      --yes-label "${TXT_YES_LABEL:-Ja}" --no-label "${TXT_NO_LABEL:-Nein}" \
-      --title "$tool_key: Voraussetzungen" --yesno "$prerequisites\n\nFehlende Voraussetzungen im Setup einrichten? apt kann Abhaengigkeiten aktualisieren; Basiswerkzeuge bleiben erhalten. Kein System-Python-Wechsel, Modell- oder Dienststart. Nein: nur vorhandene Basis verwenden." 16 78; then
-      tool_args+=(--install-build-deps)
+    local prerequisite_policy=ask
+    # Batch consent is dynamically scoped, never an ambient environment opt-in.
+    if [[ " ${FUNCNAME[*]} " == *" run_ordered_tool_actions "* ]]; then
+      prerequisite_policy="${TOOL_BATCH_BUILD_DEPS_POLICY:-ask}"
     fi
+    case "$prerequisite_policy" in
+      all)
+        printf '%s\n' "$tool_key: Build-Voraussetzungen fuer diesen Stapel freigegeben."
+        tool_args+=(--install-build-deps)
+        ;;
+      *)
+        if dialog --defaultno \
+          --yes-label "${TXT_YES_LABEL:-Ja}" --no-label "${TXT_NO_LABEL:-Nein}" \
+          --title "$tool_key: Voraussetzungen" --yesno "$prerequisites\n\nFehlende Voraussetzungen im Setup einrichten? apt kann Abhaengigkeiten aktualisieren; Basiswerkzeuge bleiben erhalten. Kein System-Python-Wechsel, Modell- oder Dienststart. Nein: nur vorhandene Basis verwenden." 16 78; then
+          tool_args+=(--install-build-deps)
+        fi
+        ;;
+    esac
   fi
   if [[ "$tool_key" == Markdown_Docs_Server && "$action" =~ ^(install|update)$ ]]; then
     tool_args+=(--interactive)

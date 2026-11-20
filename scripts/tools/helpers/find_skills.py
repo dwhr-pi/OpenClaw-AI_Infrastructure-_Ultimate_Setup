@@ -80,15 +80,19 @@ def git(source, *args):
         env.update(GIT_TERMINAL_PROMPT='0', GIT_LFS_SKIP_SMUDGE='1',
                    GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM='1', GIT_NOREPLACE_OBJECTS='1')
         options = list(args[1:])
-        if '--progress' not in options:
-            options.insert(0, '--progress')
+        # Pinned source fetches must not add tag or submodule network requests.
+        for option in reversed(('--progress', '--no-tags', '--no-recurse-submodules')):
+            if option not in options:
+                options.insert(0, option)
         command = ['git', '-c', 'core.hooksPath=' + os.devnull, '-c', 'credential.helper=',
-                   '-c', 'core.fsmonitor=false', '-c', 'http.version=HTTP/1.1',
+                   '-c', 'core.fsmonitor=false', '-c', 'protocol.version=2', '-c', 'http.version=HTTP/1.1',
                    '-c', 'http.lowSpeedLimit=1024', '-c', 'http.lowSpeedTime=120',
                    '-C', str(source), 'fetch', *options]
         print('Git-Download: Gesamtzeitbudget', timeout,
               'Sekunden; HTTP/1.1; unter 1 KiB/s fuer 120s gilt als Transportstillstand;'
               ' hoechstens ein Wiederholungsversuch, kein anderer Pin/Host.', flush=True)
+        print('Git-Protokoll 2 angefordert; keine automatischen Tags oder Submodule.'
+              ' Vollstaendige Git-Objekte, kein Partial-Clone-/Archiv-Fallback.', flush=True)
         deadline = time.monotonic() + timeout
         for attempt in range(2):
             remaining = deadline - time.monotonic()

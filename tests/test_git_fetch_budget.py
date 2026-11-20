@@ -24,13 +24,45 @@ class GitFetchBudget(unittest.TestCase):
                 patch.object(helper.subprocess, 'run') as capture, redirect_stdout(io.StringIO()):
             self.assertEqual(self.fetch(), 'ok')
         command = run.call_args.args[0]
-        self.assertEqual(command[-5:], ['fetch', '--progress', '--depth=1', 'origin', PIN])
+        self.assertEqual(command[command.index('fetch'):],
+                         ['fetch', '--progress', '--no-tags', '--no-recurse-submodules',
+                          '--depth=1', 'origin', PIN])
         self.assertAlmostEqual(run.call_args.kwargs['timeout'], 900, delta=1)
-        for option in ('http.version=HTTP/1.1', 'http.lowSpeedLimit=1024', 'http.lowSpeedTime=120'):
+        for option in ('protocol.version=2', 'http.version=HTTP/1.1',
+                       'http.lowSpeedLimit=1024', 'http.lowSpeedTime=120'):
             self.assertIn(option, command)
         self.assertIn('credential.helper=', command)
         self.assertIn('core.fsmonitor=false', command)
         capture.assert_not_called()
+
+    def test_explicit_narrow_fetch_options_are_not_duplicated(self):
+        with patch.dict(os.environ, {}, clear=True), patch.object(runner, 'run') as run, \
+                redirect_stdout(io.StringIO()):
+            helper.git(Path('/fixture'), 'fetch', '--progress', '--no-tags',
+                       '--no-recurse-submodules', '--depth=1', 'origin', PIN)
+        command = run.call_args.args[0]
+        for flag in ('--progress', '--no-tags', '--no-recurse-submodules'):
+            self.assertEqual(command.count(flag), 1)
+        self.assertEqual(command[-3:], ['--depth=1', 'origin', PIN])
+
+    def test_truncated_ref_listing_remains_failed_after_bounded_slow_retry(self):
+        error = subprocess.CalledProcessError(128, 'fixture', stderr=(
+            'curl 28 Operation too slow\nfatal: expected flush after ref listing'))
+        with patch.dict(os.environ, {}, clear=True), patch.object(runner, 'run', side_effect=error) as run, \
+                redirect_stdout(io.StringIO()) as output:
+            with self.assertRaises(subprocess.CalledProcessError) as raised:
+                self.fetch()
+        self.assertIs(raised.exception, error)
+        self.assertEqual(run.call_count, 2)
+        for call in run.call_args_list:
+            command = call.args[0]
+            self.assertIn('protocol.version=2', command)
+            self.assertIn('--no-tags', command)
+            self.assertIn('--no-recurse-submodules', command)
+            self.assertEqual(command[-1], PIN)
+            self.assertFalse(any(arg.startswith('--filter') for arg in command))
+            self.assertNotIn('http.sslVerify=false', command)
+        self.assertIn('kein weiterer Versuch', output.getvalue())
 
     def test_explicit_bounded_budget(self):
         for budget in ('180', '1200', '3600'):

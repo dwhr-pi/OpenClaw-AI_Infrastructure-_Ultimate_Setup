@@ -105,7 +105,7 @@ run_bash_script() { printf '%s\\n' "$@"; }
         for tool in ('Outlines', 'eSpeak_NG', 'SongRec', 'Valkey', 'Kube_Bench'):
             for action, answer in (('install', 0), ('install', 1), ('update', 0), ('doctor', 0)):
                 command = stubs + dispatcher + '\nDIALOG_RESULT=' + str(answer) + '\nrun_tool_script ' + tool + ' ' + action
-                result = subprocess.run([bash, '--noprofile', '--norc', '-c', command],
+                result = subprocess.run([bash, '--noprofile', '--norc', '-s'], input=command,
                                         env=env, capture_output=True, text=True, timeout=10, check=True)
                 self.assertEqual('--install-build-deps' in result.stdout,
                                  answer == 0 and action in ('install', 'update'))
@@ -127,9 +127,91 @@ source "scripts/lang/$1.sh"
         env = {k: v for k, v in os.environ.items() if k.upper() in ('PATH', 'SYSTEMROOT', 'TEMP', 'TMP')}
         env.update(LANG='C', LC_ALL='C')
         command = stubs + dispatcher + '\n' + override + '\nANSWER=' + str(answer) + '\nrun_tool_script Arize_Phoenix install'
-        result = subprocess.run([bash, '--noprofile', '--norc', '-c', command, 'fixture', language],
+        result = subprocess.run([bash, '--noprofile', '--norc', '-s', '--', language], input=command,
                                 cwd=ROOT, env=env, capture_output=True, encoding='utf-8', timeout=15, check=True)
         return result.stdout.splitlines()
+
+    def batch_prerequisites(self, choice='all', menu_rc=0, queue='Outlines eSpeak_NG Other', after=''):
+        bash = 'C:/Program Files/Git/bin/bash.exe' if os.name == 'nt' else shutil.which('bash')
+        if not bash or (os.name == 'nt' and not Path(bash).is_file()):
+            self.skipTest('Bash not available for offline batch fixture')
+        text = (ROOT / 'setup_ultimate.sh').read_text(encoding='utf-8')
+        batch = ('select_tool_batch_build_deps_policy() {'
+                 + text.split('select_tool_batch_build_deps_policy() {', 1)[1].split('is_base_install_ready()', 1)[0])
+        dispatcher = ('run_tool_script() {'
+                      + text.split('run_tool_script() {', 1)[1].split('remove_tool_from_autostart_script()', 1)[0])
+        stubs = '''
+declare -A TOOL_SCRIPT_NAMES=([Outlines]=outlines [eSpeak_NG]=espeak_ng [Other]=other)
+INSTALL_DIR=/fixture
+TOOL_BATCH_BUILD_DEPS_POLICY=all
+validate_tool_source_policy() { return 0; }
+show_tool_action_plan_intro() { :; }
+format_tool_queue_preview() { :; }
+confirm_tool_batch_step() { return 0; }
+uninstall_tool() { printf 'UNINSTALL:%s\\n' "$1"; }
+install_tool() { run_tool_script "$1" install; }
+run_bash_script() { printf 'RUN_ARG:%s\\n' "$@"; }
+dialog() {
+  case " $* " in
+    *" --menu "*)
+      printf 'MENU_ARG:%s\\n' "$@" >&2
+      printf '%s\\n' "$BATCH_CHOICE"
+      return "$MENU_RC"
+      ;;
+    *) printf 'TOOL_QUESTION\\n'; return 1 ;;
+  esac
+}
+'''
+        env = {k: v for k, v in os.environ.items() if k.upper() in ('PATH', 'SYSTEMROOT', 'TEMP', 'TMP')}
+        env.update(BATCH_CHOICE=choice, MENU_RC=str(menu_rc))
+        command = (stubs + batch + dispatcher + '\nuninstalls=(Old); installs=(' + queue + ')\n'
+                   'rc=0; run_ordered_tool_actions fixture uninstalls installs || rc=$?\n'
+                   'printf "BATCH_RC:%s\\n" "$rc"\n' + after)
+        return subprocess.run([bash, '--noprofile', '--norc', '-s'], input=command, cwd=ROOT,
+                              env=env, capture_output=True, encoding='utf-8', timeout=15, check=True)
+
+    def test_batch_all_approves_only_supported_tools_without_repeated_dialogs(self):
+        result = self.batch_prerequisites()
+        self.assertEqual(result.stdout.count('RUN_ARG:--install-build-deps'), 2)
+        self.assertNotIn('TOOL_QUESTION', result.stdout)
+        self.assertIn('UNINSTALL:Old', result.stdout)
+        self.assertIn('RUN_ARG:/fixture/scripts/tools/other_install.sh', result.stdout)
+        self.assertIn('MENU_ARG:--stdout', result.stderr)
+        self.assertIn('MENU_ARG:--default-item\nMENU_ARG:ask', result.stderr)
+        self.assertEqual(result.stderr.count('MENU_ARG:--menu'), 1)
+        self.assertIn('BATCH_RC:0', result.stdout)
+
+    def test_batch_ask_keeps_individual_default_no_dialogs(self):
+        result = self.batch_prerequisites(choice='ask')
+        self.assertEqual(result.stdout.count('TOOL_QUESTION'), 2)
+        self.assertNotIn('RUN_ARG:--install-build-deps', result.stdout)
+
+    def test_batch_cancel_or_invalid_choice_prevents_uninstall_and_install(self):
+        for choice, status in (('all', 1), ('all', 255), ('unknown', 0), ('', 0)):
+            with self.subTest(choice=choice, status=status):
+                result = self.batch_prerequisites(choice=choice, menu_rc=status)
+                self.assertIn('BATCH_RC:1', result.stdout)
+                self.assertNotIn('UNINSTALL:', result.stdout)
+                self.assertNotIn('RUN_ARG:', result.stdout)
+
+    def test_batch_consent_never_leaks_to_single_tool_or_readonly_action(self):
+        result = self.batch_prerequisites(after=('run_tool_script Outlines install\n'
+                                                'run_tool_script Outlines doctor\n'))
+        self.assertEqual(result.stdout.count('RUN_ARG:--install-build-deps'), 2)
+        self.assertEqual(result.stdout.count('TOOL_QUESTION'), 1)
+        self.assertIn('RUN_ARG:/fixture/scripts/tools/outlines_doctor.sh', result.stdout)
+        for queue in ('Outlines', ''):
+            with self.subTest(queue=queue):
+                result = self.batch_prerequisites(queue=queue)
+                self.assertNotIn('MENU_ARG:', result.stderr)
+                self.assertNotIn('RUN_ARG:--install-build-deps', result.stdout)
+
+    def test_next_batch_requires_its_own_choice(self):
+        result = self.batch_prerequisites(after=('BATCH_CHOICE=ask\n'
+                                                'run_ordered_tool_actions next uninstalls installs\n'))
+        self.assertEqual(result.stderr.count('MENU_ARG:--menu'), 2)
+        self.assertEqual(result.stdout.count('RUN_ARG:--install-build-deps'), 2)
+        self.assertEqual(result.stdout.count('TOOL_QUESTION'), 2)
 
     def test_prerequisite_buttons_follow_all_setup_languages_not_system_locale(self):
         labels = {'de': ('Ja', 'Nein'), 'en': ('Yes', 'No'), 'fr': ('Oui', 'Non'),

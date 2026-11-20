@@ -35,6 +35,23 @@ Developer-PowerShell-Weg nutzen.
 
 ## Schaltflaechen im Voraussetzungen-Dialog
 
+Bei einer Stapelinstallation mit mehreren ausgewaehlten Tools gibt es vor der
+ersten Installation **oder Deinstallation** eine einmalige Voraussetzungen-Auswahl:
+
+- **Wie bisher:** Voraussetzungen je Tool bestaetigen (Voreinstellung).
+- **Alle:** fehlende freigegebene Build-Voraussetzungen fuer diesen Stapel einrichten,
+  ohne den Voraussetzungen-Dialog bei jedem Tool erneut zu zeigen.
+
+Abbrechen fuehrt keine Stapelaktion aus. Die Wahl gilt nur fuer diesen Stapel,
+nicht fuer spaetere Stapel, Einzelinstallationen oder einen Setup-Neustart.
+Sie gilt nur fuer die bereits freigegebenen Voraussetzungen-Wege, nicht fuer
+beliebige Pakete oder Befehle. apt-Simulation, Ressourcen-, Pfad- und
+Integritaetspruefungen sowie Lizenz-/Sicherheitsfreigaben bleiben bestehen.
+Sudo kann weiterhin nach einem Passwort fragen. Optionale manuelle
+Schrittbestaetigungen und Fehlerdialoge werden dadurch nicht abgeschaltet.
+Die neue Auswahl verwendet wie die bisherigen technischen Voraussetzungen-Texte
+deutsche Beschreibungen; die folgenden Sprachpaketregeln betreffen die Ja-/Nein-Tasten.
+
 Die Ja-/Nein-Schaltflaechen des gemeinsamen Voraussetzungen-Fensters verwenden
 die ausgewaehlte Setup-Sprache und deren Sprachpaketwerte, nicht die Sprache
 des installierten `dialog`-Pakets. Deutsch zeigt `Ja` und `Nein`, Englisch
@@ -72,6 +89,26 @@ Der korrigierte Helfer protokolliert `Gesamtzeitbudget` und `Versuch 1 von 2`.
 Keine stille Aktualisierung unsignierter Teststaende oder signierter Releases.
 
 ### Mousai/Phoenix: langsame Uebertragung und curl 28
+
+Nachtrag 20.11.2026: Der Phoenix-Lauf `20261120_155250` erreichte bereits den
+zweiten Versuch mit 128 Bytes/s und 300 Sekunden. Auch dieser brach mit curl 28
+und `expected flush after ref listing` ab. Der Phoenix-Build wurde nicht erreicht;
+das Protokoll belegt weder einen Pythonfehler noch eine erfolgreiche Installation.
+Eine weitere blosse Verlaengerung oder ein dritter Versuch wird nicht eingefuehrt.
+
+Der gemeinsame Downloader fordert jetzt ausdruecklich Git-Protokoll 2 an und
+setzt `--no-tags --no-recurse-submodules` fuer den gepinnten Fetch. So werden
+automatische Tag- und Submodulabfragen vermieden; erforderliche Submodule
+brauchen weiterhin ihren eigenen geprueften Quellenweg. Die Aenderung gilt auch
+fuer Phoenix. Pin, HTTP/1.1, TLS-Pruefung und das gemeinsame Zeitbudget bleiben
+erhalten. Kein Blob-Filter mit spaeteren unkontrollierten Nachdownloads, kein
+Archiv-/Mirror-Fallback, kein Erfolg aus unvollstaendigen Git-Paketen.
+Siehe [Git-Fetch-Optionen](https://git-scm.com/docs/git-fetch) und
+[Git-Protokoll 2](https://git-scm.com/docs/protocol-v2).
+Die engere Abfrage repariert keinen gestoerten Transport; die Ursache in
+Verbindung, Proxy oder Server ist aus diesem Log allein nicht bestimmbar.
+Offline-Tests pruefen beide Versuche und den Abbruch, nicht einen echten
+WSL-/Phoenix-Download. Vorhandene Daten und das signierte Release bleiben unveraendert.
 
 Das Protokoll vom 18.11.2026 meldete `Operation too slow`, danach `early EOF`.
 Dies ist ein abgebrochener Git-Transport, kein nachgewiesener Compilerfehler.
