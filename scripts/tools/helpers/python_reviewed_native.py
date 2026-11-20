@@ -187,11 +187,23 @@ def install_locked_wheels(args, cwd, env, run=None):
                 'disk quota', 'permission denied'))
             network_timeout = 'failed to download' in output and (
                 'network timeout' in output or 'timed out' in output)
-            if attempt or permanent or not network_timeout or time.monotonic() >= deadline:
+            dns_failure = 'failed to download' in output and any(message in output for message in (
+                'dns error', 'failed to lookup address information', 'name resolution'))
+            temporary_dns = dns_failure and any(message in output for message in (
+                'temporary failure in name resolution', 'eai_again', '[errno -3]'))
+            if dns_failure and not permanent:
+                print('DNS-/Namensaufloesung fuer die Python-Paketquelle fehlgeschlagen; '
+                      'kein Modell- oder Quellbuildfehler. Keine Aenderung an DNS, WSL oder TLS.', flush=True)
+            if attempt or permanent or not (network_timeout or temporary_dns) or time.monotonic() >= deadline:
+                if dns_failure and not permanent:
+                    raise ValueError('Python-Paketdownload wegen DNS-/Namensaufloesung abgebrochen; '
+                                     'Installation unvollstaendig. Kein weiterer automatischer Versuch, '
+                                     'kein Wechsel der Paketquelle oder DNS-Konfiguration.') from error
                 raise
             # Retry only installation against the same lock and cache, never resolution/build.
             child = dict(child, UV_HTTP_TIMEOUT='900', UV_CONCURRENT_DOWNLOADS='1')
-            print('Wheel-Download durch Netzwerk-Timeout abgebrochen. Ein letzter Versuch mit'
+            reason = 'voruebergehenden DNS-Fehler' if temporary_dns else 'Netzwerk-Timeout'
+            print('Wheel-Download durch ' + reason + ' abgebrochen. Ein letzter Versuch mit'
                   ' 900s HTTP-Lesefenster und einem parallelen Download im selben 7200s-Budget.'
                   ' Gleiche Lockdatei, Hashpflicht, Paketquelle und TLS-Pruefung; kein neuer Build.', flush=True)
 

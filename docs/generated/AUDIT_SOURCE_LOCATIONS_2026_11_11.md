@@ -587,7 +587,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/paperless_safe_common.sh:29`
 - `scripts/tools/helpers/perplexity_sdk_tools.py:142`
 - `scripts/tools/helpers/propainter_common.sh:155`
-- `scripts/tools/helpers/python_reviewed_native.py:328`
+- `scripts/tools/helpers/python_reviewed_native.py:340`
 - `scripts/tools/helpers/qwen3_tts_common.sh:55`
 - `scripts/tools/helpers/qwen3_tts_common.sh:237`
 - `scripts/tools/helpers/qwen_desktop_study.py:70`
@@ -916,7 +916,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Netz-/Port-Kandidat
 
-229 Fundstellen, keine automatische Risikoeinstufung.
+230 Fundstellen, keine automatische Risikoeinstufung.
 
 - `charts/monitoring-lite/templates/network-policy.yaml:26`
 - `charts/monitoring-lite/templates/network-policy.yaml:42`
@@ -1109,8 +1109,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/gitops_bootstrap_install.sh:57`
 - `scripts/tools/helpers/candidate_security_native.py:310`
 - `scripts/tools/helpers/freellmapi_common.sh:147`
-- `scripts/tools/helpers/python_reviewed_native.py:307`
-- `scripts/tools/helpers/python_reviewed_native.py:315`
+- `scripts/tools/helpers/python_reviewed_native.py:191`
+- `scripts/tools/helpers/python_reviewed_native.py:319`
+- `scripts/tools/helpers/python_reviewed_native.py:327`
 - `scripts/wireguard/create-home-peer.sh:33`
 - `scripts/wireguard/create-vps-peer.sh:33`
 - `services/inference-gateway/local_policy.py:26`

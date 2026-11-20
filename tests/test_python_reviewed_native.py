@@ -159,6 +159,62 @@ class ReviewedPythonTests(unittest.TestCase):
                 self.assertIs(raised.exception, error)
                 run.assert_called_once()
 
+    def test_temporary_dns_uses_only_existing_second_attempt_and_same_lock(self):
+        args = self.wheel_install_command()
+        env = {'UV_CACHE_DIR': '/private/cache', 'UV_HTTP_TIMEOUT': '300'}
+        error = subprocess.CalledProcessError(2, args, stderr=(
+            b'Failed to download `huggingface-hub==2.4.0`\ncause: dns error\n'
+            b'failed to lookup address information: Temporary failure in name resolution'))
+        output = io.StringIO()
+        with patch.object(helper.time, 'monotonic', side_effect=[0, 0, 20, 20]), \
+                patch.object(helper.native_build_process, 'run', side_effect=[error, 'ok']) as run, \
+                redirect_stdout(output):
+            self.assertEqual(helper.install_locked_wheels(args, Path('/private'), env), 'ok')
+        self.assertEqual(run.call_count, 2)
+        first, second = run.call_args_list
+        self.assertEqual(first.args[:2], second.args[:2])
+        self.assertEqual(second.args[2], dict(env, UV_HTTP_TIMEOUT='900', UV_CONCURRENT_DOWNLOADS='1'))
+        self.assertEqual(second.kwargs['timeout'], 7180)
+        self.assertIn('DNS-/Namensaufloesung', output.getvalue())
+        self.assertNotIn('UV_CONCURRENT_DOWNLOADS', env)
+
+    def test_timeout_then_dns_reports_root_cause_without_third_attempt(self):
+        args = self.wheel_install_command()
+        timeout = subprocess.CalledProcessError(1, args, stderr='Failed to download due to network timeout')
+        dns = subprocess.CalledProcessError(2, args, stderr=(
+            'Failed to download `huggingface-hub`\ndns error\nTemporary failure in name resolution'))
+        with patch.object(helper.native_build_process, 'run', side_effect=[timeout, dns]) as run, \
+                redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(ValueError, 'DNS-/Namensaufloesung') as raised:
+                helper.install_locked_wheels(args, Path('/private'), {})
+        self.assertEqual(run.call_count, 2)
+        self.assertIs(raised.exception.__cause__, dns)
+
+    def test_dns_does_not_override_permanent_errors_or_retry_permanent_resolution_failure(self):
+        args = self.wheel_install_command()
+        for reason in ('Hash mismatch', 'certificate verify failed', 'No space left on device',
+                       '403 Forbidden', 'Name or service not known'):
+            error = subprocess.CalledProcessError(2, args, stderr=(
+                'Failed to download package\ndns error\n' + reason))
+            with self.subTest(reason=reason), \
+                    patch.object(helper.native_build_process, 'run', side_effect=error) as run, \
+                    redirect_stdout(io.StringIO()):
+                expected = ValueError if reason == 'Name or service not known' else subprocess.CalledProcessError
+                with self.assertRaises(expected):
+                    helper.install_locked_wheels(args, Path('/private'), {})
+                run.assert_called_once()
+
+    def test_expired_budget_does_not_retry_temporary_dns(self):
+        args = self.wheel_install_command()
+        error = subprocess.CalledProcessError(2, args, stderr=(
+            'Failed to download package\ndns error\nTemporary failure in name resolution'))
+        with patch.object(helper.time, 'monotonic', side_effect=[0, 0, 7201]), \
+                patch.object(helper.native_build_process, 'run', side_effect=error) as run, \
+                redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(ValueError, 'DNS-/Namensaufloesung'):
+                helper.install_locked_wheels(args, Path('/private'), {})
+            run.assert_called_once()
+
     def test_second_wheel_timeout_is_final_and_process_timeout_never_retries(self):
         args = self.wheel_install_command()
         for error, count in ((subprocess.CalledProcessError(1, args, stderr=(

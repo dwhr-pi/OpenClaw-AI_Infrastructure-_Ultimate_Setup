@@ -44,6 +44,22 @@ Offline-Regressionstests ersetzen weiterhin keinen erfolgreichen Linux-/WSL-Gesa
 [build-source]: https://github.com/open-jarvis/OpenJarvis/blob/a9e59e8770f92dd8046c2e5fcc1246eef51bb96a/pyproject.toml
 [hatch-vcs-source]: https://github.com/ofek/hatch-vcs/blob/v0.5.0/hatch_vcs/version_source.py
 
+### Paketdownload: Timeouts und DNS-Abbruch
+
+Ein weiterer WSL-Lauf am 20.11.2026 scheiterte zuerst an einem Netzwerk-Timeout beim
+`aiohttp`-Download und im zweiten Versuch an der Namensaufloesung fuer `files.pythonhosted.org`
+beim Download von `huggingface-hub`. Das ist kein Nachweis fuer defekte Modellgewichte,
+eine fehlende Buildbasis oder eine erfolgreiche OpenJarvis-Installation.
+
+Der gemeinsame Python-Installer benennt DNS-Abbrueche jetzt auch in der abschliessenden
+Fehlermeldung. Ein ausdruecklich voruebergehender DNS-Fehler im ersten Versuch darf den
+bereits vorgesehenen zweiten Versuch nutzen. Insgesamt bleiben es hoechstens zwei Versuche
+im selben 7200-Sekunden-Budget, mit gleicher Lockdatei, gleichem Cache, Hashpflicht und TLS.
+Ein DNS-Fehler im zweiten Versuch startet keinen dritten Versuch; Hash-, Zertifikats-,
+Zugriffs- und Speicherfehler werden nicht als temporaere DNS-Probleme umgedeutet.
+Keine automatische DNS-/WSL-Reparatur, kein Mirror, keine alternativen Paketquellen oder IP-Tricks.
+Die Ursache einer anhaltend gestoerten WSL-/Host-Netzverbindung ist damit nicht behoben.
+
 OpenJarvis ist ein Agenten-/SDK-Framework, kein mitgeliefertes LLM und kein Modellgewicht.
 Es kann bestehende Inferenz-Backends wie Ollama ansprechen. Die Website nennt weitere
 Engines, Werkzeuge, Speicher und Lernwege; deren vollstaendige Integration wird hier nicht behauptet.

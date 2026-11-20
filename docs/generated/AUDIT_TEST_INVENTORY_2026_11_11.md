@@ -5183,28 +5183,36 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_python_reviewed_native.py:146`
   Prueffall: `test_other_wheel_errors_never_relax_hash_tls_or_disk_failures`
 - `tests/test_python_reviewed_native.py:162`
+  Prueffall: `test_temporary_dns_uses_only_existing_second_attempt_and_same_lock`
+- `tests/test_python_reviewed_native.py:181`
+  Prueffall: `test_timeout_then_dns_reports_root_cause_without_third_attempt`
+- `tests/test_python_reviewed_native.py:193`
+  Prueffall: `test_dns_does_not_override_permanent_errors_or_retry_permanent_resolution_failure`
+- `tests/test_python_reviewed_native.py:207`
+  Prueffall: `test_expired_budget_does_not_retry_temporary_dns`
+- `tests/test_python_reviewed_native.py:218`
   Prueffall: `test_second_wheel_timeout_is_final_and_process_timeout_never_retries`
-- `tests/test_python_reviewed_native.py:174`
+- `tests/test_python_reviewed_native.py:230`
   Prueffall: `test_expired_wheel_budget_keeps_original_error_without_retry`
-- `tests/test_python_reviewed_native.py:185`
+- `tests/test_python_reviewed_native.py:241`
   Prueffall: `test_resolver_timeout_does_not_retry_build_or_write_success_receipt`
-- `tests/test_python_reviewed_native.py:212`
+- `tests/test_python_reviewed_native.py:268`
   Prueffall: `test_incomplete_wheels_fail_closed`
-- `tests/test_python_reviewed_native.py:221`
+- `tests/test_python_reviewed_native.py:277`
   Prueffall: `test_probe_is_bounded_and_never_cli_execution`
-- `tests/test_python_reviewed_native.py:236`
+- `tests/test_python_reviewed_native.py:292`
   Prueffall: `test_import_guard_preserves_popen_types_and_blocks_cached_process_calls`
-- `tests/test_python_reviewed_native.py:265`
+- `tests/test_python_reviewed_native.py:321`
   Prueffall: `test_failed_probe_logs_traceback_without_credential_shaped_values`
-- `tests/test_python_reviewed_native.py:278`
+- `tests/test_python_reviewed_native.py:334`
   Prueffall: `test_timeout_diagnostics_are_bounded_and_decode_bytes`
-- `tests/test_python_reviewed_native.py:291`
+- `tests/test_python_reviewed_native.py:347`
   Prueffall: `test_build_runner_streams_with_shared_timeout`
-- `tests/test_python_reviewed_native.py:297`
+- `tests/test_python_reviewed_native.py:353`
   Prueffall: `test_explicit_unsupported_python_never_downloads`
-- `tests/test_python_reviewed_native.py:306`
+- `tests/test_python_reviewed_native.py:362`
   Prueffall: `test_missing_python_requires_explicit_consent`
-- `tests/test_python_reviewed_native.py:313`
+- `tests/test_python_reviewed_native.py:369`
   Prueffall: `test_build_rejects_wrong_source_layout`
 
 ## tests/test_queue_safety.py
@@ -6958,4 +6966,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3117**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3121**. Kein Nachweis bestandener Tests.
