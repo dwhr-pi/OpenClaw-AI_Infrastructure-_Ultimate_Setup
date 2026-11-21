@@ -9,8 +9,11 @@ import shutil
 import signal
 import stat
 import subprocess
+import sys
 import tarfile
 import tempfile
+
+import native_build_process
 
 
 SIDECARS = ('gvisor_sentry', 'checkpointgofer', 'runsc-metric-server',
@@ -22,6 +25,65 @@ PINS = {'gvisor': 'a0e6be6fb5e03d8ebea13592f36a097c7e9a41b9',
         'kata_containers': '03cf2ec06a5d302f23af811744f6bcea49988bfb'}
 BAZEL_HASHES = {'x86_64': '7f775b54bbec487efaf0f49ccda1d2ed02cd34f582edfdd6aeeec76e39ef585c',
                 'aarch64': '10ba9cb76d4ee748d274dcc2981992bb12b74a203dc41a9c2eceeb8f29359366'}
+KATA_TIMEOUTS = {
+    'download': ('KATA_GO_DOWNLOAD_TIMEOUT_SECONDS', 1800, 30, 7200),
+    'verify': ('KATA_GO_VERIFY_TIMEOUT_SECONDS', 300, 30, 1800),
+    'build': ('KATA_GO_BUILD_TIMEOUT_SECONDS', 7200, 300, 21600),
+}
+
+
+class KataPhaseError(ValueError):
+    """Fixed phase codes, without process output, paths or environment values."""
+
+
+def kata_timeouts(env):
+    result = {}
+    for phase, (name, default, minimum, maximum) in KATA_TIMEOUTS.items():
+        value = env.get(name, os.environ.get(name, str(default)))
+        if (not isinstance(value, str) or re.fullmatch(r'[0-9]{1,5}', value) is None
+                or not minimum <= int(value) <= maximum):
+            raise KataPhaseError('kata_go_' + phase + '_timeout_invalid')
+        result[phase] = int(value)
+    return result
+
+
+def kata_go_phases(module, prefix, item, env, run=None):
+    """Stream bounded Go phases; a tail buffer is not a complete JSON document."""
+    timeouts = kata_timeouts(env)
+    env = dict(env)
+    env.update(GOTOOLCHAIN='local', GOENV='off', GOWORK='off', GOFLAGS='-mod=readonly -p=2')
+    commands = {
+        'download': ['go', 'mod', 'download', '-json'],
+        'verify': ['go', 'mod', 'verify'],
+        'build': ['make', '-j2', 'runtime', 'containerd-shim-v2',
+                  'VERSION=' + item['version'], 'PREFIX=' + str(prefix)],
+    }
+    for phase, args in commands.items():
+        try:
+            def check_locks():
+                for name in ('go.mod', 'go.sum'):
+                    expected = item['source_sha256']['src/runtime/' + name]
+                    if sha256(module / name) != expected:
+                        raise KataPhaseError('kata_go_' + phase + '_source_contract_changed')
+
+            check_locks()
+            print('Kata Go Phase:', phase, 'Zeitbudget:', timeouts[phase],
+                  's; Heartbeat ist kein Fortschrittsnachweis.', flush=True)
+            if run is None:
+                native_build_process.run(args, module, env, timeout=timeouts[phase],
+                                         heartbeat=30, label='Kata-Go-' + phase)
+            else:
+                # Preserve the existing three-argument test-runner contract.
+                run(args, Path(module), env)
+            check_locks()
+        except KataPhaseError:
+            raise
+        except subprocess.TimeoutExpired:
+            raise KataPhaseError('kata_go_' + phase + '_timeout') from None
+        except KeyboardInterrupt:
+            raise KataPhaseError('kata_go_' + phase + '_interrupted') from None
+        except Exception:
+            raise KataPhaseError('kata_go_' + phase + '_failed') from None
 
 
 def checked(path):
@@ -100,6 +162,49 @@ def executable(name, env):
     return str(Path(value).resolve())
 
 
+LIBCLANG_PROBE = '''import ctypes,glob,json,pathlib,re,sys
+patterns = ('/usr/lib/llvm-*/lib/libclang.so*',
+            '/usr/lib/*-linux-gnu/libclang-*.so*',
+            '/usr/lib/libclang*.so*', '/usr/lib64/libclang*.so*')
+candidates = sorted(set(p for pattern in patterns for p in glob.glob(pattern)),
+                    key=lambda p: tuple(map(int,re.findall(r'[0-9]+',p))), reverse=True)
+for name in candidates[:64]:
+    path = pathlib.Path(name).resolve()
+    if not any(path.is_relative_to(root) for root in ('/usr/lib','/usr/lib64')):
+        continue
+    try:
+        library = ctypes.CDLL(str(path))
+        for symbol in ('clang_getClangVersion','clang_createIndex','clang_disposeIndex'):
+            getattr(library,symbol)
+    except (OSError,AttributeError):
+        continue
+    print(json.dumps({'library':str(path)}))
+    sys.exit(0)
+sys.exit(1)
+'''
+
+
+def require_libclang(cwd, env, run=None):
+    # Load only a host library in a time-bounded child, never inside the installer.
+    child = {key: value for key, value in env.items() if key in ('PATH', 'LANG', 'LC_ALL')}
+    try:
+        result = command([sys.executable, '-I', '-B', '-c', LIBCLANG_PROBE], cwd, child, run, True)
+        value = json.loads(result)
+        if not isinstance(value, dict) or set(value) != {'library'} or not isinstance(value['library'], str):
+            raise ValueError('invalid probe')
+        path = Path(value['library'])
+        if (not path.is_absolute() or '..' in path.parts
+                or not any(path.is_relative_to(root) for root in (Path('/usr/lib'), Path('/usr/lib64')))
+                or not re.fullmatch(r'libclang(?:-[0-9.]+)?\.so(?:\.[0-9.]+)?', path.name)):
+            raise ValueError('invalid library')
+    except Exception:
+        raise ValueError('Firecracker: ladbare Host-libclang mit Clang-C-API fehlt; '
+                         'Buildabhaengigkeit libclang-dev im Voraussetzungen-Dialog freigeben. '
+                         'Kein Cargo-Build gestartet.') from None
+    env['LIBCLANG_PATH'] = str(path.parent)
+    return str(path)
+
+
 def toolchains(key, cwd, env, run=None):
     versions = {}
     if key == 'gvisor':
@@ -110,6 +215,7 @@ def toolchains(key, cwd, env, run=None):
         if versions['bazel'] != 'bazel 9.3.1':
             raise ValueError('Bazel 9.3.1 erforderlich.')
     elif key == 'firecracker':
+        versions['libclang'] = require_libclang(cwd, env, run)
         # Resolve rustup proxies to an already installed sysroot before invoking Cargo.
         selected = env.get('NATIVE_SOURCE_RUST_TOOLCHAIN') or os.environ.get('NATIVE_SOURCE_RUST_TOOLCHAIN')
         if not selected or not Path(selected).is_absolute():
@@ -140,6 +246,8 @@ def toolchains(key, cwd, env, run=None):
 def preflight(outer, spec, approved=False):
     """Consent-gated shared dependencies/private compilers, never runtime activation."""
     key, item = recipe(spec)
+    if key == 'kata_containers':
+        kata_timeouts({})
     if platform.system() != 'Linux' or platform.machine() not in BAZEL_HASHES:
         raise ValueError('Nur natives Linux x86_64/aarch64; kein Crossbuild.')
     if os.geteuid() == 0:
@@ -155,6 +263,8 @@ def preflight(outer, spec, approved=False):
     import native_build_deps
     native_build_deps.prepare(spec, approved=approved)
     env = {name: value for name, value in os.environ.items() if name in ('PATH', 'LANG', 'LC_ALL')}
+    if key == 'firecracker':
+        require_libclang(path, env)
     for name in set(item['tools']) - {'go', 'bazel'}:
         executable(name, env)
     if not Path(outer).exists():
@@ -251,6 +361,8 @@ def probe(prefix, spec, env, run=None):
 def build(source, prefix, spec, env, run=None):
     """Return prefix-relative owned artifacts. Caller supplies fresh private staging tree."""
     key, item = recipe(spec)
+    if key == 'kata_containers':
+        kata_timeouts(env)
     source, prefix = checked(source), checked(prefix)
     if not source.is_relative_to(prefix):
         raise ValueError('Source muss im privaten Prefix liegen.')
@@ -306,10 +418,7 @@ def build(source, prefix, spec, env, run=None):
         locks.append('sandbox-receipts/Cargo.lock')
     else:
         module = source / 'src/runtime'
-        command(['go', 'mod', 'download'], module, env, run)
-        command(['go', 'mod', 'verify'], module, env, run)
-        command(['make', '-j2', 'runtime', 'containerd-shim-v2', 'VERSION=' + item['version'],
-                 'PREFIX=' + str(prefix)], module, env, run)
+        kata_go_phases(module, prefix, item, env, run)
         artifacts = []
         for name in ('kata-runtime', 'containerd-shim-kata-v2'):
             copy_binary(module / name, prefix / 'bin' / name)

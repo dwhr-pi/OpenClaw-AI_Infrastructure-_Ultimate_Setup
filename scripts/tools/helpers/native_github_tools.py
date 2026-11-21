@@ -33,7 +33,7 @@ CANDIDATE_BACKENDS = {
                      'temporal', 'argo_workflows'), 'candidate_go_controllers'),
     **dict.fromkeys(('kubescape', 'nuclei', 'trufflehog', 'testssl'), 'candidate_security_native'),
     **dict.fromkeys(('gvisor', 'kata_containers', 'firecracker'), 'native_sandbox_candidates'),
-    **dict.fromkeys(('phoenix', 'checkov', 'ragas'), 'python_reviewed_native'),
+    **dict.fromkeys(('phoenix', 'checkov', 'ragas', 'openjarvis'), 'python_reviewed_native'),
     **dict.fromkeys(('milvus', 'vaultwarden', 'owasp_zap'), 'security_data_native'),
 }
 
@@ -508,12 +508,12 @@ def validate(prefix, marker, spec, full=False):
     return record
 
 
-def quarantine_incomplete_caddy(outer, prefix, marker, spec):
+def quarantine_incomplete_native(outer, prefix, marker, spec):
     outer, prefix = common.checked(outer), common.checked(prefix)
-    if spec["id"] != "caddy" or outer.name != "caddy" or prefix != outer / "native-github" or marker != prefix / "build-ready.json":
-        raise ValueError("Unvollstaendige Ordner nur am privaten Caddy-Ziel sichern.")
+    if spec["id"] not in ("caddy", "owasp_zap") or outer.name != spec["id"] or prefix != outer / "native-github" or marker != prefix / "build-ready.json":
+        raise ValueError("Unvollstaendige Ordner nur am privaten Caddy-/ZAP-Ziel sichern.")
     if not prefix.is_dir() or marker.exists() or marker.is_symlink():
-        raise ValueError("Caddy-Zustand geaendert/Buildmarker vorhanden; keine Verschiebung.")
+        raise ValueError(spec["name"] + ": Zustand geaendert/Buildmarker vorhanden; keine Verschiebung.")
     # Same-filesystem rename preserves all unknown contents, without recursive deletion.
     backup = common.checked(Path(tempfile.mkdtemp(prefix="native-github-incomplete-", dir=outer)))
     saved = backup / "native-github"
@@ -522,10 +522,10 @@ def quarantine_incomplete_caddy(outer, prefix, marker, spec):
     except OSError:
         backup.rmdir()  # Only the newly created empty recovery directory.
         raise
-    print("Caddy: unvollstaendiger Altbestand unveraendert gesichert:", saved, flush=True)
+    print(spec["name"] + ": unvollstaendiger Altbestand unveraendert gesichert:", saved, flush=True)
     print("Keine Altdateien geloescht/als installiert uebernommen. Sicherung bleibt auch bei erneutem Buildfehler erhalten.")
     (backup / "RECOVERY.json").write_text(json.dumps(dict(
-        tool="caddy", original=str(prefix), saved=str(saved),
+        tool=spec["id"], original=str(prefix), saved=str(saved),
         scope="unverified-incomplete-preserved", installed=False,
         reason="explicit recovery after missing build marker"), indent=2), encoding="utf-8")
     return saved
@@ -538,21 +538,22 @@ def install(outer, prefix, marker, spec, install_build_deps=False, quarantine_in
         return
     incomplete = prefix.exists()
     if incomplete:
-        if spec["id"] != "caddy":
+        if spec["id"] not in ("caddy", "owasp_zap"):
             raise ValueError("Vorhandener nativer Ordner ohne Buildnachweis; nichts ueberschreiben.")
-        print("Caddy: vorhandener nativer Ordner ohne Buildnachweis; keine automatische Uebernahme/Loeschung.")
+        print(spec["name"] + ": vorhandener nativer Ordner ohne Buildnachweis; keine automatische Uebernahme/Loeschung.")
         print("Reparatur: Altordner separat erhalten, danach neuer GitHub-Build. Kein Platzgewinn; zusaetzlicher Buildspeicher erforderlich.")
-        print("Gezielt freigeben: bash scripts/tools/caddy_install.sh --repair --quarantine-incomplete")
+        print("Gezielt freigeben: bash scripts/tools/" + spec["id"] + "_install.sh --repair --quarantine-incomplete")
         if not quarantine_incomplete and sys.stdin.isatty():
             try:
-                quarantine_incomplete = input("Unvollstaendigen Caddy-Ordner erhalten und frisch bauen? [j/N]: ").strip().lower() in ("j", "ja", "y", "yes")
+                quarantine_incomplete = input("Unvollstaendigen " + spec["name"] + "-Ordner erhalten und frisch bauen? [j/N]: ").strip().lower() in ("j", "ja", "y", "yes")
             except EOFError:
                 quarantine_incomplete = False
         if not quarantine_incomplete:
-            raise ValueError("Vorhandener nativer Ordner ohne Buildnachweis; Reparatur nicht freigegeben. Siehe docs/tools/caddy.md.")
+            guide = "docs/tools/caddy.md" if spec["id"] == "caddy" else "docs/tools/security-data-native.md"
+            raise ValueError("Vorhandener nativer Ordner ohne Buildnachweis; Reparatur nicht freigegeben. Siehe " + guide + ".")
     preflight(outer, spec, install_build_deps=install_build_deps)
     if incomplete:
-        quarantine_incomplete_caddy(outer, prefix, marker, spec)
+        quarantine_incomplete_native(outer, prefix, marker, spec)
     prefix.mkdir(mode=0o700)
     try:
         recipe = spec["recipe"]
@@ -637,27 +638,35 @@ def main(argv=None):
     parser.add_argument("action", nargs="?", default="install", choices=("install", "update", "repair", "uninstall", "status", "check", "doctor", "plan"))
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--install-build-deps", action="store_true", help="Explicit consent for approved build dependencies/private toolchains; no application package")
-    parser.add_argument("--quarantine-incomplete", action="store_true", help="Caddy repair only: preserve an unmarked native directory by rename before a fresh build")
+    parser.add_argument("--quarantine-incomplete", action="store_true", help="Caddy/ZAP repair only: preserve an unmarked native directory by rename before a fresh build")
     alias = parser.add_mutually_exclusive_group()
     for action in ("repair", "uninstall", "status", "check"):
         alias.add_argument("--" + action, dest="override", action="store_const", const=action)
     args = parser.parse_args(argv)
+    if os.environ.get('OPENCLAW_BUILD_DEPS_DENY') == '1':
+        args.install_build_deps = False
     if args.override:
         if args.action not in ("install", args.override):
             parser.error("Widerspruechliche Aktionen.")
         args.action = args.override
     if args.install_build_deps and args.action not in ("install", "update", "repair", "plan"):
         parser.error("--install-build-deps ist nur fuer Install/Update/Repair oder deren Plan erlaubt.")
-    if args.quarantine_incomplete and (args.tool != "caddy" or args.action not in ("repair", "plan")):
-        parser.error("--quarantine-incomplete ist nur fuer Caddy --repair oder plan erlaubt.")
+    if args.quarantine_incomplete and (args.tool not in ("caddy", "owasp_zap") or args.action not in ("repair", "plan")):
+        parser.error("--quarantine-incomplete ist nur fuer Caddy/ZAP --repair oder plan erlaubt.")
     spec = TOOLS[args.tool]
     outer, prefix, marker = paths(args.tool)
     if args.dry_run or args.action == "plan":
         print(json.dumps(dict(tool=args.tool, target=str(prefix), **spec), indent=2))
         if args.tool in ('litellm', 'xerj'):
             print('Rust 1.98.0: vorhandene Basis bevorzugt; privater offizieller Bootstrap nur nach Zustimmung/--install-build-deps, 2048 MiB Zusatzpuffer. Kein Download in diesem Plan.')
+        if args.tool == 'vaultwarden':
+            print('Vaultwarden: Rust 1.99.1 erforderlich; passende vorhandene Basis bevorzugt. '
+                  'Falls privater Bootstrap erforderlich: 2048 MiB zusaetzlich, insgesamt '
+                  + str(spec['recipe']['disk_mb'] + 2048)
+                  + ' MiB frei, unter WSL auch auf dem Windows-Host. '
+                  'Nur bedingter Planbedarf, keine Toolchain-Probe oder Downloadfreigabe.')
         if args.quarantine_incomplete:
-            print("Caddy-Reparaturplan: unmarkierten Altordner nach Vorpruefung im Tool-Verzeichnis erhalten/umbenennen; danach frischer GitHub-Build. Kein Platzgewinn.")
+            print(spec["name"] + "-Reparaturplan: unmarkierten Altordner nach Vorpruefung im Tool-Verzeichnis erhalten/umbenennen; danach frischer GitHub-Build. Kein Platzgewinn.")
         print("Nur Plan. Kein Download/Build/Container/Hosteingriff; blocked_reason ist KEINE Installation.")
         return 0
     if args.action in ("status", "check", "doctor"):

@@ -1,5 +1,10 @@
 # VPS Safe Install Path
 
+Vor der Hostwahl:
+[Kostenlose VPS und Anbieterrecherche](VPS_ORACLE_CLOUDFREE_GUIDE.md#anbieterrecherche-vor-dem-setup).
+Fuer Offline-Planung und explizit autorisierte bestehende Hosts:
+[VPS-Adapter mit Faehigkeitsmatrix und offenen Abnahmen](VPS_PROVIDER_ADAPTER.md).
+
 ## Reihenfolge
 
 1. SSH-Zugriff und Snapshot/Backup sichern.

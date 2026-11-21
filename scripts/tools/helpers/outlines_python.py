@@ -19,8 +19,21 @@ def select(base, approved=False):
         if not isinstance(entry, str) or '\\' in entry or ':' in entry:
             raise ValueError('Outlines: ungueltiger privater Python-Pfad.')
         relative = Path(entry)
-        python = common.checked(slot / relative)
-        if relative.is_absolute() or '..' in relative.parts or not python.is_file() or not python.resolve().is_relative_to(slot.resolve()):
+        if relative.is_absolute() or '..' in relative.parts:
+            raise ValueError('Outlines: Python-Pfad verlaesst private Toolchain oder fehlt.')
+        managed = common.checked(slot / 'managed')
+        candidate = slot / relative
+        if not candidate.is_relative_to(managed):
+            raise ValueError('Outlines: Python-Pfad liegt nicht in privater managed-Laufzeit.')
+        # uv may return an internal version alias; never relax the general path guard.
+        try:
+            resolved = candidate.resolve(strict=True)
+        except (OSError, RuntimeError) as error:
+            raise ValueError('Outlines: privater Python-Verweis fehlt oder ist zyklisch.') from error
+        if not resolved.is_relative_to(managed):
+            raise ValueError('Outlines: Python-Verweis verlaesst private managed-Laufzeit.')
+        python = common.checked(resolved)
+        if not python.is_file():
             raise ValueError('Outlines: Python-Pfad verlaesst private Toolchain oder fehlt.')
         common.run([str(python), '-I', '-B', '-c',
                     'import sys,ssl,venv; assert sys.version_info[:2] == (3,13); print(sys.version)'], base, env)
@@ -53,10 +66,11 @@ def select(base, approved=False):
         common.run([uv, 'python', 'install', '3.13', '--no-bin', '--no-config'], base, env)
         python = Path(common.run([uv, 'python', 'find', '3.13', '--managed-python',
                                   '--no-python-downloads', '--no-config'], base, env).strip())
-        if not python.is_absolute() or not python.resolve().is_relative_to((slot / 'managed').resolve()):
+        if not python.is_absolute() or not python.is_relative_to(slot / 'managed'):
             raise ValueError('Outlines: uv lieferte keinen privaten Python-Pfad.')
         entry = python.relative_to(slot).as_posix()
-        verify(entry)
+        python = Path(verify(entry))
+        entry = python.relative_to(slot).as_posix()
         marker.write_text(json.dumps({'entry': entry, 'files': common.inventory(slot)}), encoding='utf-8')
     except BaseException:
         shutil.rmtree(common.checked(slot))

@@ -21,6 +21,23 @@ Python 3 und Git erforderlich; 2048 MiB Reserve nur fuer Quellen, nicht fuer
 Modelle oder GPU-Builds. Kein Docker-Fallback. Keine Pakete, Gewichte, GUI,
 Modelle, Audio, Trainingslaeufe, APIs oder Dienste automatisch starten.
 
+### Git-Download bei Verbindungsstillstand
+
+Der gemeldete Abbruch bei etwa 62 Prozent entstand vor Checkout und Build durch
+das Git-Zeitlimit, nicht durch eine belegte Python-/GPU-Inkompatibilitaet.
+Die genaue Netzwerk-/Hostursache ist aus dem Log nicht bestimmbar.
+Der gemeinsame Downloader verwendet HTTP/1.1 und erkennt HTTP-Transfers unter
+1 KiB/s ueber 120 Sekunden als Stillstand. Bei Timeout oder erkannten transienten
+Transportfehlern folgt hoechstens ein Neuversuch desselben Fetch-Befehls und Pins.
+Standard bleibt ein Gesamtbudget von 900 Sekunden; ein laufender erster Versuch
+darf es ausnutzen. Ein Neuversuch erhaelt nur die Restzeit. Kein Spiegelserver,
+kein anderer Branch und kein Abschalten der TLS-/Pin-/Hashpruefung.
+Authentifizierungs-, Zertifikats- und unbekannte Fehler bleiben ohne Neuversuch
+blockierend. Abbruch durch den Benutzer wird nicht wiederholt.
+Schlaegt auch der zweite Versuch fehl, bleiben Installation und Erfolgsmarker aus;
+die bestehende begrenzte Bereinigung und die Logs bleiben erhalten.
+Diese Transportkorrektur ist kein erfolgreicher Download-/Runtime-Nachweis unter WSL.
+
 ```bash
 bash scripts/tools/levo_2_install.sh --dry-run
 bash scripts/tools/levo_2_install.sh

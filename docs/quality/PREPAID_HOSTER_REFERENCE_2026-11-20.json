@@ -1,0 +1,25 @@
+{
+  "review_date": "2026-11-20",
+  "commit": "f25b7fb1506cab7151619acc0de9411a7cb953b2",
+  "file": "docs/vps/PROVIDER_REVIEW_2026_11_18.md",
+  "original_url": "https://www.prepaid-hoster.de/vserver/vserver-testen-neu.html",
+  "ci": [
+    {"event": "pull_request", "run_id": 44739434281, "job_id": 136299022631, "status": 404},
+    {"event": "push", "run_id": 44739428314, "job_id": 136299002099, "status": 404}
+  ],
+  "independent_original_status": 404,
+  "replacement_url": "https://support.prepaid-hoster.de/faq/de/virtuelle-server/kann-ich-eure-server-vor-dem-kauf-testen.html",
+  "replacement_status": 200,
+  "replacement_title": "Kann ich eure Server vor dem Kauf testen?",
+  "decision": "preserve-failed-original-and-link-read-official-faq",
+  "content_findings": [
+    "The official FAQ no longer offers public test servers; test servers are available on request.",
+    "The separately described credit-funded server booking is paid, not a free tier."
+  ],
+  "limits": [
+    "No availability guarantee, account, order, payment or server test.",
+    "Search results still contain historical seven-day advertising; snippets do not override the read FAQ.",
+    "Previous dated reports remain unchanged; no domain exception or accepted error status was added."
+  ],
+  "checker_changed": false
+}

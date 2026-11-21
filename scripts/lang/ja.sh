@@ -3,6 +3,7 @@
 # shellcheck disable=SC2034
 TXT_YES_LABEL="はい"
 TXT_NO_LABEL="いいえ"
+TXT_OK_LABEL="確定"
 TXT_LOADING_NOTICE_TITLE="画面を準備中"
 TXT_LOADING_NOTICE_BODY='「%s」画面を準備します。\n\n%s\n\nWSL やストレージの状態により、読み込みには数秒から数分かかります。任意の時間・ディスク測定値はローカルの概要から読み込みます。\n\n続行しますか？'
 TXT_LOADING_GAUGE_TITLE='%s を読み込み中'

@@ -96,7 +96,7 @@ class CargoTools(unittest.TestCase):
                 mock.patch.object(rust, 'verify', return_value=self.base) as verify, \
                 mock.patch.object(bootstrap, 'existing') as existing:
             self.assertEqual(rust.select(target), self.base)
-        verify.assert_called_once_with(self.base, target)
+        verify.assert_called_once_with(self.base, target, version=rust.VERSION)
         existing.assert_not_called()
 
     def test_corrupt_shared_basis_fails_closed(self):

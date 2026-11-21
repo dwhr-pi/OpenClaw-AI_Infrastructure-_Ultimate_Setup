@@ -1,0 +1,152 @@
+{
+  "review_date": "2026-11-19",
+  "commit": "56964fe0efafbb3519e348eeb9f69839bcf7e907",
+  "user_approved_reclassification": true,
+  "scope": "Exact failed original references retained as code; live Markdown link scope intentionally reduced; no checker exception or alive-status change.",
+  "ci": {
+    "workflow_run_id": 44606178609,
+    "job_id": 135850360672
+  },
+  "independent_checks": [
+    {
+      "url": "https://github.com/microsoft/agent-framework",
+      "status": 404,
+      "method": "anonymous GET; website and GitHub repository API; no authenticated content retrieved"
+    },
+    {
+      "url": "https://docs.hetzner.com/general/infrastructure-and-availability/price-adjustment/",
+      "status": 404,
+      "method": "anonymous GET; search snippets not accepted as current content verification"
+    }
+  ],
+  "limitations": [
+    "CI status 0 denotes transport failure, not HTTP.",
+    "403/404 do not establish deletion, license change or general unavailability.",
+    "Other listed URLs carry CI observations, not a new full provider-content audit.",
+    "Installer source URLs and pins are unchanged; clone availability remains unverified."
+  ],
+  "references": [
+    {
+      "original_url": "https://github.com/microsoft/agent-framework",
+      "ci_status": 404,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/TOOL_SETUP_AUDIT.md",
+        "docs/GITHUB_TOOL_SOURCES.md",
+        "docs/tools/agentic-coding.md"
+      ]
+    },
+    {
+      "original_url": "https://docs.hetzner.com/general/infrastructure-and-availability/price-adjustment/",
+      "ci_status": 404,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/vps/PROVIDER_REVIEW_2026_11_18.md"
+      ]
+    },
+    {
+      "original_url": "https://portal.vertacloud.biz/index.php?rp=/store/free-vps",
+      "ci_status": 0,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/vps/PROVIDER_REVIEW_2026_11_18.md"
+      ]
+    },
+    {
+      "original_url": "https://www.akamai.com/cloud/pricing",
+      "ci_status": 403,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/vps/PROVIDER_REVIEW_2026_11_18.md"
+      ]
+    },
+    {
+      "original_url": "https://www.kamatera.com/free-trial/",
+      "ci_status": 403,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/vps/PROVIDER_REVIEW_2026_11_18.md"
+      ]
+    },
+    {
+      "original_url": "https://contabo.com/en/vps/",
+      "ci_status": 403,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/vps/PROVIDER_REVIEW_2026_11_18.md"
+      ]
+    },
+    {
+      "original_url": "https://www.time4vps.com/Linux-vps/",
+      "ci_status": 403,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/vps/PROVIDER_REVIEW_2026_11_18.md"
+      ]
+    },
+    {
+      "original_url": "https://alphavps.com/uk-vps/",
+      "ci_status": 403,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/vps/PROVIDER_REVIEW_2026_11_18.md"
+      ]
+    },
+    {
+      "original_url": "https://admiralmarkets.com/trading-platforms/forex-vps",
+      "ci_status": 403,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/vps/PROVIDER_REVIEW_2026_11_18.md"
+      ]
+    },
+    {
+      "original_url": "https://vpswala.org/blog/get/free-vps",
+      "ci_status": 403,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/vps/PROVIDER_REVIEW_2026_11_18.md"
+      ]
+    },
+    {
+      "original_url": "https://www.reddit.com/r/oraclecloud/comments/1nnjx3d/tutorial_on_how_to_setup_an_alwaysfree_server/",
+      "ci_status": 403,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/vps/PROVIDER_REVIEW_2026_11_18.md"
+      ]
+    },
+    {
+      "original_url": "https://github.com/microsoft/agent-framework/releases/tag/python-1.24.0",
+      "ci_status": 404,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/audit/MULTI_AGENT_AUDIT_2026-11-05.md"
+      ]
+    },
+    {
+      "original_url": "https://raw.githubusercontent.com/microsoft/agent-framework/main/LICENSE",
+      "ci_status": 404,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/audit/MULTI_AGENT_AUDIT_2026-11-05.md"
+      ]
+    },
+    {
+      "original_url": "https://github.com/microsoft/agent-framework/tree/17b1a14bd5b4c774c18d5b827b4f5b97bed3cbee/python/packages/core",
+      "ci_status": 404,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/tools/microsoft-agent-framework.md"
+      ]
+    },
+    {
+      "original_url": "https://github.com/microsoft/agent-framework/tree/17b1a14bd5b4c774c18d5b827b4f5b97bed3cbee/python/packages/ollama",
+      "ci_status": 404,
+      "classification": "unverified-original-reference",
+      "files": [
+        "docs/tools/microsoft-agent-framework.md"
+      ]
+    }
+  ]
+}

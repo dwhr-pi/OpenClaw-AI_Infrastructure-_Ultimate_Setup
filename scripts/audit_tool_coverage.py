@@ -149,7 +149,25 @@ def cell(value):
     return str(value).replace("|", "\\|").replace("\n", " ")
 
 
-def markdown(data):
+def unverified_repositories(root):
+    path = Path(root) / 'docs/quality/CI_SOURCE_REFERENCES_2026-11-19.json'
+    if not path.is_file():
+        return {}
+    if path.is_symlink():
+        raise ValueError('Verlinkter Quellenbericht abgelehnt.')
+    review = json.loads(path.read_text(encoding='utf-8'))
+    if review.get('user_approved_reclassification') is not True:
+        return {}
+    date = review['review_date']
+    if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', date):
+        raise ValueError('Ungueltiges Quellenbericht-Datum.')
+    return {row['original_url']: date for row in review['references']
+            if row.get('classification') == 'unverified-original-reference'
+            and re.fullmatch(r'https://github\.com/[\w.-]+/[\w.-]+', row['original_url'])}
+
+
+def markdown(data, root=ROOT):
+    unverified = unverified_repositories(root)
     lines = ["# Dokumentation und Setup: Vollstaendigkeitsabgleich", "",
              "Statischer Repository-Abgleich des lokalen Standes. Zeitpunkt/Commit separat festhalten. Neu erzeugen:", "",
              "```text", "python -B scripts/audit_tool_coverage.py --output docs/TOOL_SETUP_AUDIT.md", "```", "",
@@ -195,7 +213,10 @@ def markdown(data):
               "| Quelle | Zuordnung | Dokumentationsfundstellen |", "|---|---|---|"]
     for t in data["documentation_repositories"]:
         docs = ", ".join(f"[{p}]({Path(p).relative_to('docs').as_posix()})" for p in t["docs"][:3])
-        lines.append(f"| [{t['repo']}](https://github.com/{t['repo']}) | {cell('; '.join(t['matches']) or 'Keine direkte Zuordnung; manuell pruefen')} | {docs} |")
+        url = 'https://github.com/' + t['repo']
+        reference = (f"`{url}` (unverifiziert, {unverified[url]})" if url in unverified
+                     else f"[{t['repo']}]({url})")
+        lines.append(f"| {reference} | {cell('; '.join(t['matches']) or 'Keine direkte Zuordnung; manuell pruefen')} | {docs} |")
     lines += ["", "## Strukturfehler", "",
               "Doppelte Registry-IDs: " + (", ".join(data["duplicate_registry_ids"]) or "keine"),
               "", "Doppelte Menue-Keys: " + (", ".join(data["duplicate_menu_keys"]) or "keine"), ""]

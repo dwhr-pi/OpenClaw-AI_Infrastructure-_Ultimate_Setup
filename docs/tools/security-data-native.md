@@ -8,7 +8,8 @@ Der zentrale Merger integriert die drei `candidate-native`-Rezepte.
 Modul: `scripts/tools/helpers/security_data_native.py`.
 
 - `preflight(outer, spec, approved=False)`: Linux x86_64, Disk/RAM und vorhandene
-  Werkzeuge pruefen; `approved` installiert hier absichtlich nichts.
+  Werkzeuge pruefen; fuer ZAP und Vaultwarden erlaubt `approved` die unten beschriebene Buildbasis.
+  Milvus erhaelt dadurch keinen zusaetzlichen Downloadpfad.
 - `build(source, prefix, spec, env, run=None)`: `source == prefix/source`, voller
   Git-Pin/Origin und SHA256-Quellvertraege; Rueckgabe aller prefix-relativen
   Artefakt-/Konfigurations-/Nachweispfade. Optionaler Runner: `(args,cwd,env)`
@@ -20,7 +21,9 @@ Modul: `scripts/tools/helpers/security_data_native.py`.
 Der Default-Buildrunner beendet nach 14400 Sekunden die Prozessgruppe. Ein
 injizierter Runner muss das gleiche begrenzte Fehler-/Abbruchverhalten bieten.
 Builds duerfen Quell-/Paketserver kontaktieren; Diagnose und Probes nicht.
-Es gibt keinen apt-, Docker-, Podman-, rustup- oder Wrapper-Download-Fallback.
+Kein Docker-, Podman-, rustup- oder Wrapper-Download-Fallback.
+Die ZAP-/Vaultwarden-Buildbasis wird ausschliesslich im freigegebenen Vorbereitungsschritt eingerichtet;
+der Build selbst installiert keine Systempakete und laedt keine Toolchain nach.
 Git-/Paket-Zugangsdaten und geerbte Anwendungsvariablen werden nicht uebernommen.
 
 ## Pins und Umfang
@@ -64,9 +67,40 @@ Commit `6ed6921cc2b0e03b4d74189574d2a5e71c512e97`, AGPL-3.0-only.
 [Rust-Pin](https://github.com/dani-garcia/vaultwarden/blob/6ed6921cc2b0e03b4d74189574d2a5e71c512e97/rust-toolchain.toml)
 und [Features](https://github.com/dani-garcia/vaultwarden/blob/6ed6921cc2b0e03b4d74189574d2a5e71c512e97/Cargo.toml).
 
-Rust 1.99.1 separat vorhanden, C-Compiler, pkg-config, Perl, OpenSSL-Entwicklung
-und System-C-Laufzeit; 12 GiB Disk und 4 GiB verfuegbarer RAM. Rust-Auswahl wie
-oben per absolutem `NATIVE_SOURCE_RUST_TOOLCHAIN`. `cargo build --locked --release
+Rust 1.99.1, C-Compiler, pkg-config, Perl, OpenSSL-Entwicklung und System-C-Laufzeit;
+12 GiB Disk und 4 GiB verfuegbarer RAM. Seit 19.11.2026 richtet der Installer fehlende
+Buildvoraussetzungen nach Zustimmung im Setup-Dialog selbst ein. CLI-Freigabe:
+`bash scripts/tools/vaultwarden_install.sh --install-build-deps`.
+Debian-/Ubuntu-Familie einschliesslich Ubuntu 26 und DietPi: ausschliesslich
+`build-essential`, `pkg-config`, `perl`, `libssl-dev` aus vorhandenen apt-Quellen;
+abweichende Basen erhalten vor der Installation eine Paketaufloesungssimulation.
+
+Ein vorhandenes passendes Rust wird bevorzugt. Sonst installiert der private Bootstrap
+Rust 1.99.1 unter `toolchain/rust-1.99.1-linux-amd64`, getrennt von Rust 1.98.0 anderer Tools.
+Quelle ist ausschliesslich `static.rust-lang.org`; der bestehende Bootstrap prueft
+Dateigroesse/SHA256 von `rustup-init` 1.29.2 vor Ausfuehrung, danach rustc-/Cargo-Version,
+sysroot und das lokale Dateiinventar. Rustup prueft die Distributionskomponenten beim Download;
+dies ersetzt keinen eigenen, vollstaendig vendorten Toolchain-Lock.
+Zusaetzliche Speicherreserve: 2 GiB, also 14 GiB vor dem Rust-Bootstrap, auch auf dem WSL-Host.
+
+Nachtrag 20.11.2026: Der gemeldete Lauf hatte auf C: 13946 MiB frei. Die
+12-GiB-Basispruefung bestand, fuer den erforderlichen Rust-Bootstrap galten
+jedoch 14336 MiB; es fehlten mindestens 390 MiB. Der Abbruch war korrekt,
+kein Rust-/Python-Buildfehler. Ein Setup-Update schafft keinen freien Host-Speicher.
+Menue-Vorpruefung, Voraussetzungen-Dialog und Plan nennen jetzt diesen
+bedingten Zusatzbedarf. Die Menueanzeige behauptet nicht, dass Rust fehlt;
+die verbindliche Toolchain-/Speicherpruefung bleibt im Installer.
+Eine passende vorhandene Basis wird weiterhin ohne neuen Bootstrap bevorzugt.
+Reserven werden nicht gesenkt, Daten nicht automatisch geloescht und ein
+Speicherabbruch nicht durch `--install-build-deps` umgangen. Der Mindestwert
+ist keine Garantie fuer den gesamten spaeteren Betrieb oder andere parallele Installationen.
+Kein System-Rust-/Default-/Shell-PATH-Wechsel; `--no-modify-path` und private Cargo-/Rustup-Verzeichnisse.
+Ein explizites `NATIVE_SOURCE_RUST_TOOLCHAIN` muss gueltig sein und wird nie still ersetzt.
+Ohne Zustimmung, bei Hash-/Versionsfehlern oder veraendertem privatem Bestand wird abgebrochen.
+Buildwerkzeuge bleiben bei App-Deinstallation erhalten; vorhandene Daten werden nicht entfernt.
+Offline-Fixtures ersetzen keinen erfolgreichen WSL-Quellbuild.
+
+`cargo build --locked --release
 --no-default-features --features sqlite --bin vaultwarden`; SQLite wird gebuendelt.
 Kein PostgreSQL/MySQL, keine Datenbankanlage oder Migration.
 
@@ -91,10 +125,32 @@ Commit `8a1bff313f4d183dba5aa154ecbe89ad751c9153`, Apache-2.0.
 [Buildanleitung](https://github.com/zaproxy/zaproxy/blob/8a1bff313f4d183dba5aa154ecbe89ad751c9153/BUILDING.md)
 und [Distributionstasks](https://github.com/zaproxy/zaproxy/blob/8a1bff313f4d183dba5aa154ecbe89ad751c9153/buildSrc/src/main/kotlin/org/zaproxy/zap/distributions.gradle.kts).
 
-Vorhandenes JDK 21 (Compiler/Error Prone) und Gradle 8.13, 12 GiB Disk/4 GiB RAM.
-Die Gradle-Distribution ist zusaetzlich durch URL/SHA256 im Vorschlag dokumentiert,
-aber wird nicht heruntergeladen. Der Wrapper und automatische JDK-Provisionierung
-werden nicht benutzt. `:zap:distFiles` baut `zap-2.17.0.jar`, Runtime-JARs und
+JDK 21 (Compiler/Error Prone) und Gradle 8.13, 12 GiB Disk/4 GiB RAM.
+Seit der Installerkorrektur vom 19.11.2026 werden fehlende Voraussetzungen nach
+Zustimmung im Voraussetzungen-Dialog bereitgestellt. Ohne Zustimmung kein Download.
+CLI-Freigabe: `bash scripts/tools/owasp_zap_install.sh --install-build-deps`.
+Debian-/Ubuntu-Familie einschliesslich neuer Releases und DietPi: fehlendes JDK 21
+via `openjdk-21-jdk-headless`, ausschliesslich aus vorhandenen apt-Quellen, mit
+Paketaufloesungssimulation auf abweichenden Basen. apt kann gemeinsame Abhaengigkeiten
+und Java-Alternativen aktualisieren; kein erzwungenes `update-alternatives`.
+Ein passendes vorhandenes JDK wird bevorzugt, sonst wird JDK 21 nur fuer diesen Build
+per `JAVA_HOME`/Prozess-PATH ausgewaehlt. Keine Fremdquelle und kein Versions-Bypass.
+
+Fehlendes oder unpassendes Gradle wird privat unter `toolchain/gradle-8.13` eingerichtet:
+[offizielle Gradle-Distribution](https://github.com/gradle/gradle-distributions/releases/tag/v8.13.0),
+Archiv `gradle-8.13-all.zip`, 232036537 Bytes, SHA256
+`fba8464465835e74f7270bbf43d6d8a8d7709ab0a43ce1aa3323f73e9aa0c612`.
+Der Hash wurde gegen die
+[offizielle Gradle-Pruefsumme](https://services.gradle.org/distributions/gradle-8.13-all.zip.sha256)
+abgeglichen. Begrenztes Entpacken
+verwirft Links und unsichere Pfade; Wiederverwendung prueft das gesamte Dateiinventar.
+Ein beschaedigtes vorhandenes Ziel wird nicht ueberschrieben. Der Bootstrap verlangt
+zusaetzlich 1 GiB Speicherreserve und hinterlaesst bei Downloadfehlern keinen fertigen
+Installationsnachweis. Gemeinsame Buildwerkzeuge bleiben bei Deinstallation erhalten.
+Offline-Fixtures pruefen Zustimmung, Paketfreigabe, Hashfehler und Manipulation;
+ein erfolgreicher Linux-/WSL-Quellbuild ist damit noch nicht nachgewiesen.
+Wrapper und automatische Gradle-JDK-Provisionierung werden nicht benutzt.
+`:zap:distFiles` baut `zap-2.17.0.jar`, Runtime-JARs und
 vollstaendige Core-Ressourcen (`xml`, `lang`, `db`, Startskripte).
 Der upstream Runtime-CycloneDX-BOM wird ueber `jarWithBom` erzeugt.
 `--write-locks --write-verification-metadata sha256` erzeugt die lokalen
@@ -108,6 +164,36 @@ ZAP-Distribution. Die JAR-Probe liest ZIP-Integritaet, Main-Klasse und Version
 mit begrenztem Entpackbudget. Kein Java-Anwendungsprozess, Port, Session-DB,
 API-Key, Ziel-URL oder Scan. Eine systemd-Unit ist fuer diesen Desktop/Core-
 Komponentenumfang nicht anwendbar und wird nicht erstellt.
+
+### ZAP: Ordner ohne Buildnachweis reparieren (21.11.2026)
+
+`Vorhandener nativer Ordner ohne Buildnachweis` bedeutet, dass `native-github/`
+bereits existiert, aber kein gueltiger Installationsnachweis vorliegt. Die Ursache
+kann ein unterbrochener Versuch sein; daraus folgt kein Besitznachweis fuer alle Inhalte.
+Der Installer darf den Ordner deshalb nicht pauschal loeschen oder als installiert uebernehmen.
+
+Im interaktiven Installationslauf kann das Setup jetzt eine gesonderte Reparatur anbieten.
+Die Zustimmung zur Installation von Buildwerkzeugen allein ist **keine** Reparaturfreigabe.
+Ohne Terminal/Zustimmung bleibt der Altbestand unveraendert. Ausdrueckliche CLI-Freigabe:
+
+```bash
+bash scripts/tools/owasp_zap_install.sh --repair --quarantine-incomplete --install-build-deps
+```
+
+Nach erfolgreicher Ressourcen-/Buildbasis-Vorpruefung wird ausschliesslich der private
+ZAP-Ordner `tools/owasp_zap/native-github/` innerhalb desselben Toolverzeichnisses nach
+`native-github-incomplete-<zufall>/native-github/` umbenannt. Das Protokoll nennt den
+Sicherungspfad; daneben dokumentiert `RECOVERY.json` die unbestaetigte Herkunft.
+Unbekannte Inhalte werden erhalten, nicht ausgefuehrt, nicht rekursiv geloescht und nicht
+in den neuen Build kopiert. Die Sicherung schafft keinen freien Speicherplatz.
+Sie bleibt auch bei einem erneuten Buildfehler erhalten. Private Toolchains und
+Legacy-Container, Volumes und `/opt`-Installationen bleiben unberuehrt.
+
+Ein vorhandener, aber ungueltiger Buildmarker oder ein unsicherer Zielpfad sperrt
+diesen Weg weiterhin. Bei Ablehnung, Vorpruefungsfehler oder reinem Reparaturplan
+werden keine Altdateien verschoben. Ein neuer Erfolgsnachweis entsteht erst nach
+erfolgreichem frischem Build; die Sicherung selbst ist kein Installationsnachweis.
+Die Offline-Tests belegen diese Dateisicherungsgrenzen, keinen echten ZAP-Build oder Scan.
 
 ## Nachweise und Entfernung
 

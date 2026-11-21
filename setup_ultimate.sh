@@ -482,12 +482,29 @@ is_wsl_environment() {
 
 get_windows_host_free_kb() {
   local drive_name="${WINDOWS_HOST_DRIVE:-C}"
+  local windows_mount
+  local free_kb
   local free_bytes
 
+  [[ "$drive_name" =~ ^[A-Za-z]$ ]] || return 0
+  windows_mount="/mnt/${drive_name,,}"
+  if command -v mountpoint >/dev/null 2>&1 && mountpoint -q -- "$windows_mount" 2>/dev/null; then
+    free_kb="$(df -Pk "$windows_mount" 2>/dev/null)" || free_kb=""
+    free_kb="$(printf '%s\n' "$free_kb" | awk 'NR==2 {print $4}')"
+    if [[ "$free_kb" =~ ^[0-9]{1,18}$ ]]; then
+      printf '%s' "$((10#$free_kb))"
+      return 0
+    fi
+  fi
+
   command -v powershell.exe >/dev/null 2>&1 || return 0
-  free_bytes="$(powershell.exe -NoProfile -Command "(Get-PSDrive -Name '${drive_name}').Free" 2>/dev/null | tr -d '\r' | awk 'NF {print int($1); exit}')"
-  if [ -n "$free_bytes" ] && [ "$free_bytes" -gt 0 ] 2>/dev/null; then
-    printf '%s' $((free_bytes / 1024))
+  command -v timeout >/dev/null 2>&1 || return 0
+  free_bytes="$(timeout --foreground --signal=TERM --kill-after=2s 10s \
+    powershell.exe -NoLogo -NoProfile -NonInteractive \
+    -Command "(Get-PSDrive -Name '${drive_name}').Free" 2>/dev/null)" || return 0
+  free_bytes="$(printf '%s\n' "$free_bytes" | tr -d '\r' | awk '/^[[:space:]]*[0-9]+[[:space:]]*$/ {gsub(/[[:space:]]/, ""); print; exit}')"
+  if [[ "$free_bytes" =~ ^[0-9]{1,18}$ ]]; then
+    printf '%s' "$((10#$free_bytes / 1024))"
   fi
 }
 
@@ -911,6 +928,7 @@ get_tool_install_fallback_min_free_mb() {
     "KEDA") printf '24576' ;;
     "Temporal") printf '24576' ;;
     "Argo_Workflows") printf '24576' ;;
+    "OpenJarvis") printf '12288' ;;
     "Arize_Phoenix") printf '12288' ;;
     "Checkov") printf '8192' ;;
     "Ragas") printf '12288' ;;
@@ -1093,6 +1111,7 @@ confirm_heavy_or_experimental_tool() {
 
 preflight_tool_install_storage() {
   local tool_key="$1"
+  local bootstrap_min_kb=0
   local min_mb
   local min_kb
   local free_kb
@@ -1117,6 +1136,12 @@ preflight_tool_install_storage() {
   fi
   echo -e "${YELLOW}Aktuell frei Linux/WSL:${NC} $(format_kb_human "$free_kb")"
 
+  if [ "$tool_key" = Vaultwarden ]; then
+    bootstrap_min_kb=$(((fallback_mb + 2048) * 1024))
+    echo "Vaultwarden: Falls Rust 1.99.1 fehlt, braucht die private Basis zusaetzlich 2048 MiB; dann mindestens $(format_kb_human "$bootstrap_min_kb") vor dem Bootstrap, unter WSL auch auf dem Windows-Host."
+    echo "Hinweis: Bedingter Zusatzbedarf, keine pauschale Downloadfreigabe. Die passende vorhandene Rust-Basis wird bevorzugt; der Installer prueft den tatsaechlichen Bedarf."
+  fi
+
   if [ "$free_kb" -lt "$min_kb" ] 2>/dev/null; then
     echo -e "${RED}Abbruch vor der Installation:${NC} Fuer ${tool_key} sind mindestens $(format_kb_human "$min_kb") frei empfohlen, aktuell sind nur $(format_kb_human "$free_kb") frei."
     echo -e "${YELLOW}Tipp:${NC} Erst Speicher freigeben, z. B. mit: bash scripts/cleanup_installation_residues.sh --apply --all"
@@ -1127,6 +1152,7 @@ preflight_tool_install_storage() {
     windows_min_mb="$(get_tool_install_windows_min_free_mb "$min_mb")"
     case "$tool_key" in
       "Traefik" | "OpenTelemetry") windows_min_mb="$min_mb" ;;
+      "Firecracker" | "Kata_Containers" | "gVisor") windows_min_mb="$min_mb" ;;
       "PyAirbyte" | "Langfuse" | "NocoDB" | "Penpot" | "Grafana_Alloy" | "Apache_Tika" | "Appsmith" | "ArchiveBox" | "Argilla" | "Budibase" | "Forgejo" | "Caddy" | "cAdvisor" | "Changedetection_IO" | "CrowdSec" | "Directus" | "Grafana" | "Healthchecks" | "Home_Assistant" | "LiteLLM" | "Loki" | "Meilisearch" | "Metabase" | "MinIO" | "Mosquitto" | "Neo4j" | "Netdata" | "Nextcloud" | "Node_Exporter" | "Node_Red" | "Open_WebUI" | "Prometheus" | "Promtail" | "Qdrant" | "SearXNG" | "Stirling_PDF" | "Uptime_Kuma" | "Vault" | "Vikunja" | "Watchtower" | "Weaviate" | "Zigbee2MQTT") windows_min_mb="$min_mb" ;;
       Qwen_Desktop_Build | Hermes_Agent_Jarvis | Gradio | Streamlit | WanVideoWrapper | CogVideoX | LTX_Video | Video2Dataset | MuseTalk | LivePortrait | SadTalker | RVC | UVR5 | Audacity | OBS | Concat | Remotion | HyperFrames) windows_min_mb="$min_mb" ;;
     esac
@@ -1134,6 +1160,9 @@ preflight_tool_install_storage() {
     windows_free_kb="$(get_windows_host_free_kb)"
     if [ -n "$windows_free_kb" ]; then
       echo -e "${YELLOW}Aktuell frei Windows-Host (${WINDOWS_HOST_DRIVE:-C}:):${NC} ${GREEN}$(format_kb_human "$windows_free_kb")${NC}"
+      if [ "$bootstrap_min_kb" -gt 0 ] && [ "$windows_free_kb" -lt "$bootstrap_min_kb" ]; then
+        echo "Vaultwarden: Fuer einen erforderlichen Rust-Bootstrap fehlen derzeit mindestens $(((bootstrap_min_kb - windows_free_kb + 1023) / 1024)) MiB auf dem Windows-Host. Die Basisreserve allein reicht dafuer nicht; kein automatisches Aufraeumen oder Absenken der Reserve."
+      fi
       if [ "$windows_free_kb" -lt "$windows_min_kb" ] 2>/dev/null; then
         echo -e "${RED}Abbruch vor der Installation:${NC} Unter WSL sollte ${WINDOWS_HOST_DRIVE:-C}: fuer ${tool_key} mindestens $(format_kb_human "$windows_min_kb") frei haben, aktuell sind nur $(format_kb_human "$windows_free_kb") frei."
         echo "Fehlend: mindestens $(((windows_min_kb - windows_free_kb + 1023) / 1024)) MiB auf dem Windows-Host. Kein Installer gestartet."
@@ -1332,6 +1361,29 @@ show_operation_intro() {
   sleep 4
 }
 
+format_tool_action_list() {
+  local tool
+  local index=0
+  local total="$#"
+
+  if [ "$total" -eq 0 ]; then
+    printf '%s' '(keine)'
+    return 0
+  fi
+
+  for tool in "$@"; do
+    if [ "$index" -gt 0 ]; then
+      if [ "$index" -eq "$((total - 1))" ]; then
+        printf '%s' ' und '
+      else
+        printf '%s' ', '
+      fi
+    fi
+    printf '%b%s%b' "$GREEN" "$tool" "$NC"
+    index=$((index + 1))
+  done
+}
+
 show_tool_action_plan_intro() {
   local context_label="$1"
   local uninstall_items="$2"
@@ -1355,8 +1407,12 @@ show_tool_action_plan_intro() {
   echo
   echo -e "${YELLOW}Was passiert:${NC} Das Setup fuehrt ausgewaehlte Tool-Aenderungen in einer sicheren Reihenfolge aus."
   echo -e "${YELLOW}Geplante Reihenfolge:${NC}"
-  echo -e "${YELLOW}1. Deinstallationen zuerst:${NC} ${uninstall_items:-${GREEN}(keine)${NC}}"
-  echo -e "${YELLOW}2. Installationen danach:${NC} ${install_items:-${GREEN}(keine)${NC}}"
+  printf '%b1. Deinstallationen zuerst:%b ' "$YELLOW" "$NC"
+  format_tool_action_list "${uninstall_array[@]}"
+  printf '\n'
+  printf '%b2. Installationen danach:%b ' "$YELLOW" "$NC"
+  format_tool_action_list "${install_array[@]}"
+  printf '\n'
   echo
   echo -e "${YELLOW}Ermittelte Werte:${NC}"
   echo -e "${YELLOW}Deinstallationen gesamt:${NC} ${uninstall_summary}"
@@ -2595,6 +2651,16 @@ selection_contains() {
   return 1
 }
 
+select_tool_batch_build_deps_policy() {
+  dialog --stdout --default-item ask \
+    --ok-label "${TXT_OK_LABEL:-OK}" --cancel-label "${TXT_BACK_LABEL:-Zurueck}" \
+    --title "Stapelinstallation: Build-Voraussetzungen" \
+    --menu "Einmalige Auswahl nur fuer diesen Stapel. Alle: fehlende freigegebene Buildwerkzeuge, Laufzeiten und Entwicklungsbibliotheken fuer die ausgewaehlten Tools einrichten. apt kann Abhaengigkeiten aktualisieren; private Toolchains brauchen weiterhin Integritaetsnachweise und Speicherreserve. Nein: nur vorhandene Buildwerkzeuge nutzen; bei fehlender Basis scheitert das betreffende Tool ohne erneute Voraussetzungen-Frage. Kein System-Python-Wechsel, keine Fremdquellen. Lizenz-, Sicherheits-, Modell- und Dienststartfreigaben werden nicht ersetzt. Abbrechen: keine Stapelaktion ausfuehren." 22 90 3 \
+    ask "Wie bisher: Voraussetzungen je Tool bestaetigen" \
+    all "Alle benoetigten freigegebenen Voraussetzungen installieren" \
+    existing "Nein: keine zusaetzlichen Buildwerkzeuge installieren"
+}
+
 run_ordered_tool_actions() {
   local context_label="$1"
   local -n uninstall_queue_ref="$2"
@@ -2604,6 +2670,7 @@ run_ordered_tool_actions() {
   local upcoming_preview
   local -a remaining_tools=()
   local index
+  local TOOL_BATCH_BUILD_DEPS_POLICY=ask
 
   if [ "${#uninstall_queue_ref[@]}" -eq 0 ] && [ "${#install_queue_ref[@]}" -eq 0 ]; then
     echo -e "${YELLOW}Keine Tool-Aenderungen fuer ${context_label} ausgewaehlt.${NC}"
@@ -2614,6 +2681,17 @@ run_ordered_tool_actions() {
     "$context_label" \
     "${uninstall_queue_ref[*]}" \
     "${install_queue_ref[*]}"
+
+  if [ "${#install_queue_ref[@]}" -gt 1 ]; then
+    TOOL_BATCH_BUILD_DEPS_POLICY="$(select_tool_batch_build_deps_policy)" || return 1
+    case "$TOOL_BATCH_BUILD_DEPS_POLICY" in
+      ask | all | existing) ;;
+      *)
+        printf '%s\n' 'Abbruch: Ungueltige Voraussetzungen-Auswahl. Keine Stapelaktion gestartet.'
+        return 1
+        ;;
+    esac
+  fi
 
   for index in "${!uninstall_queue_ref[@]}"; do
     tool_key="${uninstall_queue_ref[$index]}"
@@ -3613,6 +3691,8 @@ run_tool_script() {
   local action="$2"
   local script_name="${TOOL_SCRIPT_NAMES[$tool_key]}"
   local -a tool_args=()
+  local OPENCLAW_BUILD_DEPS_DENY="${OPENCLAW_BUILD_DEPS_DENY:-0}"
+  export OPENCLAW_BUILD_DEPS_DENY
 
   if [ -z "$script_name" ]; then
     echo -e "${RED}Fehler: Kein Skript-Mapping für Tool '$tool_key' gefunden.${NC}"
@@ -3624,7 +3704,7 @@ run_tool_script() {
   fi
 
   # Only the interactive setup opts into the documentation approval dialog.
-  if [[ "$tool_key" =~ ^(Outlines|eSpeak_NG|SongRec|Valkey|Kube_Bench|cert-manager|External_DNS|Kyverno|Gatekeeper|KEDA|Arize_Phoenix|gVisor|Kata_Containers|Firecracker|Milvus|Kubescape|Nuclei|Testssl|OWASP_ZAP|Checkov|Ragas|Temporal|TruffleHog|Vaultwarden|Argo_Workflows)$ && "$action" =~ ^(install|update)$ ]]; then
+  if [[ "$tool_key" =~ ^(Outlines|eSpeak_NG|SongRec|Valkey|Kube_Bench|cert-manager|External_DNS|Kyverno|Gatekeeper|KEDA|Arize_Phoenix|gVisor|Kata_Containers|Firecracker|Milvus|Kubescape|Nuclei|Testssl|OWASP_ZAP|Checkov|Ragas|Temporal|TruffleHog|Vaultwarden|OpenJarvis|Argo_Workflows)$ && "$action" =~ ^(install|update)$ ]]; then
     local prerequisites='Gepinnter nativer GitHub-Build. Fehlende freigegebene Compiler, Laufzeiten und Entwicklungsbibliotheken werden nach Zustimmung eingerichtet, private Toolchains mit Integritaetsnachweis. Debian-/Ubuntu-Familie einschliesslich neuer Releases und DietPi: Paketaufloesung wird vor apt-Installation simuliert. Keine Fremdquelle, kein System-Python-Wechsel. Umfang und Ressourcen siehe Toolseite; keine automatische Aktivierung, Scans oder Zugangsdatenpruefung.'
     if [ "$tool_key" = Outlines ]; then
       prerequisites='Outlines: geeignetes vorhandenes Python bevorzugen. Falls keines vorhanden: Ubuntu 24.04 bekommt Python 3.12/venv per apt; andere Systeme wie Ubuntu 26.04 bekommen eine private Python-3.13-Laufzeit via uv/GitHub (1024 MiB Zusatzreserve). uv bestimmt die Patchversion; Dateiinventar wird erfasst. Kein System-Python-Wechsel. Fehlendes uv aus SHA256-geprueftem GitHub-Release.'
@@ -3636,10 +3716,33 @@ run_tool_script() {
       prerequisites='Valkey: Compiler, make, pkg-config und OpenSSL-Entwicklungsbibliotheken aus Debian-/Ubuntu-Paketen. Gepinnter privater GitHub-Build, kein Server-/Portstart und kein Austausch einer Redis-Installation.'
     elif [ "$tool_key" = SongRec ]; then
       prerequisites='SongRec: fehlendes Cargo/Rust, Compiler, pkg-config, gettext sowie ALSA-/GLib-/OpenSSL-Entwicklungsbibliotheken aus Debian-/Ubuntu-Paketen. Abweichende Basis wird mit apt simuliert. Vorhandene private Cargo-/Rust-Werkzeuge bleiben. SongRec aus gepinntem GitHub-Stand; kein Mikrofon-/Shazam-Aufruf.'
+    elif [ "$tool_key" = Vaultwarden ]; then
+      prerequisites='Vaultwarden: vorhandenes passendes Rust 1.99.1 bevorzugen. Falls es fehlt: private gepruefte Rust-Basis nach Zustimmung, ohne System-/Default-Aenderung. Zur 12-GiB-Buildreserve kommen beim Bootstrap 2 GiB hinzu: mindestens 14 GiB frei, unter WSL auch auf dem Windows-Host. Kein automatisches Aufraeumen, Serverstart oder Web-Vault-Download.'
     fi
-    if dialog --defaultno --title "$tool_key: Voraussetzungen" --yesno "$prerequisites\n\nFehlende Voraussetzungen im Setup einrichten? apt kann Abhaengigkeiten aktualisieren; Basiswerkzeuge bleiben erhalten. Kein System-Python-Wechsel, Modell- oder Dienststart. Nein: nur vorhandene Basis verwenden." 16 78; then
-      tool_args+=(--install-build-deps)
+    local prerequisite_policy=ask
+    # Batch consent is dynamically scoped, never an ambient environment opt-in.
+    if [[ " ${FUNCNAME[*]} " == *" run_ordered_tool_actions "* ]]; then
+      prerequisite_policy="${TOOL_BATCH_BUILD_DEPS_POLICY:-ask}"
     fi
+    case "$prerequisite_policy" in
+      all)
+        printf '%s\n' "$tool_key: Build-Voraussetzungen fuer diesen Stapel freigegeben."
+        tool_args+=(--install-build-deps)
+        ;;
+      existing)
+        OPENCLAW_BUILD_DEPS_DENY=1
+        printf '%s\n' "$tool_key: Keine zusaetzlichen Buildwerkzeuge freigegeben; nur vorhandene Basis verwenden."
+        ;;
+      *)
+        if dialog --defaultno \
+          --yes-label "${TXT_YES_LABEL:-Ja}" --no-label "${TXT_NO_LABEL:-Nein}" \
+          --title "$tool_key: Voraussetzungen" --yesno "$prerequisites\n\nFehlende Voraussetzungen im Setup einrichten? apt kann Abhaengigkeiten aktualisieren; Basiswerkzeuge bleiben erhalten. Kein System-Python-Wechsel, Modell- oder Dienststart. Nein: nur vorhandene Basis verwenden." 16 78; then
+          tool_args+=(--install-build-deps)
+        else
+          OPENCLAW_BUILD_DEPS_DENY=1
+        fi
+        ;;
+    esac
   fi
   if [[ "$tool_key" == Markdown_Docs_Server && "$action" =~ ^(install|update)$ ]]; then
     tool_args+=(--interactive)
@@ -5088,6 +5191,8 @@ TOOL_SCRIPT_NAMES["Zigbee2MQTT"]="zigbee2mqtt"
 register_native_github_tool_keys
 
 # Append documented candidates without installing or starting any component.
+TOOL_SCRIPT_NAMES["OpenJarvis"]="openjarvis"
+TOOLS["OpenJarvis"]="Nativer CLI-/SDK-Basisbuild (experimentell); ohne Quickstart/Modelldownload. GUI, Desktop und Rust separat. docs/tools/openjarvis.md"
 TOOL_KEYS+=()
 TOOL_SCRIPT_NAMES["cert-manager"]="cert_manager"
 TOOLS["cert-manager"]="Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. docs/tools/native-go-controllers.md"

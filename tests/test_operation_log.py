@@ -215,5 +215,106 @@ print_operation_log_heading "$file"
         self.assertIn('Tool: \x1b[1;36mCaddy\x1b[0m', r.stdout)
 
 
+@unittest.skipUnless(BASH, 'Bash unavailable')
+class WindowsHostSpace(unittest.TestCase):
+    def shell(self, code):
+        prefix = '''set -euo pipefail
+WINDOWS_HOST_DRIVE=C
+mountpoint() { return 1; }
+df() { echo 'unexpected df' >&2; return 99; }
+powershell.exe() { echo 'unexpected PowerShell' >&2; return 99; }
+timeout() {
+  [[ "$1" == --foreground && "$2" == --signal=TERM && "$3" == --kill-after=2s && "$4" == 10s ]] || return 98
+  shift 4
+  "$@"
+}
+'''
+        result = subprocess.run([BASH, '--noprofile', '--norc', '-s'],
+                                input=prefix + function('get_windows_host_free_kb') + code,
+                                cwd=ROOT, capture_output=True, text=True, encoding='utf-8', timeout=30,
+                                env=dict(os.environ, BASH_ENV='', ENV=''))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stderr, '')
+        return result.stdout
+
+    def test_mounted_drive_uses_df_without_powershell(self):
+        output = self.shell('''
+WINDOWS_HOST_DRIVE=C
+mountpoint() { [[ "$*" == '-q -- /mnt/c' ]]; }
+df() {
+  [[ "$*" == '-Pk /mnt/c' ]] || return 97
+  printf 'Filesystem 1024-blocks Used Available Capacity Mounted\\nC: 99999999 1 15284224 90%% /mnt/c\\n'
+}
+printf 'FREE:%s\\n' "$(get_windows_host_free_kb)"
+''')
+        self.assertEqual(output, 'FREE:15284224\n')
+
+    def test_mounted_zero_is_known_and_alternate_drive_is_lowercased(self):
+        output = self.shell('''
+WINDOWS_HOST_DRIVE=D
+mountpoint() { [[ "$*" == '-q -- /mnt/d' ]]; }
+df() { printf 'Filesystem 1024-blocks Used Available Capacity Mounted\\nD: 100 100 0 100%% /mnt/d\\n'; }
+get_windows_host_free_kb
+''')
+        self.assertEqual(output, '0')
+
+    def test_powershell_preserves_large_decimal_bytes_and_crlf(self):
+        output = self.shell('''
+WINDOWS_HOST_DRIVE=C
+powershell.exe() {
+  [[ "$1" == -NoLogo && "$2" == -NoProfile && "$3" == -NonInteractive && "$4" == -Command ]] || return 97
+  printf 'Windows banner\\n 15651045376 \\r\\n'
+}
+get_windows_host_free_kb
+''')
+        self.assertEqual(output, str(15651045376 // 1024))
+
+    def test_powershell_zero_and_leading_zeros_are_decimal(self):
+        for value, expected in (('0', '0'), ('0008192', '8')):
+            with self.subTest(value=value):
+                self.assertEqual(self.shell('powershell.exe() { printf "' + value
+                                            + '\\n"; }; get_windows_host_free_kb'), expected)
+
+    def test_timeout_failure_discards_even_numeric_partial_output(self):
+        self.assertEqual(self.shell('''
+set +o pipefail
+timeout() { printf '15651045376\\n'; return 124; }
+get_windows_host_free_kb
+'''), '')
+
+    def test_df_failure_or_invalid_value_falls_back(self):
+        for df in ("printf 'Header\\nC: 1 1 99999999'; return 1",
+                   "printf 'Header\\nC: 1 1 unknown'",
+                   "printf 'Header\\nC: 1 1 1.5e10'"):
+            with self.subTest(df=df):
+                self.assertEqual(self.shell('mountpoint() { return 0; }; df() { ' + df
+                                            + '; }; powershell.exe() { printf "8192\\n"; }; '
+                                            'get_windows_host_free_kb'), '8')
+
+    def test_invalid_drive_does_not_run_any_probe(self):
+        output = self.shell('''
+WINDOWS_HOST_DRIVE="C'; Write-Output BAD; '"
+mountpoint() { echo 'unexpected mount check' >&2; return 99; }
+get_windows_host_free_kb
+''')
+        self.assertEqual(output, '')
+
+    def test_missing_timeout_never_runs_unbounded_powershell(self):
+        output = self.shell('''
+command() {
+  if [[ "$1" == -v && "$2" == timeout ]]; then return 1; fi
+  builtin command "$@"
+}
+get_windows_host_free_kb
+''')
+        self.assertEqual(output, '')
+
+    def test_invalid_or_missing_powershell_result_remains_unknown(self):
+        for value in ('', '1.5e10', '-1', '9999999999999999999', 'unknown'):
+            with self.subTest(value=value):
+                self.assertEqual(self.shell('powershell.exe() { printf "' + value
+                                            + '\\n"; }; get_windows_host_free_kb'), '')
+
+
 if __name__ == '__main__':
     unittest.main()

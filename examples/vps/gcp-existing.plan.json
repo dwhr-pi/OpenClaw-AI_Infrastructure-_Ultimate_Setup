@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "provider": "gcp",
+  "account_ref": "example-project",
+  "region": "us-central1",
+  "zone": "us-central1-a",
+  "resource_name": "example-host",
+  "resource_id": "1000000000000000001",
+  "sku": "e2-micro",
+  "os_image": "projects/ubuntu-os-cloud/global/images/example-replace-with-exact-image",
+  "architecture": "x86_64",
+  "usage": "monitoring",
+  "offer_id": "gcp",
+  "owner": "example-operator",
+  "pricing": {
+    "currency": "USD",
+    "hourly": "0",
+    "setup": "0",
+    "extras": "0",
+    "tax": "0",
+    "reviewed_on": "2026-11-18",
+    "source_url": "https://docs.cloud.google.com/free/docs/free-cloud-features"
+  },
+  "budget": {"amount": "0", "hours": 1},
+  "review": {
+    "usage_state": "unverified",
+    "source_url": "https://cloud.google.com/terms/aup",
+    "reviewed_on": "2026-11-18",
+    "account_state": "human_action_required"
+  },
+  "ssh": {
+    "host": "192.0.2.10",
+    "port": 22,
+    "user": "ubuntu",
+    "recovery_user": "recovery",
+    "key_env": "OPENCLAW_VPS_ADMIN_KEY_PATH",
+    "recovery_key_env": "OPENCLAW_VPS_RECOVERY_KEY_PATH",
+    "known_hosts_env": "OPENCLAW_VPS_KNOWN_HOSTS_PATH",
+    "host_fingerprint": "SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "api_token_env": "OPENCLAW_VPS_GCP_READ_TOKEN"
+  },
+  "dedicated_host": false,
+  "service_public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "bootstrap_sha256": "eeaf49d7b27c9fc5b5361e1e560e25296b96e57f25d6da708e8da06e76213ac7"
+}

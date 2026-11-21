@@ -26,20 +26,22 @@ def run(args, cwd, env, timeout=7200, heartbeat=30, label='Build'):
 
     reader = threading.Thread(target=read, daemon=True)
     reader.start()
-    deadline = time.monotonic() + timeout
+    deadline = None if timeout is None else time.monotonic() + timeout
     started = time.monotonic()
     try:
         while True:
-            remaining = deadline - time.monotonic()
-            if remaining <= 0:
+            remaining = None if deadline is None else deadline - time.monotonic()
+            if remaining is not None and remaining <= 0:
                 raise subprocess.TimeoutExpired(args, timeout)
             try:
-                code = process.wait(timeout=min(heartbeat, remaining))
+                code = process.wait(timeout=heartbeat if remaining is None else min(heartbeat, remaining))
                 break
             except subprocess.TimeoutExpired:
+                budget = ('kein automatisches Zeitlimit' if deadline is None else
+                          'Restbudget: ' + str(max(0, round(deadline - time.monotonic()))) + ' s')
                 print(label + ' laeuft; PID:', process.pid, 'Dauer:', round(time.monotonic() - started),
-                      's; Restbudget:', max(0, round(deadline - time.monotonic())),
-                      's (Prozess noch nicht beendet, kein Fortschritts-/Erfolgsnachweis).', flush=True)
+                      's;', budget,
+                      '(Prozess noch nicht beendet, kein Fortschritts-/Erfolgsnachweis).', flush=True)
         reader.join(timeout=5)
         if reader.is_alive() or errors:
             raise OSError('Build-Ausgabe nicht vollstaendig lesbar; kein Erfolgsnachweis.')

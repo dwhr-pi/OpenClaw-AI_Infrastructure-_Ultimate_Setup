@@ -1,20 +1,24 @@
-"""Reviewed source-wheel builds for Phoenix, Checkov and Ragas; no app starts."""
+"""Reviewed source-wheel builds for Phoenix, Checkov, Ragas and OpenJarvis; no app starts."""
+from email.parser import Parser
 import hashlib
 import json
 import os
 from pathlib import Path
 import platform
+import re
 import shutil
 import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 from urllib.request import urlopen
 import zipfile
 
 import gap_tools as common
 import native_uv
 import native_node
+import native_build_process
 import webinar_releases as releases
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -23,6 +27,16 @@ PYTHON = '3.12.12'
 BUILD_REQUIREMENTS = ['build==1.3.0', 'hatchling==1.27.0', 'setuptools==80.9.0',
                       'setuptools-scm==9.2.0', 'wheel==0.45.1', 'PyYAML==6.0.3']
 PNPM_SHA256 = '72f1630812107c8723eb5be4517725f3e13f09cfd8f71571cf29f23ce318bdb7'
+RAGAS_COMPATIBILITY = ('langchain-community==0.3.31', 'langchain>=0.3.27,<1.0',
+                       'langchain-core>=0.3.78,<1.0', 'langchain-openai>=0.3,<1.0')
+
+
+def runtime_compatibility_requirements(spec):
+    if spec['id'] != 'ragas':
+        return []
+    if spec['recipe']['version'] != '0.3.9':
+        raise ValueError('Ragas-Kompatibilitaetsbereich nur fuer den geprueften Pin 0.3.9 freigegeben.')
+    return list(RAGAS_COMPATIBILITY)
 
 
 def frontend(outer, spec, approved=False):
@@ -108,7 +122,8 @@ def environment(base):
                XDG_CONFIG_HOME=str(base / 'home/config'), XDG_CACHE_HOME=str(base / 'cache'),
                UV_CACHE_DIR=str(base / 'cache/uv'), UV_NO_CONFIG='1', UV_KEYRING_PROVIDER='disabled',
                UV_PYTHON_DOWNLOADS='never', UV_NO_PROGRESS='1', UV_CONCURRENT_BUILDS='1',
-               UV_CONCURRENT_DOWNLOADS='4', PYTHONDONTWRITEBYTECODE='1',
+               UV_CONCURRENT_DOWNLOADS='2', UV_HTTP_TIMEOUT='300', UV_HTTP_CONNECT_TIMEOUT='30',
+               UV_HTTP_RETRIES='3', PYTHONDONTWRITEBYTECODE='1',
                DO_NOT_TRACK='1', RAGAS_DO_NOT_TRACK='true', HF_HUB_OFFLINE='1',
                HF_DATASETS_OFFLINE='1', AWS_EC2_METADATA_DISABLED='true',
                PIP_CONFIG_FILE=os.devnull, PIP_DISABLE_PIP_VERSION_CHECK='1',
@@ -116,10 +131,87 @@ def environment(base):
     return env
 
 
+def failure_details(error):
+    """Bound child diagnostics and remove terminal controls/credential-shaped values."""
+    parts = []
+    for label, value in (('stderr', error.stderr), ('stdout', error.output)):
+        if isinstance(value, bytes):
+            value = value.decode('utf-8', errors='replace')
+        if not value:
+            continue
+        value = re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', value)
+        value = ''.join(char for char in value if char in '\n\t' or char.isprintable())
+        value = re.sub(r'(?i)(https?://)[^\s/@]+:[^\s/@]+@', r'\1[redacted]@', value)
+        value = re.sub(r'(?i)(\bBearer\s+)\S+', r'\1[redacted]', value)
+        value = re.sub(r'''(?ix)((?:api[_-]?key|token|password|secret|authorization)\b["']?\s*[:=]\s*)[^\s,;]+''',
+                       r'\1[redacted]', value)
+        parts.append(label + ':\n' + value[-6000:])
+    return '\n'.join(parts) or 'Keine Kindprozess-Ausgabe vorhanden.'
+
+
 def execute(args, cwd, env, timeout=7200):
-    result = subprocess.run(list(map(str, args)), cwd=cwd, env=env, capture_output=True,
-                            text=True, errors='replace', check=True, timeout=timeout)
+    try:
+        result = subprocess.run(list(map(str, args)), cwd=cwd, env=env, capture_output=True,
+                                text=True, errors='replace', check=True, timeout=timeout)
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+        print('Python-Build/Probe fehlgeschlagen; begrenzte bereinigte Diagnose:\n' + failure_details(error),
+              flush=True)
+        raise
     return result.stdout.strip()
+
+
+def build_execute(args, cwd, env):
+    return native_build_process.run(args, cwd, env, timeout=7200, label='Python-/Frontend-Build')
+
+
+def frontend_execute(args, cwd, env):
+    print('Phoenix-Frontend: kein automatisches Gesamtzeitlimit; manueller Abbruch mit Strg+C. '
+          'Netzwerkfehler und pnpm-interne Zeitlimits bleiben moeglich.', flush=True)
+    return native_build_process.run(args, cwd, env, timeout=None, label='Phoenix-Frontend-Build')
+
+
+def install_locked_wheels(args, cwd, env, run=None):
+    deadline = time.monotonic() + 7200
+    child = dict(env)
+    for attempt in range(2):
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise subprocess.TimeoutExpired(args, 7200)
+        print('Hashgesperrte Wheel-Installation: Versuch', attempt + 1,
+              'von 2; Restbudget:', round(remaining), 's.', flush=True)
+        try:
+            if run is not None:
+                return run(args, cwd, child)
+            return native_build_process.run(args, cwd, child, timeout=remaining,
+                                            label='Hashgesperrte Wheel-Installation')
+        except subprocess.CalledProcessError as error:
+            output = '\n'.join(value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value
+                               for value in (error.output, error.stderr) if value).lower()
+            permanent = any(message in output for message in (
+                'hash mismatch', 'does not match the expected hash', 'certificate',
+                'unauthorized', 'forbidden', '401', '403', 'no space left',
+                'disk quota', 'permission denied'))
+            network_timeout = 'failed to download' in output and (
+                'network timeout' in output or 'timed out' in output)
+            dns_failure = 'failed to download' in output and any(message in output for message in (
+                'dns error', 'failed to lookup address information', 'name resolution'))
+            temporary_dns = dns_failure and any(message in output for message in (
+                'temporary failure in name resolution', 'eai_again', '[errno -3]'))
+            if dns_failure and not permanent:
+                print('DNS-/Namensaufloesung fuer die Python-Paketquelle fehlgeschlagen; '
+                      'kein Modell- oder Quellbuildfehler. Keine Aenderung an DNS, WSL oder TLS.', flush=True)
+            if attempt or permanent or not (network_timeout or temporary_dns) or time.monotonic() >= deadline:
+                if dns_failure and not permanent:
+                    raise ValueError('Python-Paketdownload wegen DNS-/Namensaufloesung abgebrochen; '
+                                     'Installation unvollstaendig. Kein weiterer automatischer Versuch, '
+                                     'kein Wechsel der Paketquelle oder DNS-Konfiguration.') from error
+                raise
+            # Retry only installation against the same lock and cache, never resolution/build.
+            child = dict(child, UV_HTTP_TIMEOUT='900', UV_CONCURRENT_DOWNLOADS='1')
+            reason = 'voruebergehenden DNS-Fehler' if temporary_dns else 'Netzwerk-Timeout'
+            print('Wheel-Download durch ' + reason + ' abgebrochen. Ein letzter Versuch mit'
+                  ' 900s HTTP-Lesefenster und einem parallelen Download im selben 7200s-Budget.'
+                  ' Gleiche Lockdatei, Hashpflicht, Paketquelle und TLS-Pruefung; kein neuer Build.', flush=True)
 
 
 def select_python(outer, spec, approved=False):
@@ -209,30 +301,57 @@ def inspect_wheel(wheel, recipe):
             raise ValueError('Checkov-Wheel ohne generierte Graph-Policies.')
         if recipe['distribution'] == 'ragas' and 'ragas/_version.py' not in names:
             raise ValueError('Ragas-Wheel ohne erzeugte SCM-Version.')
+        if recipe['distribution'] == 'OpenJarvis' and not {
+                'openjarvis/__init__.py', 'openjarvis/cli/__init__.py'}.issubset(names):
+            raise ValueError('OpenJarvis-Wheel ohne CLI-/SDK-Basis.')
+        if recipe['distribution'] == 'OpenJarvis':
+            metadata_paths = [n for n in names if n.endswith('.dist-info/METADATA') and n.count('/') == 1]
+            if len(metadata_paths) != 1:
+                raise ValueError('OpenJarvis-Wheel braucht genau eine Paketmetadatei.')
+            metadata = Parser().parsestr(archive.read(metadata_paths[0]).decode('utf-8'))
+            if (metadata.get_all('Name') != [recipe['distribution']] or
+                    metadata.get_all('Version') != [recipe['version']]):
+                raise ValueError('OpenJarvis-Wheel: Paketname/Buildversion abweichend; '
+                                 'keine Runtime-Abhaengigkeiten installiert.')
 
 
 def probe_script(recipe):
-    # Disable sockets and subprocesses before importing the installed public API.
-    return '''import importlib, importlib.metadata as m, json, socket, subprocess, sys
+    # Keep Popen a real class: imports can subclass it or use Popen[str] annotations.
+    return '''import importlib, importlib.metadata as m, json, os, socket, subprocess, sys
+%s
 def denied(*args, **kwargs):
     raise RuntimeError("Runtime-Probe erlaubt kein Netzwerk/Unterprozess")
+def audit_runtime(event, args):
+    if event in {"subprocess.Popen", "os.system", "os.posix_spawn", "os.fork", "os.forkpty",
+                 "socket.connect", "socket.bind", "socket.getaddrinfo", "socket.gethostbyname",
+                 "socket.gethostbyaddr", "socket.sendto", "socket.sendmsg"}:
+        if event == "subprocess.Popen" and %r:
+            # GitPython handles a denied executable in its documented quiet refresh mode.
+            raise PermissionError("Runtime-Probe blockiert Audit-Ereignis: " + event)
+        raise RuntimeError("Runtime-Probe blockiert Audit-Ereignis: " + event)
+sys.addaudithook(audit_runtime)
 socket.socket.connect = denied
 socket.socket.connect_ex = denied
 socket.create_connection = denied
 socket.getaddrinfo = denied
 socket.socket.bind = denied
-subprocess.Popen = denied
 assert sys.prefix != sys.base_prefix
 module = importlib.import_module(%r)
 assert m.version(%r) == %r
 %s
 rows = sorted([{"name": d.metadata["Name"], "version": d.version} for d in m.distributions()], key=lambda d: d["name"].lower())
 print(json.dumps({"version": m.version(%r), "module": module.__name__, "distributions": rows,
-                  "application_tested": False, "network_allowed": False, "scan_performed": False}))
-''' % (recipe['import_module'], recipe['distribution'], recipe['version'],
-       {'ragas': 'assert callable(module.evaluate) and callable(module.aevaluate)',
+                  "application_tested": False, "network_allowed": False, "process_allowed": False,
+                  "git_runtime_tested": False,
+                  "guard": "cpython-audit-hook-and-socket-guards", "scan_performed": False}))
+''' % ('os.environ["GIT_PYTHON_REFRESH"] = "quiet"' if recipe['distribution'] == 'ragas' else '',
+       recipe['distribution'] == 'ragas', recipe['import_module'], recipe['distribution'], recipe['version'],
+       {'ragas': 'assert callable(module.evaluate) and callable(module.aevaluate)\n'
+                 'assert importlib.import_module("git").GIT_OK is False',
         'arize-phoenix': 'assert callable(module.launch_app)',
-        'checkov': 'importlib.import_module("checkov.common.util.type_forcers")'}[recipe['distribution']],
+        'checkov': 'importlib.import_module("checkov.common.util.type_forcers")',
+        'OpenJarvis': 'assert any(e.name == "jarvis" and e.value == "openjarvis.cli:main" '
+                     'for e in m.distribution("OpenJarvis").entry_points)'}[recipe['distribution']],
        recipe['distribution'])
 
 
@@ -242,7 +361,7 @@ def build(source, prefix, spec, env, run=None):
     if source != prefix / 'source':
         raise ValueError('Buildquelle muss im eigenen nativen Praefix liegen.')
     verify_source(source, recipe)
-    runner = run or execute
+    runner = run or build_execute
     child = environment(common.checked(prefix / '_python-build'))
     uv = native_uv.select(prefix.parent, spec, allow_download=False)
     python = select_python(prefix.parent, spec)
@@ -253,29 +372,37 @@ def build(source, prefix, spec, env, run=None):
     for venv in ('build-venv', 'venv'):
         runner([uv, 'venv', '--python', python, '--no-python-downloads', str(prefix / venv)], prefix, child)
     build_input = prefix / 'build-requirements.in'
-    build_input.write_text('\n'.join(BUILD_REQUIREMENTS) + '\n', encoding='ascii')
+    requirements = BUILD_REQUIREMENTS + (['hatch-vcs==0.5.0'] if spec['id'] == 'openjarvis' else [])
+    build_input.write_text('\n'.join(requirements) + '\n', encoding='ascii')
     index = ['--index-url', 'https://pypi.org/simple', '--no-config', '--keyring-provider', 'disabled']
 
     def locked_install(input_file, lock, target):
+        print('uv-Downloadbudget: HTTP-Lesen 300s, Verbindung 30s, hoechstens 3 HTTP-Wiederholungen, '
+              '2 parallele Downloads; Prozesslimit weiterhin 7200s. Kein Index-/TLS-/Hash-Fallback.', flush=True)
         runner([uv, 'pip', 'compile', str(input_file), '--python', str(target),
                 '--generate-hashes', '--only-binary', ':all:', '--output-file', str(lock), *index], prefix, child)
-        runner([uv, 'pip', 'install', '--python', str(target), '--require-hashes',
-                '--only-binary', ':all:', '-r', str(lock), *index], prefix, child)
+        install_locked_wheels([uv, 'pip', 'install', '--python', str(target), '--require-hashes',
+                               '--only-binary', ':all:', '-r', str(lock), *index], prefix, child, run=run)
 
     locked_install(build_input, prefix / 'build-requirements.lock', build_python)
     if spec['id'] == 'phoenix':
+        frontend_runner = run or frontend_execute
         slot = frontend(prefix.parent, spec)
         child['PATH'] = str(slot) + os.pathsep + child.get('PATH', '')
         child.update(COREPACK_ENABLE_NETWORK='0', npm_config_manage_package_manager_versions='false',
                      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD='1')
         # Skip the npx preinstall hook: the pinned pnpm is already selected directly.
-        runner([slot / 'pnpm', 'install', '--frozen-lockfile', '--ignore-scripts'], source / 'app', child)
-        runner([slot / 'pnpm', 'rebuild', 'esbuild'], source / 'app', child)
-        runner([slot / 'pnpm', 'run', 'build'], source / 'app', child)
+        frontend_runner([slot / 'pnpm', 'install', '--frozen-lockfile', '--ignore-scripts'], source / 'app', child)
+        frontend_runner([slot / 'pnpm', 'rebuild', 'esbuild'], source / 'app', child)
+        frontend_runner([slot / 'pnpm', 'run', 'build'], source / 'app', child)
         if not (source / 'src/phoenix/server/static/.vite/manifest.json').is_file():
             raise ValueError('Phoenix-UI-Build lieferte kein Vite-Manifest.')
     if spec['id'] == 'ragas':
         child['SETUPTOOLS_SCM_PRETEND_VERSION_FOR_RAGAS'] = recipe['version']
+    elif spec['id'] == 'openjarvis':
+        # hatch-vcs calls get_version without dist_name, so the generic override is required.
+        child['SETUPTOOLS_SCM_PRETEND_VERSION'] = recipe['version']
+        child['SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENJARVIS'] = recipe['version']
     runner([build_python, '-I', '-B', '-m', 'build', '--wheel', '--no-isolation',
             '--outdir', str(wheelhouse), str(source)], source, child)
     wheels = list(wheelhouse.glob('*.whl'))
@@ -284,19 +411,22 @@ def build(source, prefix, spec, env, run=None):
     wheel = common.checked(wheels[0])
     inspect_wheel(wheel, recipe)
     runtime_input = prefix / 'runtime-requirements.in'
-    runtime_input.write_text(str(wheel) + '\n', encoding='utf-8')
+    compatibility = runtime_compatibility_requirements(spec)
+    runtime_input.write_text('\n'.join([str(wheel), *compatibility]) + '\n', encoding='utf-8')
     locked_install(runtime_input, prefix / 'runtime-requirements.lock', vpython)
     runner([uv, 'pip', 'check', '--python', str(vpython), '--no-config'], prefix, child)
     cli = common.checked(prefix / 'venv/bin' / recipe['cli'])
     if not cli.is_file():
         raise ValueError('Installierter CLI-Einstieg fehlt.')
     # The bounded probe always uses the local executor, never a long-running build runner.
+    print(spec['name'] + ': begrenzte Offline-Importprobe (45s); kein Dienst-/Modellstart.', flush=True)
     report = json.loads(execute([vpython, '-I', '-B', '-c', probe_script(recipe)], prefix, child, 45))
     verify_source(source, recipe)
     wheel_name = wheel.relative_to(prefix).as_posix()
     receipt = dict(commit=recipe['pin'], source_sha256=recipe['source_sha256'],
                    wheel=wheel_name, wheel_sha256=hashlib.sha256(wheel.read_bytes()).hexdigest(),
                    python=python, probe=report, application_tested=False,
+                   runtime_compatibility_requirements=compatibility,
                    dependency_scope='resolved-at-install; hashes enforced; not an upstream audited dependency lock')
     (prefix / 'python-build-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n', encoding='utf-8')
     components = [dict(type='library', name=row['name'], version=row['version'],

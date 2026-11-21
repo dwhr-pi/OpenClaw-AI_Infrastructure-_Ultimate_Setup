@@ -121,6 +121,23 @@ class RuntimeCleanupTests(unittest.TestCase):
                 chmod.assert_not_called()
                 remove.assert_not_called()
 
+    def test_install_cleanup_failure_keeps_original_download_error(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            runtime, marker = base / 'runtime', base / 'ready.json'
+            spec = dict(name='fixture', repo='fixture/source', pin='a' * 40, mode='source')
+            original = subprocess.CalledProcessError(128, ['git', 'fetch'], output='curl 28')
+            with patch.object(tools, 'reserve'), patch.object(tools, 'git', side_effect=original), \
+                    patch.object(tools, 'remove_runtime_tree', side_effect=PermissionError('busy runtime')), \
+                    redirect_stdout(io.StringIO()) as output:
+                with self.assertRaises(subprocess.CalledProcessError) as result:
+                    tools.install(runtime, marker, base, spec)
+            self.assertIs(result.exception, original)
+            self.assertIn('Rollback unvollstaendig: PermissionError', output.getvalue())
+            self.assertTrue(runtime.exists())
+            self.assertFalse(marker.exists())
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -2,6 +2,7 @@
 from contextlib import redirect_stdout
 import io
 import os
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -13,6 +14,7 @@ from unittest.mock import Mock, patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts/tools/helpers'))
 import native_build_deps as deps
+import native_go
 import gap_tools as tools
 
 
@@ -105,10 +107,206 @@ run_bash_script() { printf '%s\\n' "$@"; }
         for tool in ('Outlines', 'eSpeak_NG', 'SongRec', 'Valkey', 'Kube_Bench'):
             for action, answer in (('install', 0), ('install', 1), ('update', 0), ('doctor', 0)):
                 command = stubs + dispatcher + '\nDIALOG_RESULT=' + str(answer) + '\nrun_tool_script ' + tool + ' ' + action
-                result = subprocess.run([bash, '--noprofile', '--norc', '-c', command],
+                result = subprocess.run([bash, '--noprofile', '--norc', '-s'], input=command,
                                         env=env, capture_output=True, text=True, timeout=10, check=True)
                 self.assertEqual('--install-build-deps' in result.stdout,
                                  answer == 0 and action in ('install', 'update'))
+
+    def prerequisite_dialog(self, language, answer, override=''):
+        bash = 'C:/Program Files/Git/bin/bash.exe' if os.name == 'nt' else shutil.which('bash')
+        if not bash or (os.name == 'nt' and not Path(bash).is_file()):
+            self.skipTest('Bash not available for offline language fixture')
+        text = (ROOT / 'setup_ultimate.sh').read_text(encoding='utf-8')
+        dispatcher = 'run_tool_script() {' + text.split('run_tool_script() {', 1)[1].split('remove_tool_from_autostart_script()', 1)[0]
+        stubs = '''
+declare -A TOOL_SCRIPT_NAMES=([Arize_Phoenix]=phoenix)
+INSTALL_DIR=/fixture
+validate_tool_source_policy() { return 0; }
+dialog() { printf 'DIALOG_ARG:%s\\n' "$@"; return "$ANSWER"; }
+run_bash_script() { printf 'RUN_DENY:%s\\n' "${OPENCLAW_BUILD_DEPS_DENY:-unset}"; printf 'RUN_ARG:%s\\n' "$@"; }
+source "scripts/lang/$1.sh"
+'''
+        env = {k: v for k, v in os.environ.items() if k.upper() in ('PATH', 'SYSTEMROOT', 'TEMP', 'TMP')}
+        env.update(LANG='C', LC_ALL='C')
+        command = stubs + dispatcher + '\n' + override + '\nANSWER=' + str(answer) + '\nrun_tool_script Arize_Phoenix install'
+        result = subprocess.run([bash, '--noprofile', '--norc', '-s', '--', language], input=command,
+                                cwd=ROOT, env=env, capture_output=True, encoding='utf-8', timeout=15, check=True)
+        return result.stdout.splitlines()
+
+    def batch_prerequisites(self, choice='all', menu_rc=0, queue='Outlines eSpeak_NG Other', after='', language='de'):
+        bash = 'C:/Program Files/Git/bin/bash.exe' if os.name == 'nt' else shutil.which('bash')
+        if not bash or (os.name == 'nt' and not Path(bash).is_file()):
+            self.skipTest('Bash not available for offline batch fixture')
+        text = (ROOT / 'setup_ultimate.sh').read_text(encoding='utf-8')
+        batch = ('select_tool_batch_build_deps_policy() {'
+                 + text.split('select_tool_batch_build_deps_policy() {', 1)[1].split('is_base_install_ready()', 1)[0])
+        dispatcher = ('run_tool_script() {'
+                      + text.split('run_tool_script() {', 1)[1].split('remove_tool_from_autostart_script()', 1)[0])
+        stubs = '''
+declare -A TOOL_SCRIPT_NAMES=([Outlines]=outlines [eSpeak_NG]=espeak_ng [Other]=other)
+INSTALL_DIR=/fixture
+TOOL_BATCH_BUILD_DEPS_POLICY=all
+validate_tool_source_policy() { return 0; }
+show_tool_action_plan_intro() { :; }
+format_tool_queue_preview() { :; }
+confirm_tool_batch_step() { return 0; }
+uninstall_tool() { printf 'UNINSTALL:%s\\n' "$1"; }
+install_tool() { run_tool_script "$1" install; }
+run_bash_script() { printf 'CHILD_DENY:%s\\n' "${OPENCLAW_BUILD_DEPS_DENY:-unset}"; printf 'RUN_ARG:%s\\n' "$@"; }
+dialog() {
+  case " $* " in
+    *" --menu "*)
+      printf 'MENU_ARG:%s\\n' "$@" >&2
+      printf '%s\\n' "$BATCH_CHOICE"
+      return "$MENU_RC"
+      ;;
+    *) printf 'TOOL_QUESTION\\n'; return 1 ;;
+  esac
+}
+source "scripts/lang/$1.sh"
+'''
+        env = {k: v for k, v in os.environ.items() if k.upper() in ('PATH', 'SYSTEMROOT', 'TEMP', 'TMP')}
+        env.update(BATCH_CHOICE=choice, MENU_RC=str(menu_rc))
+        command = (stubs + batch + dispatcher + '\nuninstalls=(Old); installs=(' + queue + ')\n'
+                   'rc=0; run_ordered_tool_actions fixture uninstalls installs || rc=$?\n'
+                   'printf "BATCH_RC:%s\\n" "$rc"\n' + after)
+        return subprocess.run([bash, '--noprofile', '--norc', '-s', '--', language], input=command, cwd=ROOT,
+                              env=env, capture_output=True, encoding='utf-8', timeout=15, check=True)
+
+    def test_batch_no_reuses_only_existing_basis_without_repeated_questions_or_leaking_denial(self):
+        result = self.batch_prerequisites(choice='existing', after=(
+            'printf "POLICY_AFTER:%s\\n" "${OPENCLAW_BUILD_DEPS_DENY:-unset}"\n'
+            'run_tool_script Outlines doctor\n'))
+        self.assertNotIn('RUN_ARG:--install-build-deps', result.stdout)
+        self.assertNotIn('TOOL_QUESTION', result.stdout)
+        self.assertEqual(result.stdout.count('CHILD_DENY:1'), 2)
+        self.assertIn('POLICY_AFTER:unset', result.stdout)
+        self.assertIn('RUN_ARG:/fixture/scripts/tools/outlines_doctor.sh', result.stdout)
+        self.assertIn('Nein: keine zusaetzlichen Buildwerkzeuge installieren', result.stderr)
+
+    def test_batch_buttons_use_all_ten_selected_language_packs(self):
+        for language in ('de', 'en', 'fr', 'es', 'eo', 'zh', 'ja', 'ru', 'ar', 'he'):
+            with self.subTest(language=language):
+                result = self.batch_prerequisites(language=language)
+                pack = (ROOT / 'scripts/lang' / (language + '.sh')).read_text(encoding='utf-8')
+                for option, key in (('--ok-label', 'TXT_OK_LABEL'), ('--cancel-label', 'TXT_BACK_LABEL')):
+                    value = re.search(r'^' + key + r'="([^"\n]*)"$', pack, re.MULTILINE).group(1)
+                    self.assertIn('MENU_ARG:' + option + '\nMENU_ARG:' + value, result.stderr)
+
+    def test_explicit_denial_blocks_apt_and_terminal_reprompt_even_if_approved_is_set(self):
+        spec = {'id': 'espeak_ng', 'recipe': {'apt_build_deps': list(deps.ESPEAK_PACKAGES)}}
+        with patch.dict(os.environ, {'OPENCLAW_BUILD_DEPS_DENY': '1'}), \
+                patch.object(deps, 'ubuntu_release', return_value=True), \
+                patch.object(deps.shutil, 'which', return_value='fixture'), \
+                patch.object(deps, 'installed', return_value=False), \
+                patch.object(deps.sys, 'stdin', Mock(isatty=Mock(return_value=True))), \
+                patch('builtins.input', side_effect=AssertionError('No repeated question')) as question, \
+                patch.object(deps.common, 'run') as run, redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(ValueError, 'Zustimmung'):
+                deps.prepare(spec, approved=True)
+            question.assert_not_called()
+            run.assert_not_called()
+
+    def test_explicit_denial_blocks_missing_go_without_terminal_reprompt(self):
+        key = next(iter(native_go.CONTRACTS))
+        spec = {'id': key, 'name': key, 'recipe': {'go_min': native_go.CONTRACTS[key][0]}}
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.dict(os.environ, {'OPENCLAW_BUILD_DEPS_DENY': '1'}), \
+                patch.object(native_go.shutil, 'which', return_value=None), \
+                patch.object(native_go.private_go, 'target', return_value=('linux-amd64', 1, 'a' * 64)), \
+                patch.object(native_go.sys.stdin, 'isatty', return_value=True), \
+                patch('builtins.input', side_effect=AssertionError('No repeated question')) as question, \
+                patch.object(native_go.private_go, 'ensure') as ensure, redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(ValueError, 'nicht freigegeben'):
+                native_go.select(Path(directory), spec, approved=True, allow_download=True)
+            question.assert_not_called()
+            ensure.assert_not_called()
+            self.assertEqual(list(Path(directory).iterdir()), [])
+
+    def test_explicit_denial_never_rebootstraps_disappearing_private_go(self):
+        key = next(iter(native_go.CONTRACTS))
+        spec = {'id': key, 'name': key, 'recipe': {'go_min': native_go.CONTRACTS[key][0]}}
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            (base / 'toolchain' / (native_go.private_go.VERSION + '-linux-amd64')).mkdir(parents=True)
+            with patch.dict(os.environ, {'OPENCLAW_BUILD_DEPS_DENY': '1'}), \
+                    patch.object(native_go.shutil, 'which', return_value=None), \
+                    patch.object(native_go.private_go, 'target', return_value=('linux-amd64', 'go.tar.gz', ('a' * 64, 1))), \
+                    patch.object(native_go.private_go, 'verify_private', side_effect=FileNotFoundError('fixture')), \
+                    patch.object(native_go.private_go, 'ensure') as ensure, \
+                    patch.object(native_go.private_go, 'download') as download:
+                with self.assertRaises(FileNotFoundError):
+                    native_go.select(base, spec, approved=True, allow_download=True)
+                ensure.assert_not_called()
+                download.assert_not_called()
+
+    def test_batch_all_approves_only_supported_tools_without_repeated_dialogs(self):
+        result = self.batch_prerequisites()
+        self.assertEqual(result.stdout.count('RUN_ARG:--install-build-deps'), 2)
+        self.assertNotIn('TOOL_QUESTION', result.stdout)
+        self.assertIn('UNINSTALL:Old', result.stdout)
+        self.assertIn('RUN_ARG:/fixture/scripts/tools/other_install.sh', result.stdout)
+        self.assertIn('MENU_ARG:--stdout', result.stderr)
+        self.assertIn('MENU_ARG:--default-item\nMENU_ARG:ask', result.stderr)
+        self.assertEqual(result.stderr.count('MENU_ARG:--menu'), 1)
+        self.assertIn('BATCH_RC:0', result.stdout)
+
+    def test_batch_ask_keeps_individual_default_no_dialogs(self):
+        result = self.batch_prerequisites(choice='ask')
+        self.assertEqual(result.stdout.count('TOOL_QUESTION'), 2)
+        self.assertNotIn('RUN_ARG:--install-build-deps', result.stdout)
+
+    def test_batch_cancel_or_invalid_choice_prevents_uninstall_and_install(self):
+        for choice, status in (('all', 1), ('all', 255), ('unknown', 0), ('', 0)):
+            with self.subTest(choice=choice, status=status):
+                result = self.batch_prerequisites(choice=choice, menu_rc=status)
+                self.assertIn('BATCH_RC:1', result.stdout)
+                self.assertNotIn('UNINSTALL:', result.stdout)
+                self.assertNotIn('RUN_ARG:', result.stdout)
+
+    def test_batch_consent_never_leaks_to_single_tool_or_readonly_action(self):
+        result = self.batch_prerequisites(after=('run_tool_script Outlines install\n'
+                                                'run_tool_script Outlines doctor\n'))
+        self.assertEqual(result.stdout.count('RUN_ARG:--install-build-deps'), 2)
+        self.assertEqual(result.stdout.count('TOOL_QUESTION'), 1)
+        self.assertIn('RUN_ARG:/fixture/scripts/tools/outlines_doctor.sh', result.stdout)
+        for queue in ('Outlines', ''):
+            with self.subTest(queue=queue):
+                result = self.batch_prerequisites(queue=queue)
+                self.assertNotIn('MENU_ARG:', result.stderr)
+                self.assertNotIn('RUN_ARG:--install-build-deps', result.stdout)
+
+    def test_next_batch_requires_its_own_choice(self):
+        result = self.batch_prerequisites(after=('BATCH_CHOICE=ask\n'
+                                                'run_ordered_tool_actions next uninstalls installs\n'))
+        self.assertEqual(result.stderr.count('MENU_ARG:--menu'), 2)
+        self.assertEqual(result.stdout.count('RUN_ARG:--install-build-deps'), 2)
+        self.assertEqual(result.stdout.count('TOOL_QUESTION'), 2)
+
+    def test_prerequisite_buttons_follow_all_setup_languages_not_system_locale(self):
+        labels = {'de': ('Ja', 'Nein'), 'en': ('Yes', 'No'), 'fr': ('Oui', 'Non'),
+                  'es': ('S\u00ed', 'No'), 'eo': ('Jes', 'Ne'), 'zh': ('\u662f', '\u5426'),
+                  'ja': ('\u306f\u3044', '\u3044\u3044\u3048'), 'ru': ('\u0414\u0430', '\u041d\u0435\u0442'),
+                  'ar': ('\u0646\u0639\u0645', '\u0644\u0627'), 'he': ('\u05db\u05df', '\u05dc\u05d0')}
+        for language, (yes, no) in labels.items():
+            for answer in (0, 1, 255):
+                with self.subTest(language=language, answer=answer):
+                    lines = self.prerequisite_dialog(language, answer)
+                    self.assertEqual(lines[lines.index('DIALOG_ARG:--yes-label') + 1], 'DIALOG_ARG:' + yes)
+                    self.assertEqual(lines[lines.index('DIALOG_ARG:--no-label') + 1], 'DIALOG_ARG:' + no)
+                    self.assertIn('DIALOG_ARG:--defaultno', lines)
+                    self.assertEqual('RUN_ARG:--install-build-deps' in lines, answer == 0)
+                    self.assertIn('RUN_DENY:' + ('0' if answer == 0 else '1'), lines)
+
+    def test_prerequisite_buttons_preserve_overrides_and_missing_key_fallback(self):
+        for override, labels in (("TXT_YES_LABEL='Custom accept'; TXT_NO_LABEL='Custom decline'",
+                                  ('Custom accept', 'Custom decline')),
+                                 ('unset TXT_YES_LABEL TXT_NO_LABEL', ('Ja', 'Nein'))):
+            with self.subTest(override=override):
+                lines = self.prerequisite_dialog('en', 1, override)
+                self.assertEqual(lines[lines.index('DIALOG_ARG:--yes-label') + 1], 'DIALOG_ARG:' + labels[0])
+                self.assertEqual(lines[lines.index('DIALOG_ARG:--no-label') + 1], 'DIALOG_ARG:' + labels[1])
+                self.assertNotIn('RUN_ARG:--install-build-deps', lines)
 
     def test_planned_infrastructure_is_rejected_before_installer_or_log(self):
         bash = 'C:/Program Files/Git/bin/bash.exe' if os.name == 'nt' else shutil.which('bash')

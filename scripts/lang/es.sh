@@ -3,6 +3,7 @@
 # shellcheck disable=SC2034
 TXT_YES_LABEL="Sí"
 TXT_NO_LABEL="No"
+TXT_OK_LABEL="Aceptar"
 TXT_LOADING_NOTICE_TITLE="PREPARANDO LA VISTA"
 TXT_LOADING_NOTICE_BODY='Preparando la vista «%s».\n\n%s\n\nLa carga puede tardar segundos o varios minutos según WSL y el almacenamiento. Las mediciones opcionales se leen del resumen local.\n\n¿Continuar?'
 TXT_LOADING_GAUGE_TITLE='CARGANDO %s'

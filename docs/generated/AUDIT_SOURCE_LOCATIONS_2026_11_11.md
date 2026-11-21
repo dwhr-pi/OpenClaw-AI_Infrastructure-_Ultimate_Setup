@@ -14,7 +14,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Bewegliches Wort latest/main/master (lexikalisch)
 
-653 Fundstellen, keine automatische Risikoeinstufung.
+656 Fundstellen, keine automatische Risikoeinstufung.
 
 - `.github/workflows/build-and-push.yml:4`
 - `.github/workflows/build-and-push.yml:16`
@@ -97,11 +97,11 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `config/docker_to_github.json:2948`
 - `config/docker_to_github.json:3190`
 - `config/docker_to_github.json:3191`
-- `config/docker_to_github.json:3616`
-- `config/docker_to_github.json:3663`
-- `config/docker_to_github.json:3707`
-- `config/docker_to_github.json:3756`
-- `config/docker_to_github.json:3802`
+- `config/docker_to_github.json:3653`
+- `config/docker_to_github.json:3700`
+- `config/docker_to_github.json:3744`
+- `config/docker_to_github.json:3793`
+- `config/docker_to_github.json:3839`
 - `config/legal/sources.json:36`
 - `config/legal/sources.json:37`
 - `config/models.yaml:16`
@@ -239,8 +239,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/audio/openclaw_dejavu_mcp_server.py:228`
 - `scripts/audio/run_full_song.py:57`
 - `scripts/audio/run_full_song.py:84`
-- `scripts/audit_tool_coverage.py:205`
-- `scripts/audit_tool_coverage.py:220`
+- `scripts/audit_tool_coverage.py:226`
+- `scripts/audit_tool_coverage.py:241`
 - `scripts/auto_update.sh:39`
 - `scripts/benchmarks/install_lab.py:315`
 - `scripts/benchmarks/install_lab.py:382`
@@ -303,26 +303,26 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/install/install_cad_tools.sh:58`
 - `scripts/install/install_cad_tools.sh:67`
 - `scripts/install_local_only.sh:63`
-- `scripts/lang/ar.sh:38`
-- `scripts/lang/ar.sh:47`
+- `scripts/lang/ar.sh:39`
+- `scripts/lang/ar.sh:48`
 - `scripts/lang/de.sh:100`
 - `scripts/lang/en.sh:35`
 - `scripts/lang/en.sh:53`
 - `scripts/lang/en.sh:100`
-- `scripts/lang/eo.sh:38`
-- `scripts/lang/eo.sh:47`
-- `scripts/lang/es.sh:38`
-- `scripts/lang/es.sh:47`
-- `scripts/lang/fr.sh:38`
-- `scripts/lang/fr.sh:47`
-- `scripts/lang/he.sh:38`
-- `scripts/lang/he.sh:47`
-- `scripts/lang/ja.sh:38`
-- `scripts/lang/ja.sh:47`
-- `scripts/lang/ru.sh:38`
-- `scripts/lang/ru.sh:47`
-- `scripts/lang/zh.sh:38`
-- `scripts/lang/zh.sh:47`
+- `scripts/lang/eo.sh:39`
+- `scripts/lang/eo.sh:48`
+- `scripts/lang/es.sh:39`
+- `scripts/lang/es.sh:48`
+- `scripts/lang/fr.sh:39`
+- `scripts/lang/fr.sh:48`
+- `scripts/lang/he.sh:39`
+- `scripts/lang/he.sh:48`
+- `scripts/lang/ja.sh:39`
+- `scripts/lang/ja.sh:48`
+- `scripts/lang/ru.sh:39`
+- `scripts/lang/ru.sh:48`
+- `scripts/lang/zh.sh:39`
+- `scripts/lang/zh.sh:48`
 - `scripts/lib/common.sh:92`
 - `scripts/lib/gitops_artifacts.py:93`
 - `scripts/lib/gitops_artifacts.py:129`
@@ -411,9 +411,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/quality/repository_audit.py:284`
 - `scripts/quality/run_master_audit_tests.py:27`
 - `scripts/quality/run_master_audit_tests.py:75`
-- `scripts/quality/sync_native_candidates.py:141`
-- `scripts/quality/sync_native_candidates.py:158`
-- `scripts/quality/sync_native_candidates.py:177`
+- `scripts/quality/sync_native_candidates.py:150`
+- `scripts/quality/sync_native_candidates.py:167`
+- `scripts/quality/sync_native_candidates.py:186`
 - `scripts/quality/tool_ssh_docs.py:212`
 - `scripts/quality/tool_ssh_docs.py:223`
 - `scripts/quality/tool_truth_table.py:80`
@@ -548,13 +548,13 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/enki_browser_study.py:126`
 - `scripts/tools/helpers/enki_browser_study.py:178`
 - `scripts/tools/helpers/fal_client_common.sh:189`
-- `scripts/tools/helpers/find_skills.py:117`
-- `scripts/tools/helpers/find_skills.py:252`
-- `scripts/tools/helpers/find_skills.py:310`
+- `scripts/tools/helpers/find_skills.py:176`
+- `scripts/tools/helpers/find_skills.py:311`
+- `scripts/tools/helpers/find_skills.py:369`
 - `scripts/tools/helpers/gap_tools.py:426`
-- `scripts/tools/helpers/gap_tools.py:487`
-- `scripts/tools/helpers/gap_tools.py:514`
-- `scripts/tools/helpers/gap_tools.py:603`
+- `scripts/tools/helpers/gap_tools.py:496`
+- `scripts/tools/helpers/gap_tools.py:525`
+- `scripts/tools/helpers/gap_tools.py:614`
 - `scripts/tools/helpers/hf_datasets_common.sh:96`
 - `scripts/tools/helpers/hf_hub_common.sh:42`
 - `scripts/tools/helpers/hf_hub_common.sh:97`
@@ -567,9 +567,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/moss_tts_common.sh:189`
 - `scripts/tools/helpers/musetalk_runtime.py:169`
 - `scripts/tools/helpers/native_github_tools.py:106`
-- `scripts/tools/helpers/native_github_tools.py:628`
-- `scripts/tools/helpers/native_github_tools.py:634`
-- `scripts/tools/helpers/native_github_tools.py:712`
+- `scripts/tools/helpers/native_github_tools.py:629`
+- `scripts/tools/helpers/native_github_tools.py:635`
+- `scripts/tools/helpers/native_github_tools.py:721`
 - `scripts/tools/helpers/offload_sources.py:40`
 - `scripts/tools/helpers/offload_sources.py:41`
 - `scripts/tools/helpers/offload_sources.py:71`
@@ -587,6 +587,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/paperless_safe_common.sh:29`
 - `scripts/tools/helpers/perplexity_sdk_tools.py:142`
 - `scripts/tools/helpers/propainter_common.sh:155`
+- `scripts/tools/helpers/python_reviewed_native.py:353`
 - `scripts/tools/helpers/qwen3_tts_common.sh:55`
 - `scripts/tools/helpers/qwen3_tts_common.sh:237`
 - `scripts/tools/helpers/qwen_desktop_study.py:70`
@@ -598,9 +599,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/script_quality.py:90`
 - `scripts/tools/helpers/script_quality.py:171`
 - `scripts/tools/helpers/sdnext_common.sh:152`
-- `scripts/tools/helpers/security_data_native.py:22`
-- `scripts/tools/helpers/security_data_native.py:24`
-- `scripts/tools/helpers/security_data_native.py:245`
+- `scripts/tools/helpers/security_data_native.py:29`
+- `scripts/tools/helpers/security_data_native.py:31`
+- `scripts/tools/helpers/security_data_native.py:334`
 - `scripts/tools/helpers/sfizz_common.sh:75`
 - `scripts/tools/helpers/stable_audio_open_common.sh:175`
 - `scripts/tools/helpers/tgi_common.sh:66`
@@ -631,9 +632,11 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/opa_install.sh:6`
 - `scripts/tools/trivy_install.sh:27`
 - `scripts/tools/valkey_update.sh:2`
+- `scripts/vps_adapter.py:106`
+- `scripts/vps_adapter.py:123`
 - `setup_ultimate.sh:179`
-- `setup_ultimate.sh:2398`
-- `setup_ultimate.sh:2833`
+- `setup_ultimate.sh:2454`
+- `setup_ultimate.sh:2911`
 - `stacks/llmops-platform/docker-compose.yml:24`
 - `stacks/llmops-platform/docker-compose.yml:50`
 - `stacks/llmops-platform/docker-compose.yml:88`
@@ -672,7 +675,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 
 ## Git-Clone (Pin kann separat folgen)
 
-60 Fundstellen, keine automatische Risikoeinstufung.
+61 Fundstellen, keine automatische Risikoeinstufung.
 
 - `examples/kubernetes/hardened-services.yaml:214`
 - `scripts/custom_source_manager.sh:179`
@@ -713,6 +716,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/flowise_install.sh:135`
 - `scripts/tools/gamedev_3d_studio_install.sh:80`
 - `scripts/tools/gbox_install.sh:44`
+- `scripts/tools/helpers/find_skills.py:95`
 - `scripts/tools/helpers/freellmapi_common.sh:219`
 - `scripts/tools/helpers/github_docker_stack_common.sh:50`
 - `scripts/tools/helpers/node_tool_common.sh:74`
@@ -906,13 +910,13 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/yara_install.sh:7`
 - `scripts/tools/zenbot_trader_install.sh:39`
 - `scripts/tools/zenbot_trader_install.sh:40`
-- `setup_ultimate.sh:2769`
+- `setup_ultimate.sh:2847`
 - `tools/websitefactory/scripts/check-build.sh:29`
 - `tools/websitefactory/scripts/check-build.sh:37`
 
 ## Netz-/Port-Kandidat
 
-228 Fundstellen, keine automatische Risikoeinstufung.
+230 Fundstellen, keine automatische Risikoeinstufung.
 
 - `charts/monitoring-lite/templates/network-policy.yaml:26`
 - `charts/monitoring-lite/templates/network-policy.yaml:42`
@@ -1105,14 +1109,16 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/gitops_bootstrap_install.sh:57`
 - `scripts/tools/helpers/candidate_security_native.py:310`
 - `scripts/tools/helpers/freellmapi_common.sh:147`
-- `scripts/tools/helpers/python_reviewed_native.py:223`
+- `scripts/tools/helpers/python_reviewed_native.py:197`
+- `scripts/tools/helpers/python_reviewed_native.py:326`
+- `scripts/tools/helpers/python_reviewed_native.py:337`
 - `scripts/wireguard/create-home-peer.sh:33`
 - `scripts/wireguard/create-vps-peer.sh:33`
 - `services/inference-gateway/local_policy.py:26`
 - `services/inference-gateway/local_policy.py:27`
 - `services/inference-gateway/local_policy.py:28`
-- `setup_ultimate.sh:1654`
-- `setup_ultimate.sh:3028`
+- `setup_ultimate.sh:1710`
+- `setup_ultimate.sh:3106`
 - `stacks/freellmapi/compose.yml:8`
 - `stacks/freellmapi/compose.yml:10`
 - `stacks/llmops-platform/docker-compose.yml:20`
@@ -1535,7 +1541,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/kiwi_edit_common.sh:149`
 - `scripts/tools/helpers/kiwi_edit_common.sh:157`
 - `scripts/tools/helpers/kiwi_edit_common.sh:305`
-- `scripts/tools/helpers/litellm_rust.py:84`
+- `scripts/tools/helpers/litellm_rust.py:86`
 - `scripts/tools/helpers/moshi_common.sh:147`
 - `scripts/tools/helpers/moshi_common.sh:148`
 - `scripts/tools/helpers/moshi_common.sh:156`
@@ -1546,13 +1552,13 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/moss_tts_common.sh:260`
 - `scripts/tools/helpers/musetalk_runtime.py:47`
 - `scripts/tools/helpers/musetalk_runtime.py:48`
-- `scripts/tools/helpers/native_build_deps.py:133`
-- `scripts/tools/helpers/native_build_deps.py:151`
+- `scripts/tools/helpers/native_build_deps.py:144`
+- `scripts/tools/helpers/native_build_deps.py:162`
 - `scripts/tools/helpers/native_github_tools.py:124`
 - `scripts/tools/helpers/native_github_tools.py:228`
 - `scripts/tools/helpers/native_github_tools.py:230`
-- `scripts/tools/helpers/native_github_tools.py:608`
-- `scripts/tools/helpers/native_go.py:65`
+- `scripts/tools/helpers/native_github_tools.py:609`
+- `scripts/tools/helpers/native_go.py:68`
 - `scripts/tools/helpers/native_node.py:78`
 - `scripts/tools/helpers/native_node.py:93`
 - `scripts/tools/helpers/node_tool_common.sh:53`
@@ -1814,10 +1820,10 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/zotero_uninstall.sh:23`
 - `scripts/tools/zotero_uninstall.sh:24`
 - `scripts/tools/zotero_uninstall.sh:25`
-- `setup_ultimate.sh:1326`
-- `setup_ultimate.sh:2769`
-- `setup_ultimate.sh:4786`
-- `setup_ultimate.sh:5335`
+- `setup_ultimate.sh:1355`
+- `setup_ultimate.sh:2847`
+- `setup_ultimate.sh:4889`
+- `setup_ultimate.sh:5440`
 - `systemd/openclaw-workspace-backup.service.example:9`
 - `systemd/openclaw-workspace-backup.service.example:14`
 

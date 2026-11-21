@@ -89,7 +89,7 @@
           "LICENSE.txt": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef"
         },
         "scope": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation",
-        "note": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+        "note": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation. Vorhandenes Rust 1.99.1 bevorzugt; nach Zustimmung private offizielle Rust-Basis und Debian-/Ubuntu-Buildpakete, kein System-Rust-Wechsel. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
         "probe_strategy": "static-artifact-only; security_data_native.doctor(prefix,spec); runtime exit 3"
       }
     },
@@ -134,7 +134,7 @@
           "buildSrc/src/main/kotlin/org/zaproxy/zap/distributions.gradle.kts": "7be0800bde15f1615b252f15d2ac5d19187b4caad09cd887d1d8c0ec34df8ce4"
         },
         "scope": "ZAP Core-JAR mit Runtime-JARs, xml/lang/db-Konfiguration und Startskripten; ohne Add-ons/Browser/Installer/JRE; kein vollstaendiges Scanprofil",
-        "note": "ZAP Core-JAR mit Runtime-JARs, xml/lang/db-Konfiguration und Startskripten; ohne Add-ons/Browser/Installer/JRE; kein vollstaendiges Scanprofil. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+        "note": "ZAP Core-JAR mit Runtime-JARs, xml/lang/db-Konfiguration und Startskripten; ohne Add-ons/Browser/Installer/JRE; kein vollstaendiges Scanprofil. JDK 21 und Gradle 8.13 vorhandene Basis bevorzugt; nach Zustimmung JDK-Buildpaket via apt und privates SHA256-geprueftes Gradle aus offiziellem Release. Kein Wrapper oder automatischer JDK-Download durch Gradle. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
         "probe_strategy": "static-artifact-only; security_data_native.doctor(prefix,spec); runtime exit 3"
       }
     }

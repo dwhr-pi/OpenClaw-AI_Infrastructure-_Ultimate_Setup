@@ -19,11 +19,12 @@ SONGREC_COMMANDS = ('cargo', 'rustc', 'cc', 'c++', 'make', 'pkg-config', 'msgfmt
 ESPEAK_PACKAGES = ('cmake', 'build-essential')
 OUTLINES_PACKAGES = ('python3.12', 'python3.12-venv')
 VALKEY_PACKAGES = ('build-essential', 'pkg-config', 'libssl-dev')
+VAULTWARDEN_PACKAGES = ('build-essential', 'pkg-config', 'perl', 'libssl-dev')
 TESTSSL_PACKAGES = ('bash', 'openssl', 'bsdextrautils', 'coreutils', 'gawk', 'grep',
                     'sed', 'procps', 'findutils', 'util-linux')
 SANDBOX_PACKAGES = {
     'gvisor': ('build-essential', 'python3', 'ca-certificates', 'bzip2'),
-    'firecracker': ('build-essential', 'musl-tools', 'python3', 'ca-certificates'),
+    'firecracker': ('build-essential', 'musl-tools', 'python3', 'ca-certificates', 'libclang-dev'),
     'kata_containers': ('build-essential', 'pkg-config', 'libseccomp-dev', 'ca-certificates'),
 }
 
@@ -54,15 +55,25 @@ def installed(package):
 
 
 def prepare(spec, approved=False):
+    denied = os.environ.get('OPENCLAW_BUILD_DEPS_DENY') == '1'
+    if denied:
+        approved = False
     packages = spec["recipe"].get("apt_build_deps", [])
+    if spec['id'] == 'vaultwarden' and not packages:
+        packages = VAULTWARDEN_PACKAGES
     name, slug = "Mosquitto", "mosquitto"
     extra = {
         'testssl': ('testssl', TESTSSL_PACKAGES, ('bash', 'openssl', 'hexdump', 'unshare')),
         'valkey': ('Valkey', VALKEY_PACKAGES, ('make', 'cc', 'c++', 'pkg-config')),
         'espeak_ng': ('eSpeak NG', ESPEAK_PACKAGES, ('cmake', 'make', 'cc')),
         'outlines': ('Outlines', OUTLINES_PACKAGES, ()),
+        'vaultwarden': ('Vaultwarden', VAULTWARDEN_PACKAGES, ('cc', 'pkg-config', 'perl')),
     }
     extra.update({key: (key, packages, ('cc', 'make')) for key, packages in SANDBOX_PACKAGES.items()})
+    if spec['id'] == 'owasp_zap':
+        if packages and tuple(packages) != ('openjdk-21-jdk-headless',):
+            raise ValueError('Nicht freigegebene ZAP-Systempaketliste; keine apt-Aktion.')
+        name, slug, packages = 'OWASP ZAP', 'owasp_zap', ('openjdk-21-jdk-headless',)
     if spec['id'] in extra:
         name, expected, commands = extra[spec['id']]
         if tuple(packages) != expected:
@@ -81,7 +92,7 @@ def prepare(spec, approved=False):
             return
     if not packages:
         return
-    if (spec["id"] not in ("mosquitto", "litellm", "songrec", "espeak_ng", "outlines", "valkey", 'testssl', *SANDBOX_PACKAGES) or
+    if (spec["id"] not in ("mosquitto", "litellm", "songrec", "espeak_ng", "outlines", "valkey", 'testssl', 'owasp_zap', 'vaultwarden', *SANDBOX_PACKAGES) or
             (spec["id"] == "mosquitto" and tuple(packages) != MOSQUITTO_PACKAGES)):
         raise ValueError("Nicht freigegebene Systempaketliste; keine apt-Aktion.")
     release = os_release()
@@ -119,7 +130,7 @@ def prepare(spec, approved=False):
     print("Nur freigegebene Basiswerkzeuge/Bibliotheken via apt; " + name + " selbst aus GitHub. "
           "apt kann Abhaengigkeiten aktualisieren. Basiswerkzeuge bleiben bei Deinstallation erhalten.")
     print("Gezielt erneut starten: bash scripts/tools/" + slug + "_install.sh --install-build-deps")
-    if not approved and sys.stdin.isatty():
+    if not approved and not denied and sys.stdin.isatty():
         try:
             print("Fehlende Buildpakete jetzt mit apt installieren? [j/N]", flush=True)
             print("Warte auf Ihre Eingabe und Enter. Nur [j/ja/y/yes] erlaubt die Aktion; Nur [Enter] bedeutet: Nein.", flush=True)

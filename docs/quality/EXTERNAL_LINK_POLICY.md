@@ -2,6 +2,51 @@
 
 Stand: 31.10.2026. Keine Merge- oder Produktionsfreigabe.
 
+## Folgepruefung 20.11.2026: Prepaid-Hoster HTTP 404
+
+Die beiden Linkchecks zu `f25b7fb` meldeten jeweils genau dieselbe alte Prepaid-Hoster-Testserverseite
+mit HTTP 404. Der unabhaengige GET bestaetigt 404; die gelesene offizielle FAQ liefert HTTP 200 und
+nennt Testserver nur noch auf Anfrage. Die Anbieteruebersicht verlinkt diese konkrete FAQ, nicht
+eine beliebige Startseite. Die alte Adresse und der datierte Befund bleiben dort als Code erhalten.
+Historische Sieben-Tage-Werbung aus Suchtreffern ist keine aktuelle Verfuegbarkeitszusage.
+[Beide CI-Jobs, Originaladresse, Ersatzbeleg und Grenzen](PREPAID_HOSTER_REFERENCE_2026-11-20.json).
+Die zuvor nachgeprueften 18 Adressen haben diese neuen Laeufe bestanden und bleiben aktiv.
+Keine neue Ignore-Regel, Quellenpauschalausnahme oder Retry-Erweiterung.
+
+## Nachpruefung 20.11.2026: kanonischer Commit und Abrufsperren
+
+Am Commit `c88ef57` scheiterte der PR-Linkcheck an einem historischen Commit-Link mit dem alten
+Repositorynamen (HTTP 503). Der aktive Link nutzt jetzt den gelesenen kanonischen Repositorynamen
+und denselben vollstaendigen Commit; die Originaladresse bleibt im datierten Review erhalten.
+Kein Ersatz durch `main`, keinen neueren Commit oder eine beliebige Startseite.
+
+Der Push-Linkcheck meldete zehn GitHub-API-Adressen und acht Anbieter-/Medienseiten mit HTTP 403/429.
+Alle 18 Originaladressen lieferten beim unabhaengigen Einzel-GET wieder HTTP 200 und bleiben aktive Links.
+API-JSON wurde gelesen, YouTube nur auf Seitentitel geprueft. Instagram lieferte eine allgemeine
+HTML-Seite: Der Reel-Inhalt bleibt unbestaetigt. Ein erfolgreicher Einzelabruf ist keine nachtraegliche
+CI-Abnahme, keine Konditions-/Lizenzpruefung und kein Beweis fuer dauerhafte Erreichbarkeit.
+Mangels CI-Antwortheadern ist ein ausgeschoepftes API-Limit nur eine moegliche Ursache, kein Nachweis.
+[Alle 19 Einzelbefunde mit Lauf, Job, Fundstelle und Pruefgrenzen](CI_LINK_FOLLOWUP_2026-11-20.json).
+Keine neue Quellenumklassifizierung, Ignore-Regel, Statusfreigabe oder Retry-Aenderung.
+Die Offline-Regression desselben Commits war bei Push und PR erfolgreich; offen bleibt die erneute CI-Linkpruefung.
+
+## Nachpruefung 19.11.2026: Microsoft- und VPS-Referenzen
+
+Der Linkcheck zu `56964fe` scheiterte an 15 unterschiedlichen Originaladressen:
+Microsoft Agent Framework (HTTP 404) sowie einzelne VPS-/Community-Seiten (0/403/404).
+Die [datierte Einzelreferenzliste](CI_SOURCE_REFERENCES_2026-11-19.json) enthaelt Original-URLs,
+betroffene Dateien, CI-Lauf/Job und den begrenzten unabhaengigen Pruefumfang.
+Auf ausdrueckliche Nutzerfreigabe bleiben genau diese Adressen als Code mit Datum und Befund erhalten.
+Das reduziert bewusst den Live-Link-Pruefumfang, nicht die Fehlerkriterien des Checkers.
+Keine Domain-Ausnahme, kein 403/404 als Erfolg und kein Ersatz durch beliebige Startseiten.
+Der Quellen-Auditgenerator darf die genehmigten Referenzen nicht wieder als aktive Links ausgeben.
+Nicht erneut gelesene Inhalte, Lizenzbedingungen und VPS-Konditionen bleiben unbestaetigt.
+Suchindex-Treffer belegen keine aktuelle Erreichbarkeit; die Installer-Quellenpins bleiben unveraendert.
+
+Die Offline-Regression desselben Commits meldete genau einen Fehler: Die Cargo-Fixture erwartete
+noch `verify(root, cwd)` statt des ausdruecklichen Versionsvertrags `verify(root, cwd, version=...)`.
+Die korrigierte Assertion prueft diesen Pin weiterhin, statt den Mockaufruf unspezifisch zu akzeptieren.
+
 ## Nachpruefung 16.11.2026: rustfmt und AMD HIP
 
 Am Commit `246680c` scheiterte der PR-Linkcheck an HTTP 502 fuer rustfmt in der

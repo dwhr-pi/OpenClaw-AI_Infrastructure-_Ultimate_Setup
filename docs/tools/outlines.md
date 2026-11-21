@@ -32,6 +32,13 @@ kein Austausch von Python 3.14; 1024 MiB Zusatzreserve.
 Der uv-Resolver bestimmt die konkrete 3.13-Patchversion, kein separat gepinnter
 Python-Archivvertrag. Die Laufzeit wird lokal auf SSL/venv/Version geprueft und
 als Dateiinventar dokumentiert; veraenderte Bestaende werden nicht ueberschrieben.
+Interne uv-Versionsaliase werden vor dem Aufruf auf eine regulaere Python-Datei
+innerhalb der privaten `managed`-Laufzeit aufgeloest. Der kanonische Einstieg und
+das Inventar einschliesslich Alias-Zielen werden fuer Wiederholungen festgehalten.
+Externe Ziele, defekte Verweise und Linkschleifen stoppen vor dem Python-Aufruf.
+Die allgemeine Symlink-/Junction-Sperre fuer Installationsziele bleibt bestehen.
+Damit wird der gemeldete Abbruch nach `uv python find` im Installer korrigiert;
+ein bestandener Offline-Test ersetzt keinen echten Outlines-Build unter WSL.
 Diese Inventarpruefung ersetzt keinen unabhaengigen Ursprungsnachweis des Python-Archivs.
 Die private Basis bleibt bei App-Deinstallation erhalten. Nach Einrichtung sind
 weitere automatische Python-Downloads im eigentlichen Outlines-Build deaktiviert.

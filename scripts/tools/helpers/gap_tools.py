@@ -477,10 +477,19 @@ def install(runtime, marker, base, spec, install_build_deps=False):
         if spec["mode"] == "source":
             print("NUR QUELLEN installiert; KEINE gebaute/einsatzbereite Anwendung oder ComfyUI-Integration.")
     except BaseException:
-        # This directory was absent before this invocation; venv paths stay stable, no rename.
-        remove_runtime_tree(runtime)
-        marker.unlink(missing_ok=True)
-        print("Rollback: nur neue Dateien dieses Versuchs entfernt; Logs/Basiswerkzeuge bleiben.")
+        if runtime.name != 'runtime':
+            # Native callers own their source/build prefix; never broaden the runtime remover.
+            print('Quellen-Rollback an aufrufenden Installer delegiert; '
+                  'kein Runtime-Loeschversuch am Quellenpfad. Urspruenglicher Fehler bleibt erhalten.')
+            raise
+        try:
+            # No marker existed on entry. Remove new proof before attempting partial cleanup.
+            marker.unlink(missing_ok=True)
+            remove_runtime_tree(runtime)
+            print("Rollback: nur neue Dateien dieses Versuchs entfernt; Logs/Basiswerkzeuge bleiben.")
+        except (OSError, ValueError) as cleanup_error:
+            print('Rollback unvollstaendig:', type(cleanup_error).__name__,
+                  '; Restbestand erhalten. Urspruenglicher Fehler folgt; keine Fremddaten-Bereinigung.')
         raise
 
 
@@ -497,6 +506,8 @@ def main(argv=None):
     for action in ("repair", "uninstall", "status", "check"):
         override.add_argument("--" + action, dest="override", action="store_const", const=action)
     opts = parser.parse_args(argv)
+    if os.environ.get('OPENCLAW_BUILD_DEPS_DENY') == '1':
+        opts.install_build_deps = False
     if opts.override:
         if opts.action not in ("install", opts.override):
             parser.error("Widerspruechliche Aktionen.")

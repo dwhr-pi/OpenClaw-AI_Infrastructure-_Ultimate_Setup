@@ -142,6 +142,52 @@ class NativeCleanupTests(unittest.TestCase):
         self.assertTrue(self.prefix.exists())
         self.assertFalse(marker.exists())
 
+    def test_real_source_fetch_failure_preserves_error_and_uses_outer_cleanup(self):
+        original = subprocess.CalledProcessError(128, ['git', 'fetch'], output='curl 28 Operation too slow')
+        self.outer.mkdir(parents=True)
+        keep = self.outer / 'user-notes.txt'
+        keep.write_text('preserve user data')
+        (self.outer / 'toolchain').mkdir()
+
+        def git(path, *args):
+            if args[0] == 'fetch':
+                raise original
+            return ''
+
+        with patch.object(tool, 'preflight'), patch.object(tool.common, 'reserve'), \
+                patch.object(tool.common, 'git', side_effect=git), \
+                patch.object(tool.common, 'remove_runtime_tree') as runtime_remove, \
+                patch.object(tool, 'build') as build, redirect_stdout(io.StringIO()) as output:
+            with self.assertRaises(subprocess.CalledProcessError) as result:
+                tool.install(self.outer, self.prefix, self.prefix / 'build-ready.json', tool.TOOLS['firecracker'])
+        self.assertIs(result.exception, original)
+        runtime_remove.assert_not_called()
+        build.assert_not_called()
+        self.assertIn('Quellen-Rollback an aufrufenden Installer delegiert', output.getvalue())
+        self.assertFalse(self.prefix.exists())
+        self.assertTrue((self.outer / 'toolchain').is_dir())
+        self.assertEqual(keep.read_text(), 'preserve user data')
+
+    def test_failed_outer_cleanup_does_not_mask_source_fetch_error(self):
+        self.outer.mkdir(parents=True)
+        original = subprocess.CalledProcessError(128, ['git', 'fetch'], output='curl 28')
+
+        def git(path, *args):
+            if args[0] == 'fetch':
+                raise original
+            return ''
+
+        with patch.object(tool, 'preflight'), patch.object(tool.common, 'reserve'), \
+                patch.object(tool.common, 'git', side_effect=git), \
+                patch.object(tool, 'remove_native_tree', side_effect=PermissionError('busy source')), \
+                redirect_stdout(io.StringIO()) as output:
+            with self.assertRaises(subprocess.CalledProcessError) as result:
+                tool.install(self.outer, self.prefix, self.prefix / 'build-ready.json', tool.TOOLS['firecracker'])
+        self.assertIs(result.exception, original)
+        self.assertIn('Rollback unvollstaendig', output.getvalue())
+        self.assertTrue((self.prefix / 'source').is_dir())
+        self.assertFalse((self.prefix / 'build-ready.json').exists())
+
     def test_build_failure_rolls_back_readonly_cache_without_losing_original_error(self):
         self.outer.mkdir(parents=True)
         marker = self.prefix / "build-ready.json"

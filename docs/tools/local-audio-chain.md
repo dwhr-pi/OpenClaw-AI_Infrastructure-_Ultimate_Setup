@@ -1,5 +1,7 @@
 # Lokale KI-Audio-Chain: Arrangement bis Export
 
+[Wan2.2-Quellpruefung und fehlende MIDI-/Vocoder-/DAW-Bausteine](../models/WAN22_AUDIO_MIDI_TOOLCHAIN.md).
+
 [Lyrics vorbereiten und Reim-/Silbenvorgaben pruefen](../CREATIVE_LYRICS.md):
 optionaler vorgeschalteter Offline-Schritt, kein automatisches Audio-Rendering.
 
