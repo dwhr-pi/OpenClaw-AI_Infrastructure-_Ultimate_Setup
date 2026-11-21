@@ -377,6 +377,47 @@ print('guard-ok')
         for forbidden in ('\x1b', 'hidden-value', 'hidden-bearer', 'hidden-password'):
             self.assertNotIn(forbidden, text)
 
+    def test_ragas_probe_handles_denied_git_refresh_without_starting_any_process(self):
+        recipe = next(spec['recipe'] for spec in self.specs() if spec['id'] == 'ragas')
+        guard = helper.probe_script(recipe).split('assert sys.prefix != sys.base_prefix')[0]
+        body = '''
+assert os.environ["GIT_PYTHON_REFRESH"] == "quiet"
+assert subprocess.Popen is original
+assert subprocess.Popen[str]
+# Reproduce GitPython's refresh exception handling, without importing upstream code.
+git_ok = False
+try:
+    subprocess.run(["git", "version"], check=True, capture_output=True)
+    git_ok = True
+except (FileNotFoundError, PermissionError):
+    pass
+assert git_ok is False
+for args in ([sys.executable, "-c", "raise SystemExit(99)"], ["git", "fetch", "https://example.invalid"]):
+    try:
+        original(args)
+    except PermissionError as error:
+        assert 'blockiert Audit-Ereignis' in str(error)
+    else:
+        raise AssertionError("Process was allowed")
+for event in ('socket.connect', 'socket.bind', 'socket.sendto', 'os.posix_spawn', 'os.fork', 'os.system'):
+    try:
+        sys.audit(event, None)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError(event)
+print('ragas-guard-ok')
+'''
+        script = 'import subprocess\noriginal = subprocess.Popen\n' + guard + body
+        result = subprocess.run([sys.executable, '-I', '-B', '-c', script],
+                                capture_output=True, text=True, timeout=15, check=True)
+        self.assertEqual(result.stdout.strip(), 'ragas-guard-ok')
+        self.assertIn('importlib.import_module("git").GIT_OK is False', helper.probe_script(recipe))
+        for spec in self.specs():
+            if spec['id'] != 'ragas':
+                self.assertNotIn('GIT_PYTHON_REFRESH', helper.probe_script(spec['recipe']))
+        self.assertIn('"git_runtime_tested": False', helper.probe_script(recipe))
+
     def test_timeout_diagnostics_are_bounded_and_decode_bytes(self):
         error = subprocess.TimeoutExpired('probe', 45, output=b'x' * 10000,
                                          stderr=b'Timeout detail\xff\x00')

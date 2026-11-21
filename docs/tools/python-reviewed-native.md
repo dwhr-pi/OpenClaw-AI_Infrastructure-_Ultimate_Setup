@@ -135,6 +135,31 @@ Git-, Python-Paketdownload-, Verbindungs- und Importprobe-Limits werden hierdurc
 nicht entfernt; auch pnpm-interne Netzwerkfehler sind weiterhin moeglich.
 Dies behebt keine DNS-Stoerung und ist keine erfolgreiche Phoenix-Laufzeitabnahme.
 
+### Ragas: GitPython in der Offline-Importprobe (21.11.2026)
+
+Ein WSL-Lauf installierte 92 Pakete und bestand `uv pip check`, scheiterte danach aber
+beim Ragas-Import: GitPython wollte bereits bei der Initialisierung einen Git-Prozess
+zur Versionspruefung starten. Das ist ein Konflikt mit unserer Prozesssperre, kein
+belegter Download- oder Python-Versionsfehler.
+
+Die Probe setzt ausschliesslich fuer Ragas und nur im kurzlebigen Pruefprozess
+`GIT_PYTHON_REFRESH=quiet`. Ein versuchter `subprocess.Popen` bleibt vor dem Start
+blockiert, meldet dort aber `PermissionError`: Diesen Fall behandelt die
+[GitPython-3.2.1-Initialisierung][gitpython-refresh] als nicht verfuegbares Git.
+Der [Modulimport][gitpython-import] kann damit ohne gestarteten Git-Prozess abschliessen.
+Es werden weder GitPython/Ragas-Quellen veraendert noch Module oder Rueckgabewerte vorgetaeuscht.
+
+Die Probe verlangt weiterhin Ragas 0.3.9, importierbare `evaluate`/`aevaluate` und
+explizit `git.GIT_OK is False`. Netzwerk, Shell, andere Prozesswege und Git-Kommandos
+bleiben gesperrt; `subprocess.Popen` bleibt als Klasse fuer Imports erhalten.
+Die 45-Sekunden-Grenze bleibt bestehen. Der Bericht vermerkt `git_runtime_tested=false`:
+Git-basierte Experimentversionierung und echte Evaluation sind nicht abgenommen.
+Im spaeteren normalen Ragas-Betrieb wird dieser Probe-Schalter nicht gesetzt.
+Ein erfolgreicher Gesamtlauf unter Linux/WSL ist separat nachzuweisen.
+
+[gitpython-refresh]: https://github.com/gitpython-developers/GitPython/blob/3.2.1/git/cmd.py
+[gitpython-import]: https://github.com/gitpython-developers/GitPython/blob/3.2.1/git/__init__.py
+
 ### Lifecycle-Befehle
 
 ```bash

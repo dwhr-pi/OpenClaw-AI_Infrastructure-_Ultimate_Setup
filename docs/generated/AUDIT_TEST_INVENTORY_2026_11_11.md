@@ -5215,14 +5215,16 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_python_reviewed_native.py:367`
   Prueffall: `test_failed_probe_logs_traceback_without_credential_shaped_values`
 - `tests/test_python_reviewed_native.py:380`
+  Prueffall: `test_ragas_probe_handles_denied_git_refresh_without_starting_any_process`
+- `tests/test_python_reviewed_native.py:421`
   Prueffall: `test_timeout_diagnostics_are_bounded_and_decode_bytes`
-- `tests/test_python_reviewed_native.py:393`
+- `tests/test_python_reviewed_native.py:434`
   Prueffall: `test_build_runner_streams_with_shared_timeout`
-- `tests/test_python_reviewed_native.py:399`
+- `tests/test_python_reviewed_native.py:440`
   Prueffall: `test_explicit_unsupported_python_never_downloads`
-- `tests/test_python_reviewed_native.py:408`
+- `tests/test_python_reviewed_native.py:449`
   Prueffall: `test_missing_python_requires_explicit_consent`
-- `tests/test_python_reviewed_native.py:415`
+- `tests/test_python_reviewed_native.py:456`
   Prueffall: `test_build_rejects_wrong_source_layout`
 
 ## tests/test_queue_safety.py
@@ -6976,4 +6978,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3126**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3127**. Kein Nachweis bestandener Tests.

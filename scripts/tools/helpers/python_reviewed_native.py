@@ -317,13 +317,17 @@ def inspect_wheel(wheel, recipe):
 
 def probe_script(recipe):
     # Keep Popen a real class: imports can subclass it or use Popen[str] annotations.
-    return '''import importlib, importlib.metadata as m, json, socket, subprocess, sys
+    return '''import importlib, importlib.metadata as m, json, os, socket, subprocess, sys
+%s
 def denied(*args, **kwargs):
     raise RuntimeError("Runtime-Probe erlaubt kein Netzwerk/Unterprozess")
 def audit_runtime(event, args):
     if event in {"subprocess.Popen", "os.system", "os.posix_spawn", "os.fork", "os.forkpty",
                  "socket.connect", "socket.bind", "socket.getaddrinfo", "socket.gethostbyname",
                  "socket.gethostbyaddr", "socket.sendto", "socket.sendmsg"}:
+        if event == "subprocess.Popen" and %r:
+            # GitPython handles a denied executable in its documented quiet refresh mode.
+            raise PermissionError("Runtime-Probe blockiert Audit-Ereignis: " + event)
         raise RuntimeError("Runtime-Probe blockiert Audit-Ereignis: " + event)
 sys.addaudithook(audit_runtime)
 socket.socket.connect = denied
@@ -338,9 +342,12 @@ assert m.version(%r) == %r
 rows = sorted([{"name": d.metadata["Name"], "version": d.version} for d in m.distributions()], key=lambda d: d["name"].lower())
 print(json.dumps({"version": m.version(%r), "module": module.__name__, "distributions": rows,
                   "application_tested": False, "network_allowed": False, "process_allowed": False,
+                  "git_runtime_tested": False,
                   "guard": "cpython-audit-hook-and-socket-guards", "scan_performed": False}))
-''' % (recipe['import_module'], recipe['distribution'], recipe['version'],
-       {'ragas': 'assert callable(module.evaluate) and callable(module.aevaluate)',
+''' % ('os.environ["GIT_PYTHON_REFRESH"] = "quiet"' if recipe['distribution'] == 'ragas' else '',
+       recipe['distribution'] == 'ragas', recipe['import_module'], recipe['distribution'], recipe['version'],
+       {'ragas': 'assert callable(module.evaluate) and callable(module.aevaluate)\n'
+                 'assert importlib.import_module("git").GIT_OK is False',
         'arize-phoenix': 'assert callable(module.launch_app)',
         'checkov': 'importlib.import_module("checkov.common.util.type_forcers")',
         'OpenJarvis': 'assert any(e.name == "jarvis" and e.value == "openjarvis.cli:main" '
