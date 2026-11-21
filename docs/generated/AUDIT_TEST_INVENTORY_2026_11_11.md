@@ -3739,17 +3739,23 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 ## tests/test_native_build_process.py
 
-- `tests/test_native_build_process.py:21`
+- `tests/test_native_build_process.py:22`
   Prueffall: `test_output_and_success_status`
-- `tests/test_native_build_process.py:30`
+- `tests/test_native_build_process.py:31`
   Prueffall: `test_nonzero_exit_preserved`
-- `tests/test_native_build_process.py:36`
+- `tests/test_native_build_process.py:37`
+  Prueffall: `test_unlimited_wait_keeps_heartbeat_past_former_two_hour_limit`
+- `tests/test_native_build_process.py:49`
+  Prueffall: `test_unlimited_wait_still_propagates_manual_interrupt_and_cleans_up`
+- `tests/test_native_build_process.py:62`
+  Prueffall: `test_unlimited_child_nonzero_exit_remains_failure`
+- `tests/test_native_build_process.py:68`
   Prueffall: `test_timeout_reports_failure_and_terminates_child`
-- `tests/test_native_build_process.py:46`
+- `tests/test_native_build_process.py:78`
   Prueffall: `test_return_buffer_is_bounded`
-- `tests/test_native_build_process.py:52`
+- `tests/test_native_build_process.py:84`
   Prueffall: `test_timeout_terminates_spawned_build_child`
-- `tests/test_native_build_process.py:71`
+- `tests/test_native_build_process.py:103`
   Prueffall: `test_signal_is_reported_without_claiming_oom`
 
 ## tests/test_native_candidate_dispatch.py
@@ -5178,41 +5184,45 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_ragas_runtime_compatibility_flows_through_hash_lock_and_guarded_probe`
 - `tests/test_python_reviewed_native.py:106`
   Prueffall: `test_download_budgets_are_fixed_and_do_not_inherit_unsafe_uv_settings`
-- `tests/test_python_reviewed_native.py:125`
+- `tests/test_python_reviewed_native.py:120`
+  Prueffall: `test_phoenix_frontend_executor_has_no_total_timeout`
+- `tests/test_python_reviewed_native.py:128`
+  Prueffall: `test_phoenix_build_routes_only_frontend_commands_to_unlimited_executor`
+- `tests/test_python_reviewed_native.py:171`
   Prueffall: `test_wheel_download_timeout_retries_same_lock_and_cache_in_shared_budget`
-- `tests/test_python_reviewed_native.py:146`
+- `tests/test_python_reviewed_native.py:192`
   Prueffall: `test_other_wheel_errors_never_relax_hash_tls_or_disk_failures`
-- `tests/test_python_reviewed_native.py:162`
+- `tests/test_python_reviewed_native.py:208`
   Prueffall: `test_temporary_dns_uses_only_existing_second_attempt_and_same_lock`
-- `tests/test_python_reviewed_native.py:181`
+- `tests/test_python_reviewed_native.py:227`
   Prueffall: `test_timeout_then_dns_reports_root_cause_without_third_attempt`
-- `tests/test_python_reviewed_native.py:193`
+- `tests/test_python_reviewed_native.py:239`
   Prueffall: `test_dns_does_not_override_permanent_errors_or_retry_permanent_resolution_failure`
-- `tests/test_python_reviewed_native.py:207`
+- `tests/test_python_reviewed_native.py:253`
   Prueffall: `test_expired_budget_does_not_retry_temporary_dns`
-- `tests/test_python_reviewed_native.py:218`
+- `tests/test_python_reviewed_native.py:264`
   Prueffall: `test_second_wheel_timeout_is_final_and_process_timeout_never_retries`
-- `tests/test_python_reviewed_native.py:230`
+- `tests/test_python_reviewed_native.py:276`
   Prueffall: `test_expired_wheel_budget_keeps_original_error_without_retry`
-- `tests/test_python_reviewed_native.py:241`
+- `tests/test_python_reviewed_native.py:287`
   Prueffall: `test_resolver_timeout_does_not_retry_build_or_write_success_receipt`
-- `tests/test_python_reviewed_native.py:268`
+- `tests/test_python_reviewed_native.py:314`
   Prueffall: `test_incomplete_wheels_fail_closed`
-- `tests/test_python_reviewed_native.py:277`
+- `tests/test_python_reviewed_native.py:323`
   Prueffall: `test_probe_is_bounded_and_never_cli_execution`
-- `tests/test_python_reviewed_native.py:292`
+- `tests/test_python_reviewed_native.py:338`
   Prueffall: `test_import_guard_preserves_popen_types_and_blocks_cached_process_calls`
-- `tests/test_python_reviewed_native.py:321`
+- `tests/test_python_reviewed_native.py:367`
   Prueffall: `test_failed_probe_logs_traceback_without_credential_shaped_values`
-- `tests/test_python_reviewed_native.py:334`
+- `tests/test_python_reviewed_native.py:380`
   Prueffall: `test_timeout_diagnostics_are_bounded_and_decode_bytes`
-- `tests/test_python_reviewed_native.py:347`
+- `tests/test_python_reviewed_native.py:393`
   Prueffall: `test_build_runner_streams_with_shared_timeout`
-- `tests/test_python_reviewed_native.py:353`
+- `tests/test_python_reviewed_native.py:399`
   Prueffall: `test_explicit_unsupported_python_never_downloads`
-- `tests/test_python_reviewed_native.py:362`
+- `tests/test_python_reviewed_native.py:408`
   Prueffall: `test_missing_python_requires_explicit_consent`
-- `tests/test_python_reviewed_native.py:369`
+- `tests/test_python_reviewed_native.py:415`
   Prueffall: `test_build_rejects_wrong_source_layout`
 
 ## tests/test_queue_safety.py
@@ -6966,4 +6976,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3121**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3126**. Kein Nachweis bestandener Tests.

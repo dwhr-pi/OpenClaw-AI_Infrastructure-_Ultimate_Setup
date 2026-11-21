@@ -107,13 +107,33 @@ setzt jetzt feste uv-Budgets: 300 Sekunden HTTP-Lesezeitlimit, 30 Sekunden Verbi
 hoechstens drei HTTP-Wiederholungen und zwei statt vier parallele Downloads.
 Die Werte erscheinen im Installationsprotokoll; geerbte uv-Netzwerkoptionen werden nicht uebernommen.
 Diese Parameter sind in der [offiziellen uv-Referenz](https://docs.astral.sh/uv/reference/environment/)
-dokumentiert. Das Prozesslimit bleibt 7200 Sekunden je Buildschritt, nicht je Gesamtinstallation.
+dokumentiert. Das Prozesslimit bleibt 7200 Sekunden je Python-Buildschritt, nicht je Gesamtinstallation.
+Fuer Phoenix-Frontend-Schritte gilt die nachstehende Ausnahme.
 Keine zusaetzliche Wiederholung des gesamten Builds, kein unsicherer Mirror, TLS-Bypass
 oder Verzicht auf `--require-hashes` und reine Wheel-Abhaengigkeiten.
 Ein weiterhin nicht erreichbarer Paketserver bleibt ein Fehler; die Aenderung garantiert
 keinen Download bei DNS-/Netzausfall. Kein Modell-Download oder Provider-Aufruf.
 Offline-Tests pruefen die Budgets, Umgebungsfilterung und den Abbruch ohne Erfolgsnachweis;
 die erneute Installation unter WSL ist separat zu testen.
+
+### Phoenix-Frontend ohne Zwei-Stunden-Abbruch (21.11.2026)
+
+Ein gemeldeter WSL-Lauf wurde nach genau 7200 Sekunden bei
+`pnpm install --frozen-lockfile --ignore-scripts` durch unser Prozesslimit beendet.
+Ob der Prozess noch Fortschritt machte oder bereits hing, belegen die Heartbeats nicht.
+
+Fuer die drei Phoenix-Frontend-Schritte `pnpm install`, `pnpm rebuild esbuild` und
+`pnpm run build` gibt es jetzt kein automatisches Gesamtzeitlimit mehr.
+Das Log meldet PID, Laufzeit und ausdruecklich `kein automatisches Zeitlimit`.
+Ein haengender Prozess kann dadurch unbegrenzt weiterlaufen; Abbruch mit **Strg+C**
+bleibt moeglich und wird nicht als Erfolg behandelt. Unter POSIX wird beim Abbruch
+die gestartete Prozessgruppe beendet. Nichtnull-Exitcodes bleiben Fehler.
+
+Unveraendert bleiben der Quellpin, das eingefrorene pnpm-Lockfile, die gezielte
+esbuild-Freigabe, Integritaets-/Speicherpruefungen und der geschuetzte Rollback.
+Git-, Python-Paketdownload-, Verbindungs- und Importprobe-Limits werden hierdurch
+nicht entfernt; auch pnpm-interne Netzwerkfehler sind weiterhin moeglich.
+Dies behebt keine DNS-Stoerung und ist keine erfolgreiche Phoenix-Laufzeitabnahme.
 
 ### Lifecycle-Befehle
 

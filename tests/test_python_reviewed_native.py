@@ -117,6 +117,52 @@ class ReviewedPythonTests(unittest.TestCase):
         for key in ('UV_INSECURE_HOST', 'UV_NATIVE_TLS', 'HTTPS_PROXY', 'UV_EXTRA_INDEX_URL'):
             self.assertNotIn(key, env)
 
+    def test_phoenix_frontend_executor_has_no_total_timeout(self):
+        args = [Path('/private/pnpm'), 'install', '--frozen-lockfile', '--ignore-scripts']
+        with patch.object(helper.native_build_process, 'run', return_value='ok') as run, \
+                redirect_stdout(io.StringIO()):
+            self.assertEqual(helper.frontend_execute(args, Path('/source/app'), {}), 'ok')
+        self.assertIsNone(run.call_args.kwargs['timeout'])
+        self.assertEqual(run.call_args.args, (args, Path('/source/app'), {}))
+
+    def test_phoenix_build_routes_only_frontend_commands_to_unlimited_executor(self):
+        spec = next(spec for spec in self.specs() if spec['id'] == 'phoenix')
+        with tempfile.TemporaryDirectory() as directory:
+            prefix = Path(directory) / 'native'
+            source = prefix / 'source'
+            manifest = source / 'src/phoenix/server/static/.vite/manifest.json'
+            manifest.parent.mkdir(parents=True)
+            manifest.write_text('{}')
+            calls = []
+
+            def run(args, cwd, env):
+                calls.append(list(map(str, args)))
+                if '-m' in args and 'build' in args:
+                    (prefix / 'wheels/phoenix-fixture.whl').write_bytes(b'fixture, never imported')
+                if args[1:3] == ['pip', 'install']:
+                    cli = prefix / 'venv/bin' / spec['recipe']['cli']
+                    cli.parent.mkdir(parents=True, exist_ok=True)
+                    cli.write_bytes(b'fixture')
+
+            with patch.object(helper, 'verify_source'), patch.object(helper, 'inspect_wheel'), \
+                    patch.object(helper.native_uv, 'select', return_value='/uv'), \
+                    patch.object(helper, 'select_python', return_value='/python'), \
+                    patch.object(helper, 'frontend', return_value=Path('/private/frontend')), \
+                    patch.object(helper, 'build_execute', side_effect=run), \
+                    patch.object(helper, 'frontend_execute', return_value='ok') as frontend, \
+                    patch.object(helper, 'install_locked_wheels', return_value='ok'), \
+                    patch.object(helper, 'execute', return_value='{"distributions": []}') as probe, \
+                    redirect_stdout(io.StringIO()):
+                # The application CLI is created only by the mocked wheel installer.
+                cli = prefix / 'venv/bin' / spec['recipe']['cli']
+                cli.parent.mkdir(parents=True)
+                cli.write_bytes(b'fixture')
+                helper.build(source, prefix, spec, {})
+                self.assertEqual(probe.call_args.args[-1], 45)
+            self.assertEqual([list(map(str, call.args[0]))[1:] for call in frontend.call_args_list], [
+                ['install', '--frozen-lockfile', '--ignore-scripts'], ['rebuild', 'esbuild'], ['run', 'build']])
+            self.assertFalse(any(Path(call[0]).name == 'pnpm' for call in calls))
+
     def wheel_install_command(self):
         return ['/uv', 'pip', 'install', '--python', '/venv/python', '--require-hashes',
                 '--only-binary', ':all:', '-r', '/private/runtime-requirements.lock',

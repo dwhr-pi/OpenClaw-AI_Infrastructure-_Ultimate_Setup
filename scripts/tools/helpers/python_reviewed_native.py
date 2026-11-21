@@ -164,6 +164,12 @@ def build_execute(args, cwd, env):
     return native_build_process.run(args, cwd, env, timeout=7200, label='Python-/Frontend-Build')
 
 
+def frontend_execute(args, cwd, env):
+    print('Phoenix-Frontend: kein automatisches Gesamtzeitlimit; manueller Abbruch mit Strg+C. '
+          'Netzwerkfehler und pnpm-interne Zeitlimits bleiben moeglich.', flush=True)
+    return native_build_process.run(args, cwd, env, timeout=None, label='Phoenix-Frontend-Build')
+
+
 def install_locked_wheels(args, cwd, env, run=None):
     deadline = time.monotonic() + 7200
     child = dict(env)
@@ -373,14 +379,15 @@ def build(source, prefix, spec, env, run=None):
 
     locked_install(build_input, prefix / 'build-requirements.lock', build_python)
     if spec['id'] == 'phoenix':
+        frontend_runner = run or frontend_execute
         slot = frontend(prefix.parent, spec)
         child['PATH'] = str(slot) + os.pathsep + child.get('PATH', '')
         child.update(COREPACK_ENABLE_NETWORK='0', npm_config_manage_package_manager_versions='false',
                      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD='1')
         # Skip the npx preinstall hook: the pinned pnpm is already selected directly.
-        runner([slot / 'pnpm', 'install', '--frozen-lockfile', '--ignore-scripts'], source / 'app', child)
-        runner([slot / 'pnpm', 'rebuild', 'esbuild'], source / 'app', child)
-        runner([slot / 'pnpm', 'run', 'build'], source / 'app', child)
+        frontend_runner([slot / 'pnpm', 'install', '--frozen-lockfile', '--ignore-scripts'], source / 'app', child)
+        frontend_runner([slot / 'pnpm', 'rebuild', 'esbuild'], source / 'app', child)
+        frontend_runner([slot / 'pnpm', 'run', 'build'], source / 'app', child)
         if not (source / 'src/phoenix/server/static/.vite/manifest.json').is_file():
             raise ValueError('Phoenix-UI-Build lieferte kein Vite-Manifest.')
     if spec['id'] == 'ragas':
