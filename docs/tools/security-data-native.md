@@ -165,6 +165,36 @@ mit begrenztem Entpackbudget. Kein Java-Anwendungsprozess, Port, Session-DB,
 API-Key, Ziel-URL oder Scan. Eine systemd-Unit ist fuer diesen Desktop/Core-
 Komponentenumfang nicht anwendbar und wird nicht erstellt.
 
+### ZAP: Ordner ohne Buildnachweis reparieren (21.11.2026)
+
+`Vorhandener nativer Ordner ohne Buildnachweis` bedeutet, dass `native-github/`
+bereits existiert, aber kein gueltiger Installationsnachweis vorliegt. Die Ursache
+kann ein unterbrochener Versuch sein; daraus folgt kein Besitznachweis fuer alle Inhalte.
+Der Installer darf den Ordner deshalb nicht pauschal loeschen oder als installiert uebernehmen.
+
+Im interaktiven Installationslauf kann das Setup jetzt eine gesonderte Reparatur anbieten.
+Die Zustimmung zur Installation von Buildwerkzeugen allein ist **keine** Reparaturfreigabe.
+Ohne Terminal/Zustimmung bleibt der Altbestand unveraendert. Ausdrueckliche CLI-Freigabe:
+
+```bash
+bash scripts/tools/owasp_zap_install.sh --repair --quarantine-incomplete --install-build-deps
+```
+
+Nach erfolgreicher Ressourcen-/Buildbasis-Vorpruefung wird ausschliesslich der private
+ZAP-Ordner `tools/owasp_zap/native-github/` innerhalb desselben Toolverzeichnisses nach
+`native-github-incomplete-<zufall>/native-github/` umbenannt. Das Protokoll nennt den
+Sicherungspfad; daneben dokumentiert `RECOVERY.json` die unbestaetigte Herkunft.
+Unbekannte Inhalte werden erhalten, nicht ausgefuehrt, nicht rekursiv geloescht und nicht
+in den neuen Build kopiert. Die Sicherung schafft keinen freien Speicherplatz.
+Sie bleibt auch bei einem erneuten Buildfehler erhalten. Private Toolchains und
+Legacy-Container, Volumes und `/opt`-Installationen bleiben unberuehrt.
+
+Ein vorhandener, aber ungueltiger Buildmarker oder ein unsicherer Zielpfad sperrt
+diesen Weg weiterhin. Bei Ablehnung, Vorpruefungsfehler oder reinem Reparaturplan
+werden keine Altdateien verschoben. Ein neuer Erfolgsnachweis entsteht erst nach
+erfolgreichem frischem Build; die Sicherung selbst ist kein Installationsnachweis.
+Die Offline-Tests belegen diese Dateisicherungsgrenzen, keinen echten ZAP-Build oder Scan.
+
 ## Nachweise und Entfernung
 
 `candidate-build-lock.json` speichert Quellvertraege und beobachtete Toolversionen.

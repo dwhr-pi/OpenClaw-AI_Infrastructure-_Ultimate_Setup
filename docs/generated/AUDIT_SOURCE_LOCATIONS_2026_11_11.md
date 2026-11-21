@@ -567,9 +567,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/moss_tts_common.sh:189`
 - `scripts/tools/helpers/musetalk_runtime.py:169`
 - `scripts/tools/helpers/native_github_tools.py:106`
-- `scripts/tools/helpers/native_github_tools.py:628`
-- `scripts/tools/helpers/native_github_tools.py:634`
-- `scripts/tools/helpers/native_github_tools.py:720`
+- `scripts/tools/helpers/native_github_tools.py:629`
+- `scripts/tools/helpers/native_github_tools.py:635`
+- `scripts/tools/helpers/native_github_tools.py:721`
 - `scripts/tools/helpers/offload_sources.py:40`
 - `scripts/tools/helpers/offload_sources.py:41`
 - `scripts/tools/helpers/offload_sources.py:71`
@@ -1557,7 +1557,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/native_github_tools.py:124`
 - `scripts/tools/helpers/native_github_tools.py:228`
 - `scripts/tools/helpers/native_github_tools.py:230`
-- `scripts/tools/helpers/native_github_tools.py:608`
+- `scripts/tools/helpers/native_github_tools.py:609`
 - `scripts/tools/helpers/native_go.py:68`
 - `scripts/tools/helpers/native_node.py:78`
 - `scripts/tools/helpers/native_node.py:93`

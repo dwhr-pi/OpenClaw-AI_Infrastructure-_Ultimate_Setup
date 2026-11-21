@@ -1,4 +1,4 @@
-"""Caddy orphan recovery preserves unknown contents; no builds or downloads."""
+"""Caddy/ZAP orphan recovery preserves unknown contents; no builds or downloads."""
 from contextlib import redirect_stderr, redirect_stdout
 import io
 import json
@@ -15,6 +15,8 @@ import native_github_tools as tool
 
 
 class CaddyRecoveryTests(unittest.TestCase):
+    tool_id = "caddy"
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -24,8 +26,8 @@ class CaddyRecoveryTests(unittest.TestCase):
         stdin = patch.object(tool.sys, "stdin", Mock(isatty=Mock(return_value=False)))
         stdin.start()
         self.addCleanup(stdin.stop)
-        self.spec = tool.TOOLS["caddy"]
-        self.outer, self.prefix, self.marker = tool.paths("caddy")
+        self.spec = tool.TOOLS[self.tool_id]
+        self.outer, self.prefix, self.marker = tool.paths(self.tool_id)
         self.prefix.mkdir(parents=True)
         self.keep = self.prefix / "unknown-user-notes.txt"
         self.keep.write_text("private user notes")
@@ -75,12 +77,13 @@ class CaddyRecoveryTests(unittest.TestCase):
         output = io.StringIO()
         with patch.object(tool, "preflight"), patch.object(tool, "fetch_source", side_effect=self.fetch), \
              patch.object(tool, "build", side_effect=self.build), redirect_stdout(output):
-            self.assertEqual(tool.main(["caddy", "install", "--repair", "--quarantine-incomplete"]), 0)
+            self.assertEqual(tool.main([self.tool_id, "install", "--repair", "--quarantine-incomplete"]), 0)
         saved, = self.backups()
         self.assertEqual((saved / self.keep.name).read_text(), "private user notes")
         self.assertFalse(self.keep.exists())
         self.assertFalse((saved / "build-ready.json").exists())
         receipt = json.loads((saved.parent / "RECOVERY.json").read_text())
+        self.assertEqual(receipt["tool"], self.tool_id)
         self.assertFalse(receipt["installed"])
         self.assertTrue(self.marker.is_file())
         self.assertEqual((self.prefix / "bin/caddy").read_bytes(), b"fresh binary")
@@ -118,7 +121,7 @@ class CaddyRecoveryTests(unittest.TestCase):
 
     def test_dry_run_never_moves_existing_files(self):
         with patch.object(tool, "preflight") as preflight, redirect_stdout(io.StringIO()):
-            self.assertEqual(tool.main(["caddy", "repair", "--quarantine-incomplete", "--dry-run"]), 0)
+            self.assertEqual(tool.main([self.tool_id, "repair", "--quarantine-incomplete", "--dry-run"]), 0)
         preflight.assert_not_called()
         self.assertFalse(self.backups())
         self.assertFalse((Path(self.temp.name) / "install_logs").exists())
@@ -127,25 +130,29 @@ class CaddyRecoveryTests(unittest.TestCase):
     def test_failed_rename_keeps_original_and_removes_only_empty_recovery_directory(self):
         with patch.object(Path, "rename", side_effect=PermissionError("cannot rename")), redirect_stdout(io.StringIO()):
             with self.assertRaisesRegex(PermissionError, "cannot rename"):
-                tool.quarantine_incomplete_caddy(self.outer, self.prefix, self.marker, self.spec)
+                tool.quarantine_incomplete_native(self.outer, self.prefix, self.marker, self.spec)
         self.assertFalse(list(self.outer.glob("native-github-incomplete-*")))
         self.assertTrue(self.keep.exists())
 
     def test_changed_marker_after_preflight_prevents_move(self):
         self.marker.write_text("marker appeared")
         with self.assertRaisesRegex(ValueError, "Zustand geaendert"):
-            tool.quarantine_incomplete_caddy(self.outer, self.prefix, self.marker, self.spec)
+            tool.quarantine_incomplete_native(self.outer, self.prefix, self.marker, self.spec)
         self.assertTrue(self.keep.exists())
         self.assertFalse(self.backups())
 
     def test_option_rejects_other_tools_and_uninstall_before_any_operation(self):
         for args in (["watchtower", "repair", "--quarantine-incomplete"],
-                     ["caddy", "uninstall", "--quarantine-incomplete"],
-                     ["caddy", "install", "--quarantine-incomplete"]):
+                     [self.tool_id, "uninstall", "--quarantine-incomplete"],
+                     [self.tool_id, "install", "--quarantine-incomplete"]):
             with self.subTest(args=args), patch.object(tool.common, "operation") as operation, redirect_stderr(io.StringIO()):
                 with self.assertRaises(SystemExit):
                     tool.main(args)
             operation.assert_not_called()
+
+
+class ZapRecoveryTests(CaddyRecoveryTests):
+    tool_id = "owasp_zap"
 
 
 if __name__ == "__main__":

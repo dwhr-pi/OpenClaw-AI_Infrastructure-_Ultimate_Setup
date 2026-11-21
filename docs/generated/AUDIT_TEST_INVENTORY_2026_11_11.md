@@ -703,27 +703,27 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 ## tests/test_caddy_recovery.py
 
-- `tests/test_caddy_recovery.py:48`
+- `tests/test_caddy_recovery.py:50`
   Prueffall: `test_noninteractive_default_preserves_orphan_without_preflight`
-- `tests/test_caddy_recovery.py:56`
+- `tests/test_caddy_recovery.py:58`
   Prueffall: `test_interactive_refusal_does_not_move_or_build`
-- `tests/test_caddy_recovery.py:65`
+- `tests/test_caddy_recovery.py:67`
   Prueffall: `test_storage_failure_precedes_any_move`
-- `tests/test_caddy_recovery.py:74`
+- `tests/test_caddy_recovery.py:76`
   Prueffall: `test_explicit_repair_preserves_all_old_data_and_creates_only_fresh_marker`
-- `tests/test_caddy_recovery.py:92`
+- `tests/test_caddy_recovery.py:95`
   Prueffall: `test_interactive_install_can_offer_recovery_without_extra_cli_flags`
-- `tests/test_caddy_recovery.py:100`
+- `tests/test_caddy_recovery.py:103`
   Prueffall: `test_new_build_failure_never_removes_preserved_orphan`
-- `tests/test_caddy_recovery.py:110`
+- `tests/test_caddy_recovery.py:113`
   Prueffall: `test_invalid_existing_marker_is_not_quarantined_or_adopted`
-- `tests/test_caddy_recovery.py:119`
+- `tests/test_caddy_recovery.py:122`
   Prueffall: `test_dry_run_never_moves_existing_files`
-- `tests/test_caddy_recovery.py:127`
+- `tests/test_caddy_recovery.py:130`
   Prueffall: `test_failed_rename_keeps_original_and_removes_only_empty_recovery_directory`
-- `tests/test_caddy_recovery.py:134`
+- `tests/test_caddy_recovery.py:137`
   Prueffall: `test_changed_marker_after_preflight_prevents_move`
-- `tests/test_caddy_recovery.py:141`
+- `tests/test_caddy_recovery.py:144`
   Prueffall: `test_option_rejects_other_tools_and_uninstall_before_any_operation`
 
 ## tests/test_candidate_go_controllers.py
