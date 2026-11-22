@@ -150,6 +150,39 @@ Mousai bleibt beim bisherigen Quellenmodus: Erfolgreicher Fetch ist keine
 gebaute oder gestartete Desktopanwendung. Offline-Tests verwenden nur Mocks;
 ein echter Download-/Build-/Runtime-Nachweis wird daraus nicht abgeleitet.
 
+## Tool-Git-Download ohne Zeitlimit (22.11.2026)
+
+Der OpenJarvis-Bericht vom 22.11.2026 zeigt einen Abbruch bei etwa 7,5 MiB durch
+Gits Stillstandsgrenze von 128 Bytes/s ueber 300 Sekunden. Der aktuelle Installer
+war damit erreicht; das Entfernen des Phoenix-Frontend-Limits oder das lokale
+Git-Bundle fuer das Setup entfernt diese gesonderte Tool-Downloadgrenze nicht.
+
+Auf ausdruecklichen Wunsch laesst sich fuer den gemeinsamen Tool-Git-Downloader
+jetzt beides abschalten: das Gesamtzeitlimit und die Mindestdatenraten-/Stillstandsfrist.
+Nur der exakte Wert `0` aktiviert diesen Modus:
+
+```bash
+OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS=0 bash ./setup_ultimate.sh
+```
+
+Die Einstellung gilt fuer diesen Setup-Prozess und dessen Toolskripte, wird aber
+nicht dauerhaft gespeichert. Ohne Einstellung gelten weiterhin 900 Sekunden;
+positive Werte von 180 bis 3600 Sekunden behalten die bisherigen Stillstandsgrenzen.
+`GIT_TIMEOUT_SECONDS` aus einem separaten Update-Skript ist nicht diese Einstellung.
+
+Der Modus `0` setzt `http.lowSpeedLimit=0`, `http.lowSpeedTime=0` und kein
+Gesamtzeitlimit am Prozessstarter. Heartbeats melden ausdruecklich, dass kein
+automatisches Zeitlimit besteht. Ein Haenger kann unbegrenzt weiterlaufen und
+muss gegebenenfalls mit **Strg+C** abgebrochen werden. Die Ursache einer
+Netzwerkstoerung wird dadurch nicht behoben; auch der Server kann Verbindungen beenden.
+
+Hoechstens zwei Versuche bei erkannten Transportfehlern; kein endloser Retry-Loop.
+Manueller Abbruch, Zertifikats-, Zugriffs- und Pinfehler bleiben Fehler. Keine
+Freigabe weiterer Hosts, Credentials oder Mirrors; Quellpin, Hashpruefungen,
+Git-Protokoll 2 und der Verzicht auf automatische Tags/Submodule bleiben erhalten.
+Lokale Git-Pruefungen, Paketdownloads, Buildschritte und Importproben behalten ihre
+eigenen Grenzen. Der Modus ist keine Erfolgsmeldung und kein Ersatz fuer eine Laufzeitabnahme.
+
 ## Qwen Code Desktop: Download oder eigener Build
 
 **Qwen_Desktop** bleibt der bisherige manuelle Windows-Download mit Browser und Bestaetigungspause:

@@ -43,7 +43,9 @@ Netzwerkursache ist damit nicht festgestellt. Der Rollback darf nur den eigenen
 neu angelegten Runtime-Ordner dieses Versuchs entfernen, keine Benutzerdaten.
 
 Die Folgekorrektur verwendet fuer Fetch ein eigenes Budget: standardmaessig
-900 Sekunden, explizit 180 bis 3600 Sekunden. Git-Fortschritt und ein 30s-Heartbeat
+900 Sekunden, explizit 180 bis 3600 Sekunden. Seit 22.11.2026 erlaubt der exakte Wert `0`
+einen [ausdruecklichen Modus ohne Git-Zeitlimit](github-gap-tools.md#tool-git-download-ohne-zeitlimit-22112026).
+Git-Fortschritt und ein 30s-Heartbeat
 werden ins Log gestreamt; ein Heartbeat ist kein Fortschritts-/Erfolgsnachweis.
 Unter Linux/WSL beendet ein Timeout die Prozessgruppe vor dem Rollback.
 Keine automatischen Wiederholungen, kein Wechsel auf main/latest, keine

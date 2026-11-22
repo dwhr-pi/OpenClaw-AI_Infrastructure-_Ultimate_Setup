@@ -76,6 +76,17 @@ bash scripts/tools/openjarvis_check.sh
 bash scripts/tools/openjarvis_doctor.sh
 ```
 
+Seit der Korrektur vom 22.11.2026 ist ein Git-Download ohne automatische
+Gesamtzeit-/Stillstandsgrenze ausdruecklich waehlbar:
+
+```bash
+OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS=0 bash scripts/tools/openjarvis_install.sh --install-build-deps
+```
+
+Die Einstellung behebt keine Netzwerkstoerung; ein Haenger kann unbegrenzt laufen.
+Abbruch mit Strg+C bleibt moeglich. Paketdownloads und Importproben sind davon
+nicht betroffen. Details und Grenzen: [gemeinsamer Downloadmodus](github-gap-tools.md#tool-git-download-ohne-zeitlimit-22112026).
+
 Der aktuelle native Buildpfad ist fuer Linux/WSL vorgesehen. Ubuntu 26 mit
 System-Python 3.14 nutzt bei Bedarf eine private CPython-3.12.12-Basis nach Zustimmung;
 das System-Python wird nicht ersetzt. Debian-/DietPi-/ARM-Systeme brauchen passende

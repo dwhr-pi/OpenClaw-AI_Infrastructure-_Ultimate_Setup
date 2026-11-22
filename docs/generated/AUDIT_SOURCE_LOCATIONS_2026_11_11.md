@@ -548,9 +548,9 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/helpers/enki_browser_study.py:126`
 - `scripts/tools/helpers/enki_browser_study.py:178`
 - `scripts/tools/helpers/fal_client_common.sh:189`
-- `scripts/tools/helpers/find_skills.py:176`
-- `scripts/tools/helpers/find_skills.py:311`
-- `scripts/tools/helpers/find_skills.py:369`
+- `scripts/tools/helpers/find_skills.py:184`
+- `scripts/tools/helpers/find_skills.py:319`
+- `scripts/tools/helpers/find_skills.py:377`
 - `scripts/tools/helpers/gap_tools.py:426`
 - `scripts/tools/helpers/gap_tools.py:496`
 - `scripts/tools/helpers/gap_tools.py:525`
@@ -716,7 +716,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/tools/flowise_install.sh:135`
 - `scripts/tools/gamedev_3d_studio_install.sh:80`
 - `scripts/tools/gbox_install.sh:44`
-- `scripts/tools/helpers/find_skills.py:95`
+- `scripts/tools/helpers/find_skills.py:102`
 - `scripts/tools/helpers/freellmapi_common.sh:219`
 - `scripts/tools/helpers/github_docker_stack_common.sh:50`
 - `scripts/tools/helpers/node_tool_common.sh:74`

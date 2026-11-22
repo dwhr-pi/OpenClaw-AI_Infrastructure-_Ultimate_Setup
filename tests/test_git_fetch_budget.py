@@ -72,12 +72,67 @@ class GitFetchBudget(unittest.TestCase):
             self.assertAlmostEqual(run.call_args.kwargs['timeout'], int(budget), delta=1)
 
     def test_invalid_budget_stops_before_process(self):
-        for budget in ('0', '179', '3601', '-1', '900.5', 'infinite', ' 900', '900;echo bad'):
+        for budget in ('00', '179', '3601', '-1', '900.5', 'infinite', ' 900', '900;echo bad'):
             with patch.dict(os.environ, {'OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS': budget}), \
                     patch.object(runner, 'run') as run:
                 with self.assertRaises(ValueError):
                     self.fetch()
                 run.assert_not_called()
+
+    def test_explicit_zero_removes_total_and_low_speed_limits_only_for_fetch(self):
+        with patch.dict(os.environ, {'OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS': '0'}), \
+                patch.object(helper.time, 'monotonic', side_effect=AssertionError('No deadline')), \
+                patch.object(runner, 'run', return_value='ok') as run, redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(self.fetch(), 'ok')
+        command = run.call_args.args[0]
+        self.assertIsNone(run.call_args.kwargs['timeout'])
+        for flag in ('http.lowSpeedLimit=0', 'http.lowSpeedTime=0', 'protocol.version=2',
+                     '--no-tags', '--no-recurse-submodules'):
+            self.assertIn(flag, command)
+        self.assertEqual(command[-1], PIN)
+        self.assertNotIn('http.sslVerify=false', command)
+        self.assertIn('unbegrenzt', output.getvalue())
+        self.assertIn('keine Mindestdatenrate/Stillstandsfrist', output.getvalue())
+
+    def test_unlimited_transport_failure_never_reenables_low_speed_limits_or_retries_forever(self):
+        for message in ('curl 56 connection reset', 'curl 28 Operation too slow', 'Could not resolve host'):
+            error = subprocess.CalledProcessError(128, 'fixture', stderr=message)
+            with self.subTest(message=message), \
+                    patch.dict(os.environ, {'OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS': '0'}), \
+                    patch.object(helper.time, 'sleep'), \
+                    patch.object(runner, 'run', side_effect=error) as run, redirect_stdout(io.StringIO()):
+                with self.assertRaises(subprocess.CalledProcessError) as raised:
+                    self.fetch()
+            self.assertIs(raised.exception, error)
+            self.assertEqual(run.call_count, 2)
+            first, second = run.call_args_list
+            self.assertEqual(first.args, second.args)
+            for call in run.call_args_list:
+                self.assertIsNone(call.kwargs['timeout'])
+                self.assertIn('http.lowSpeedTime=0', call.args[0])
+
+    def test_unlimited_mode_preserves_interrupt_and_permanent_error_stop(self):
+        for error in (KeyboardInterrupt(), subprocess.CalledProcessError(128, 'fixture', stderr='certificate verify failed')):
+            with self.subTest(error=type(error).__name__), \
+                    patch.dict(os.environ, {'OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS': '0'}), \
+                    patch.object(runner, 'run', side_effect=error) as run, redirect_stdout(io.StringIO()):
+                with self.assertRaises(type(error)):
+                    self.fetch()
+            run.assert_called_once()
+
+    def test_unlimited_mode_is_not_persisted_and_local_checks_remain_bounded(self):
+        with patch.dict(os.environ, {}, clear=True), patch.object(runner, 'run') as run, \
+                redirect_stdout(io.StringIO()):
+            with patch.dict(os.environ, {'OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS': '0'}):
+                self.fetch()
+                with patch.object(helper.subprocess, 'run') as local:
+                    local.return_value.stdout = PIN
+                    self.assertEqual(helper.git(Path('/fixture'), 'rev-parse', 'HEAD'), PIN)
+                self.assertEqual(local.call_args.kwargs['timeout'], 180)
+            self.fetch()
+        self.assertIsNone(run.call_args_list[0].kwargs['timeout'])
+        self.assertAlmostEqual(run.call_args_list[1].kwargs['timeout'], 900, delta=1)
+        self.assertIn('http.lowSpeedTime=120', run.call_args_list[1].args[0])
 
     def test_nontransport_errors_are_not_retried_or_reported_success(self):
         for text in ('', 'fatal: not our ref', 'Authentication failed', 'certificate verify failed',
