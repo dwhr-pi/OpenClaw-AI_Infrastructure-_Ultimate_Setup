@@ -2,6 +2,23 @@
 
 Stand: 31.10.2026. Keine Merge- oder Produktionsfreigabe.
 
+## PR 31: Generator-Korrektur vom 23.11.2026
+
+Der Quellen-Auditgenerator erzeugte erneut aktive Repository-Links aus historischen,
+bereits als Code dokumentierten Originaladressen und Beispiel-Platzhaltern.
+Das erzeugte elf HTTP-404-Fehler im generierten Bericht. Alle erkannten Repositorynamen
+und Fundstellen bleiben im Inventar, aber ausschliesslich in Code genannte Adressen
+werden nicht mehr zu neuen Live-Links aufgewertet. Eine aktive Prosa-Fundstelle verhindert
+diese Code-only-Darstellung; die bestehenden genehmigten Einzelklassifizierungen bleiben erhalten.
+Die Herkunftstrennung ist lexikalisch, keine neue Verifikation oder vollstaendiger Markdown-Parser.
+Die Originaldokumente bleiben vollstaendig im unveraenderten Link-Gate.
+
+Ein weiterer historischer Commit-Link mit altem Repositorynamen scheiterte mit HTTP 503.
+Der korrigierte Link verwendet denselben vollen Commit unter dem kanonischen Namen;
+die alte Adresse und der CI-Befund bleiben im Review vom 02.11.2026 erhalten.
+[Einzelbefunde, Originaladressen und Pruefgrenzen](CI_PR31_REFERENCE_REVIEW_2026-11-23.json).
+Keine neue Quellenfreigabe, Domain-Ausnahme, Status-Aufweichung oder Retry-Erweiterung.
+
 ## Folgepruefung 20.11.2026: Prepaid-Hoster HTTP 404
 
 Die beiden Linkchecks zu `f25b7fb` meldeten jeweils genau dieselbe alte Prepaid-Hoster-Testserverseite

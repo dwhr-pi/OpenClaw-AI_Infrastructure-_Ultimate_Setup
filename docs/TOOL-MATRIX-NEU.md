@@ -3,7 +3,7 @@
 Quelle: Haupt-Registry `config/tools.yml`. Erzeugt durch
 `python3 -I -B scripts/quality/tool_truth_table.py --check`; nicht manuell bearbeiten.
 
-Inventar: **440 Tools**. Datei vorhanden bedeutet weder installierbar noch installiert.
+Inventar: **441 Tools**. Datei vorhanden bedeutet weder installierbar noch installiert.
 Kein Tool wird durch diese Offline-Inventur als laufende Runtime oder stabil abgenommen.
 
 Status ist die unveraenderte Registry-Angabe. Auch `stable` ist kein Testnachweis.
@@ -307,6 +307,7 @@ Pruefumfang und Nachweisgrenzen: [Review](REVIEW-2026-11-11.md).
 | opendkim | [Datei](../scripts/tools/planned_tool_stub_install.sh) | nicht zugeordnet | nicht zugeordnet | [Datei](../docs/tools/registry/opendkim.md) | DOKU-ONLY | planned | nicht eingetragen | nicht eingetragen | [Datei](../scripts/tools/planned_tool_stub_uninstall.sh) |
 | opendmarc | [Datei](../scripts/tools/planned_tool_stub_install.sh) | nicht zugeordnet | nicht zugeordnet | [Datei](../docs/tools/registry/opendmarc.md) | DOKU-ONLY | planned | nicht eingetragen | nicht eingetragen | [Datei](../scripts/tools/planned_tool_stub_uninstall.sh) |
 | openhands | [Datei](../scripts/tools/openhands_install.sh) | nicht zugeordnet | nicht zugeordnet | [Datei](../docs/agents/LOCAL_CODING_WORKBENCH.md) | WIDERSPRUCH | experimental | [Datei](../scripts/tools/openhands_doctor.sh) | [Datei](../scripts/tools/openhands_update.sh) | [Datei](../scripts/tools/openhands_uninstall.sh) |
+| openjarvis | [Datei](../scripts/tools/openjarvis_install.sh) | nicht zugeordnet | nicht zugeordnet | [Datei](../docs/tools/openjarvis.md) | STUB | experimental | [Datei](../scripts/tools/openjarvis_doctor.sh) | [Datei](../scripts/tools/openjarvis_update.sh) | [Datei](../scripts/tools/openjarvis_uninstall.sh) |
 | openlit | [Datei](../scripts/tools/openlit_install.sh) | nicht zugeordnet | nicht zugeordnet | [Datei](../docs/tools/registry/openlit.md) | STUB | nicht angegeben | nicht eingetragen | nicht eingetragen | [Datei](../scripts/tools/openlit_uninstall.sh) |
 | openmontage | [Datei](../scripts/tools/openmontage_install.sh) | nicht zugeordnet | nicht zugeordnet | [Datei](../docs/tools/openmontage.md) | STUB | experimental | [Datei](../scripts/tools/openmontage_doctor.sh) | [Datei](../scripts/tools/openmontage_update.sh) | [Datei](../scripts/tools/openmontage_uninstall.sh) |
 | openscap | [Datei](../scripts/tools/planned_tool_stub_install.sh) | nicht zugeordnet | nicht zugeordnet | [Datei](../docs/tools/registry/openscap.md) | DOKU-ONLY | planned | nicht eingetragen | nicht eingetragen | [Datei](../scripts/tools/planned_tool_stub_uninstall.sh) |

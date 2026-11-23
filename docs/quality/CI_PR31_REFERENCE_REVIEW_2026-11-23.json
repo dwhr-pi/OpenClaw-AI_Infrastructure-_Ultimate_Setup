@@ -1,0 +1,45 @@
+{
+  "review_date": "2026-11-23",
+  "reviewed_commit": "62fdd5fcb2f83f3e41b49c096a98f6b7ce4851ba",
+  "pull_request": 31,
+  "workflow_run_id": 45007687054,
+  "job_id": 137162837218,
+  "scope": "Preserve existing code/example provenance in generated audit output; no new source reclassification or checker exceptions.",
+  "generated_file": "docs/TOOL_SETUP_AUDIT.md",
+  "references": [
+    {"original_url": "https://github.com/bminor/bash", "ci_status": 404, "independent_get_status": 404},
+    {"original_url": "https://github.com/canonical/ufw", "ci_status": 404, "independent_get_status": 404},
+    {"original_url": "https://github.com/cheahjs/free-llm-api-resources", "ci_status": 404, "independent_get_status": 404},
+    {"original_url": "https://github.com/deinname/fingpt", "ci_status": 404, "kind": "example-placeholder"},
+    {"original_url": "https://github.com/dwhr-pi/content-multiplier", "ci_status": 404},
+    {"original_url": "https://github.com/flowiseai/flowisechatbot", "ci_status": 404, "independent_get_status": 404},
+    {"original_url": "https://github.com/microsoft/typescript-node-starter", "ci_status": 404},
+    {"original_url": "https://github.com/openclaw/clawbake", "ci_status": 404},
+    {"original_url": "https://github.com/owner/repository", "ci_status": 404, "kind": "example-placeholder"},
+    {"original_url": "https://github.com/till-schaefer/jarvis", "ci_status": 404},
+    {"original_url": "https://github.com/username/huginn", "ci_status": 404, "kind": "example-placeholder"}
+  ],
+  "preserved_history": [
+    {"original_url": "https://www.gnu.org/software/bash/", "evidence": "docs/quality/UNVERIFIED_GNU_REFERENCES_2026-10-30.json"},
+    {"original_url": "https://github.com/modelcontextprotocol/server-sqlite", "evidence": "docs/quality/EXTERNAL_LINK_POLICY.md"},
+    {"original_url": "https://github.com/modelcontextprotocol/server-postgres", "evidence": "docs/quality/EXTERNAL_LINK_POLICY.md"},
+    {"original_url": "https://github.com/modelcontextprotocol/server-git", "evidence": "docs/quality/EXTERNAL_LINK_POLICY.md"},
+    {"original_url": "https://github.com/modelcontextprotocol/server-filesystem", "evidence": "docs/quality/EXTERNAL_LINK_POLICY.md"}
+  ],
+  "commit_link": {
+    "original_url": "https://github.com/dwhr-pi/VPS-_Kubernate-_Ollama_OpenClaw_installation/commit/1e04abb55d57648b02d19d406edd1519eceecdd4",
+    "ci_status": 503,
+    "canonical_url": "https://github.com/dwhr-pi/OpenClaw-AI_Infrastructure-_Ultimate_Setup/commit/1e04abb55d57648b02d19d406edd1519eceecdd4",
+    "verification_api": "https://api.github.com/repos/dwhr-pi/OpenClaw-AI_Infrastructure-_Ultimate_Setup/git/commits/1e04abb55d57648b02d19d406edd1519eceecdd4",
+    "verified_sha": "1e04abb55d57648b02d19d406edd1519eceecdd4",
+    "verified_subject": "Add hybrid production review examples",
+    "file": "docs/_API-Keys/reviews/2026-11-02.md"
+  },
+  "limitations": [
+    "HTTP 404 does not establish deletion, license status or the absence of private content.",
+    "Only four repository URLs received a new independent GET; the other repository statuses are CI observations.",
+    "Code-only provenance is not a source availability or content review. Any active source-document link remains checked.",
+    "The canonical commit page returned only a limited HTML view; commit identity and subject were separately read through the public GitHub API.",
+    "No installer source URLs, pins, licenses, credentials, services or signed release were changed."
+  ]
+}

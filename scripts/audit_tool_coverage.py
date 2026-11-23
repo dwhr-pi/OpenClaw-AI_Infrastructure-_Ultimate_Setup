@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 import re
 import shlex
+import textwrap
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,6 +32,25 @@ def repos(text):
         if owner.lower() not in {"topics", "orgs", "settings", "features"}:
             result.add(f"{owner}/{name}".lower())
     return result
+
+
+def prose_repos(text):
+    """Do not promote code examples into new live links; this is not a link checker."""
+    lines = []
+    fence = None
+    for line in text.splitlines():
+        if fence:
+            if re.fullmatch(r' {0,3}' + re.escape(fence[0]) + '{' + str(len(fence)) + r',}\s*', line):
+                fence = None
+            continue
+        start = re.match(r' {0,3}(`{3,}|~{3,})(.*)$', line)
+        if start and (start[1][0] != '`' or '`' not in start[2]):
+            fence = start[1]
+            continue
+        if not line.startswith(('    ', '\t')):
+            lines.append(line)
+    prose = re.sub(r'(?P<ticks>`+)(?!`)[\s\S]*?(?<!`)(?P=ticks)(?!`)', '', '\n'.join(lines))
+    return repos(prose)
 
 
 def local_file(root, relative):
@@ -79,6 +99,7 @@ def audit(root=ROOT):
     chains = json.loads((root / "config/development_toolchains.json").read_text(encoding="utf-8"))["tools"]
     recipes = json.loads((root / "config/development_installers.json").read_text(encoding="utf-8"))["recipes"]
     documented = defaultdict(set)
+    prose_documented = defaultdict(set)
     doc_count = 0
     for path in sorted((root / "docs").rglob("*.md")):
         if path.is_symlink() or any(p.is_symlink() for p in path.parents):
@@ -87,8 +108,11 @@ def audit(root=ROOT):
         if relative == REPORT:
             continue
         doc_count += 1
-        for repo in repos(path.read_text(encoding="utf-8")):
+        text = path.read_text(encoding="utf-8")
+        for repo in repos(text):
             documented[repo].add(relative)
+        for repo in prose_repos(text):
+            prose_documented[repo].add(relative)
 
     rows, matched_menu = [], set()
     source_matches = defaultdict(set)
@@ -130,7 +154,8 @@ def audit(root=ROOT):
         chain_rows.append({"id": tool["id"], "name": tool["name"],
                            "mode": recipe.get("mode", "Rezept fehlt") if recipe else "Rezept fehlt",
                            "missing_files": missing})
-    refs = [{"repo": repo, "docs": sorted(paths), "matches": sorted(source_matches.get(repo, set()))}
+    refs = [{"repo": repo, "docs": sorted(paths), "matches": sorted(source_matches.get(repo, set())),
+             "prose_docs": sorted(prose_documented.get(repo, set()))}
             for repo, paths in sorted(documented.items())]
     counts = {"docs": doc_count, "registry": len(rows), "menu": len(names),
               "registry_without_menu": sum(not t["menu"] for t in rows),
@@ -164,6 +189,19 @@ def unverified_repositories(root):
     return {row['original_url']: date for row in review['references']
             if row.get('classification') == 'unverified-original-reference'
             and re.fullmatch(r'https://github\.com/[\w.-]+/[\w.-]+', row['original_url'])}
+
+
+def preserved_history(root):
+    path = Path(root) / 'docs/quality/CI_PR31_REFERENCE_REVIEW_2026-11-23.json'
+    if not path.is_file():
+        return []
+    if path.is_symlink():
+        raise ValueError('Verlinkter Quellenbericht abgelehnt.')
+    rows = json.loads(path.read_text(encoding='utf-8')).get('preserved_history', [])
+    for row in rows:
+        if not re.fullmatch(r'https://[^\s`<>]+', row['original_url']):
+            raise ValueError('Ungueltige historische Originaladresse.')
+    return rows
 
 
 def markdown(data, root=ROOT):
@@ -210,17 +248,37 @@ def markdown(data, root=ROOT):
     lines += ["", "## Dokumentierte GitHub-Quellen", "",
               "Vollstaendige Liste der erkannten Repository-URLs. Bis zu drei Fundstellen pro Quelle;",
               "mit --format json sind alle Fundstellen verfuegbar. Leere Zuordnung ist keine Installationszusage.", "",
+              "Nur in Codebeispielen genannte Repository-Adressen bleiben Code, statt neue Live-Links zu erzeugen.",
+              "Diese lexikalische Herkunftstrennung ist keine Inhaltspruefung und ersetzt nicht den Markdown-Linkchecker.", "",
               "| Quelle | Zuordnung | Dokumentationsfundstellen |", "|---|---|---|"]
     for t in data["documentation_repositories"]:
         docs = ", ".join(f"[{p}]({Path(p).relative_to('docs').as_posix()})" for p in t["docs"][:3])
         url = 'https://github.com/' + t['repo']
         reference = (f"`{url}` (unverifiziert, {unverified[url]})" if url in unverified
+                     else f"`{url}` (Code-/Beispielreferenz)" if not t.get('prose_docs', t['docs'])
                      else f"[{t['repo']}]({url})")
         lines.append(f"| {reference} | {cell('; '.join(t['matches']) or 'Keine direkte Zuordnung; manuell pruefen')} | {docs} |")
+    history = preserved_history(root)
+    if history:
+        lines += ['', '## Erhaltene Originaladressen', '',
+                  'Historische, unverifizierte Originalreferenz; kein neuer Verfuegbarkeitsnachweis.',
+                  'Diese bereits dokumentierten Adressen bleiben auch nach Regenerierung erhalten.', '']
+        lines += ['- `' + row['original_url'] + '`' for row in history]
     lines += ["", "## Strukturfehler", "",
               "Doppelte Registry-IDs: " + (", ".join(data["duplicate_registry_ids"]) or "keine"),
               "", "Doppelte Menue-Keys: " + (", ".join(data["duplicate_menu_keys"]) or "keine"), ""]
-    return "\n".join(lines)
+    wrapped = []
+    in_code = False
+    for line in lines:
+        if line.startswith('```'):
+            in_code = not in_code
+        if in_code or line.startswith(('|', '```')):
+            wrapped.append(line)
+        else:
+            wrapped.extend(textwrap.wrap(line, width=120, break_long_words=False,
+                                         break_on_hyphens=False,
+                                         subsequent_indent='  ' if line.startswith('- ') else '') or [''])
+    return "\n".join(wrapped)
 
 
 def main():
