@@ -3770,24 +3770,24 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 - `tests/test_native_candidate_dispatch.py:19`
   Prueffall: `test_every_requested_adapter_is_wired_to_exact_reviewed_recipe`
-- `tests/test_native_candidate_dispatch.py:35`
+- `tests/test_native_candidate_dispatch.py:36`
   Prueffall: `test_all_backends_reject_windows_before_packages_or_network`
-- `tests/test_native_candidate_dispatch.py:45`
+- `tests/test_native_candidate_dispatch.py:46`
   Prueffall: `test_unreviewed_adapter_path_is_never_imported`
-- `tests/test_native_candidate_dispatch.py:54`
+- `tests/test_native_candidate_dispatch.py:55`
   Prueffall: `test_generic_resources_fail_before_adapter_or_download`
-- `tests/test_native_candidate_dispatch.py:63`
+- `tests/test_native_candidate_dispatch.py:64`
   Prueffall: `test_adapter_needs_real_owned_artifacts_not_a_clone_or_success_message`
-- `tests/test_native_candidate_dispatch.py:73`
+- `tests/test_native_candidate_dispatch.py:74`
   Prueffall: `test_doctor_does_not_turn_build_receipts_into_runtime_acceptance`
 
 ## tests/test_native_candidate_sync.py
 
 - `tests/test_native_candidate_sync.py:16`
   Prueffall: `test_allowlist_covers_every_remaining_requested_tool_once`
-- `tests/test_native_candidate_sync.py:22`
+- `tests/test_native_candidate_sync.py:29`
   Prueffall: `test_unknown_fragment_cannot_change_catalog`
-- `tests/test_native_candidate_sync.py:30`
+- `tests/test_native_candidate_sync.py:37`
   Prueffall: `test_render_is_read_only_and_wrappers_use_native_lifecycle`
 
 ## tests/test_native_cleanup.py
@@ -6182,22 +6182,30 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_tool_coverage_audit.py:66`
   Prueffall: `test_sources_deduplicate_normalize_and_keep_provenance`
 - `tests/test_tool_coverage_audit.py:77`
-  Prueffall: `test_bare_github_references_are_included_but_topics_are_not`
-- `tests/test_tool_coverage_audit.py:82`
-  Prueffall: `test_missing_recipe_and_duplicates_reported`
-- `tests/test_tool_coverage_audit.py:92`
-  Prueffall: `test_report_deterministic_local_links_and_scope`
-- `tests/test_tool_coverage_audit.py:101`
-  Prueffall: `test_read_only_scan_does_not_change_files`
-- `tests/test_tool_coverage_audit.py:107`
-  Prueffall: `test_approved_exact_unverified_source_is_not_reactivated_by_regeneration`
-- `tests/test_tool_coverage_audit.py:117`
-  Prueffall: `test_unapproved_review_never_reclassifies_sources`
+  Prueffall: `test_code_only_references_keep_provenance_without_becoming_live_links`
+- `tests/test_tool_coverage_audit.py:94`
+  Prueffall: `test_active_occurrence_is_not_hidden_by_code_occurrences`
+- `tests/test_tool_coverage_audit.py:100`
+  Prueffall: `test_historical_original_urls_survive_regeneration_as_code`
+- `tests/test_tool_coverage_audit.py:113`
+  Prueffall: `test_report_prose_respects_markdown_line_limit`
 - `tests/test_tool_coverage_audit.py:122`
-  Prueffall: `test_native_registration_adds_allowlisted_keys_without_duplicate_existing`
-- `tests/test_tool_coverage_audit.py:132`
-  Prueffall: `test_unused_native_allowlist_does_not_change_menu_inventory`
+  Prueffall: `test_bare_github_references_are_included_but_topics_are_not`
+- `tests/test_tool_coverage_audit.py:127`
+  Prueffall: `test_missing_recipe_and_duplicates_reported`
 - `tests/test_tool_coverage_audit.py:137`
+  Prueffall: `test_report_deterministic_local_links_and_scope`
+- `tests/test_tool_coverage_audit.py:146`
+  Prueffall: `test_read_only_scan_does_not_change_files`
+- `tests/test_tool_coverage_audit.py:152`
+  Prueffall: `test_approved_exact_unverified_source_is_not_reactivated_by_regeneration`
+- `tests/test_tool_coverage_audit.py:162`
+  Prueffall: `test_unapproved_review_never_reclassifies_sources`
+- `tests/test_tool_coverage_audit.py:167`
+  Prueffall: `test_native_registration_adds_allowlisted_keys_without_duplicate_existing`
+- `tests/test_tool_coverage_audit.py:177`
+  Prueffall: `test_unused_native_allowlist_does_not_change_menu_inventory`
+- `tests/test_tool_coverage_audit.py:182`
   Prueffall: `test_shell_expressions_are_not_menu_names_and_never_executed`
 
 ## tests/test_tool_menu_order.py
@@ -6986,4 +6994,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3131**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3135**. Kein Nachweis bestandener Tests.

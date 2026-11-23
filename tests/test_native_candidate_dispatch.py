@@ -20,7 +20,8 @@ class CandidateDispatchTests(unittest.TestCase):
         entries = []
         for path in sorted((ROOT / 'config/native-candidates').glob('*.json')):
             entries += json.loads(path.read_text(encoding='utf-8'))['tools']
-        self.assertEqual(len(entries), 20)
+        self.assertEqual(len(entries), 21)
+        self.assertEqual(sum(spec['id'] == 'openjarvis' for spec in entries), 1)
         self.assertEqual({s['id'] for s in entries}, set(engine.CANDIDATE_BACKENDS))
         for spec in entries:
             self.assertEqual(engine.TOOLS[spec['id']], spec)

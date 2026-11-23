@@ -239,8 +239,8 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 - `scripts/audio/openclaw_dejavu_mcp_server.py:228`
 - `scripts/audio/run_full_song.py:57`
 - `scripts/audio/run_full_song.py:84`
-- `scripts/audit_tool_coverage.py:226`
-- `scripts/audit_tool_coverage.py:241`
+- `scripts/audit_tool_coverage.py:284`
+- `scripts/audit_tool_coverage.py:299`
 - `scripts/auto_update.sh:39`
 - `scripts/benchmarks/install_lab.py:315`
 - `scripts/benchmarks/install_lab.py:382`
