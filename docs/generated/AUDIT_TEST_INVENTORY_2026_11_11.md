@@ -4817,15 +4817,15 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_no_metrics_targets_are_enabled_by_default`
 - `tests/test_platform_gap_additions.py:143`
   Prueffall: `test_every_native_manifest_tool_has_a_recovery_scenario`
-- `tests/test_platform_gap_additions.py:151`
+- `tests/test_platform_gap_additions.py:154`
   Prueffall: `test_new_documentation_links_resolve`
-- `tests/test_platform_gap_additions.py:161`
+- `tests/test_platform_gap_additions.py:164`
   Prueffall: `test_velero_renderer_never_applies_and_requires_real_digest_shapes`
-- `tests/test_platform_gap_additions.py:189`
+- `tests/test_platform_gap_additions.py:192`
   Prueffall: `test_changed_shell_files_parse_without_execution`
-- `tests/test_platform_gap_additions.py:198`
+- `tests/test_platform_gap_additions.py:201`
   Prueffall: `test_loading_dialog_has_translated_yes_no_for_all_ten_languages`
-- `tests/test_platform_gap_additions.py:238`
+- `tests/test_platform_gap_additions.py:241`
   Prueffall: `test_language_pack_overrides_remain_compatible_and_do_not_leak_to_english`
 
 ## tests/test_platform_health.py
