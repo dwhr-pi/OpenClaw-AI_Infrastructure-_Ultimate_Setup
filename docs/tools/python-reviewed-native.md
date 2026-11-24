@@ -1,4 +1,8 @@
-# Phoenix, Checkov und Ragas nativ installieren
+# Phoenix, Checkov, Ragas und OpenJarvis nativ installieren
+
+[OpenJarvis](openjarvis.md) nutzt denselben geprueften Source-Wheel-Lifecycle,
+aber ausschliesslich fuer die CLI-/SDK-Basis. GUI, Desktop-Paket und Rust-Erweiterung
+sind getrennte Ausbaustufen; kein Quickstart-Autostart oder automatischer Modelldownload.
 
 Die drei Menueeintraege erhalten private Source-Wheel-Installer statt Dokumentations-Platzhalter.
 Quellen, vollstaendige Pins, Lizenz und SHA256-Vertraege stehen im
@@ -26,9 +30,137 @@ Installationsziel: `~/.openclaw_ultimate_user_data/tools/TOOL/native-github/`.
 Die `venv`, Source-Wheels, Hash-Locks, SBOM und Importprobe bleiben im privaten Toolverzeichnis.
 Checkov startet keinen IaC-Scan; Ragas ruft weder LLM-Judges noch Provider auf.
 Die begrenzte Python-Probe blockiert Netzwerk-/Unterprozessaufrufe vor dem Import.
+Dabei bleibt `subprocess.Popen` als Klasse erhalten, damit Typannotationen und Bibliotheksimporte funktionieren.
+Ein CPython-Audit-Hook und Socket-Sperren verhindern die erfassten Prozess-/Netzwerkaufrufe;
+dies ist keine Betriebssystem-Sandbox fuer nicht vertrauenswuerdigen Code.
+Buildschritte zeigen laufende Ausgabe, Prozess-ID und regelmaessige Lebenszeichen statt still zu warten.
+Scheitert die 45-Sekunden-Importprobe, protokolliert sie begrenzte, bereinigte Fehlerausgabe und bleibt fehlgeschlagen.
+Im gemeldeten Phoenix-Versuch fehlte diese Ausgabe; die konkrete Importursache ist deshalb noch nicht belegt.
 Phoenix startet keinen HTTP-/Tracing-Dienst. Auth, Datenbank, Trace-Redaction und Betrieb sind separat abzunehmen.
 
 ## Pruefung und Lifecycle
+
+### Ragas: pyarrow-Download-Timeout (20.11.2026)
+
+Der Lauf `20261120_163907` scheiterte beim Download des etwa 52,5 MiB grossen
+`pyarrow==26.0.1`-Wheels nach dem 300s-HTTP-Lesefenster. Die verschachtelte
+Extraktionsmeldung nennt ausdruecklich einen Netzwerk-Timeout, nicht einen
+belegten Python-/Quellcodefehler. Ein allgemeiner I/O-Fehler reicht nicht fuer einen Retry.
+
+Nur bei ausdruecklichem Wheel-Download-Timeout wiederholt der Installer die
+hashgesperrte `uv pip install`-Phase hoechstens einmal. Der letzte Versuch nutzt
+900s HTTP-Lesezeitlimit und einen statt zwei paralleler Downloads. Beide
+Versuche teilen ein Installationsbudget von 7200s; die Aufloesung, der
+Source-Wheel-Build und die Lockdatei werden nicht wiederholt. Derselbe private
+Cache bleibt waehrend dieses Versuchs erhalten, ohne neue Persistenz ausserhalb
+des bisherigen Besitz-/Rollback-Bereichs. Kein garantierter Download-Resume.
+Verbindungsaufbau bleibt 30s, uv-interne HTTP-Wiederholungen bleiben auf drei begrenzt.
+
+Hash-, Zertifikats-, Zugriffs- und Speicherfehler bleiben sofort blockierend,
+auch wenn zusaetzlich ein Timeout genannt wird. Kein neuer Index/Mirror,
+kein Hash-/TLS-Fallback, keine Paketversionsaenderung und kein dritter Versuch.
+Ein Prozess-Timeout oder Benutzerabbruch wird nicht wiederholt. Ein erneuter
+Fehler verhindert Probe und Erfolgsmarker; bisherige Nutzerdaten bleiben erhalten.
+Die [offizielle uv-Referenz](https://docs.astral.sh/uv/reference/environment/)
+beschreibt HTTP-Lesezeitlimit und Downloadparallelitaet. Offline-Fixtures
+belegen die Grenzen, nicht eine erfolgreiche WSL-Installation oder Evaluation.
+
+### Ragas 0.3.9 und LangChain-Kompatibilitaet (19.11.2026)
+
+Der erneute WSL-Lauf konnte `hf-xet` und alle 95 Pakete laden. Erst die geschuetzte
+Importprobe scheiterte: Ragas importiert `langchain_community.chat_models.vertexai`,
+das im installierten Community-Paket 0.4.2 fehlt. `uv pip check` prueft deklarierte
+Paketmetadaten, nicht die Existenz jedes importierten Moduls. Der
+[gepruefte Ragas-Quellstand][ragas-legacy-source]
+importiert diese alte API ohne passende obere LangChain-Versionsgrenzen.
+
+Nur fuer Ragas 0.3.9 ergaenzt der Installer deshalb vor der Hash-Lock-Erzeugung:
+
+```text
+langchain-community==0.3.31
+langchain>=0.3.27,<1.0
+langchain-core>=0.3.78,<1.0
+langchain-openai>=0.3,<1.0
+```
+
+Das [offizielle Community-Wheel 0.3.31](https://pypi.org/project/langchain-community/0.3.31/)
+wurde ohne Installation oder Ausfuehrung nach Groesse und SHA256 geprueft;
+es enthaelt das benoetigte Modul. SHA256:
+`1c727e3ebbacd4d891b07bd440647668001cea3e39cbe732499ad655ec5cb569`.
+Die Quelle von Ragas bleibt unveraendert gepinnt; kein Import-Shim, kein Ausblenden von Fehlern.
+Hashes fuer die tatsaechlich aufgeloesten Pakete werden weiterhin vor Installation erzeugt
+und erzwungen. Der Buildnachweis erfasst die zusaetzlichen Anforderungen; die Offline-Importprobe
+bleibt 45 Sekunden begrenzt und sperrt Netzwerk-/Prozessaufrufe. Andere Tools erhalten diese Grenzen nicht.
+
+**Legacy-Kompatibilitaet, keine Sicherheitsfreigabe:** LangChain Community ist laut PyPI archiviert.
+Dieser Bereich repariert die belegte API-Unvertraeglichkeit des bestehenden experimentellen Pins,
+beweist aber weder einen erfolgreichen kompletten WSL-Build noch Schwachstellenfreiheit.
+Ein spaeteres Ragas-Upgrade mit gepflegten Providerpaketen und eigener Abnahme bleibt erforderlich.
+Keine Evaluation, Cloudanmeldung oder LLM-Anfrage wird dabei gestartet.
+
+### Langsame Paketdownloads (19.11.2026)
+
+Der gemeldete Ragas-Lauf scheiterte beim Wheel-Download von `hf-xet==1.8.0`
+auf `files.pythonhosted.org` durch einen HTTP-Timeout, nicht durch einen belegten
+Python-Kompatibilitaetsfehler. Der gemeinsame Installer fuer Ragas, Phoenix und Checkov
+setzt jetzt feste uv-Budgets: 300 Sekunden HTTP-Lesezeitlimit, 30 Sekunden Verbindungsaufbau,
+hoechstens drei HTTP-Wiederholungen und zwei statt vier parallele Downloads.
+Die Werte erscheinen im Installationsprotokoll; geerbte uv-Netzwerkoptionen werden nicht uebernommen.
+Diese Parameter sind in der [offiziellen uv-Referenz](https://docs.astral.sh/uv/reference/environment/)
+dokumentiert. Das Prozesslimit bleibt 7200 Sekunden je Python-Buildschritt, nicht je Gesamtinstallation.
+Fuer Phoenix-Frontend-Schritte gilt die nachstehende Ausnahme.
+Keine zusaetzliche Wiederholung des gesamten Builds, kein unsicherer Mirror, TLS-Bypass
+oder Verzicht auf `--require-hashes` und reine Wheel-Abhaengigkeiten.
+Ein weiterhin nicht erreichbarer Paketserver bleibt ein Fehler; die Aenderung garantiert
+keinen Download bei DNS-/Netzausfall. Kein Modell-Download oder Provider-Aufruf.
+Offline-Tests pruefen die Budgets, Umgebungsfilterung und den Abbruch ohne Erfolgsnachweis;
+die erneute Installation unter WSL ist separat zu testen.
+
+### Phoenix-Frontend ohne Zwei-Stunden-Abbruch (21.11.2026)
+
+Ein gemeldeter WSL-Lauf wurde nach genau 7200 Sekunden bei
+`pnpm install --frozen-lockfile --ignore-scripts` durch unser Prozesslimit beendet.
+Ob der Prozess noch Fortschritt machte oder bereits hing, belegen die Heartbeats nicht.
+
+Fuer die drei Phoenix-Frontend-Schritte `pnpm install`, `pnpm rebuild esbuild` und
+`pnpm run build` gibt es jetzt kein automatisches Gesamtzeitlimit mehr.
+Das Log meldet PID, Laufzeit und ausdruecklich `kein automatisches Zeitlimit`.
+Ein haengender Prozess kann dadurch unbegrenzt weiterlaufen; Abbruch mit **Strg+C**
+bleibt moeglich und wird nicht als Erfolg behandelt. Unter POSIX wird beim Abbruch
+die gestartete Prozessgruppe beendet. Nichtnull-Exitcodes bleiben Fehler.
+
+Unveraendert bleiben der Quellpin, das eingefrorene pnpm-Lockfile, die gezielte
+esbuild-Freigabe, Integritaets-/Speicherpruefungen und der geschuetzte Rollback.
+Git-, Python-Paketdownload-, Verbindungs- und Importprobe-Limits werden hierdurch
+nicht entfernt; auch pnpm-interne Netzwerkfehler sind weiterhin moeglich.
+Dies behebt keine DNS-Stoerung und ist keine erfolgreiche Phoenix-Laufzeitabnahme.
+
+### Ragas: GitPython in der Offline-Importprobe (21.11.2026)
+
+Ein WSL-Lauf installierte 92 Pakete und bestand `uv pip check`, scheiterte danach aber
+beim Ragas-Import: GitPython wollte bereits bei der Initialisierung einen Git-Prozess
+zur Versionspruefung starten. Das ist ein Konflikt mit unserer Prozesssperre, kein
+belegter Download- oder Python-Versionsfehler.
+
+Die Probe setzt ausschliesslich fuer Ragas und nur im kurzlebigen Pruefprozess
+`GIT_PYTHON_REFRESH=quiet`. Ein versuchter `subprocess.Popen` bleibt vor dem Start
+blockiert, meldet dort aber `PermissionError`: Diesen Fall behandelt die
+[GitPython-3.2.1-Initialisierung][gitpython-refresh] als nicht verfuegbares Git.
+Der [Modulimport][gitpython-import] kann damit ohne gestarteten Git-Prozess abschliessen.
+Es werden weder GitPython/Ragas-Quellen veraendert noch Module oder Rueckgabewerte vorgetaeuscht.
+
+Die Probe verlangt weiterhin Ragas 0.3.9, importierbare `evaluate`/`aevaluate` und
+explizit `git.GIT_OK is False`. Netzwerk, Shell, andere Prozesswege und Git-Kommandos
+bleiben gesperrt; `subprocess.Popen` bleibt als Klasse fuer Imports erhalten.
+Die 45-Sekunden-Grenze bleibt bestehen. Der Bericht vermerkt `git_runtime_tested=false`:
+Git-basierte Experimentversionierung und echte Evaluation sind nicht abgenommen.
+Im spaeteren normalen Ragas-Betrieb wird dieser Probe-Schalter nicht gesetzt.
+Ein erfolgreicher Gesamtlauf unter Linux/WSL ist separat nachzuweisen.
+
+[gitpython-refresh]: https://github.com/gitpython-developers/GitPython/blob/3.2.1/git/cmd.py
+[gitpython-import]: https://github.com/gitpython-developers/GitPython/blob/3.2.1/git/__init__.py
+
+### Lifecycle-Befehle
 
 ```bash
 bash scripts/tools/phoenix_status.sh
@@ -42,6 +174,8 @@ kein stilles Wechseln auf einen aktuellen Branch. Deinstallation entfernt nur un
 belegte eigene Programmdateien, keine fremden Installationen, Laufzeitdaten oder gemeinsame Toolchains.
 Ein bestandener Offline-Test ist kein erfolgreicher Ubuntu-/WSL-Build und kein Betriebsnachweis.
 Die echte Linux-Build- und Dienstabnahme steht noch aus.
+
+[ragas-legacy-source]: https://github.com/vibrantlabsai/ragas/blob/8b4653c41abf6c8f86f63397f1a960d6411c0ca9/src/ragas/llms/base.py
 
 Quellen: [Phoenix](https://github.com/Arize-ai/phoenix),
 [Checkov](https://github.com/bridgecrewio/checkov), [Ragas](https://github.com/vibrantlabsai/ragas).

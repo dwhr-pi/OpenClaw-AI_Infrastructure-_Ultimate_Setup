@@ -372,7 +372,7 @@
       "readiness": "planned",
       "auto_install": false,
       "install_mode": "github-native-build",
-      "description": "ZAP Core-JAR mit Runtime-JARs, xml/lang/db-Konfiguration und Startskripten; ohne Add-ons/Browser/Installer/JRE; kein vollstaendiges Scanprofil. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+      "description": "ZAP Core-JAR mit Runtime-JARs, xml/lang/db-Konfiguration und Startskripten; ohne Add-ons/Browser/Installer/JRE; kein vollstaendiges Scanprofil. JDK 21 und Gradle 8.13 vorhandene Basis bevorzugt; nach Zustimmung JDK-Buildpaket via apt und privates SHA256-geprueftes Gradle aus offiziellem Release. Kein Wrapper oder automatischer JDK-Download durch Gradle. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
       "install_script": "scripts/tools/owasp_zap_install.sh",
       "update_script": "scripts/tools/owasp_zap_update.sh",
       "uninstall_script": "scripts/tools/owasp_zap_uninstall.sh",
@@ -5672,7 +5672,7 @@
       "source_verified": true,
       "source_commit": "6ed6921cc2b0e03b4d74189574d2a5e71c512e97",
       "license": "AGPL-3.0-only",
-      "description": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation. Vorinstallierte Buildbasis erforderlich; kein apt/Toolchain-Download im Hook. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
+      "description": "Vaultwarden SQLite-Backend, gebuendelte SQLite; ausdruecklich ohne Web-Vault, WEB_VAULT_ENABLED=false; keine vollstaendige Browser-Installation. Vorhandenes Rust 1.99.1 bevorzugt; nach Zustimmung private offizielle Rust-Basis und Debian-/Ubuntu-Buildpakete, kein System-Rust-Wechsel. Source-Build und statische Artefaktpruefung, Linux-Build auf diesem Host nicht abgenommen; Runtime/Restore/TLS offen.",
       "check_script": "scripts/tools/vaultwarden_check.sh"
     },
     {
@@ -8760,6 +8760,31 @@
       "safety": "Nur Loopback, freigegebene Quell-Momentaufnahme, kein Docker/PyPI/CDN/Autostart.",
       "security_note": "Install/Update/Uninstall und Start brauchen --apply. Schreibgeschuetzte Dokumentansicht, keine Shell-Ausfuehrung. Keine Produktionsabnahme.",
       "updated": "2026-11-05"
+    },
+    {
+      "id": "openjarvis",
+      "name": "OpenJarvis",
+      "category": "Agents / Local-first",
+      "ports": [],
+      "status": "experimental",
+      "readiness": "planned",
+      "auto_install": false,
+      "install_mode": "github-native-build",
+      "check_type": "path",
+      "check_value": "~/.openclaw_ultimate_user_data/tools/openjarvis/native-github/build-ready.json",
+      "source": "https://github.com/open-jarvis/OpenJarvis.git",
+      "source_verified": true,
+      "source_commit": "a9e59e8770f92dd8046c2e5fcc1246eef51bb96a",
+      "license": "Apache-2.0",
+      "description": "Gepinnter nativer Python-CLI-/SDK-Basisbuild mit Lifecycle; ohne Quickstart-Autostart oder automatische Modelldownloads. GUI, Desktop-Paket und Rust-Erweiterung sind getrennte Ausbaustufen. Linux-/WSL-Buildabnahme offen; keine Inferenz oder Agentenausfuehrung.",
+      "doc": "docs/tools/openjarvis.md",
+      "website": "https://openjarvis.stanford.edu/",
+      "install_script": "scripts/tools/openjarvis_install.sh",
+      "update_script": "scripts/tools/openjarvis_update.sh",
+      "uninstall_script": "scripts/tools/openjarvis_uninstall.sh",
+      "status_script": "scripts/tools/openjarvis_status.sh",
+      "doctor_script": "scripts/tools/openjarvis_doctor.sh",
+      "check_script": "scripts/tools/openjarvis_check.sh"
     }
   ],
   "voice_tools": [

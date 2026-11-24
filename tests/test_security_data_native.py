@@ -57,8 +57,107 @@ class CandidateTests(unittest.TestCase):
             self.assertEqual(run.call_args.kwargs['stdin'], native.subprocess.DEVNULL)
 
     def test_rust_no_implicit_bootstrap(self):
-        with patch.dict(os.environ, {'NATIVE_SOURCE_RUST_TOOLCHAIN': ''}), self.assertRaises(ValueError):
+        with patch.dict(os.environ, {'NATIVE_SOURCE_RUST_TOOLCHAIN': ''}), \
+                patch.object(native.litellm_rust, 'select', side_effect=ValueError('missing')), self.assertRaises(ValueError):
             native.rust_environment(SPECS['vaultwarden'], {}, Path.cwd())
+
+    def test_vaultwarden_build_selects_exact_private_rust_without_bootstrap(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            root = base / 'private-rust'
+            (root / 'bin').mkdir(parents=True)
+            for name in ('rustc', 'cargo'):
+                (root / 'bin' / name).write_bytes(b'fixture')
+            env = {'PATH': 'original'}
+            with patch.object(native.litellm_rust, 'select', return_value=root) as select, \
+                    patch.object(native, 'versions', return_value='rustc 1.99.1 (fixture)'), \
+                    patch.object(native.litellm_rust_bootstrap, 'prepare') as bootstrap:
+                native.rust_environment(SPECS['vaultwarden'], env, base / 'native-github', toolchain_base=base)
+                select.assert_called_once_with(base, version='1.99.1')
+                bootstrap.assert_not_called()
+                self.assertEqual(env['RUSTUP_AUTO_INSTALL'], '0')
+                self.assertEqual(env['RUSTUP_TOOLCHAIN'], str(root))
+
+    def test_gradle_requires_consent_before_download(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(native.shutil, 'which', return_value=None), \
+                patch.object(native.releases, 'download') as download:
+            with self.assertRaisesRegex(ValueError, 'Zustimmung'):
+                native.zap_gradle(Path(temp), SPECS['owasp_zap'], {}, prepare=True)
+            download.assert_not_called()
+            self.assertFalse((Path(temp) / 'toolchain').exists())
+
+    def test_gradle_private_bootstrap_reuse_and_tamper(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base, env = Path(temp), {'PATH': ''}
+            def download(url, target, size, sha):
+                self.assertEqual(url, native.GRADLE_URL)
+                self.assertEqual(size, 232036537)
+                self.assertEqual(sha, native.GRADLE_SHA256)
+                with zipfile.ZipFile(target, 'w') as archive:
+                    archive.writestr('gradle-8.13/bin/gradle', '#!/bin/sh\nexit 0\n')
+                    archive.writestr('gradle-8.13/lib/fixture.jar', 'synthetic')
+            with patch.object(native.shutil, 'which', return_value=None), \
+                    patch.object(native.common, 'reserve') as reserve, \
+                    patch.object(native.releases, 'download', side_effect=download) as fetch:
+                native.zap_gradle(base, SPECS['owasp_zap'], env, approved=True, prepare=True)
+                reserve.assert_called_once_with(base, {'reserve_mb': 13312})
+                native.zap_gradle(base, SPECS['owasp_zap'], {}, prepare=False)
+                self.assertEqual(fetch.call_count, 1)
+                entry = base / 'toolchain/gradle-8.13/app/gradle-8.13/bin/gradle'
+                self.assertEqual(env['PATH'].split(os.pathsep)[0], str(entry.parent))
+                entry.write_text('modified')
+                with self.assertRaises(ValueError):
+                    native.zap_gradle(base, SPECS['owasp_zap'], {}, approved=True, prepare=True)
+                self.assertEqual(fetch.call_count, 1)
+
+    def test_gradle_failed_hash_does_not_publish(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(native.shutil, 'which', return_value=None), \
+                patch.object(native.common, 'reserve'), \
+                patch.object(native.releases, 'download', side_effect=ValueError('SHA256')):
+            with self.assertRaisesRegex(ValueError, 'SHA256'):
+                native.zap_gradle(Path(temp), SPECS['owasp_zap'], {}, approved=True, prepare=True)
+            self.assertFalse((Path(temp) / 'toolchain/gradle-8.13').exists())
+            self.assertEqual(list(Path(temp).glob('gradle-bootstrap-*')), [])
+
+    def test_gradle_contract_change_rejected_before_download(self):
+        spec = json.loads(json.dumps(SPECS['owasp_zap']))
+        spec['recipe']['gradle_distribution']['sha256'] = '0' * 64
+        with tempfile.TemporaryDirectory() as temp, patch.object(native.releases, 'download') as download:
+            with self.assertRaisesRegex(ValueError, 'Downloadvertrag'):
+                native.zap_gradle(Path(temp), spec, {}, approved=True, prepare=True)
+            download.assert_not_called()
+
+    def test_gradle_existing_exact_version_without_download(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(native.shutil, 'which', return_value='/gradle'), \
+                patch.object(native, 'versions', return_value='Gradle 8.13\n'), \
+                patch.object(native.releases, 'download') as download:
+            native.zap_gradle(Path(temp), SPECS['owasp_zap'], {}, prepare=True)
+            download.assert_not_called()
+
+    def test_zap_java_prerequisites_use_consent_gated_package_path(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(native.shutil, 'which', return_value=None), \
+                patch.object(native.Path, 'is_file', return_value=False), \
+                patch.object(native.native_build_deps, 'prepare', side_effect=ValueError('no consent')) as prepare:
+            with self.assertRaisesRegex(ValueError, 'no consent'):
+                native.zap_java(Path(temp), SPECS['owasp_zap'], {}, prepare=True)
+            prepare.assert_called_once_with(SPECS['owasp_zap'], approved=False)
+
+    def test_zap_existing_jdk_sets_private_build_environment_only(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            compiler = base / 'jdk/bin/javac'
+            compiler.parent.mkdir(parents=True)
+            compiler.write_text('fixture')
+            env = {'PATH': 'original', 'JAVA_HOME': 'incompatible-jdk'}
+            def version(args, cwd, child):
+                return 'javac 21.0.9' if args[0] == str(compiler) else 'openjdk version "21.0.9"'
+            with patch.object(native.shutil, 'which', side_effect=lambda name, **_: str(compiler) if name == 'javac' else 'java'), \
+                    patch.object(native, 'versions', side_effect=version), \
+                    patch.object(native.native_build_deps, 'prepare') as prepare:
+                native.zap_java(base, SPECS['owasp_zap'], env, approved=True, prepare=True)
+                self.assertEqual(env['JAVA_HOME'], str(compiler.parent.parent))
+                self.assertEqual(env['PATH'], 'original')
+                prepare.assert_not_called()
 
     @unittest.skipIf(os.name == 'nt', 'Windows does not preserve POSIX executable permission bits')
     def test_elf_probe_no_subprocess(self):

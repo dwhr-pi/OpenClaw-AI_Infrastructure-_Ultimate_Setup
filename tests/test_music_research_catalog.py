@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import re
 import unittest
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location('unreleased_fixture', ROOT / 'scripts/tools/helpers/unreleased_research.py')
@@ -92,6 +93,46 @@ class MusicResearchCatalog(unittest.TestCase):
         for target in re.findall(r'\]\(([^\s)]+)\)', text):
             if '://' not in target and not target.startswith('#'):
                 self.assertTrue((doc.parent / target.split('#')[0]).is_file(), target)
+
+    def test_musiclab_plan_has_local_assets_and_no_runtime_claim(self):
+        doc = ROOT / 'docs/models/SONGSAGE_MIDI_RESEARCH.md'
+        text = doc.read_text(encoding='utf-8')
+        for phrase in ('kein fertiges Modell', 'keine Originalgrafiken', 'Werkgruppen',
+                       'LoRA', 'Ollama', 'MIDI-Roundtrip', 'Wan2.2'):
+            self.assertIn(phrase, text)
+        for target in re.findall(r'\]\(([^\s)]+)\)', text):
+            if '://' not in target and not target.startswith('#'):
+                self.assertTrue((doc.parent / target.split('#')[0]).is_file(), target)
+        sample, = re.findall(r'```json\n(.*?)\n```', text, re.S)
+        self.assertEqual(json.loads(sample)['schema'], 'openclaw-musiclab-draft-1')
+        svg = ROOT / 'docs/assets/songsage-midi-architecture.svg'
+        root = ET.fromstring(svg.read_text(encoding='utf-8'))
+        self.assertEqual(root.tag, '{http://www.w3.org/2000/svg}svg')
+        self.assertNotIn('<script', svg.read_text(encoding='utf-8'))
+        for node in root.iter():
+            for attribute, value in node.attrib.items():
+                if attribute.endswith('href'):
+                    self.assertTrue(value.startswith('#'), 'No external asset requests')
+
+    def test_wan_review_distinguishes_dependencies_from_installed_music_tools(self):
+        doc = ROOT / 'docs/models/WAN22_AUDIO_MIDI_TOOLCHAIN.md'
+        text = doc.read_text(encoding='utf-8')
+        for phrase in ('pyworld', 'CosyVoice', 'HiFT', '66 Textdateien',
+                       'keine Installation', 'keinen bestehenden Setup-',
+                       'keine\nInstaller oder Buildfreigabe', 'Legacy/EOL'):
+            self.assertIn(phrase, text)
+        self.assertIn('1ea34ff48f87168174e12956e200b1d908b1c5ff', text)
+        for target in re.findall(r'\]\(([^\s)]+)\)', text):
+            if '://' not in target and not target.startswith('#'):
+                self.assertTrue((doc.parent / target.split('#')[0]).is_file(), target)
+        rows = json.loads((ROOT / 'config/tools.yml').read_text(encoding='utf-8'))['tools']
+        ids = {row['id'] for row in rows}
+        for key in ('ace_step_15', 'yue', 'musicgen', 'levo_2', 'openutau', 'diffsinger',
+                    'rvc', 'seed_vc', 'uvr5', 'ffmpeg', 'moss_music'):
+            self.assertIn(key, ids)
+        for key in ('miditok', 'mido', 'fluidsynth', 'rubberband', 'world_vocoder',
+                    'calf', 'lmms', 'ardour', 'cosyvoice'):
+            self.assertNotIn(key, ids, 'New candidate is documentation-only until a reviewed installer exists')
 
 
 if __name__ == '__main__':

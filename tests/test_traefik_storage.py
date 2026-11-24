@@ -81,6 +81,39 @@ done
 ''')
         self.assertEqual(output.splitlines(), ['MIN:0:16384', 'MIN:1:16384', 'MIN:20000:31024'])
 
+    def test_sandbox_host_reserves_match_native_recipes_and_reported_shortfall(self):
+        output = self.run_functions('''
+for key in Firecracker Kata_Containers gVisor; do
+  for HOST_MB in 14926 16384 65536; do
+    rc=0
+    preflight_tool_install_storage "$key" || rc=$?
+    printf 'RESULT:%s:%s:%s\\n' "$key" "$HOST_MB" "$rc"
+  done
+done
+''')
+        self.assertIn('Fehlend: mindestens 1458 MiB', output)
+        for key in ('Firecracker', 'Kata_Containers'):
+            self.assertIn('RESULT:' + key + ':14926:1', output)
+            self.assertIn('RESULT:' + key + ':16384:0', output)
+        self.assertIn('RESULT:gVisor:16384:1', output)
+        self.assertIn('RESULT:gVisor:65536:0', output)
+
+    def test_vaultwarden_shows_conditional_rust_reserve_without_false_toolchain_probe(self):
+        output = self.run_functions('''
+for HOST_MB in 13946 14336; do
+  rc=0
+  preflight_tool_install_storage Vaultwarden || rc=$?
+  printf 'RESULT:Vaultwarden:%s:%s\\n' "$HOST_MB" "$rc"
+done
+''')
+        self.assertIn('Falls Rust 1.99.1 fehlt', output)
+        self.assertIn('zusaetzlich 2048 MiB', output)
+        self.assertIn('mindestens 390 MiB', output)
+        self.assertEqual(output.count('Fuer einen erforderlichen Rust-Bootstrap fehlen'), 1)
+        # The menu does not know whether a compatible compiler is already present.
+        self.assertIn('RESULT:Vaultwarden:13946:0', output)
+        self.assertIn('RESULT:Vaultwarden:14336:0', output)
+
 
 if __name__ == '__main__':
     unittest.main()

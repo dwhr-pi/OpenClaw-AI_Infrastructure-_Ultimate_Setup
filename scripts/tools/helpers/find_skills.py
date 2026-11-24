@@ -71,21 +71,88 @@ def git(source, *args):
     if args and args[0] == 'fetch':
         import native_build_process
         raw = os.environ.get('OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS', '900')
-        if not re.fullmatch(r'[0-9]{3,4}', raw) or not 180 <= int(raw) <= 3600:
-            raise ValueError('OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS: 180 bis 3600 ganze Sekunden erforderlich.')
-        timeout = int(raw)
+        if raw != '0' and (not re.fullmatch(r'[0-9]{3,4}', raw) or not 180 <= int(raw) <= 3600):
+            raise ValueError('OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS: 0 ohne Zeitlimit oder 180 bis 3600 ganze Sekunden erforderlich.')
+        timeout = None if raw == '0' else int(raw)
         env = {key: value for key, value in os.environ.items() if key.upper() in {
             'PATH', 'HOME', 'USERPROFILE', 'SYSTEMROOT', 'TEMP', 'TMP', 'LANG', 'LC_ALL',
             'HTTP_PROXY', 'HTTPS_PROXY', 'NO_PROXY', 'SSL_CERT_FILE', 'SSL_CERT_DIR', 'GIT_SSL_CAINFO'}}
         env.update(GIT_TERMINAL_PROMPT='0', GIT_LFS_SKIP_SMUDGE='1',
                    GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM='1', GIT_NOREPLACE_OBJECTS='1')
         options = list(args[1:])
-        if '--progress' not in options:
-            options.insert(0, '--progress')
+        # Pinned source fetches must not add tag or submodule network requests.
+        for option in reversed(('--progress', '--no-tags', '--no-recurse-submodules')):
+            if option not in options:
+                options.insert(0, option)
         command = ['git', '-c', 'core.hooksPath=' + os.devnull, '-c', 'credential.helper=',
-                   '-c', 'core.fsmonitor=false', '-C', str(source), 'fetch', *options]
-        print('Git-Download: Zeitbudget', timeout, 'Sekunden; kein automatischer Wiederholungsversuch.', flush=True)
-        return native_build_process.run(command, source, env, timeout=timeout, label='Git-Download')
+                   '-c', 'core.fsmonitor=false', '-c', 'protocol.version=2', '-c', 'http.version=HTTP/1.1',
+                   '-c', 'http.lowSpeedLimit=1024', '-c', 'http.lowSpeedTime=120',
+                   '-C', str(source), 'fetch', *options]
+        if timeout is None:
+            command = [({'http.lowSpeedLimit=1024': 'http.lowSpeedLimit=0',
+                         'http.lowSpeedTime=120': 'http.lowSpeedTime=0'}).get(value, value) for value in command]
+            print('Git-Download: ausdruecklich kein automatisches Gesamtzeitlimit und keine '
+                  'Mindestdatenrate/Stillstandsfrist. Ein Haenger kann unbegrenzt weiterlaufen; '
+                  'manueller Abbruch mit Strg+C. Hoechstens zwei Versuche; kein anderer Pin/Host.', flush=True)
+        else:
+            print('Git-Download: Gesamtzeitbudget', timeout,
+                  'Sekunden; HTTP/1.1; unter 1 KiB/s fuer 120s gilt als Transportstillstand;'
+                  ' hoechstens ein Wiederholungsversuch, kein anderer Pin/Host.', flush=True)
+        print('Git-Protokoll 2 angefordert; keine automatischen Tags oder Submodule.'
+              ' Vollstaendige Git-Objekte, kein Partial-Clone-/Archiv-Fallback.', flush=True)
+        deadline = None if timeout is None else time.monotonic() + timeout
+        for attempt in range(2):
+            remaining = None if deadline is None else deadline - time.monotonic()
+            budget = remaining
+            if budget is not None and budget <= 0:
+                raise subprocess.TimeoutExpired(command, timeout)
+            budget_label = 'kein automatisches Zeitlimit' if remaining is None else 'Restbudget: ' + str(round(remaining)) + ' s'
+            print('Git-Download: Versuch', attempt + 1, 'von 2;', budget_label, flush=True)
+            try:
+                return native_build_process.run(command, source, env, timeout=budget, label='Git-Download')
+            except (subprocess.TimeoutExpired, subprocess.CalledProcessError) as error:
+                output = '\n'.join(value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value
+                                   for value in (error.output, error.stderr) if value).lower()
+                dns_failure = isinstance(error, subprocess.CalledProcessError) and error.returncode == 128 and (
+                    any(message in output for message in ('could not resolve host', 'could not resolve proxy',
+                                                          'temporary failure in name resolution'))
+                    or re.search(r'\bcurl (?:5|6)\b', output) is not None)
+                if dns_failure:
+                    print('DNS-/Namensaufloesung fuer Git-Ziel oder Proxy fehlgeschlagen;'
+                          ' kein Modell-/Python-/Buildfehler. Keine Aenderung an DNS, WSL oder TLS.', flush=True)
+                permanent = any(message in output for message in (
+                    'authentication failed', 'could not read username', 'certificate',
+                    'not our ref', "couldn't find remote ref", 'repository not found',
+                    'permission denied', 'access denied'))
+                slow_transfer = (isinstance(error, subprocess.CalledProcessError)
+                                 and error.returncode == 128 and 'operation too slow' in output)
+                transient = not permanent and (dns_failure or isinstance(error, subprocess.TimeoutExpired) or (
+                    error.returncode == 128 and any(message in output for message in (
+                        'curl 18', 'curl 28', 'curl 35', 'curl 52', 'curl 55', 'curl 56',
+                        'curl 92', 'operation too slow', 'connection reset',
+                        'remote end hung up unexpectedly', 'early eof'))))
+                if attempt or not transient or (deadline is not None and time.monotonic() >= deadline):
+                    if slow_transfer and not permanent:
+                        print('Git-Transport bleibt zu langsam/unterbrochen; kein weiterer Versuch.'
+                              ' Kein Python-/Modellfehler und kein Erfolgsnachweis.'
+                              ' Netzwerk/Proxy separat pruefen; keine Systemaenderung vorgenommen.', flush=True)
+                    raise
+                if slow_transfer and deadline is not None:
+                    # Tolerate delayed pack production without extending the shared deadline.
+                    fallback = {'http.lowSpeedLimit=1024': 'http.lowSpeedLimit=128',
+                                'http.lowSpeedTime=120': 'http.lowSpeedTime=300'}
+                    command = [fallback.get(value, value)
+                               for value in command]
+                    print('Langsame Git-Uebertragung: letzter Versuch mit mindestens 128 Bytes/s'
+                          ' statt 1024 Bytes/s; Stillstandsfenster hoechstens 300s im Restbudget.'
+                          ' Identischer Pin/Host, unveraendertes Gesamtzeitbudget und TLS-Pruefung.', flush=True)
+                if dns_failure:
+                    # Back off only within the same total budget; never replace the resolver.
+                    delay = 2.0 if deadline is None else min(2.0, max(0.0, deadline - time.monotonic()))
+                    print('DNS-Neuversuch nach kurzer Pause:', round(delay, 2), 's.', flush=True)
+                    time.sleep(delay)
+                print('Git-Transport fehlgeschlagen; begrenzter Neuversuch am identischen Pin.'
+                      ' Keine Checkout-/Installationsfreigabe aus diesem Fehler.', flush=True)
     result = subprocess.run(["git", "-c", "core.hooksPath=" + os.devnull,
                              "-c", "credential.helper=", "-C", str(source), *args], check=True,
                             capture_output=True, text=True, timeout=180,

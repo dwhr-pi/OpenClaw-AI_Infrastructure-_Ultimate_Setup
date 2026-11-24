@@ -8,13 +8,20 @@ import re
 import shutil
 import stat
 import subprocess
+import tempfile
 import tomllib
 import zipfile
 
 import gap_tools as common
 import native_build_process
+import native_build_deps
+import webinar_releases as releases
+import litellm_rust
+import litellm_rust_bootstrap
 
 IDS = {'milvus', 'vaultwarden', 'owasp_zap'}
+GRADLE_SHA256 = 'fba8464465835e74f7270bbf43d6d8a8d7709ab0a43ce1aa3323f73e9aa0c612'
+GRADLE_URL = 'https://github.com/gradle/gradle-distributions/releases/download/v8.13.0/gradle-8.13-all.zip'
 REQUIRED = {
     'milvus': {'go.mod', 'go.sum', 'internal/core/conanfile.py',
                'internal/core/CMakeLists.txt', 'scripts/3rdparty_build.sh',
@@ -69,8 +76,9 @@ def versions(args, cwd, env):
     return (result.stdout + result.stderr).strip()
 
 
-def rust_environment(spec, env, cwd):
-    root = Path(os.environ.get('NATIVE_SOURCE_RUST_TOOLCHAIN', ''))
+def rust_environment(spec, env, cwd, toolchain_base=None):
+    root = (litellm_rust.select(toolchain_base or cwd, version=spec['recipe']['rust_exact'])
+            if spec['id'] == 'vaultwarden' else Path(os.environ.get('NATIVE_SOURCE_RUST_TOOLCHAIN', '')))
     if not root.is_absolute() or not (root / 'bin/rustc').is_file() or not (root / 'bin/cargo').is_file():
         raise ValueError('NATIVE_SOURCE_RUST_TOOLCHAIN: vorhandene absolute Rust-Toolchain erforderlich; kein rustup-Download.')
     env.update(RUSTUP_TOOLCHAIN=str(root), RUSTUP_AUTO_INSTALL='0',
@@ -81,7 +89,82 @@ def rust_environment(spec, env, cwd):
     return observed
 
 
-def tool_versions(outer, spec, env):
+def zap_java(base, spec, env, approved=False, prepare=False):
+    def compatible():
+        try:
+            java, javac = (shutil.which(name, path=env.get('PATH', '')) for name in ('java', 'javac'))
+            return (java and javac and
+                    re.search(r'version "21(?:\.|\")', versions([java, '-version'], base, env)) and
+                    re.fullmatch(r'javac 21(?:\.[0-9]+)*', versions([javac, '--version'], base, env)))
+        except (OSError, subprocess.SubprocessError):
+            return False
+
+    if compatible():
+        compiler = Path(shutil.which('javac', path=env.get('PATH', ''))).resolve(strict=True)
+        env['JAVA_HOME'] = str(compiler.parent.parent)
+        return
+    java_home = Path('/usr/lib/jvm/java-21-openjdk-amd64')
+    if prepare and not (java_home / 'bin/javac').is_file():
+        native_build_deps.prepare(spec, approved=approved)
+    common.checked(java_home)
+    env.update(JAVA_HOME=str(java_home), PATH=str(java_home / 'bin') + os.pathsep + env.get('PATH', ''))
+    if not compatible():
+        raise ValueError('ZAP: JDK 21 nicht bereit; Buildbasis-Zustimmung bzw. Paketverfuegbarkeit pruefen.')
+
+
+def zap_gradle(base, spec, env, approved=False, prepare=False):
+    value = recipe(spec)
+    distribution = value.get('gradle_distribution', {})
+    if (value.get('gradle_exact') != '8.13' or distribution != {
+            'url': 'https://services.gradle.org/distributions/gradle-8.13-all.zip', 'sha256': GRADLE_SHA256}):
+        raise ValueError('ZAP: Gradle-Downloadvertrag abweichend; kein Download.')
+    parent = common.checked(base / 'toolchain')
+    slot = common.checked(parent / 'gradle-8.13')
+    app = common.checked(slot / 'app')
+    marker = common.checked(slot / 'release-ready.json')
+    expected = {'repo': 'gradle/gradle-distributions', 'version': '8.13'}
+    if slot.exists():
+        record = releases.validate_record(app, marker, expected, full=True)
+        if record.get('artifact_sha256') != GRADLE_SHA256 or record.get('entry') != 'gradle-8.13/bin/gradle':
+            raise ValueError('ZAP: privater Gradle-Nachweis abweichend.')
+        binary = common.checked(app / record['entry'])
+    else:
+        installed = shutil.which('gradle', path=env.get('PATH', ''))
+        try:
+            suitable = installed and re.search(r'Gradle 8\.13(?:\s|$)', versions([installed, '--version'], base, env))
+        except (OSError, subprocess.SubprocessError):
+            suitable = False
+        if suitable:
+            return
+        if not prepare or not approved:
+            raise ValueError('ZAP: privates Gradle 8.13 erfordert Zustimmung zu Buildabhaengigkeiten; '
+                             '--install-build-deps. Kein Download gestartet.')
+        common.reserve(base, {'reserve_mb': value['disk_mb'] + 1024})
+        print('ZAP: privates Gradle 8.13, SHA256-geprueft; kein Wrapper/System-PATH-Umbau.', flush=True)
+        with tempfile.TemporaryDirectory(prefix='gradle-bootstrap-', dir=base) as temporary:
+            stage = common.checked(Path(temporary))
+            bundle = stage / 'bundle'
+            payload = bundle / 'app'
+            payload.mkdir(parents=True, mode=0o700)
+            archive = stage / 'gradle.zip'
+            releases.download(GRADLE_URL, archive, 232036537, GRADLE_SHA256)
+            releases.unpack(archive, payload)
+            binary = common.checked(payload / 'gradle-8.13/bin/gradle')
+            if not binary.is_file():
+                raise ValueError('ZAP: Gradle-Einstieg fehlt.')
+            binary.chmod(0o700)
+            record = {**expected, 'artifact_sha256': GRADLE_SHA256,
+                      'entry': 'gradle-8.13/bin/gradle', 'hashes': releases.inventory(payload)}
+            write(bundle / 'release-ready.json', record)
+            parent.mkdir(mode=0o700, exist_ok=True)
+            if slot.exists() or slot.is_symlink():
+                raise ValueError('ZAP: Gradle-Ziel inzwischen belegt; nichts ueberschrieben.')
+            bundle.rename(slot)
+        binary = common.checked(app / record['entry'])
+    env['PATH'] = str(binary.parent) + os.pathsep + env.get('PATH', '')
+
+
+def tool_versions(outer, spec, env, toolchain_base=None):
     value = recipe(spec)
     observed = {}
     for name in value['tools']:
@@ -93,7 +176,7 @@ def tool_versions(outer, spec, env):
             flag = 'version'
         observed[name] = versions([executable, flag], outer, env)
     if spec['id'] in ('milvus', 'vaultwarden'):
-        observed['rustc'] = rust_environment(spec, env, outer)
+        observed['rustc'] = rust_environment(spec, env, outer, toolchain_base)
     if spec['id'] == 'milvus':
         if 'Conan version 2.25.1' != observed['conan']:
             raise ValueError('Conan 2.25.1 erforderlich.')
@@ -135,7 +218,13 @@ def preflight(outer, spec, approved=False):
         raise ValueError('Dieser Milvus-x86_64-Build benoetigt AVX.')
     env = {k: v for k, v in os.environ.items() if k in ('PATH', 'LANG', 'LC_ALL')}
     env.update(GOTOOLCHAIN='local', GOENV='off', RUSTUP_AUTO_INSTALL='0')
-    return tool_versions(existing, spec, env)
+    if spec['id'] == 'vaultwarden':
+        native_build_deps.prepare(spec, approved=approved)
+        litellm_rust_bootstrap.prepare(outer, spec, approved=approved)
+    if spec['id'] == 'owasp_zap':
+        zap_java(outer, spec, env, approved=approved, prepare=True)
+        zap_gradle(outer, spec, env, approved=approved, prepare=True)
+    return tool_versions(existing, spec, env, toolchain_base=outer)
 
 
 def verify_source(source, spec):
@@ -338,7 +427,10 @@ def build(source, prefix, spec, env, run=None):
     env.update(GOTOOLCHAIN='local', GOENV='off', RUSTUP_AUTO_INSTALL='0', CI='1',
                GIT_TERMINAL_PROMPT='0', GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM='1',
                GIT_LFS_SKIP_SMUDGE='1', CARGO_NET_GIT_FETCH_WITH_CLI='false')
-    observed = tool_versions(prefix, spec, env)
+    if spec['id'] == 'owasp_zap':
+        zap_java(prefix.parent, spec, env)
+        zap_gradle(prefix.parent, spec, env)
+    observed = tool_versions(prefix, spec, env, toolchain_base=prefix.parent)
     executor = run or (lambda args, cwd, env: native_build_process.run(args, cwd, env, timeout=14400))
     entries, components = {'milvus': milvus, 'vaultwarden': vaultwarden, 'owasp_zap': zap}[spec['id']](
         source, prefix, spec, env, executor)

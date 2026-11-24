@@ -13,6 +13,7 @@ import webinar_releases as releases
 
 VERSION = "0.13.5"
 SUPPORTED_TOOLS = {
+    "openjarvis": "OpenJarvis",
     "phoenix": "Arize_Phoenix",
     "checkov": "Checkov",
     "ragas": "Ragas",
@@ -39,6 +40,8 @@ def version_ok(text):
 
 
 def select(base, spec, approved=False, allow_download=False):
+    if os.environ.get('OPENCLAW_BUILD_DEPS_DENY') == '1':
+        approved = allow_download = False
     version = spec["recipe"].get("private_uv")
     if version is None:
         return None

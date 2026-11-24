@@ -1,7 +1,7 @@
-# Native Infrastruktur-Installer hinter XERJ
+# Native Infrastruktur- und Agenten-Installer hinter XERJ
 
-Stand: 16.11.2026. Alle 22 genannten Tools stehen weiterhin am Ende des Tools-Menues.
-Valkey und Kube_Bench behalten ihre bestehenden nativen Installer; die 20 weiteren Eintraege
+Stand: 20.11.2026. Die genannten Tools stehen weiterhin im letzten Tools-Menueabschnitt.
+Valkey und Kube_Bench behalten ihre bestehenden nativen Installer; die weiteren Eintraege
 verwenden jetzt tool-spezifische native Buildrezepte statt gesperrter Dokumentations-Platzhalter.
 
 **Experimentell, echte Linux-Buildabnahme offen:** Offline-Fixtures pruefen Vertrage und Fehlerpfade,
@@ -32,6 +32,7 @@ Keine CRD-/DNS-/Zertifikatsaenderung, kein Security-Scan oder Provideraufruf dur
 | KEDA | [native-go-controllers.md](native-go-controllers.md) | Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. CRDs/Chart-/Konfigurationsdateien werden nur kopiert, nicht angewendet. |
 | Temporal | [native-go-controllers.md](native-go-controllers.md) | Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. Server und SQL-/Cassandra-Werkzeuge; Datenbank, Schema-Migration, TLS/Auth und Deployment separat. |
 | Argo_Workflows | [native-go-controllers.md](native-go-controllers.md) | Native Komponenten und statische Upstream-Dateien; keine Cluster-/Dienstabnahme. Nur Controller und Executor, kein UI-/API-Server; Workflow-Pods brauchen separate freigegebene CRI-Images. |
+| OpenJarvis | [openjarvis.md](openjarvis.md) | Gepinnter nativer Python-CLI-/SDK-Basisbuild mit Lifecycle; ohne Quickstart-Autostart oder automatische Modelldownloads. GUI, Desktop-Paket und Rust-Erweiterung sind getrennte Ausbaustufen. Linux-/WSL-Buildabnahme offen; keine Inferenz oder Agentenausfuehrung. |
 | Arize_Phoenix | [python-reviewed-native.md](python-reviewed-native.md) | Source-Wheel einschliesslich kompiliertem Frontend, private CPython-3.12-venv. Importprobe ohne launch_app/Dienststart. Elastic-2.0 vorher pruefen. Keine Laufzeit-/Datenbankabnahme; Linux-End-to-End-Build noch ausstehend. |
 | Checkov | [python-reviewed-native.md](python-reviewed-native.md) | Echtes Source-Wheel mit generierten JSON-Graph-Policies und Checkov-CLI in eigener venv; keine Scans/Providerkontakte. Python-docker ist deklarierte Bibliotheksabhaengigkeit, keine Engine/Containerinstallation. Linux-End-to-End-Build noch ausstehend. |
 | Ragas | [python-reviewed-native.md](python-reviewed-native.md) | Source-Wheel mit expliziter gepinnter SCM-Version, CLI und evaluate/aevaluate-Importprobe. Keine Evaluation, Inferenz, Modell-Downloads oder Providerkontakte; keine all/dev-Extras. Linux-End-to-End-Build noch ausstehend. |

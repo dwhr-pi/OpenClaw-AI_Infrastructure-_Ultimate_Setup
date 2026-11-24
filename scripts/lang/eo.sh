@@ -3,6 +3,7 @@
 # shellcheck disable=SC2034
 TXT_YES_LABEL="Jes"
 TXT_NO_LABEL="Ne"
+TXT_OK_LABEL="Konfirmi"
 TXT_LOADING_NOTICE_TITLE="PREPARADO DE LA VIDO"
 TXT_LOADING_NOTICE_BODY='Preparante la vidon "%s".\n\n%s\n\nŜargado povas daŭri sekundojn aŭ plurajn minutojn depende de WSL kaj la datumportilo. La laŭvolaj mezuroj venas el la loka resumo.\n\nĈu daŭrigi?'
 TXT_LOADING_GAUGE_TITLE='ŜARGADO: %s'

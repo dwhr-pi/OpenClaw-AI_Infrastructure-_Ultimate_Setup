@@ -14,8 +14,15 @@ spec.loader.exec_module(sync)
 
 class NativeCandidateSyncTests(unittest.TestCase):
     def test_allowlist_covers_every_remaining_requested_tool_once(self):
-        self.assertEqual(len(sync.ALLOWED), 20)
-        self.assertEqual(len(set(sync.ALLOWED.values())), 20)
+        expected = {
+            'openjarvis', 'cert_manager', 'external_dns', 'kyverno', 'gatekeeper',
+            'keda', 'phoenix', 'gvisor', 'kata_containers', 'firecracker', 'milvus',
+            'kubescape', 'nuclei', 'testssl', 'owasp_zap', 'checkov', 'ragas',
+            'temporal', 'trufflehog', 'vaultwarden', 'argo_workflows',
+        }
+        self.assertEqual(set(sync.ALLOWED), expected)
+        self.assertEqual(len(set(sync.ALLOWED.values())), len(expected))
+        self.assertEqual(sync.ALLOWED['openjarvis'], 'OpenJarvis')
         self.assertNotIn('valkey', sync.ALLOWED)
         self.assertNotIn('kube_bench', sync.ALLOWED)
 

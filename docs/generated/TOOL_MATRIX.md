@@ -289,6 +289,7 @@ Nur Repository-Metadaten, kein Nachweis installierter oder produktionsfaehiger P
 | opendkim | planned | unknown | unknown | not-mapped | not-mapped |
 | opendmarc | planned | unknown | unknown | not-mapped | not-mapped |
 | openhands | experimental | unknown | 47bbc5e8392c4c75b7f77a1da38bed4a9f53d6a5 | scripts/tools/openhands_doctor.sh | scripts/tools/openhands_update.sh |
+| openjarvis | experimental | planned | a9e59e8770f92dd8046c2e5fcc1246eef51bb96a | scripts/tools/openjarvis_doctor.sh | scripts/tools/openjarvis_update.sh |
 | openlit | unknown | unknown | unknown | not-mapped | not-mapped |
 | openmontage | experimental | unknown | c8066452325cb57c8fc1ba8c2a71b6e8842e6b65 | scripts/tools/openmontage_doctor.sh | scripts/tools/openmontage_update.sh |
 | openscap | planned | unknown | unknown | not-mapped | not-mapped |

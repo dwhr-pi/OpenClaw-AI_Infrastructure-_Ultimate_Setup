@@ -1,0 +1,38 @@
+name: VPS adapter - offline boundaries
+
+on:
+  pull_request:
+    paths:
+      - tools/vps/**
+      - scripts/vps_adapter.py
+      - tests/test_vps_*.py
+      - examples/vps/**
+      - .github/workflows/vps-adapter.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fixtures:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - name: Offline provider adapter fixtures
+        run: python -B -m unittest discover -s tests -p test_vps_adapter.py -v
+      - name: Offline source catalog fixtures
+        run: python -B -m unittest discover -s tests -p test_vps_catalog.py -v
+      - name: Offline CLI fixtures
+        run: python -B -m unittest discover -s tests -p test_vps_cli.py -v

@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "plan_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "actions": ["status"],
+  "valid_from": "2026-11-18T00:00:00Z",
+  "expires_at": "2026-11-19T00:00:00Z",
+  "budget_amount": "0",
+  "max_hours": 1,
+  "max_resources": 1
+}

@@ -16,6 +16,9 @@ editierbarer Offline-Brief, Zwischenstaende und Rollenplan statt vorgetaeuschter
 [Natives Betriebshandbuch: WebUI, Dejavu-MCP, SSO und Wartung](docs/NATIVE_OPERATIONS_HANDBOOK.md)
 mit getrennten Freigaben und ehrlichen Nachweisgrenzen, ohne Docker-Fallback.
 
+[OpenJarvis: eigener nativer CLI-/SDK-Build mit offizieller Website](docs/tools/openjarvis.md).
+Ohne Quickstart-Autostart oder automatische Modelldownloads; GUI, Desktop und Rust-Erweiterung separat.
+
 HE/Oracle Control/DMZ -> WireGuard -> Pi (WoL) -> RTX/K3s-Worker zuhause.
 Interne APIs bleiben privat; GPU, Tunnel, Cloud und privilegierte Dienste sind opt-in.
 Keine pauschale Produktionsfreigabe: Supply-Chain und echte Laufzeit-/Restore-Abnahmen bleiben offen.
@@ -64,6 +67,9 @@ Projektlizenz: [Apache-2.0](LICENSE). [Drittprojekte](THIRD_PARTY_NOTICES.md).
 Hinweise auf Unterstuetzung sind keine zusaetzliche Lizenzbedingung.
 
 ## Orientierung
+
+Hintergrund, keine Setup-Aufnahme:
+[ESP32-KI, Speicher und Linux-/Ollama-Tests](docs/research/ESP32_AI_LINUX_AND_OLLAMA.md).
 
 - **Einstieg:** [Erste 60 Minuten](docs/FIRST_60_MINUTES.md), [aktueller Status](docs/CURRENT_STATUS.md).
 - **Architektur:** [Hybrid-Plattform](docs/architecture/), [Kubernetes-Baseline](docs/PRODUCTION_BASELINE.md).

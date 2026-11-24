@@ -19,6 +19,26 @@ Unbekannte Werte bleiben `unbekannt`; eine nicht erkannte WSL-Kennung beweist ke
 Keine Keys, Umgebungsvariablen-Sammlung, Hostnamen, Netzadressen oder Benutzerkonfigurationen.
 Steuerzeichen werden entfernt beziehungsweise ersetzt und Feldlaengen begrenzt.
 
+## Windows-Host-Speicher unter WSL
+
+Die Menuepruefung liest zuerst den gemounteten Windows-Datentraeger unter
+`/mnt/c` beziehungsweise das konfigurierte `WINDOWS_HOST_DRIVE` direkt mit `df`.
+Nur ein nachgewiesener Mount wird verwendet, kein beliebiger Linux-Ordner dieses Namens.
+Damit ist fuer den Standardfall keine funktionierende PowerShell-Interop erforderlich.
+Als Fallback bleibt eine nichtinteraktive PowerShell-Abfrage mit zehn Sekunden
+Zeitlimit und zwei Sekunden Abbruchfrist. Grosse Bytewerte bleiben Dezimaltext,
+statt durch awk-Rundung oder wissenschaftliche Schreibweise unbrauchbar zu werden.
+Null freier Speicher ist ein bekannter Wert, nicht eine fehlgeschlagene Messung.
+Kann keiner der Wege messen, bleibt der Wert ausdruecklich unbekannt.
+
+Firecracker und Kata verlangen im Menue dieselben 16 GiB Windows-Host-Reserve
+wie der native Installer, gVisor dieselben 64 GiB. Im Protokoll mit 14926 MiB
+freiem Host-Speicher fehlen fuer Firecracker mindestens 1458 MiB zur Reserve.
+Die grosse freie virtuelle Linux-Kapazitaet ersetzt diesen Host-Speicher nicht.
+Es erfolgt keine automatische Datenloeschung oder WSL-Verschiebung und keine
+Absenkung der Schutzgrenze. Die Messung beweist nicht, auf welchem Laufwerk eine
+verschobene WSL-VHDX tatsaechlich gespeichert ist; das muss separat geklaert werden.
+
 ## Diagnose ohne Installation
 
 Im bereits geprueften Setup-Verzeichnis:

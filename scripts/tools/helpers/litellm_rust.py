@@ -16,7 +16,7 @@ GUIDANCE = ('LiteLLM: vorhandenes Rust ' + VERSION + ' mit cargo/rustc erforderl
             'Kein automatischer Rust-Download, kein apt-Rust. Siehe docs/tools/litellm.md.')
 
 
-def verify(root, cwd):
+def verify(root, cwd, version=VERSION):
     if not root.is_absolute() or not root.is_dir():
         raise ValueError('Absoluter vorhandener Toolchain-Ordner erforderlich.')
     root = root.resolve()
@@ -29,22 +29,24 @@ def verify(root, cwd):
     env.update(RUSTUP_TOOLCHAIN=str(root), RUSTUP_AUTO_INSTALL='0')
     for name in ('rustc', 'cargo'):
         value = common.run([root / 'bin' / name, '--version'], cwd, env)
-        if not re.fullmatch(re.escape(name + ' ' + VERSION) + r'(?: \([^\n]*\))?', value.strip()):
-            raise ValueError('Rust-/Cargo-Version entspricht nicht dem LiteLLM-Pin ' + VERSION + '.')
+        if not re.fullmatch(re.escape(name + ' ' + version) + r'(?: \([^\n]*\))?', value.strip()):
+            raise ValueError('Rust-/Cargo-Version entspricht nicht dem Pin ' + version + '.')
     sysroot = common.run([root / 'bin/rustc', '--print', 'sysroot'], cwd, env).strip()
     if not Path(sysroot).is_absolute() or Path(sysroot).resolve() != root:
         raise ValueError('Rust-sysroot passt nicht zur ausgewaehlten Toolchain.')
     return root
 
 
-def select(base):
+def select(base, version=VERSION):
+    guidance = GUIDANCE if version == VERSION else ('Rust ' + version + ' erforderlich; '
+        'Vaultwarden-Buildbasis im Setup freigeben. Keine automatische Ersetzung eines expliziten Pfades.')
     explicit = os.environ.get('NATIVE_SOURCE_RUST_TOOLCHAIN')
     if explicit:
         try:
-            return verify(Path(explicit), base)
+            return verify(Path(explicit), base, version=version)
         except (OSError, ValueError, subprocess.SubprocessError) as error:
-            raise ValueError('LiteLLM: explizites NATIVE_SOURCE_RUST_TOOLCHAIN ungueltig; keine automatische Ersetzung. ' + GUIDANCE) from error
-    if base.name in ('litellm', 'xerj'):
+            raise ValueError('Explizites NATIVE_SOURCE_RUST_TOOLCHAIN ungueltig; keine automatische Ersetzung. ' + guidance) from error
+    if version == VERSION and base.name in ('litellm', 'xerj'):
         # Shared bootstrap is independently inventoried, not an unchecked PATH shim.
         import litellm_rust_bootstrap as bootstrap
         shared = common.checked(base.parent / 'cargo_build_tools')
@@ -55,11 +57,11 @@ def select(base):
     candidates = []
     private = base / 'toolchain'
     if private.is_dir():
-        candidates.extend(private.glob('rust-' + VERSION + '-linux-*/rustup/toolchains/' + VERSION + '-*'))
+        candidates.extend(private.glob('rust-' + version + '-linux-*/rustup/toolchains/' + version + '-*'))
     configured_home = os.environ.get('RUSTUP_HOME')
     rust_home = Path(configured_home) if configured_home else Path.home() / '.rustup'
     if rust_home.is_absolute() and (rust_home / 'toolchains').is_dir():
-        for pattern in (VERSION + '-*', 'stable-*'):
+        for pattern in (version + '-*', 'stable-*'):
             candidates.extend(sorted((rust_home / 'toolchains').glob(pattern)))
     rustc = shutil.which('rustc')
     if rustc:
@@ -68,12 +70,12 @@ def select(base):
             candidates.append(candidate.parent.parent)
     for candidate in dict.fromkeys(candidates):
         try:
-            root = verify(candidate, base)
+            root = verify(candidate, base, version=version)
         except (OSError, ValueError, subprocess.SubprocessError):
             continue
-        print('LiteLLM: vorhandene Rust-Toolchain geprueft:', root, flush=True)
+        print('Vorhandene Rust-Toolchain ' + version + ' geprueft:', root, flush=True)
         return root
-    raise ValueError(GUIDANCE)
+    raise ValueError(guidance)
 
 
 def activate(base, spec, env):

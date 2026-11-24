@@ -8,6 +8,7 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts/tools/helpers'))
 import native_build_process as runner
@@ -31,6 +32,37 @@ class BuildProcessTests(unittest.TestCase):
         with redirect_stdout(io.StringIO()):
             with self.assertRaises(subprocess.CalledProcessError) as caught:
                 self.execute('raise SystemExit(23)')
+        self.assertEqual(caught.exception.returncode, 23)
+
+    def test_unlimited_wait_keeps_heartbeat_past_former_two_hour_limit(self):
+        process = Mock(pid=12345, stdout=io.StringIO('fixture\n'), returncode=0)
+        process.wait.side_effect = [subprocess.TimeoutExpired(['fixture'], 30), 0]
+        output = io.StringIO()
+        with patch.object(runner.subprocess, 'Popen', return_value=process), \
+                patch.object(runner.time, 'monotonic', side_effect=[0, 8000]), redirect_stdout(output):
+            self.assertEqual(runner.run(['fixture'], Path('.'), {}, timeout=None), 'fixture')
+        self.assertEqual([call.kwargs['timeout'] for call in process.wait.call_args_list], [30, 30])
+        self.assertIn('kein automatisches Zeitlimit', output.getvalue())
+        self.assertNotIn('Restbudget:', output.getvalue())
+        process.kill.assert_not_called()
+
+    def test_unlimited_wait_still_propagates_manual_interrupt_and_cleans_up(self):
+        process = Mock(pid=12345, stdout=io.StringIO('fixture\n'), returncode=-9)
+        process.wait.side_effect = [KeyboardInterrupt(), 0]
+        process.poll.return_value = None
+        with patch.object(runner.subprocess, 'Popen', return_value=process), \
+                patch.object(runner.os, 'killpg', create=True) as killpg, redirect_stdout(io.StringIO()):
+            with self.assertRaises(KeyboardInterrupt):
+                runner.run(['fixture'], Path('.'), {}, timeout=None)
+        if os.name == 'posix':
+            killpg.assert_called_once_with(process.pid, runner.signal.SIGKILL)
+        else:
+            process.kill.assert_called_once()
+
+    def test_unlimited_child_nonzero_exit_remains_failure(self):
+        with redirect_stdout(io.StringIO()):
+            with self.assertRaises(subprocess.CalledProcessError) as caught:
+                self.execute('raise SystemExit(23)', timeout=None)
         self.assertEqual(caught.exception.returncode, 23)
 
     def test_timeout_reports_failure_and_terminates_child(self):

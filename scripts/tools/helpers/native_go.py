@@ -34,6 +34,9 @@ def version_ok(text, minimum):
 
 
 def select(base, spec, approved=False, allow_download=False):
+    denied = os.environ.get('OPENCLAW_BUILD_DEPS_DENY') == '1'
+    if denied:
+        approved = allow_download = False
     minimum = spec["recipe"].get("go_min")
     if minimum is None:
         return None, None
@@ -80,6 +83,12 @@ def select(base, spec, approved=False, allow_download=False):
         if actual != "go version " + private_go.VERSION + " " + target.replace("-", "/") or not version_ok(actual, minimum):
             raise ValueError("Private Go-Version/Architektur stimmt nicht; kein Build.")
 
+    if denied:
+        # Verification may fail if files disappear; never fall back to a new bootstrap.
+        key, _, (archive_hash, _) = private_go.target()
+        binary, root = private_go.verify_private(slot, key, archive_hash)
+        validate(binary, root, key)
+        return str(binary), root
     return private_go.ensure(base, validate)
 
 

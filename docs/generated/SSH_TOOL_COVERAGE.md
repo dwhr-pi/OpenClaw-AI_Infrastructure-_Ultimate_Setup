@@ -3,7 +3,7 @@
 Generiert aus der vollstaendigen Tool-Registry und ihren verlinkten Anleitungen.
 Keine Installation, SSH-Verbindung oder Runtime-Pruefung; kein Produktivnachweis.
 
-**440 / 440 Tool-IDs mit zugeordneter Anleitung, SSH-Einstieg und eigenem Offline-Plan.**
+**441 / 441 Tool-IDs mit zugeordneter Anleitung, SSH-Einstieg und eigenem Offline-Plan.**
 
 Bestehende Sammelanleitungen bleiben erhalten. Neue kurze Einstiegsseiten schliessen
 Dokumentationsluecken, ersetzen aber keine fehlende Lifecycle- oder Runtime-Abnahme.
@@ -297,6 +297,7 @@ gilt der ausdruecklich zu pruefende interaktive SSH-Einstieg mit tool-spezifisch
 | opendkim | [SSH-Installation](../tools/registry/opendkim.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | opendmarc | [SSH-Installation](../tools/registry/opendmarc.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | openhands | [SSH-Installation](../agents/LOCAL_CODING_WORKBENCH.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
+| openjarvis | [SSH-Installation](../tools/openjarvis.md#vps-ueber-ssh-bedienen) | abgedeckt | Gepinntes natives Rezept; Einzelfreigabe |
 | openlit | [SSH-Installation](../tools/registry/openlit.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | openmontage | [SSH-Installation](../tools/openmontage.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |
 | openscap | [SSH-Installation](../tools/registry/openscap.md#vps-ueber-ssh-bedienen) | abgedeckt | Interaktiv/manuell pruefen; kein Headless-Adapter |

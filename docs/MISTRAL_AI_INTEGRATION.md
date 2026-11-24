@@ -142,8 +142,15 @@ Als einfache Staffelung:
 - `https://docs.mistral.ai/getting-started/models/weights/` (historische Quelle; Abruf 404, nicht
   als aktueller Beleg verifiziert); [Primaerquelle](https://docs.mistral.ai/models)
 - [Mistral 7B](https://docs.mistral.ai/models/model-cards/mistral-7b-0-1)
-- [Mistral Nemo 12B](https://docs.mistral.ai/models/mistral-nemo-12b-24-07)
+- [Mistral NeMo 12B](https://docs.mistral.ai/models/mistral-nemo)
 - [Ollama: mistral](https://ollama.com/library/mistral)
 - [Ollama: mixtral](https://ollama.com/library/mixtral)
 - [Ollama: codestral](https://ollama.com/library/codestral)
 - [Ollama: devstral](https://ollama.com/library/devstral)
+
+Nachtrag 24.11.2026: Die offizielle NeMo-Seite ist umgezogen. Die neue Adresse nennt weiterhin
+`open-mistral-nemo-2407`; es wurde kein anderes Modell eingesetzt. Originaladresse
+`https://docs.mistral.ai/models/mistral-nemo-12b-24-07` (CI und direkter GET: HTTP 404).
+Die neue Seite kennzeichnet das API-Modell als deprecated. Das ist keine Aussage, dass lokal
+vorhandene Gewichte unbrauchbar waeren; API-Verfuegbarkeit und lokale Ollama-Nutzung getrennt pruefen.
+[Datierter Quellen- und CI-Befund](quality/CI_LINK_FOLLOWUP_2026-11-24_PR31.json).

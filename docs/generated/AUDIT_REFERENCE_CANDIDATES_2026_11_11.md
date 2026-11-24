@@ -116,6 +116,7 @@ Koennen gemeinsame Helper, Aliase oder profilgebundene Tools sein; keine neue To
 - `scripts/tools/opa_install.sh`
 - `scripts/tools/openclaw_rl_install.sh`
 - `scripts/tools/opencv_python_install.sh`
+- `scripts/tools/openjarvis_candidate_install.sh`
 - `scripts/tools/openmanus_install.sh`
 - `scripts/tools/openwakeword_install.sh`
 - `scripts/tools/owasp_zap_candidate_install.sh`
@@ -253,6 +254,7 @@ Jedes getrackte Unterverzeichnis wird erfasst; ein Verzeichnis kann mehrere Tool
 
 Nur Nachpruefkandidaten; Status TOT wird fuer keinen dieser Pfade behauptet.
 
+- `examples/vps/authorization.template.json`
 - `scripts/config_templates/openclaw/.env-Original-(Manus).template`
 - `scripts/research/crawl4ai_adapter.py`
 - `scripts/research/web_research.py`

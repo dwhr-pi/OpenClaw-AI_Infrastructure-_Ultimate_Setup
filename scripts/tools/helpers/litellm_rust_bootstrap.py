@@ -1,5 +1,6 @@
 """Consent-gated official Rust prerequisite; no system/default/PATH changes."""
 import hashlib
+import http.client
 import json
 import os
 from pathlib import Path
@@ -8,6 +9,7 @@ import shutil
 import sys
 import tempfile
 from urllib.parse import urlsplit
+from urllib.error import URLError
 from urllib.request import HTTPRedirectHandler, build_opener
 
 import gap_tools as common
@@ -15,7 +17,7 @@ import litellm_rust as rust
 import webinar_releases as releases
 
 MANAGER_VERSION = '1.29.2'
-SUPPORTED = ('litellm', 'xerj', 'cargo_build_tools')
+SUPPORTED = ('litellm', 'xerj', 'cargo_build_tools', 'vaultwarden')
 ARTIFACTS = {
     'linux-amd64': ('x86_64-unknown-linux-gnu', 21139856,
                     '5be191e8c70a5007074254cb74d78dbfdd25cd5a61c27de7b8e5410122ec24f4'),
@@ -36,58 +38,87 @@ def download(url, target, size, digest):
     parts = urlsplit(url)
     if parts.scheme != 'https' or parts.hostname != 'static.rust-lang.org' or parts.username or parts.password:
         raise ValueError('Unzulaessiger Rust-Bootstrap-Host.')
-    total, sha = 0, hashlib.sha256()
-    with build_opener(OfficialRedirect()).open(url, timeout=45) as response, target.open('xb') as stream:
-        while True:
-            chunk = response.read(1024 * 1024)
-            if not chunk:
-                break
-            total += len(chunk)
-            if total > size:
-                raise ValueError('rustup-init groesser als der gepruefte Pin.')
-            stream.write(chunk)
-            sha.update(chunk)
-    if total != size or sha.hexdigest() != digest:
-        raise ValueError('rustup-init: Groesse/SHA256 stimmt nicht; keine Ausfuehrung.')
-    target.chmod(0o700)
+    for attempt in (1, 2):
+        total, sha, created = 0, hashlib.sha256(), False
+        print('Rust-Bootstrap: Downloadversuch', attempt, 'von 2; Socket-Timeout 45 s.', flush=True)
+        try:
+            with target.open('xb') as stream:
+                created = True
+                with build_opener(OfficialRedirect()).open(url, timeout=45) as response:
+                    while True:
+                        chunk = response.read(64 * 1024)
+                        if not chunk:
+                            break
+                        total += len(chunk)
+                        if total > size:
+                            raise ValueError('rustup-init groesser als der gepruefte Pin.')
+                        stream.write(chunk)
+                        sha.update(chunk)
+                        if total // (1024 * 1024) != (total - len(chunk)) // (1024 * 1024):
+                            print('Rust-Bootstrap: empfangen', total, 'von', size, 'Bytes; noch nicht verifiziert.', flush=True)
+            if total != size or sha.hexdigest() != digest:
+                raise ValueError('rustup-init: Groesse/SHA256 stimmt nicht; keine Ausfuehrung.')
+            target.chmod(0o700)
+            return
+        except BaseException as error:
+            if created:
+                target.unlink()
+            reason = error.reason if isinstance(error, URLError) else error
+            transient = isinstance(reason, (TimeoutError, ConnectionResetError,
+                                            http.client.IncompleteRead, http.client.RemoteDisconnected))
+            if not transient:
+                raise
+            if attempt == 2:
+                raise ValueError('Rust-Bootstrap: Transportabbruch/Timeout nach zwei Downloadversuchen; '
+                                 'keine Ausfuehrung und kein Erfolgsnachweis.') from error
+            print('Rust-Bootstrap: temporaerer Transportabbruch; einmaliger Neustart des Downloads '
+                  'mit unveraenderter Quelle, Groesse und SHA256.', flush=True)
 
 
-def location(base):
+def location(base, version=rust.VERSION):
     key = releases.host_key()
     if key not in ARTIFACTS:
         raise ValueError('Privates Rust nur fuer Linux amd64/arm64; Rust separat bereitstellen.')
     triple, size, digest = ARTIFACTS[key]
-    slot = common.checked(base / 'toolchain' / ('rust-' + rust.VERSION + '-' + key))
+    slot = common.checked(base / 'toolchain' / ('rust-' + version + '-' + key))
     return slot, triple, size, digest
 
 
-def existing(base):
+def existing(base, version=rust.VERSION):
     if releases.host_key() not in ARTIFACTS:
         return None
-    slot, triple, _, digest = location(base)
+    slot, triple, _, digest = location(base, version)
     if not slot.exists():
         return None
     marker = common.checked(slot / 'rust-ready.json')
     record = json.loads(marker.read_text(encoding='utf-8'))
     files = common.inventory(slot)
     files.pop('rust-ready.json', None)
-    if (record.get('version') != rust.VERSION or record.get('manager_sha256') != digest or
+    if (record.get('version') != version or record.get('manager_sha256') != digest or
             record.get('files') != files):
         raise ValueError('Private Rust-Basis veraendert/unvollstaendig; nichts ueberschreiben oder loeschen.')
-    return rust.verify(common.checked(slot / 'rustup/toolchains' / (rust.VERSION + '-' + triple)), base)
+    return rust.verify(common.checked(slot / 'rustup/toolchains' / (version + '-' + triple)), base, version=version)
 
 
 def prepare(base, spec, approved=False):
+    denied = os.environ.get('OPENCLAW_BUILD_DEPS_DENY') == '1'
+    if denied:
+        approved = False
     if spec['id'] not in SUPPORTED:
         return None
+    version = rust.VERSION
+    if spec['id'] == 'vaultwarden':
+        version = '1.99.1'
+        if spec['recipe'].get('rust_exact') != version:
+            raise ValueError('Vaultwarden: Rust-Bootstrap-Pin abweichend; kein Download.')
     label = spec.get('name', spec['id'])
     retry = ('bash scripts/install_rust_build_tools.sh install --apply'
              if spec['id'] == 'cargo_build_tools' else
              'bash scripts/tools/' + spec['id'] + '_install.sh --install-build-deps')
     # Explicit user paths must never be silently replaced, even on download consent.
     if os.environ.get('NATIVE_SOURCE_RUST_TOOLCHAIN'):
-        return rust.select(base)
-    private = existing(base)
+        return rust.select(base, version=version)
+    private = existing(base, version)
     if private:
         print(label + ': gepruefte private Rust-Basis wiederverwendet:', private)
         return private
@@ -100,15 +131,15 @@ def prepare(base, spec, approved=False):
                 return private
     if spec['id'] != 'cargo_build_tools':
         try:
-            return rust.select(base)
+            return rust.select(base, version=version)
         except ValueError:
             pass
-    slot, triple, size, digest = location(base)
-    print(label + ': Rust ' + rust.VERSION + ' fehlt. Private Basis moeglich; keine System-/Default-/PATH-Aenderung.')
-    print('Quelle: static.rust-lang.org; rustup-init ' + MANAGER_VERSION + ', feste SHA256; Rust ' + rust.VERSION + '.')
+    slot, triple, size, digest = location(base, version)
+    print(label + ': Rust ' + version + ' fehlt. Private Basis moeglich; keine System-/Default-/PATH-Aenderung.')
+    print('Quelle: static.rust-lang.org; rustup-init ' + MANAGER_VERSION + ', feste SHA256; Rust ' + version + '.')
     print('Ziel:', slot, '; 2048 MiB Puffer zusaetzlich zur Toolreserve. Basis bleibt bei App-Deinstallation erhalten.')
     print('Gezielt erneut starten: ' + retry, flush=True)
-    if not approved and sys.stdin.isatty():
+    if not approved and not denied and sys.stdin.isatty():
         print('Rust jetzt privat herunterladen/einrichten? [j/N]', flush=True)
         print('Warte auf Ihre Eingabe und Enter. Nur [j/ja/y/yes] erlaubt die Aktion; Nur [Enter] bedeutet: Nein.', flush=True)
         try:
@@ -133,19 +164,19 @@ def prepare(base, spec, approved=False):
                    RUSTUP_DIST_SERVER='https://static.rust-lang.org', RUSTUP_UPDATE_ROOT='https://static.rust-lang.org/rustup',
                    RUSTUP_AUTO_INSTALL='0', RUSTUP_IO_THREADS='1', RUSTUP_CONCURRENT_DOWNLOADS='1',
                    RUSTUP_UNPACK_RAM=str(512 * 1024**2))
-        version = common.run([installer, '--version'], stage, env)
-        if not re.fullmatch(r'rustup-init ' + re.escape(MANAGER_VERSION) + r'(?: \([^\n]*\))?', version):
+        manager_version = common.run([installer, '--version'], stage, env)
+        if not re.fullmatch(r'rustup-init ' + re.escape(MANAGER_VERSION) + r'(?: \([^\n]*\))?', manager_version):
             raise ValueError('rustup-init-Version stimmt nicht mit dem Pin ueberein.')
         common.run([installer, '-y', '--no-modify-path', '--profile', 'minimal',
-                    '--default-host', triple, '--default-toolchain', rust.VERSION], stage, env)
-        rust.verify(stage / 'rustup/toolchains' / (rust.VERSION + '-' + triple), stage)
+                    '--default-host', triple, '--default-toolchain', version], stage, env)
+        rust.verify(stage / 'rustup/toolchains' / (version + '-' + triple), stage, version=version)
         installer.unlink()
         if slot.exists():
             raise ValueError('Rust-Ziel inzwischen vorhanden; nichts ueberschreiben.')
         stage.rename(slot)
         published = True
-        root = rust.verify(slot / 'rustup/toolchains' / (rust.VERSION + '-' + triple), base)
-        record = {'version': rust.VERSION, 'manager_sha256': digest, 'files': common.inventory(slot)}
+        root = rust.verify(slot / 'rustup/toolchains' / (version + '-' + triple), base, version=version)
+        record = {'version': version, 'manager_sha256': digest, 'files': common.inventory(slot)}
         with (slot / 'rust-ready.json').open('x', encoding='utf-8') as stream:
             os.chmod(slot / 'rust-ready.json', 0o600)
             json.dump(record, stream)

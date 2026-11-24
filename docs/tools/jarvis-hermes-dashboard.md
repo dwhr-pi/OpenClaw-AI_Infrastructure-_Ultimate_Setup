@@ -1,5 +1,9 @@
 # JARVIS mit Hermes: Dashboard, Sprache und sichere Einrichtung
 
+**Eigenstaendiges Projekt:** [OpenJarvis von open-jarvis](openjarvis.md) hat einen
+separaten Setup-Eintrag und eine eigene offizielle Website. Diese Hermes-Anleitung
+ist keine Installations- oder Funktionsbeschreibung von OpenJarvis.
+
 Stand: **22.10.2026**. Anleitung und umsetzbares Briefing, keine hier ausgefuehrte Installation und
 kein bereits vorhandenes JARVIS-Dashboard.
 

@@ -3,6 +3,7 @@
 # shellcheck disable=SC2034
 TXT_YES_LABEL="כן"
 TXT_NO_LABEL="לא"
+TXT_OK_LABEL="אישור"
 TXT_LOADING_NOTICE_TITLE="הכנת התצוגה"
 TXT_LOADING_NOTICE_BODY='מכין את התצוגה "%s".\n\n%s\n\nהטעינה עשויה להימשך מספר שניות עד כמה דקות בהתאם ל-WSL ולאחסון. המדידות הנוספות נקראות מהסיכום המקומי.\n\nלהמשיך?'
 TXT_LOADING_GAUGE_TITLE='טוען %s'

@@ -17,6 +17,112 @@ import native_build_deps as deps
 
 
 class PrivatePython(unittest.TestCase):
+    def symlink(self, link, target, directory=False):
+        try:
+            link.symlink_to(target, target_is_directory=directory)
+        except OSError as error:
+            self.skipTest('Host permits no fixture symlinks: ' + str(error))
+
+    def private_alias(self, mode):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory).resolve()
+            slot = base / 'toolchain/outlines-python313'
+            actual = slot / 'managed/cpython-3.13.17/bin/python3.13'
+            alias = slot / 'managed/cpython-3.13/bin/python3.13'
+            calls = []
+            outside = base / 'outside-python'
+            outside.write_text('never-executed')
+
+            def command(args, cwd, env):
+                calls.append(args)
+                if 'install' in args:
+                    actual.parent.mkdir(parents=True)
+                    actual.write_text('fixture-never-executed')
+                    self.symlink(alias.parents[1], Path('cpython-3.13.17'), directory=True)
+                    if mode == 'external':
+                        actual.unlink()
+                        self.symlink(actual, outside)
+                    elif mode == 'broken':
+                        actual.unlink()
+                        self.symlink(actual, Path('missing'))
+                    elif mode == 'loop':
+                        actual.unlink()
+                        self.symlink(actual, Path('python3.13'))
+                    elif mode == 'leaf':
+                        binary = actual.with_name('python3.13-real')
+                        actual.rename(binary)
+                        self.symlink(actual, Path(binary.name))
+                    return ''
+                if 'find' in args:
+                    return str(alias)
+                return '3.13 fixture'
+
+            with patch.object(runtime.common, 'reserve'), \
+                    patch.object(runtime.native_uv, 'select', return_value='/fixture/uv') as uv, \
+                    patch.object(runtime.common, 'run', side_effect=command), redirect_stdout(io.StringIO()):
+                if mode in ('external', 'broken', 'loop'):
+                    with self.assertRaises(ValueError):
+                        runtime.select(base, approved=True)
+                    self.assertEqual(len(calls), 2)
+                    self.assertFalse(slot.exists())
+                    self.assertEqual(outside.read_text(), 'never-executed')
+                else:
+                    selected = runtime.select(base, approved=True)
+                    expected = str(actual.resolve(strict=True))
+                    self.assertEqual(selected, expected)
+                    self.assertEqual(runtime.select(base), expected)
+                    uv.assert_called_once()
+                    record = json.loads((slot / 'python-ready.json').read_text())
+                    self.assertEqual(record['entry'], Path(expected).relative_to(slot).as_posix())
+                    self.assertTrue(any(value.startswith('link:') for value in record['files'].values()))
+                    alias.parents[1].unlink()
+                    self.symlink(alias.parents[1], outside.parent, directory=True)
+                    with self.assertRaisesRegex(ValueError, 'veraendert'):
+                        runtime.select(base)
+
+    def test_internal_directory_alias_is_resolved_and_inventory_checked(self):
+        self.private_alias('directory')
+
+    def test_internal_leaf_alias_is_resolved_and_inventory_checked(self):
+        self.private_alias('leaf')
+
+    def test_external_alias_never_executes_and_preserves_external_file(self):
+        self.private_alias('external')
+
+    def test_broken_alias_never_executes(self):
+        self.private_alias('broken')
+
+    def test_alias_loop_never_executes(self):
+        self.private_alias('loop')
+
+    def test_resolved_entry_boundary_without_host_symlink_privileges(self):
+        for escapes in (False, True):
+            with self.subTest(escapes=escapes), tempfile.TemporaryDirectory() as directory:
+                base = Path(directory).resolve()
+                slot = base / 'toolchain/outlines-python313'
+                actual = slot / 'managed/cpython-real/bin/python3.13'
+                actual.parent.mkdir(parents=True)
+                actual.write_text('never-executed')
+                candidate = slot / 'managed/cpython-alias/bin/python3.13'
+                target = base / 'external' if escapes else actual
+                (slot / 'python-ready.json').write_text(json.dumps({
+                    'entry': candidate.relative_to(slot).as_posix(),
+                    'files': runtime.common.inventory(slot)}))
+                original = Path.resolve
+
+                def resolve(path, *args, **kwargs):
+                    return target if path == candidate else original(path, *args, **kwargs)
+
+                with patch.object(Path, 'resolve', resolve), \
+                        patch.object(runtime.common, 'run', return_value='3.13 fixture') as run:
+                    if escapes:
+                        with self.assertRaisesRegex(ValueError, 'verlaesst'):
+                            runtime.select(base)
+                        run.assert_not_called()
+                    else:
+                        self.assertEqual(runtime.select(base), str(actual))
+                        self.assertEqual(run.call_args.args[0][0], str(actual))
+
     def test_refusal_does_not_download_or_create_files(self):
         with tempfile.TemporaryDirectory() as directory, \
                 patch.object(runtime.sys, 'stdin', Mock(isatty=Mock(return_value=False))), \

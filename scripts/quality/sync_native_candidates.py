@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[2]
 FRAGMENTS = ROOT / 'config/native-candidates'
 ACTIONS = ('install', 'update', 'uninstall', 'status', 'doctor', 'check')
 ALLOWED = {
+    'openjarvis': 'OpenJarvis',
     'cert_manager': 'cert-manager', 'external_dns': 'External_DNS',
     'kyverno': 'Kyverno', 'gatekeeper': 'Gatekeeper', 'keda': 'KEDA',
     'phoenix': 'Arize_Phoenix', 'gvisor': 'gVisor',
@@ -52,6 +53,9 @@ def render(items):
     rows = {row['id']: row for row in registry['tools']}
     for item in items:
         key = item['id']
+        if key == 'openjarvis' and key not in rows:
+            rows[key] = {'id': key, 'name': item['tool_key'], 'category': 'Agents / Local-first', 'ports': []}
+            registry['tools'].append(rows[key])
         row = rows[key]
         row.update(status='experimental', readiness='planned', auto_install=False,
                    install_mode='github-native-build', check_type='path',
@@ -59,6 +63,8 @@ def render(items):
                    source='https://github.com/' + item['repo'] + '.git', source_verified=True,
                    source_commit=item['recipe']['pin'], license=item['license'],
                    description=item['recipe']['note'], doc=item['doc'])
+        if item.get('website'):
+            row['website'] = item['website']
         for action in ACTIONS:
             row[action + '_script'] = 'scripts/tools/' + key + '_' + action + '.sh'
             outputs[ROOT / row[action + '_script']] = (
@@ -92,6 +98,9 @@ def render(items):
         setup = re.sub(r'^TOOL_SCRIPT_NAMES\["' + re.escape(name) + r'"\]="[^"\n]*"$',
                        'TOOL_SCRIPT_NAMES["' + name + '"]="' + key + '"', setup, flags=re.M)
         label = 'Nativer GitHub-Installer (experimentell); keine automatische Aktivierung. ' + item['doc']
+        if key == 'openjarvis':
+            label = ('Nativer CLI-/SDK-Basisbuild (experimentell); ohne Quickstart/Modelldownload. '
+                     'GUI, Desktop und Rust separat. ' + item['doc'])
         setup = re.sub(r'^TOOLS\["' + re.escape(name) + r'"\]="[^"\n]*"$',
                        'TOOLS["' + name + '"]="' + label + '"', setup, flags=re.M)
     # Registration already inserts promoted names, so retain only unresolved candidates here.
@@ -109,9 +118,9 @@ def render(items):
     outputs[setup_path] = setup
     overview_path = ROOT / 'docs/tools/infrastructure-candidates.md'
     overview = [
-        '# Native Infrastruktur-Installer hinter XERJ', '',
-        'Stand: 16.11.2026. Alle 22 genannten Tools stehen weiterhin am Ende des Tools-Menues.',
-        'Valkey und Kube_Bench behalten ihre bestehenden nativen Installer; die 20 weiteren Eintraege',
+        '# Native Infrastruktur- und Agenten-Installer hinter XERJ', '',
+        'Stand: 20.11.2026. Die genannten Tools stehen weiterhin im letzten Tools-Menueabschnitt.',
+        'Valkey und Kube_Bench behalten ihre bestehenden nativen Installer; die weiteren Eintraege',
         'verwenden jetzt tool-spezifische native Buildrezepte statt gesperrter Dokumentations-Platzhalter.', '',
         '**Experimentell, echte Linux-Buildabnahme offen:** Offline-Fixtures pruefen Vertrage und Fehlerpfade,',
         'nicht einen abgeschlossenen Ubuntu-/WSL-Build. Installation bedeutet ausschliesslich den unten',

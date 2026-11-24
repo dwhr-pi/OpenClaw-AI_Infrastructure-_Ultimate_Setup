@@ -74,6 +74,51 @@ class ToolCoverageAuditTests(unittest.TestCase):
         self.assertEqual(refs["acme/app"]["docs"], ["docs/example.md"])
         self.assertEqual(data["counts"]["docs"], 1)
 
+    def test_code_only_references_keep_provenance_without_becoming_live_links(self):
+        self.write('docs/examples.md',
+                   '`https://github.com/owner/repository`\n'
+                   '````bash\n[Fake](https://github.com/acme/fenced)\n```\n````\n'
+                   '~~~text\nhttps://github.com/acme/tilde\n~~~\n'
+                   '    https://github.com/acme/indented\n'
+                   '``literal `backtick` https://github.com/acme/span``\n')
+        data = AUDIT.audit(self.root)
+        report = AUDIT.markdown(data, root=self.root)
+        refs = {row['repo']: row for row in data['documentation_repositories']}
+        for repo in ('owner/repository', 'acme/fenced', 'acme/tilde', 'acme/indented', 'acme/span'):
+            self.assertEqual(refs[repo]['docs'], ['docs/examples.md'])
+            self.assertEqual(refs[repo]['prose_docs'], [])
+            self.assertIn('`https://github.com/' + repo + '` (Code-/Beispielreferenz)', report)
+            self.assertNotIn('](https://github.com/' + repo + ')', report)
+        self.assertIn('[acme/library](https://github.com/acme/library)', report)
+
+    def test_active_occurrence_is_not_hidden_by_code_occurrences(self):
+        self.write('docs/mixed.md', '`https://github.com/acme/mixed`\n'
+                   '[Active](https://github.com/acme/mixed)\n')
+        data = AUDIT.audit(self.root)
+        self.assertIn('[acme/mixed](https://github.com/acme/mixed)', AUDIT.markdown(data, root=self.root))
+
+    def test_historical_original_urls_survive_regeneration_as_code(self):
+        url = 'https://example.org/original-source'
+        self.write('docs/quality/CI_PR31_REFERENCE_REVIEW_2026-11-23.json', json.dumps({
+            'preserved_history': [{'original_url': url}]}))
+        report = AUDIT.markdown(AUDIT.audit(self.root), root=self.root)
+        self.assertIn('`' + url + '`', report)
+        self.assertIn('unverifizierte Originalreferenz', report)
+        self.assertNotIn('](' + url + ')', report)
+        self.write('docs/quality/CI_PR31_REFERENCE_REVIEW_2026-11-23.json', json.dumps({
+            'preserved_history': [{'original_url': url + '` invalid'}]}))
+        with self.assertRaises(ValueError):
+            AUDIT.markdown(AUDIT.audit(self.root), root=self.root)
+
+    def test_report_prose_respects_markdown_line_limit(self):
+        report = AUDIT.markdown(AUDIT.audit(self.root), root=self.root)
+        in_code = False
+        for line in report.splitlines():
+            if line.startswith('```'):
+                in_code = not in_code
+            if not in_code and not line.startswith('|'):
+                self.assertLessEqual(len(line), 120, line)
+
     def test_bare_github_references_are_included_but_topics_are_not(self):
         self.assertEqual(AUDIT.repos("`github.com/Acme/App` https://github.com/Acme/App.git "
                                     "github.com/acme/other. https://github.com/topics/ai"),
@@ -103,6 +148,21 @@ class ToolCoverageAuditTests(unittest.TestCase):
         AUDIT.audit(self.root)
         after = {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
         self.assertEqual(before, after)
+
+    def test_approved_exact_unverified_source_is_not_reactivated_by_regeneration(self):
+        self.write('docs/quality/CI_SOURCE_REFERENCES_2026-11-19.json', json.dumps({
+            'user_approved_reclassification': True, 'review_date': '2026-11-19',
+            'references': [{'original_url': 'https://github.com/acme/app',
+                            'classification': 'unverified-original-reference'}]}))
+        report = AUDIT.markdown(AUDIT.audit(self.root), root=self.root)
+        self.assertIn('`https://github.com/acme/app` (unverifiziert, 2026-11-19)', report)
+        self.assertNotIn('](https://github.com/acme/app)', report)
+        self.assertIn('[acme/library](https://github.com/acme/library)', report)
+
+    def test_unapproved_review_never_reclassifies_sources(self):
+        self.write('docs/quality/CI_SOURCE_REFERENCES_2026-11-19.json', json.dumps({
+            'user_approved_reclassification': False}))
+        self.assertEqual(AUDIT.unverified_repositories(self.root), {})
 
     def test_native_registration_adds_allowlisted_keys_without_duplicate_existing(self):
         setup = self.root / 'setup_ultimate.sh'

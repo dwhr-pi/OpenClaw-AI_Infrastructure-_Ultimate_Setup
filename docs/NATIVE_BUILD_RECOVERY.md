@@ -1,7 +1,7 @@
 # Native statt Docker: Rollback und Ubuntu-Releasewechsel
 
-Stand: 2026-11-16. Geltungsbereich dieser Matrix sind die **75 Eintraege** in
-`config/docker_to_github.json`: 71 implementierte native Buildrezepte und vier ausdruecklich
+Stand: 2026-11-23. Geltungsbereich dieser Matrix sind die **76 Eintraege** in
+`config/docker_to_github.json`: 72 implementierte native Buildrezepte und vier ausdruecklich
 blockierte Gesamtplattformen. Andere Installer-Engines und Ansible- Deployments brauchen ihre
 eigenen Nachweise; diese Matrix behauptet keine vollstaendige Rollback-Abnahme aller Werkzeuge des
 Gesamtkatalogs.
@@ -75,6 +75,7 @@ keine Behauptung, dass der Build-Installer diese Dienste startet.
 | `node_exporter`      | A / B                  | Collector-Konfiguration und Textfile-Verzeichnis                                 |
 | `node_red`           | A / B                  | Flows, Credential-Secret und gesichertes userDir                                 |
 | `open_webui`         | A / B                  | Datenbank, Dateien, WEBUI_SECRET_KEY und passende Schema-Version                 |
+| `openjarvis` | A / B | CLI-/SDK-Pin, Konfiguration, lokale Speicher-/Telemetriedaten und Providervertraege getrennt sichern; kein Agentenstart, Modell-Pull oder automatischer GUI-/Desktop-/Rust-Restore |
 | `penpot`             | A / B                  | Postgres, Redis, Objektspeicher, Assets und passender WASM-/Frontendstand        |
 | `prometheus`         | A / B                  | TSDB-Snapshot, Regeln, Scrape-Konfiguration und Kompatibilitaet                  |
 | `promtail`           | A / B                  | Positionsdateien, Loki-Ziele; EOL-Build nur nach separater Archivfreigabe        |

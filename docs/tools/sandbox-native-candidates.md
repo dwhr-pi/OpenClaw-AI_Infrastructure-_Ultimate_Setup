@@ -37,7 +37,8 @@ Nur Linux x86_64/aarch64, unprivilegierter Benutzer, kein Crossbuild. Startbudge
 gVisor mindestens 64 GiB freie Disk und 8 GiB verfuegbarer RAM; andere Kandidaten
 16 GiB/4 GiB. Das sind konservative Eingangsschranken, keine gemessenen
 Obergrenzen oder Zusage eines erfolgreichen Builds. Zwei Buildjobs, maximal
-7200 Sekunden je Buildkommando. Der Hauptprozess muss seine Operationssperre halten.
+7200 Sekunden je Buildkommando ausser den unten getrennt begrenzten Kata-Phasen.
+Der Hauptprozess muss seine Operationssperre halten.
 
 Die zentrale Engine installiert nach Zustimmung ausschliesslich die im Fragment
 genannten apt-**Buildabhaengigkeiten**. Keine Runtime wird ueber apt installiert.
@@ -84,13 +85,105 @@ Standard-Go-/Rust-Aktivierungen umgehen kann.
 
 Der optionale Runner hat exakt `run(argv: list[str], cwd: Path, env: dict) -> str`.
 Er muss Fehler werfen und Prozessgruppen-/Zeit-/Ausgabebudgets selbst erzwingen.
-Ohne Injection nutzt der Hook 20s/64 KiB fuer Probes und 7200s fuer Builds;
-Buildausgabe wird geerbt statt unbegrenzt im RAM gesammelt. Nur Tests sollten
+Ohne Injection nutzt der Hook 20s/64 KiB fuer Probes und 7200s fuer allgemeine
+Buildkommandos; deren Ausgabe wird geerbt statt unbegrenzt im RAM gesammelt.
+Die getrennten Kata-Phasen nutzen den unten beschriebenen Streaming-Runner.
+Nur Tests sollten
 Runner injizieren. Eine Simulation ist kein realer Buildnachweis.
 Doctor/Check darf nur `probe` fuer bereits inventarisierte Artefakte verwenden,
 niemals `preflight` oder `build` und damit niemals Download/Compiler starten.
 
+### Firecracker: libclang vor dem Build pruefen
+
+Der Buildabbruch vom 18.11.2026 in `userfaultfd-sys`/`bindgen` meldete eine
+fehlende ladbare `libclang`-Bibliothek. Cargo und Rust allein reichen nicht.
+Die freigegebene Firecracker-Buildpaketliste enthaelt deshalb jetzt `libclang-dev`.
+Der vorhandene Voraussetzungen-Dialog richtet es nur nach Zustimmung ein;
+unter Ubuntu 26.04 und anderen Debian-Basen bleibt die apt-Simulation vorgeschaltet.
+Keine Fremdquelle und keine Docker-/Runtimeinstallation.
+
+Nach der Paketphase und erneut vor Cargo prueft ein isolierter Python-Unterprozess
+die Hostbibliothek samt benoetigten Clang-C-API-Symbolen, mit 20 Sekunden Zeitlimit
+und maximal 64 Kandidaten aus festen Systempfaden. LLVM-Verzeichnisse sowie
+x86_64-/aarch64-Multiarchpfade werden beruecksichtigt. Fremde `LIBCLANG_PATH`-,
+`LD_LIBRARY_PATH`- und Python-Pfade werden nicht in die Probe uebernommen.
+Das erfolgreich gepruefte Verzeichnis wird nur im privaten Cargo-Buildenvironment
+als `LIBCLANG_PATH` gesetzt, nicht global oder in Shellprofilen.
+
+Fehlt die Bibliothek oder kann sie nicht geladen werden, stoppt die Vorpruefung
+vor dem Quellen-/Cargo-Build statt erst nach langer Kompilierung. Installierte
+Paketmetadaten allein gelten nicht als Ladebeweis. Keine automatische Wiederholung,
+keine Veraenderung der gepinnten Quellen oder Lockfiles und keine VM-/KVM-Aktivierung.
+
+Quelle, am 18.11.2026 gelesen:
+[bindgen: Anforderungen und Debian-Paket](https://rust-lang.github.io/rust-bindgen/requirements.html).
+Die Offline-Tests `tests/test_firecracker_libclang.py` verwenden nur Mocks;
+ein echter Ubuntu-26.04-/WSL-Build und die VM-Abnahme bleiben gesondert offen.
+
+### Kata: beobachtbare Go-Phasen
+
+Der gemeldete Abbruch nach 7200 Sekunden betraf `go mod download`, nicht den
+Compiler. Der erfolgreiche Git-Fetch belegt keine Erreichbarkeit des Go-Proxys.
+Ein Timeout allein beweist weder OOM noch einen bestimmten Netzwerkfehler.
+
+Download, Modulpruefung und Make-Build verwenden jetzt den vorhandenen
+`native_build_process`-Runner unveraendert: laufende Ausgabe, PID, alle 30 Sekunden
+Heartbeat mit Restbudget und bei Timeout Abbruch der gesamten POSIX-Prozessgruppe.
+Der Heartbeat ist **kein Downloadfortschritt**. `go mod download -json` liefert
+Modulabschluss-/Fehlerdiagnosen im Operationslog, keine Prozentanzeige. Ein noch
+laufender Modulabruf kann ohne JSON-Ausgabe bleiben; dann ist nur der Heartbeat
+sichtbar. Der begrenzte Rueckgabepuffer des Runners wird nicht als vollstaendiges
+JSON geparst und ist kein Modulmanifest oder Erfolgsnachweis.
+
+| Phase | Umgebungsvariable | Standard | Erlaubte Sekunden |
+| --- | --- | --- | --- |
+| Download | `KATA_GO_DOWNLOAD_TIMEOUT_SECONDS` | 1800 | 30 bis 7200 |
+| `go mod verify` | `KATA_GO_VERIFY_TIMEOUT_SECONDS` | 300 | 30 bis 1800 |
+| Make-Build | `KATA_GO_BUILD_TIMEOUT_SECONDS` | 7200 | 300 bis 21600 |
+
+Nur dezimale ganze Sekunden ohne Leerzeichen, Vorzeichen oder Einheit sind
+gueltig. Fehler werden bereits vor der Preflight-Installation von Abhaengigkeiten
+und erneut vor dem Build abgewiesen. Fuer bewusst autorisierte Installationen
+koennen die Variablen im aufrufenden Prozess gesetzt werden; sie aendern weder
+den Source-Pin noch das Go-Minimum. Ein laengeres Zeitbudget ist keine Reparatur
+einer unbekannten Netzwerkursache. Es gibt keine automatischen Wiederholungen,
+Proxy-/Mirrorwechsel oder abgeschaltete Checksum-Pruefung.
+
+`GOTOOLCHAIN=local`, `GOENV=off`, `GOWORK=off` und
+`GOFLAGS=-mod=readonly -p=2` bleiben gesetzt. Vor und nach jeder Phase muessen
+`go.mod` und `go.sum` ihren gepinnten SHA256 behalten; eine Aenderung stoppt vor
+der Folgephase. Erst ein erfolgreicher Download, erfolgreiche Modulpruefung,
+Build und die bisherigen Artefakt-/Versionspruefungen erlauben Buildnachweise.
+
+Phasenfehler nach aussen sind feste Codes wie `kata_go_download_timeout`,
+`kata_go_verify_failed` oder `kata_go_build_source_contract_changed`; fremde
+Exceptiontexte, Pfade und Ausgabepuffer werden nicht in diese Fehler uebernommen.
+Die nativen Go-Diagnosen bleiben im lokalen Operationslog und koennen Modulnamen,
+URLs und lokale Cachepfade enthalten; Logs vor Weitergabe pruefen. Bei Abbruch
+bleibt die bestehende Engine-Rollbackgrenze unveraendert: kein Erfolgsmarker,
+neuen privaten App-Buildbaum entfernen, Toolchainbasis und Benutzerlogs erhalten.
+
+Offline-Pruefung ohne Go, Netz oder Compiler:
+
+```bash
+python3 -B -m unittest discover -s tests -p 'test_kata_go_download.py' -v
+```
+
+Diese Mock-/Fixturetests sind kein erfolgreicher Kata-Download, Hostbuild oder
+VM-/CRI-Laufzeitnachweis.
+
 ## Nachweise und Grenzen
+
+Korrektur vom 19.11.2026: Ein fehlgeschlagener Git-Fetch konnte zuvor durch
+`Bereinigung nur fuer den privaten Runtime-Ordner erlaubt` verdeckt werden.
+Native Quellen liegen in `native-github/source`, nicht im separaten `runtime`.
+Der innere Quellenhelfer delegiert deshalb seinen Rollback an den aufrufenden
+nativen Installer. Dieser darf weiterhin nur seinen in diesem Versuch neu
+angelegten nativen Prefix entfernen; Toolchainbasis, alte Installationen und
+Benutzerdaten bleiben erhalten. Der Runtime-Loeschhelfer wird nicht erweitert.
+Scheitert auch die Bereinigung, bleibt der urspruengliche Fetch-/Buildfehler
+massgeblich; Restbestand und unvollstaendiger Rollback werden separat gemeldet.
+Das behebt die Fehlerbehandlung, nicht eine gestoerte Netzwerkverbindung.
 
 gVisor baut exakt `//debian:gvisor-release-tar-bz2`, optimiert mit nativer
 Architekturkonfiguration. Nur das komplette Bundle mit sieben Sidecars wird

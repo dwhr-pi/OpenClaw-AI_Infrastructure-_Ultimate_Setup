@@ -3,6 +3,7 @@
 # shellcheck disable=SC2034
 TXT_YES_LABEL="نعم"
 TXT_NO_LABEL="لا"
+TXT_OK_LABEL="تأكيد"
 TXT_LOADING_NOTICE_TITLE="جارٍ إعداد العرض"
 TXT_LOADING_NOTICE_BODY='جارٍ إعداد العرض «%s».\n\n%s\n\nقد يستغرق التحميل ثواني أو عدة دقائق حسب WSL ووحدة التخزين. تُقرأ القياسات الاختيارية من الملخص المحلي.\n\nهل تريد المتابعة؟'
 TXT_LOADING_GAUGE_TITLE='جارٍ تحميل %s'

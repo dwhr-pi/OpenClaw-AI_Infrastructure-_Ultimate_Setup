@@ -33,6 +33,156 @@ nativem Windows-Python/PowerShell und aendern nicht den Linux-Status. Die benoet
 MSVC-Developer-Umgebung muss dort bereits verfuegbar sein; andernfalls den unten beschriebenen
 Developer-PowerShell-Weg nutzen.
 
+## Schaltflaechen im Voraussetzungen-Dialog
+
+Bei einer Stapelinstallation mit mehreren ausgewaehlten Tools gibt es vor der
+ersten Installation **oder Deinstallation** eine einmalige Voraussetzungen-Auswahl:
+
+- **Wie bisher:** Voraussetzungen je Tool bestaetigen (Voreinstellung).
+- **Alle:** fehlende freigegebene Build-Voraussetzungen fuer diesen Stapel einrichten,
+  ohne den Voraussetzungen-Dialog bei jedem Tool erneut zu zeigen.
+- **Nein:** nur vorhandene Buildwerkzeuge verwenden. Fehlende Voraussetzungen
+  fuehren zum Fehler des betreffenden Tools, nicht zu einer erneuten Download-/apt-Frage.
+
+Die OK-/Zurueck-Schaltflaechen der Stapelauswahl nutzen die Werte der gewaehlten
+Setup-Sprache, nicht die Systemsprache von `dialog`. Die ausdrueckliche Nein-Wahl
+wird an die freigegebenen Paket-/uv-/Go-/Rust-Helfer als reine Sperre weitergegeben;
+sie erteilt nie eine Freigabe. Vorhandene passende Basiswerkzeuge duerfen weiter
+verwendet werden. Hauptprogramm und seine normalen Laufzeitpakete sind nicht
+pauschal abgelehnt; Lizenz-/Sicherheitsfragen bleiben getrennt.
+Auch Nein/Escape im einzelnen Voraussetzungen-Dialog erlaubt keine erneute
+Buildwerkzeug-Frage im nachgelagerten Helfer.
+
+Abbrechen fuehrt keine Stapelaktion aus. Die Wahl gilt nur fuer diesen Stapel,
+nicht fuer spaetere Stapel, Einzelinstallationen oder einen Setup-Neustart.
+Sie gilt nur fuer die bereits freigegebenen Voraussetzungen-Wege, nicht fuer
+beliebige Pakete oder Befehle. apt-Simulation, Ressourcen-, Pfad- und
+Integritaetspruefungen sowie Lizenz-/Sicherheitsfreigaben bleiben bestehen.
+Sudo kann weiterhin nach einem Passwort fragen. Optionale manuelle
+Schrittbestaetigungen und Fehlerdialoge werden dadurch nicht abgeschaltet.
+Die neue Auswahl verwendet wie die bisherigen technischen Voraussetzungen-Texte
+deutsche Beschreibungen; Schaltflaechen und die folgenden Ja-/Nein-Tasten folgen den Sprachpaketen.
+
+Die Ja-/Nein-Schaltflaechen des gemeinsamen Voraussetzungen-Fensters verwenden
+die ausgewaehlte Setup-Sprache und deren Sprachpaketwerte, nicht die Sprache
+des installierten `dialog`-Pakets. Deutsch zeigt `Ja` und `Nein`, Englisch
+`Yes` und `No`; die uebrigen Setup-Sprachen nutzen ihre vorhandenen Uebersetzungen.
+Die Voreinstellung bleibt Nein. Nur eine ausdrueckliche Ja-Antwort gibt
+`--install-build-deps` frei; Nein oder Escape erteilt keine solche Freigabe.
+Der technische Beschreibungstext dieses Fensters ist damit nicht vollstaendig
+in alle Sprachen uebersetzt. Diese Korrektur betrifft gezielt die Schaltflaechen.
+
+## Git-Downloads und DNS-Ausfaelle
+
+Der gemeinsame Git-Downloadhelfer gilt unter anderem fuer Mousai, Dejavu, QwQ,
+Qwen3 und GPT-OSS. Ein Fehler `Could not resolve host: github.com` bedeutet,
+dass Git die Namensaufloesung nicht erfolgreich abschliessen konnte; er ist kein
+Nachweis einer Modell-, Python-, GPU- oder Speicherinkompatibilitaet.
+Ein Proxy kann ebenfalls an der Namensaufloesung scheitern.
+
+Der Installer erkennt diese Meldungen sowie die passenden curl-Fehler 5/6,
+protokolliert die DNS-Kategorie und versucht denselben Fetch-Befehl am selben
+Pin hoechstens einmal erneut. Vor dem DNS-Neuversuch wartet er bis zu zwei
+Sekunden; Pause und Neuversuch verbrauchen das bisherige Gesamtbudget
+(standardmaessig 900 Sekunden), statt ein neues Budget zu eroeffnen.
+Bei wiederholtem DNS-Fehler bleibt die Installation fehlgeschlagen, ohne
+Checkout oder Installiert-Marker. Benutzerabbruch wird nicht wiederholt.
+
+Keine automatische Bearbeitung von `/etc/resolv.conf`, `/etc/wsl.conf`,
+Windows-/VPN-/Proxy-Einstellungen, keine festen Ersatz-IP-Adressen, kein
+DNS-Serverwechsel und kein Abschalten der TLS-Pruefung. Ein dauerhaft gestoerter
+Resolver benoetigt eine separate Systemdiagnose; ein Retry ist keine DNS-Reparatur.
+
+Der GPT-OSS-Fehlerbericht vom 18.11.2026 enthielt noch den alten Hinweis
+`kein automatischer Wiederholungsversuch`. Er prueft damit nicht diese Korrektur.
+Ein Neustart eines alten WSL-Checkouts uebernimmt keine gepushten GitHub-Dateien.
+Der korrigierte Helfer protokolliert `Gesamtzeitbudget` und `Versuch 1 von 2`.
+Keine stille Aktualisierung unsignierter Teststaende oder signierter Releases.
+
+### Mousai/Phoenix: langsame Uebertragung und curl 28
+
+Nachtrag 20.11.2026: Der Phoenix-Lauf `20261120_155250` erreichte bereits den
+zweiten Versuch mit 128 Bytes/s und 300 Sekunden. Auch dieser brach mit curl 28
+und `expected flush after ref listing` ab. Der Phoenix-Build wurde nicht erreicht;
+das Protokoll belegt weder einen Pythonfehler noch eine erfolgreiche Installation.
+Eine weitere blosse Verlaengerung oder ein dritter Versuch wird nicht eingefuehrt.
+
+Der gemeinsame Downloader fordert jetzt ausdruecklich Git-Protokoll 2 an und
+setzt `--no-tags --no-recurse-submodules` fuer den gepinnten Fetch. So werden
+automatische Tag- und Submodulabfragen vermieden; erforderliche Submodule
+brauchen weiterhin ihren eigenen geprueften Quellenweg. Die Aenderung gilt auch
+fuer Phoenix. Pin, HTTP/1.1, TLS-Pruefung und das gemeinsame Zeitbudget bleiben
+erhalten. Kein Blob-Filter mit spaeteren unkontrollierten Nachdownloads, kein
+Archiv-/Mirror-Fallback, kein Erfolg aus unvollstaendigen Git-Paketen.
+Siehe [Git-Fetch-Optionen](https://git-scm.com/docs/git-fetch) und
+[Git-Protokoll 2](https://git-scm.com/docs/protocol-v2).
+Die engere Abfrage repariert keinen gestoerten Transport; die Ursache in
+Verbindung, Proxy oder Server ist aus diesem Log allein nicht bestimmbar.
+Offline-Tests pruefen beide Versuche und den Abbruch, nicht einen echten
+WSL-/Phoenix-Download. Vorhandene Daten und das signierte Release bleiben unveraendert.
+
+Das Protokoll vom 18.11.2026 meldete `Operation too slow`, danach `early EOF`.
+Dies ist ein abgebrochener Git-Transport, kein nachgewiesener Compilerfehler.
+Die bestehende Grenze von insgesamt zwei Versuchen wird nicht erhoeht.
+Nur nach explizit erkannter zu langsamer Uebertragung wird beim letzten Versuch
+die Mindestdatenrate von 1024 auf 128 Bytes/s gesenkt. Seit der Folgekorrektur
+vom 19.11.2026 erhaelt nur dieser letzte Versuch ein Stillstandsfenster von
+300 statt 120 Sekunden, begrenzt durch das verbleibende Prozessbudget.
+Beide Versuche teilen weiterhin das Gesamtbudget von
+standardmaessig 900 Sekunden. Kein neuer Host, Mirror oder Commit, keine neue
+TLS-/Credentialfreigabe. Anmelde-, Zertifikats- und Pinfehler bleiben blockierend,
+auch wenn ihre Ausgabe zusaetzlich Transportfehler enthaelt.
+
+Der Phoenix-Bericht vom 19.11.2026 zeigt, dass auch 128 Bytes/s mit 120 Sekunden
+nach serverseitiger Objektkomprimierung abbrachen (`curl 28`, `bad pack header`).
+Damit ist kein Phoenix-/Python-Buildfehler belegt. Das laengere letzte Fenster
+kann verzoegerte Pack-Uebertragung tolerieren, garantiert aber keine Reparatur.
+Die beiden Git-Optionen sind in der
+[offiziellen Git-Konfiguration](https://git-scm.com/docs/git-config#Documentation/git-config.txt-httplowSpeedLimit)
+beschrieben. Auch wenn weniger als 300 Sekunden uebrig sind, gilt nur das Restbudget.
+Bei erneutem Abbruch nennt das Log die Transportgrenze; kein dritter Versuch,
+kein unvollstaendiges Archiv als Ersatz und keine automatische DNS-/WSL-Aenderung.
+
+Die Anpassung kann langsame Verbindungen tolerieren, repariert aber keine
+unterbrochene Internetverbindung. Bei erneutem Fehler bleiben Checkout und
+Erfolgsmarker gesperrt; nur neue Dateien des Versuchs werden zurueckgerollt.
+Mousai bleibt beim bisherigen Quellenmodus: Erfolgreicher Fetch ist keine
+gebaute oder gestartete Desktopanwendung. Offline-Tests verwenden nur Mocks;
+ein echter Download-/Build-/Runtime-Nachweis wird daraus nicht abgeleitet.
+
+## Tool-Git-Download ohne Zeitlimit (22.11.2026)
+
+Der OpenJarvis-Bericht vom 22.11.2026 zeigt einen Abbruch bei etwa 7,5 MiB durch
+Gits Stillstandsgrenze von 128 Bytes/s ueber 300 Sekunden. Der aktuelle Installer
+war damit erreicht; das Entfernen des Phoenix-Frontend-Limits oder das lokale
+Git-Bundle fuer das Setup entfernt diese gesonderte Tool-Downloadgrenze nicht.
+
+Auf ausdruecklichen Wunsch laesst sich fuer den gemeinsamen Tool-Git-Downloader
+jetzt beides abschalten: das Gesamtzeitlimit und die Mindestdatenraten-/Stillstandsfrist.
+Nur der exakte Wert `0` aktiviert diesen Modus:
+
+```bash
+OPENCLAW_GIT_FETCH_TIMEOUT_SECONDS=0 bash ./setup_ultimate.sh
+```
+
+Die Einstellung gilt fuer diesen Setup-Prozess und dessen Toolskripte, wird aber
+nicht dauerhaft gespeichert. Ohne Einstellung gelten weiterhin 900 Sekunden;
+positive Werte von 180 bis 3600 Sekunden behalten die bisherigen Stillstandsgrenzen.
+`GIT_TIMEOUT_SECONDS` aus einem separaten Update-Skript ist nicht diese Einstellung.
+
+Der Modus `0` setzt `http.lowSpeedLimit=0`, `http.lowSpeedTime=0` und kein
+Gesamtzeitlimit am Prozessstarter. Heartbeats melden ausdruecklich, dass kein
+automatisches Zeitlimit besteht. Ein Haenger kann unbegrenzt weiterlaufen und
+muss gegebenenfalls mit **Strg+C** abgebrochen werden. Die Ursache einer
+Netzwerkstoerung wird dadurch nicht behoben; auch der Server kann Verbindungen beenden.
+
+Hoechstens zwei Versuche bei erkannten Transportfehlern; kein endloser Retry-Loop.
+Manueller Abbruch, Zertifikats-, Zugriffs- und Pinfehler bleiben Fehler. Keine
+Freigabe weiterer Hosts, Credentials oder Mirrors; Quellpin, Hashpruefungen,
+Git-Protokoll 2 und der Verzicht auf automatische Tags/Submodule bleiben erhalten.
+Lokale Git-Pruefungen, Paketdownloads, Buildschritte und Importproben behalten ihre
+eigenen Grenzen. Der Modus ist keine Erfolgsmeldung und kein Ersatz fuer eine Laufzeitabnahme.
+
 ## Qwen Code Desktop: Download oder eigener Build
 
 **Qwen_Desktop** bleibt der bisherige manuelle Windows-Download mit Browser und Bestaetigungspause:

@@ -2,7 +2,7 @@
 
 Generiert aus `config/tools.yml`; nicht manuell bearbeiten.
 
-**440 Tools**. Katalogabdeckung ist kein Installations- oder Laufzeitnachweis.
+**441 Tools**. Katalogabdeckung ist kein Installations- oder Laufzeitnachweis.
 Alarme gelten nur fuer explizit markierte Scrape-Ziele bzw. Pod-Labels.
 Ohne Exporter: keine Latenz-, Token-, Fehlerquoten- oder Verfuegbarkeitsbehauptung.
 
@@ -293,6 +293,7 @@ Ohne Exporter: keine Latenz-, Token-, Fehlerquoten- oder Verfuegbarkeitsbehauptu
 | `opendkim` | [Anleitung](../../docs/tools/registry/opendkim.md) | Opt-in Ziel/Pod-Label, Runtime unbestaetigt |
 | `opendmarc` | [Anleitung](../../docs/tools/registry/opendmarc.md) | Opt-in Ziel/Pod-Label, Runtime unbestaetigt |
 | `openhands` | [Anleitung](../../docs/agents/LOCAL_CODING_WORKBENCH.md) | Opt-in Ziel/Pod-Label, Runtime unbestaetigt |
+| `openjarvis` | [Anleitung](../../docs/tools/openjarvis.md) | Opt-in Ziel/Pod-Label, Runtime unbestaetigt |
 | `openlit` | [Anleitung](../../docs/tools/registry/openlit.md) | Opt-in Ziel/Pod-Label, Runtime unbestaetigt |
 | `openmontage` | [Anleitung](../../docs/tools/openmontage.md) | Opt-in Ziel/Pod-Label, Runtime unbestaetigt |
 | `openscap` | [Anleitung](../../docs/tools/registry/openscap.md) | Opt-in Ziel/Pod-Label, Runtime unbestaetigt |

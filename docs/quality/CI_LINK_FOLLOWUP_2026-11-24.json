@@ -1,0 +1,26 @@
+{
+  "checked_on": "2026-11-24",
+  "ci_head": "108af186953dc90d143ce2f39a5842ffe7495c0b",
+  "jobs": [137996172290, 137996131261],
+  "scope": "Konkrete HTTP-503/504-Fehler der beiden PR31-Linkchecks; kein vollstaendiger Live-Linkcheck oder Lizenzreview.",
+  "retained_active_references": [
+    "https://github.com/Ardour/ardour/blob/master/COPYING",
+    "https://github.com/opentofu/opentofu/blob/main/LICENSE",
+    "https://github.com/google-gemini/gemini-cli/blob/main/LICENSE",
+    "https://github.com/docker-library/docs/blob/master/postgres/README.md",
+    "https://github.com/n8n-io/n8n/blob/master/LICENSE.md",
+    "https://github.com/langgenius/dify/blob/main/LICENSE"
+  ],
+  "ci_status_for_retained": 503,
+  "recheck": "Alle sechs Originaladressen am 24.11.2026 per Webabruf als GitHub-Dateiseiten erreichbar. Kein Beleg fuer dauerhafte Verfuegbarkeit oder erfolgreiche CI-Neupruefung. Keine Umklassifizierung oder Checker-Ausnahme.",
+  "historical_api": {
+    "original_url": "https://api.github.com/repos/dwhr-pi/VPS-_Kubernate-_Ollama_OpenClaw_installation/commits/main",
+    "ci_status": 504,
+    "replacement_url": "https://api.github.com/repos/dwhr-pi/OpenClaw-AI_Infrastructure-_Ultimate_Setup/commits/cd0068a093c74ac95d468aac315104c95f7a3445",
+    "verified_sha": "cd0068a093c74ac95d468aac315104c95f7a3445",
+    "verified_subject": "upload",
+    "preservation": "Originaladresse und datierter CI-Befund bleiben im historischen Bericht erhalten; API-Antwort bestaetigt den damaligen SHA, nicht heutiges main."
+  },
+  "checker_changes": false,
+  "installation_or_runtime_tested": false
+}

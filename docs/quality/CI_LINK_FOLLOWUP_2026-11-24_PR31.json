@@ -1,0 +1,77 @@
+{
+  "checked_on": "2026-11-24",
+  "ci_head": "bcc973e91236fef57470012e72d2b357cbc9df93",
+  "jobs": [
+    138713061526,
+    138713010244
+  ],
+  "mistral": {
+    "original_url": "https://docs.mistral.ai/models/mistral-nemo-12b-24-07",
+    "ci_status": 404,
+    "direct_get_status": 404,
+    "replacement_url": "https://docs.mistral.ai/models/mistral-nemo",
+    "replacement_direct_get_status": 200,
+    "verified_identifier": "open-mistral-nemo-2407",
+    "scope": "Direkter HTTPS-GET der neuen offiziellen Modellseite bestaetigt die Modellkennung. Alte URL bleibt erhalten; kein Austausch des Modells oder seiner Gewichte."
+  },
+  "github": {
+    "ci_status": 503,
+    "original_urls": [
+      "https://github.com/dgtlmoon/changedetection.io/blob/2bd1a87403b83eb6f37f9f23c04ee2555baccba0/setup.py",
+      "https://github.com/open-telemetry/opentelemetry-collector/blob/30add0562534958c3b4173fa307b5a3497d0bc9c/cmd/otelcorecol/go.mod",
+      "https://github.com/open-telemetry/opentelemetry-collector/blob/30add0562534958c3b4173fa307b5a3497d0bc9c/cmd/otelcorecol/components.go",
+      "https://github.com/browser-use/browser-use/blob/3df5806a0d097a1546d92c49bcf1b28c9972c3bd/pyproject.toml",
+      "https://github.com/Koenkk/zigbee2mqtt/blob/344b6e03b43644c97154a72ca9eae17193c553a2/package.json",
+      "https://github.com/Koenkk/zigbee2mqtt/blob/344b6e03b43644c97154a72ca9eae17193c553a2/index.js",
+      "https://github.com/Jakeschincariol/youtube-agent-skill/blob/a2feb2104981a375ffd4f87ee04f4f5344ac43c6/LICENSE",
+      "https://github.com/tashfeenahmed/freellmapi/blob/57c0669233bbe0c70a0f9f9927613192be948773/server/src/routes/keys.ts",
+      "https://github.com/rhasspy/rhasspy/blob/083721a92a9a12396c794003a7f9ebcdd8dffa60/.python-version",
+      "https://github.com/rhasspy/rhasspy/blob/083721a92a9a12396c794003a7f9ebcdd8dffa60/setup.py.in",
+      "https://github.com/rhasspy/rhasspy/blob/083721a92a9a12396c794003a7f9ebcdd8dffa60/Makefile.in",
+      "https://github.com/rhasspy/rhasspy/blob/083721a92a9a12396c794003a7f9ebcdd8dffa60/configure.ac",
+      "https://github.com/AidaDSP/AIDA-X/blob/1.1.0/LICENSE",
+      "https://github.com/lllyasviel/stable-diffusion-webui-forge/blob/main/modules/launch_utils.py"
+    ],
+    "recheck": "Alle 14 Originaladressen per Webabruf als GitHub-Dateiseiten erreichbar; keine neue Lizenz-/Buildabnahme. Links bleiben aktiv, keine Umklassifizierung oder Checker-Ausnahme."
+  },
+  "freelivps": {
+    "url": "https://freelivps.com/",
+    "ci_status": 0,
+    "recheck": "Webabruf am 24.11.2026: TimeoutError. Weiterhin unbestaetigt; keine aktuelle Hosting-Verfuegbarkeit behauptet.",
+    "user_approved_reclassification": true,
+    "classification": "unverified-historical-reference",
+    "file": "docs/vps/PROVIDER_REVIEW_2026_11_18.md",
+    "preservation": "Originaladresse als Code erhalten, Rohkatalog unveraendert; kein Domain-Ignore oder Fehlerstatus als Erfolg."
+  },
+  "macos": {
+    "job": 138713060752,
+    "conclusion": "cancelled",
+    "steps": null,
+    "logs": "GitHub-Logabruf: BlobNotFound/404; keine Testursache belegt.",
+    "rerun": "Ein gezielter Wiederholungsversuch ueber die GitHub-Integration wurde mit HTTP 403 Resource not accessible by integration abgewiesen. Kein Wiederholungslauf gestartet, kein Workflow-Limit veraendert."
+  },
+  "checker_changed": false,
+  "next_run_followup": {
+    "checked_on": "2026-11-24",
+    "ci_head": "80eafd25d59278ce6f80c8e521953764f285a5e4",
+    "jobs": [
+      138742024326,
+      138741997133
+    ],
+    "ci_status": 503,
+    "original_urls": [
+      "https://github.com/dottxt-ai/outlines/blob/c52af8472c6fe8a607a733ec11b709476af77a96/docs/features/core/output_types.md",
+      "https://github.com/jub0t/Concat/blob/main/README.md",
+      "https://github.com/jub0t/Concat/blob/79116bd0f9a103c633d888603ad27890e929dbdc/docs/MCP.md",
+      "https://github.com/jub0t/Concat/blob/483c9d6afa7b272b816e44fdd5b21eba2d773be2/docs/MCP.md",
+      "https://github.com/heygen-com/hyperframes/blob/main/CONTRIBUTING.md",
+      "https://github.com/heygen-com/hyperframes/blob/3d67fb9d10a864201db9de3214f8cd67fb6fec46/package.json",
+      "https://github.com/haoheliu/AudioLDM2/blob/b5786c5dc0ae8f766337fdc1b67ab6046586d14d/setup.py"
+    ],
+    "recheck": "Alle sieben Originaladressen beim unabhaengigen Webabruf als GitHub-Dateiseiten erreichbar. Kein vollstaendiger Inhalts-, Lizenz- oder Buildreview, keine dauerhafte Verfuegbarkeitszusage.",
+    "decision": "Alle sieben Links bleiben aktiv. Die beiden Vollpruefungen desselben Head-Commits werden nur zeitlich eingereiht, nicht reduziert oder zwischengespeichert.",
+    "causality": "Parallelitaet der beiden Laeufe beobachtet; Last als Ursache der externen 503-Antworten nicht bewiesen.",
+    "scheduling_only": true,
+    "checker_changed": false
+  }
+}
