@@ -178,8 +178,14 @@ Azure/Students sind getrennte Angebote desselben Konzerns.
 | PaaS / Shared Hosting statt allgemeinem Root-VPS (6) | [Render](https://render.com/docs/free), [Koyeb](https://www.koyeb.com/docs), [Railway](https://docs.railway.com/pricing/plans), [Fly.io](https://fly.io/docs/about/free-trial/), [serv00](https://www.serv00.com/), [HelioHost](https://heliohost.org/) | Plattform-/Accountregionen; Root, Kernel und persistente Disk nicht unterstellen. Nicht automatisch K3s-/Ansible-Bootstrap-Ziele |
 | Entwicklungs-/CI-Umgebungen (2) | [github-vps](https://github.com/dwhr-pi/github-vps), [FreeVPS_by_Github-Action](https://github.com/dwhr-pi/FreeVPS_by_Github-Action) | Keine Dauer-VPS; separate P-Pruefung der GitHub-Grenzen in Abschnitt 6 |
 | Broker-/Tradingzweckgebunden (4) | [ForexVPS](https://www.forexvps.net/free-forex-vps), [RoboForex](https://roboforex.com/clients/services/forex-vps/), [Orbex](https://www.orbex.com/en/trading-tools/free-vps), Admirals (`https://admiralmarkets.com/trading-platforms/forex-vps`; unverifiziert, CI HTTP 403, 19.11.2026) | Konto-/Laender-/Equity-/Volumenvorgaben; Handelskosten/Verluste mitrechnen. Keine Empfehlung, Handelsvolumen fuer VPS zu erzeugen; Linux/Root/K3s U |
-| Historisch (2) | [FreeMach](https://freemach.rowe.sh/), [FreeLiVPS](https://freelivps.com/) | Laut Katalog alte/ausgelaufene Angebote bzw. Domainwechsel; aktuelles Hosting U, nicht als verfuegbar gezaehlt |
+| Historisch (2) | [FreeMach](https://freemach.rowe.sh/), FreeLiVPS: `https://freelivps.com/` (unverifizierte Originalreferenz) | Laut Katalog alte/ausgelaufene Angebote bzw. Domainwechsel; aktuelles Hosting U, nicht als verfuegbar gezaehlt |
 | Als eigener Gratis-VPS ausgeschlossen (1) | VPSWala (`https://vpswala.org/blog/get/free-vps`; unverifiziert, CI HTTP 403, 19.11.2026) | Katalog berichtet Affiliateweiterleitung zu Kamatera; hier nicht erneut geoeffnet, kein eigener Zuteilungsnachweis |
+
+Nachtrag 24.11.2026: FreeLiVPS blieb in beiden CI-Linkchecks mit Transportstatus 0 und beim
+separaten Webabruf mit Timeout unerreichbar. Die Originaladresse bleibt nach ausdruecklicher
+Freigabe als unverifizierte historische Referenz erhalten, nicht als aktueller Angebotsbeleg.
+Keine Domain-Ausnahme und kein Transportfehler als Erfolg; die Rohdaten im Katalog bleiben erhalten.
+[Einzelbeleg und Pruefgrenzen](../quality/CI_LINK_FOLLOWUP_2026-11-24_PR31.json).
 
 **Prepaid-Hoster, Nachtrag 20.11.2026:** Die alte Testserver-Adresse liefert in beiden CI-Laeufen und
 beim unabhaengigen GET HTTP 404. Historische Originaladresse:

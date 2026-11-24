@@ -439,6 +439,38 @@ class ExternalLinkPolicyTests(unittest.TestCase):
         self.assertTrue(api['replacement_url'].endswith('/commits/' + api['verified_sha']))
         self.assertEqual(api['verified_sha'], 'cd0068a093c74ac95d468aac315104c95f7a3445')
 
+    def test_mistral_nemo_moved_page_preserves_model_and_failed_original(self):
+        data = json.loads((ROOT / 'docs/quality/CI_LINK_FOLLOWUP_2026-11-24_PR31.json').read_text(encoding='utf-8'))
+        ref = data['mistral']
+        self.assertEqual(ref['original_url'], 'https://docs.mistral.ai/models/mistral-nemo-12b-24-07')
+        self.assertEqual(ref['replacement_url'], 'https://docs.mistral.ai/models/mistral-nemo')
+        self.assertEqual(ref['ci_status'], 404)
+        self.assertEqual(ref['replacement_direct_get_status'], 200)
+        text = (ROOT / 'docs/MISTRAL_AI_INTEGRATION.md').read_text(encoding='utf-8')
+        self.assertIn('`' + ref['original_url'] + '`', text)
+        self.assertNotIn(ref['original_url'], PROBE.markdown_urls(text))
+        self.assertIn(ref['replacement_url'], PROBE.markdown_urls(text))
+        self.assertIn('`open-mistral-nemo-2407`', text)
+        self.assertIn('deprecated', text)
+        self.assertFalse(data['checker_changed'])
+        self.assertEqual(len(data['github']['original_urls']), 14)
+        for url in data['github']['original_urls']:
+            self.assertFalse(self.ignored(url))
+
+    def test_freelivps_is_one_approved_historical_reference_not_a_domain_exception(self):
+        data = json.loads((ROOT / 'docs/quality/CI_LINK_FOLLOWUP_2026-11-24_PR31.json').read_text(encoding='utf-8'))
+        ref = data['freelivps']
+        self.assertEqual(ref['url'], 'https://freelivps.com/')
+        self.assertEqual(ref['ci_status'], 0)
+        self.assertTrue(ref['user_approved_reclassification'])
+        self.assertEqual(ref['classification'], 'unverified-historical-reference')
+        text = (ROOT / ref['file']).read_text(encoding='utf-8')
+        self.assertIn('`' + ref['url'] + '`', text)
+        self.assertIn('unverifizierte Originalreferenz', text)
+        self.assertNotIn(ref['url'], PROBE.markdown_urls(text))
+        self.assertFalse(self.ignored(ref['url']))
+        self.assertIn(ref['url'], (ROOT / 'docs/vps/catalog-2026-11-18.json').read_text(encoding='utf-8'))
+
     def test_pr24_metadata_errors_are_exact_dated_references_not_successes(self):
         ledger = json.loads((ROOT / 'docs/quality/PR24_LINKCHECK_2026-11-11.json').read_text(encoding='utf-8'))
         self.assertEqual(ledger['checked_on'], '2026-11-11')

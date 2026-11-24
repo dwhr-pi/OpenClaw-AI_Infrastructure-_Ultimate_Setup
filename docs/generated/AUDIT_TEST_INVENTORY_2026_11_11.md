@@ -1745,6 +1745,10 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_external_link_policy.py:427`
   Prueffall: `test_pr31_transient_github_failures_keep_live_sources_and_exact_historical_api`
 - `tests/test_external_link_policy.py:442`
+  Prueffall: `test_mistral_nemo_moved_page_preserves_model_and_failed_original`
+- `tests/test_external_link_policy.py:460`
+  Prueffall: `test_freelivps_is_one_approved_historical_reference_not_a_domain_exception`
+- `tests/test_external_link_policy.py:474`
   Prueffall: `test_pr24_metadata_errors_are_exact_dated_references_not_successes`
 
 ## tests/test_f01_f07_hardening.py
@@ -7004,4 +7008,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3140**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3142**. Kein Nachweis bestandener Tests.
