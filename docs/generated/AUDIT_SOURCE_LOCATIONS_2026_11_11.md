@@ -744,7 +744,7 @@ Neue Dateien muessen vor der Regeneration im Git-Index stehen.
 170 Fundstellen, keine automatische Risikoeinstufung.
 
 - `.github/workflows/ci.yml:24`
-- `.github/workflows/linkcheck.yml:20`
+- `.github/workflows/linkcheck.yml:24`
 - `.github/workflows/next-level-health.yml:18`
 - `.github/workflows/shellcheck.yml:13`
 - `config/tools.yml:3381`

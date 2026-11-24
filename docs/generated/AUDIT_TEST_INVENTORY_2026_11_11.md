@@ -1711,44 +1711,46 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_external_link_policy.py:195`
   Prueffall: `test_ci_link_gates_use_the_same_explicit_configuration`
 - `tests/test_external_link_policy.py:220`
-  Prueffall: `test_status_failures_stay_failures_after_bounded_retries`
+  Prueffall: `test_duplicate_live_jobs_share_head_commit_queue_without_cancellation`
 - `tests/test_external_link_policy.py:232`
+  Prueffall: `test_status_failures_stay_failures_after_bounded_retries`
+- `tests/test_external_link_policy.py:244`
   Prueffall: `test_transport_failure_never_becomes_success`
-- `tests/test_external_link_policy.py:239`
+- `tests/test_external_link_policy.py:251`
   Prueffall: `test_retry_can_recover_without_weakening_success_codes`
-- `tests/test_external_link_policy.py:249`
+- `tests/test_external_link_policy.py:261`
   Prueffall: `test_local_examples_are_syntax_only`
-- `tests/test_external_link_policy.py:259`
+- `tests/test_external_link_policy.py:271`
   Prueffall: `test_history_is_preserved_at_original_locations`
-- `tests/test_external_link_policy.py:279`
+- `tests/test_external_link_policy.py:291`
   Prueffall: `test_equivalent_primary_records_keep_original_addresses`
-- `tests/test_external_link_policy.py:313`
+- `tests/test_external_link_policy.py:325`
   Prueffall: `test_unavailable_card_is_not_silently_replaced`
-- `tests/test_external_link_policy.py:318`
+- `tests/test_external_link_policy.py:330`
   Prueffall: `test_probe_excludes_code_not_public_links`
-- `tests/test_external_link_policy.py:322`
+- `tests/test_external_link_policy.py:334`
   Prueffall: `test_approved_original_references_are_exact_evidence_not_ignore_rules`
-- `tests/test_external_link_policy.py:343`
+- `tests/test_external_link_policy.py:355`
   Prueffall: `test_official_supplements_do_not_claim_equivalent_unverified_content`
-- `tests/test_external_link_policy.py:351`
+- `tests/test_external_link_policy.py:363`
   Prueffall: `test_gnu_followup_preserves_only_observed_transport_failures`
-- `tests/test_external_link_policy.py:369`
-  Prueffall: `test_notebooklm_reference_uses_official_rename_with_original_preserved`
 - `tests/test_external_link_policy.py:381`
+  Prueffall: `test_notebooklm_reference_uses_official_rename_with_original_preserved`
+- `tests/test_external_link_policy.py:393`
   Prueffall: `test_mosquitto_reference_uses_exact_pinned_upstream_source`
-- `tests/test_external_link_policy.py:392`
-  Prueffall: `test_south_africa_reference_is_individual_evidence_not_domain_ignore`
 - `tests/test_external_link_policy.py:404`
+  Prueffall: `test_south_africa_reference_is_individual_evidence_not_domain_ignore`
+- `tests/test_external_link_policy.py:416`
   Prueffall: `test_godot_sources_preserve_originals_and_exact_upstream_documents`
-- `tests/test_external_link_policy.py:418`
+- `tests/test_external_link_policy.py:430`
   Prueffall: `test_pinokio_html_release_never_substitutes_digest_verification`
-- `tests/test_external_link_policy.py:427`
+- `tests/test_external_link_policy.py:439`
   Prueffall: `test_pr31_transient_github_failures_keep_live_sources_and_exact_historical_api`
-- `tests/test_external_link_policy.py:442`
+- `tests/test_external_link_policy.py:454`
   Prueffall: `test_mistral_nemo_moved_page_preserves_model_and_failed_original`
-- `tests/test_external_link_policy.py:460`
+- `tests/test_external_link_policy.py:472`
   Prueffall: `test_freelivps_is_one_approved_historical_reference_not_a_domain_exception`
-- `tests/test_external_link_policy.py:474`
+- `tests/test_external_link_policy.py:486`
   Prueffall: `test_pr24_metadata_errors_are_exact_dated_references_not_successes`
 
 ## tests/test_f01_f07_hardening.py
@@ -7008,4 +7010,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3142**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3143**. Kein Nachweis bestandener Tests.

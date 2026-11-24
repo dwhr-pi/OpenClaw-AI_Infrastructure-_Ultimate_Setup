@@ -11,6 +11,10 @@ permissions:
 jobs:
   linkcheck:
     runs-on: ubuntu-latest
+    concurrency:
+      group: markdown-live-links-${{ github.event.pull_request.head.sha || github.sha }}
+      cancel-in-progress: false
+      queue: max
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262

@@ -50,5 +50,28 @@
     "logs": "GitHub-Logabruf: BlobNotFound/404; keine Testursache belegt.",
     "rerun": "Ein gezielter Wiederholungsversuch ueber die GitHub-Integration wurde mit HTTP 403 Resource not accessible by integration abgewiesen. Kein Wiederholungslauf gestartet, kein Workflow-Limit veraendert."
   },
-  "checker_changed": false
+  "checker_changed": false,
+  "next_run_followup": {
+    "checked_on": "2026-11-24",
+    "ci_head": "80eafd25d59278ce6f80c8e521953764f285a5e4",
+    "jobs": [
+      138742024326,
+      138741997133
+    ],
+    "ci_status": 503,
+    "original_urls": [
+      "https://github.com/dottxt-ai/outlines/blob/c52af8472c6fe8a607a733ec11b709476af77a96/docs/features/core/output_types.md",
+      "https://github.com/jub0t/Concat/blob/main/README.md",
+      "https://github.com/jub0t/Concat/blob/79116bd0f9a103c633d888603ad27890e929dbdc/docs/MCP.md",
+      "https://github.com/jub0t/Concat/blob/483c9d6afa7b272b816e44fdd5b21eba2d773be2/docs/MCP.md",
+      "https://github.com/heygen-com/hyperframes/blob/main/CONTRIBUTING.md",
+      "https://github.com/heygen-com/hyperframes/blob/3d67fb9d10a864201db9de3214f8cd67fb6fec46/package.json",
+      "https://github.com/haoheliu/AudioLDM2/blob/b5786c5dc0ae8f766337fdc1b67ab6046586d14d/setup.py"
+    ],
+    "recheck": "Alle sieben Originaladressen beim unabhaengigen Webabruf als GitHub-Dateiseiten erreichbar. Kein vollstaendiger Inhalts-, Lizenz- oder Buildreview, keine dauerhafte Verfuegbarkeitszusage.",
+    "decision": "Alle sieben Links bleiben aktiv. Die beiden Vollpruefungen desselben Head-Commits werden nur zeitlich eingereiht, nicht reduziert oder zwischengespeichert.",
+    "causality": "Parallelitaet der beiden Laeufe beobachtet; Last als Ursache der externen 503-Antworten nicht bewiesen.",
+    "scheduling_only": true,
+    "checker_changed": false
+  }
 }

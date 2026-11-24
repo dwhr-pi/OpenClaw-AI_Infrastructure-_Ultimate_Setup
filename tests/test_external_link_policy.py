@@ -217,6 +217,18 @@ class ExternalLinkPolicyTests(unittest.TestCase):
         self.assertIn('timeout-minutes: 20', health)
         self.assertNotIn('check_markdown_links.cjs', health)
 
+    def test_duplicate_live_jobs_share_head_commit_queue_without_cancellation(self):
+        text = (ROOT / '.github/workflows/linkcheck.yml').read_text(encoding='utf-8')
+        self.assertIn('      group: markdown-live-links-${{ github.event.pull_request.head.sha || github.sha }}', text)
+        self.assertIn('      cancel-in-progress: false', text)
+        self.assertIn('      queue: max', text)
+        self.assertNotIn('cancel-in-progress: true', text)
+        self.assertNotIn('if:', text)
+        self.assertNotIn('github.ref', text)
+        self.assertIn("find . -type f -name '*.md'", text)
+        self.assertIn('timeout-minutes: 35', text)
+        self.assertIn('timeout-minutes: 30', text)
+
     def test_status_failures_stay_failures_after_bounded_retries(self):
         for status in (202, 401, 403, 404, 429, 500, 503):
             with self.subTest(status=status):

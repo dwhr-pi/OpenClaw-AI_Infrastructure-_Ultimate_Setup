@@ -2,6 +2,34 @@
 
 Stand: 31.10.2026. Keine Merge- oder Produktionsfreigabe.
 
+## PR 31: doppelte Vollpruefungen einreihen (24.11.2026)
+
+Die beiden Voll-Linkchecks zu `80eafd25d59278ce6f80c8e521953764f285a5e4` scheiterten
+an sieben wechselnden GitHub-Dateiseiten mit HTTP 503. Alle sieben Originaladressen waren
+beim unabhaengigen Webabruf erreichbar und bleiben aktive Quellen. Keine Umklassifizierung,
+kein Mirror und kein Erfolg aus einem Fehlerstatus.
+
+Push und PR prueften fast zeitgleich. Ob diese Parallelabfragen die 503-Antworten verursachen,
+ist nicht belegt. Zur Lastbegrenzung werden die beiden Vollpruefungen desselben Head-Commits
+jetzt ueber eine gemeinsame Job-Concurrency-Gruppe nacheinander ausgefuehrt. Der PR nutzt
+seinen Head-SHA, nicht den abweichenden synthetischen Merge-SHA; Push und manueller Lauf
+nutzen `github.sha`. Unterschiedliche Commits werden damit nicht global serialisiert.
+
+`cancel-in-progress: false` erhaelt den laufenden Job; `queue: max` erlaubt nach der
+[GitHub-Dokumentation zur Job-Warteschlange][link-queue-doc] bis zu 100 wartende Jobs.
+Bei voller Warteschlange kann GitHub weitere Jobs abbrechen; eine abgebrochene Pruefung ist
+kein Erfolg. Beide Ereignisse und alle Markdown-Dateien bleiben im Gate, ohne Cache oder
+Ergebnisuebernahme. Die zweite Vollpruefung wartet entsprechend laenger; Reihenfolge und
+erfolgreicher Live-Abruf sind nicht garantiert. Bestehende 35-/30-Minuten-Limits und die
+maximal drei Versuche bleiben unveraendert. Die kleine README-Pruefung im CI-Workflow
+und andere Repository-/Runner-Last sind durch diese Gruppe nicht begrenzt.
+
+[Originaladressen und datierte CI-Befunde](CI_LINK_FOLLOWUP_2026-11-24_PR31.json).
+Offline-Vertraege pruefen die Konfiguration, nicht die reale GitHub-Warteschlange oder
+eine erfolgreiche Live-Linkpruefung. Kein Installer oder signiertes Release wird geaendert.
+
+[link-queue-doc]: https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
+
 ## PR 31: Generator-Korrektur vom 23.11.2026
 
 Der Quellen-Auditgenerator erzeugte erneut aktive Repository-Links aus historischen,
