@@ -1,11 +1,15 @@
 """Fixture-only private Rust bootstrap: no downloads, compiler or rustup execution."""
 import io
+import hashlib
+import http.client
 import os
 from pathlib import Path
 import sys
+import ssl
 import tempfile
 import unittest
 from unittest.mock import patch
+from urllib.error import HTTPError, URLError
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts/tools/helpers'))
 import litellm_rust_bootstrap as bootstrap
@@ -158,6 +162,62 @@ class PrivateRustTests(unittest.TestCase):
                 bootstrap.download('https://static.rust-lang.org/fixture', self.base / 'payload', 5, '0' * 64)
         with self.assertRaisesRegex(ValueError, 'Host'):
             bootstrap.download('https://evil.example/fixture', self.base / 'another', 5, '0' * 64)
+
+    def test_transport_retry_restarts_partial_file_and_checks_full_digest(self):
+        class Interrupted(io.BytesIO):
+            def read(self, size):
+                if self.tell():
+                    raise TimeoutError('fixture timeout')
+                return super().read(size)
+        payload = b'fixture'
+        target = self.base / 'payload'
+        with patch.object(bootstrap, 'build_opener') as opener:
+            opener.return_value.open.side_effect = [Interrupted(b'partial'), io.BytesIO(payload)]
+            bootstrap.download('https://static.rust-lang.org/fixture', target, len(payload),
+                               hashlib.sha256(payload).hexdigest())
+            self.assertEqual(opener.return_value.open.call_count, 2)
+            for call in opener.return_value.open.call_args_list:
+                self.assertEqual(call.args, ('https://static.rust-lang.org/fixture',))
+                self.assertEqual(call.kwargs, {'timeout': 45})
+        self.assertEqual(target.read_bytes(), payload)
+
+    def test_two_transport_failures_stop_and_remove_only_new_payload(self):
+        for error in (TimeoutError('timeout'), URLError(TimeoutError('timeout')),
+                      ConnectionResetError('reset'), http.client.IncompleteRead(b'part')):
+            with self.subTest(error=type(error).__name__), patch.object(bootstrap, 'build_opener') as opener:
+                opener.return_value.open.side_effect = error
+                with self.assertRaisesRegex(ValueError, 'nach zwei Downloadversuchen'):
+                    bootstrap.download('https://static.rust-lang.org/fixture', self.base / 'payload', 5, '0' * 64)
+                self.assertEqual(opener.return_value.open.call_count, 2)
+                self.assertFalse((self.base / 'payload').exists())
+
+    def test_integrity_and_security_errors_never_retry(self):
+        errors = (URLError(ssl.SSLCertVerificationError('certificate')),
+                  HTTPError('https://static.rust-lang.org/fixture', 403, 'denied', {}, None),
+                  PermissionError('denied'), KeyboardInterrupt())
+        for error in errors:
+            with self.subTest(error=type(error).__name__), patch.object(bootstrap, 'build_opener') as opener:
+                opener.return_value.open.side_effect = error
+                with self.assertRaises(type(error)):
+                    bootstrap.download('https://static.rust-lang.org/fixture', self.base / 'payload', 5, '0' * 64)
+                self.assertEqual(opener.return_value.open.call_count, 1)
+                self.assertFalse((self.base / 'payload').exists())
+        for payload in (b'wrong', b'oversize', b''):
+            with self.subTest(payload=payload), patch.object(bootstrap, 'build_opener') as opener:
+                opener.return_value.open.return_value = io.BytesIO(payload)
+                with self.assertRaises(ValueError):
+                    bootstrap.download('https://static.rust-lang.org/fixture', self.base / 'payload', 5, '0' * 64)
+                self.assertEqual(opener.return_value.open.call_count, 1)
+                self.assertFalse((self.base / 'payload').exists())
+
+    def test_existing_download_target_never_overwritten_or_removed(self):
+        target = self.base / 'payload'
+        target.write_bytes(b'keep')
+        with patch.object(bootstrap, 'build_opener') as opener:
+            with self.assertRaises(FileExistsError):
+                bootstrap.download('https://static.rust-lang.org/fixture', target, 5, '0' * 64)
+            opener.assert_not_called()
+        self.assertEqual(target.read_bytes(), b'keep')
 
 
 if __name__ == '__main__':

@@ -1698,51 +1698,53 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
   Prueffall: `test_canonical_review_commit_preserves_pin_and_failed_original`
 - `tests/test_external_link_policy.py:81`
   Prueffall: `test_transient_ci_sources_remain_active_not_reclassified`
-- `tests/test_external_link_policy.py:108`
+- `tests/test_external_link_policy.py:114`
   Prueffall: `test_approved_ci_references_keep_originals_without_checker_exceptions`
-- `tests/test_external_link_policy.py:125`
+- `tests/test_external_link_policy.py:131`
   Prueffall: `test_vllm_metric_reference_keeps_original_and_pinned_primary_sources`
-- `tests/test_external_link_policy.py:152`
+- `tests/test_external_link_policy.py:158`
   Prueffall: `test_only_exact_account_entries_are_exempt`
-- `tests/test_external_link_policy.py:164`
+- `tests/test_external_link_policy.py:170`
   Prueffall: `test_public_failures_are_not_exempt_or_alive`
-- `tests/test_external_link_policy.py:179`
+- `tests/test_external_link_policy.py:185`
   Prueffall: `test_rate_limit_backoff_is_bounded_without_accepting_429`
-- `tests/test_external_link_policy.py:189`
+- `tests/test_external_link_policy.py:195`
   Prueffall: `test_ci_link_gates_use_the_same_explicit_configuration`
-- `tests/test_external_link_policy.py:214`
+- `tests/test_external_link_policy.py:220`
   Prueffall: `test_status_failures_stay_failures_after_bounded_retries`
-- `tests/test_external_link_policy.py:226`
+- `tests/test_external_link_policy.py:232`
   Prueffall: `test_transport_failure_never_becomes_success`
-- `tests/test_external_link_policy.py:233`
+- `tests/test_external_link_policy.py:239`
   Prueffall: `test_retry_can_recover_without_weakening_success_codes`
-- `tests/test_external_link_policy.py:243`
+- `tests/test_external_link_policy.py:249`
   Prueffall: `test_local_examples_are_syntax_only`
-- `tests/test_external_link_policy.py:253`
+- `tests/test_external_link_policy.py:259`
   Prueffall: `test_history_is_preserved_at_original_locations`
-- `tests/test_external_link_policy.py:273`
+- `tests/test_external_link_policy.py:279`
   Prueffall: `test_equivalent_primary_records_keep_original_addresses`
-- `tests/test_external_link_policy.py:307`
+- `tests/test_external_link_policy.py:313`
   Prueffall: `test_unavailable_card_is_not_silently_replaced`
-- `tests/test_external_link_policy.py:312`
+- `tests/test_external_link_policy.py:318`
   Prueffall: `test_probe_excludes_code_not_public_links`
-- `tests/test_external_link_policy.py:316`
+- `tests/test_external_link_policy.py:322`
   Prueffall: `test_approved_original_references_are_exact_evidence_not_ignore_rules`
-- `tests/test_external_link_policy.py:337`
+- `tests/test_external_link_policy.py:343`
   Prueffall: `test_official_supplements_do_not_claim_equivalent_unverified_content`
-- `tests/test_external_link_policy.py:345`
+- `tests/test_external_link_policy.py:351`
   Prueffall: `test_gnu_followup_preserves_only_observed_transport_failures`
-- `tests/test_external_link_policy.py:363`
+- `tests/test_external_link_policy.py:369`
   Prueffall: `test_notebooklm_reference_uses_official_rename_with_original_preserved`
-- `tests/test_external_link_policy.py:375`
+- `tests/test_external_link_policy.py:381`
   Prueffall: `test_mosquitto_reference_uses_exact_pinned_upstream_source`
-- `tests/test_external_link_policy.py:386`
+- `tests/test_external_link_policy.py:392`
   Prueffall: `test_south_africa_reference_is_individual_evidence_not_domain_ignore`
-- `tests/test_external_link_policy.py:398`
+- `tests/test_external_link_policy.py:404`
   Prueffall: `test_godot_sources_preserve_originals_and_exact_upstream_documents`
-- `tests/test_external_link_policy.py:412`
+- `tests/test_external_link_policy.py:418`
   Prueffall: `test_pinokio_html_release_never_substitutes_digest_verification`
-- `tests/test_external_link_policy.py:421`
+- `tests/test_external_link_policy.py:427`
+  Prueffall: `test_pr31_transient_github_failures_keep_live_sources_and_exact_historical_api`
+- `tests/test_external_link_policy.py:442`
   Prueffall: `test_pr24_metadata_errors_are_exact_dated_references_not_successes`
 
 ## tests/test_f01_f07_hardening.py
@@ -3021,28 +3023,36 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 
 ## tests/test_litellm_rust_bootstrap.py
 
-- `tests/test_litellm_rust_bootstrap.py:47`
+- `tests/test_litellm_rust_bootstrap.py:51`
   Prueffall: `test_no_consent_no_download_or_mutation`
-- `tests/test_litellm_rust_bootstrap.py:59`
+- `tests/test_litellm_rust_bootstrap.py:63`
   Prueffall: `test_explicit_invalid_path_never_bootstraps`
-- `tests/test_litellm_rust_bootstrap.py:65`
+- `tests/test_litellm_rust_bootstrap.py:69`
   Prueffall: `test_success_reuse_and_private_environment`
-- `tests/test_litellm_rust_bootstrap.py:74`
+- `tests/test_litellm_rust_bootstrap.py:78`
   Prueffall: `test_vaultwarden_has_separate_pin_and_reuses_verified_private_toolchain`
-- `tests/test_litellm_rust_bootstrap.py:89`
+- `tests/test_litellm_rust_bootstrap.py:93`
   Prueffall: `test_vaultwarden_changed_pin_is_not_bootstrapped`
-- `tests/test_litellm_rust_bootstrap.py:95`
+- `tests/test_litellm_rust_bootstrap.py:99`
   Prueffall: `test_explicit_denial_never_prompts_or_downloads_a_missing_rust_toolchain`
-- `tests/test_litellm_rust_bootstrap.py:108`
+- `tests/test_litellm_rust_bootstrap.py:112`
   Prueffall: `test_vaultwarden_storage_shortfall_stops_before_staging_or_download`
-- `tests/test_litellm_rust_bootstrap.py:119`
+- `tests/test_litellm_rust_bootstrap.py:123`
   Prueffall: `test_vaultwarden_invalid_explicit_path_never_downloads`
-- `tests/test_litellm_rust_bootstrap.py:127`
+- `tests/test_litellm_rust_bootstrap.py:131`
   Prueffall: `test_failed_download_cleans_only_its_staging`
-- `tests/test_litellm_rust_bootstrap.py:139`
+- `tests/test_litellm_rust_bootstrap.py:143`
   Prueffall: `test_partial_or_changed_slot_is_not_overwritten`
-- `tests/test_litellm_rust_bootstrap.py:149`
+- `tests/test_litellm_rust_bootstrap.py:153`
   Prueffall: `test_corrupt_payload_not_executed`
+- `tests/test_litellm_rust_bootstrap.py:166`
+  Prueffall: `test_transport_retry_restarts_partial_file_and_checks_full_digest`
+- `tests/test_litellm_rust_bootstrap.py:184`
+  Prueffall: `test_two_transport_failures_stop_and_remove_only_new_payload`
+- `tests/test_litellm_rust_bootstrap.py:194`
+  Prueffall: `test_integrity_and_security_errors_never_retry`
+- `tests/test_litellm_rust_bootstrap.py:213`
+  Prueffall: `test_existing_download_target_never_overwritten_or_removed`
 
 ## tests/test_local_ai_benchmarks.py
 
@@ -6994,4 +7004,4 @@ Parametrisierung und dynamisch erzeugte Tests koennen mehr Laufzeitfaelle liefer
 - `tests/test_yue.py:135`
   Prueffall: `test_real_local_sparse_checkout_excludes_env_and_media`
 
-Statisch benannte Testpositionen: **3135**. Kein Nachweis bestandener Tests.
+Statisch benannte Testpositionen: **3140**. Kein Nachweis bestandener Tests.

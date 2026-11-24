@@ -83,6 +83,18 @@ sysroot und das lokale Dateiinventar. Rustup prueft die Distributionskomponenten
 dies ersetzt keinen eigenen, vollstaendig vendorten Toolchain-Lock.
 Zusaetzliche Speicherreserve: 2 GiB, also 14 GiB vor dem Rust-Bootstrap, auch auf dem WSL-Host.
 
+Nachtrag 24.11.2026: Ein WSL-Lauf bestand die Speicherpruefung, scheiterte aber beim
+Download von `rustup-init` mit einem Lese-Timeout, noch vor dessen Ausfuehrung.
+Der private Bootstrap erlaubt jetzt hoechstens zwei Downloadversuche bei Timeout,
+Verbindungsreset oder abgebrochener HTTP-Uebertragung. Jeder Versuch beginnt ohne
+Teildatei neu; es gibt weder Range-Fortsetzung noch Mirror. Empfangene Bytes werden
+angezeigt, sind aber erst nach exakter Groessen- und SHA256-Pruefung verwendbar.
+Der Socket-Timeout bleibt 45 Sekunden; das ist keine Gesamtzeitgrenze fuer den Download.
+Hash-, Groessen-, Zertifikats-, Pfad- und Zugriffsfehler sowie Strg+C loesen keine
+Wiederholung aus. Nur selbst neu angelegte Teildateien werden entfernt.
+Ein zweiter Transportabbruch stoppt den Installer ohne Ausfuehrung/Erfolgsmarker.
+Keine automatische Netzwerk-/DNS-/WSL-Reparatur und keine Absenkung der Speicherreserve.
+
 Nachtrag 20.11.2026: Der gemeldete Lauf hatte auf C: 13946 MiB frei. Die
 12-GiB-Basispruefung bestand, fuer den erforderlichen Rust-Bootstrap galten
 jedoch 14336 MiB; es fehlten mindestens 390 MiB. Der Abbruch war korrekt,

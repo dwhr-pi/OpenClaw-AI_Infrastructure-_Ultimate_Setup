@@ -1,5 +1,6 @@
 """Consent-gated official Rust prerequisite; no system/default/PATH changes."""
 import hashlib
+import http.client
 import json
 import os
 from pathlib import Path
@@ -8,6 +9,7 @@ import shutil
 import sys
 import tempfile
 from urllib.parse import urlsplit
+from urllib.error import URLError
 from urllib.request import HTTPRedirectHandler, build_opener
 
 import gap_tools as common
@@ -36,20 +38,41 @@ def download(url, target, size, digest):
     parts = urlsplit(url)
     if parts.scheme != 'https' or parts.hostname != 'static.rust-lang.org' or parts.username or parts.password:
         raise ValueError('Unzulaessiger Rust-Bootstrap-Host.')
-    total, sha = 0, hashlib.sha256()
-    with build_opener(OfficialRedirect()).open(url, timeout=45) as response, target.open('xb') as stream:
-        while True:
-            chunk = response.read(1024 * 1024)
-            if not chunk:
-                break
-            total += len(chunk)
-            if total > size:
-                raise ValueError('rustup-init groesser als der gepruefte Pin.')
-            stream.write(chunk)
-            sha.update(chunk)
-    if total != size or sha.hexdigest() != digest:
-        raise ValueError('rustup-init: Groesse/SHA256 stimmt nicht; keine Ausfuehrung.')
-    target.chmod(0o700)
+    for attempt in (1, 2):
+        total, sha, created = 0, hashlib.sha256(), False
+        print('Rust-Bootstrap: Downloadversuch', attempt, 'von 2; Socket-Timeout 45 s.', flush=True)
+        try:
+            with target.open('xb') as stream:
+                created = True
+                with build_opener(OfficialRedirect()).open(url, timeout=45) as response:
+                    while True:
+                        chunk = response.read(64 * 1024)
+                        if not chunk:
+                            break
+                        total += len(chunk)
+                        if total > size:
+                            raise ValueError('rustup-init groesser als der gepruefte Pin.')
+                        stream.write(chunk)
+                        sha.update(chunk)
+                        if total // (1024 * 1024) != (total - len(chunk)) // (1024 * 1024):
+                            print('Rust-Bootstrap: empfangen', total, 'von', size, 'Bytes; noch nicht verifiziert.', flush=True)
+            if total != size or sha.hexdigest() != digest:
+                raise ValueError('rustup-init: Groesse/SHA256 stimmt nicht; keine Ausfuehrung.')
+            target.chmod(0o700)
+            return
+        except BaseException as error:
+            if created:
+                target.unlink()
+            reason = error.reason if isinstance(error, URLError) else error
+            transient = isinstance(reason, (TimeoutError, ConnectionResetError,
+                                            http.client.IncompleteRead, http.client.RemoteDisconnected))
+            if not transient:
+                raise
+            if attempt == 2:
+                raise ValueError('Rust-Bootstrap: Transportabbruch/Timeout nach zwei Downloadversuchen; '
+                                 'keine Ausfuehrung und kein Erfolgsnachweis.') from error
+            print('Rust-Bootstrap: temporaerer Transportabbruch; einmaliger Neustart des Downloads '
+                  'mit unveraenderter Quelle, Groesse und SHA256.', flush=True)
 
 
 def location(base, version=rust.VERSION):

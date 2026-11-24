@@ -89,6 +89,7 @@ class ExternalLinkPolicyTests(unittest.TestCase):
         self.assertEqual(len(active), 18)
         self.assertEqual(sum(r['ci_status'] == 403 for r in active), 12)
         self.assertEqual(sum(r['ci_status'] == 429 for r in active), 6)
+        followup = json.loads((ROOT / 'docs/quality/CI_LINK_FOLLOWUP_2026-11-24.json').read_text(encoding='utf-8'))
         for row in active:
             url = row['original_url']
             self.assertEqual(row['independent_status'], 200)
@@ -96,6 +97,11 @@ class ExternalLinkPolicyTests(unittest.TestCase):
             path = (ROOT / row['file']).resolve()
             path.relative_to(ROOT)
             text = path.read_text(encoding='utf-8')
+            if url == followup['historical_api']['original_url']:
+                self.assertIn('`' + url + '`', text)
+                self.assertNotIn(url, PROBE.markdown_urls(text))
+                url = followup['historical_api']['replacement_url']
+                self.assertFalse(self.ignored(url), url)
             if url not in PROBE.markdown_urls(text):
                 definitions = re.findall(r'^\[([^\]]+)\]:\s+(\S+)\s*$', text, re.MULTILINE)
                 labels = [label for label, target in definitions if target == url]
@@ -417,6 +423,21 @@ class ExternalLinkPolicyTests(unittest.TestCase):
         self.assertIn('https://github.com/pinokiocomputer/pinokio/releases/tag/v8.2.0', PROBE.markdown_urls(text))
         self.assertTrue('nicht allein die SHA256-Digests' in ' '.join(text.split()))
         self.assertFalse(self.ignored(original))
+
+    def test_pr31_transient_github_failures_keep_live_sources_and_exact_historical_api(self):
+        data = json.loads((ROOT / 'docs/quality/CI_LINK_FOLLOWUP_2026-11-24.json').read_text(encoding='utf-8'))
+        self.assertEqual(data['checked_on'], '2026-11-24')
+        self.assertFalse(data['checker_changes'])
+        self.assertEqual(len(data['retained_active_references']), 6)
+        for url in data['retained_active_references']:
+            self.assertFalse(self.ignored(url))
+        api = data['historical_api']
+        text = (ROOT / 'docs/_API-Keys/reviews/2026-10-26.md').read_text(encoding='utf-8')
+        self.assertIn('`' + api['original_url'] + '`', text)
+        self.assertNotIn(api['original_url'], PROBE.markdown_urls(text))
+        self.assertIn(api['replacement_url'], PROBE.markdown_urls(text))
+        self.assertTrue(api['replacement_url'].endswith('/commits/' + api['verified_sha']))
+        self.assertEqual(api['verified_sha'], 'cd0068a093c74ac95d468aac315104c95f7a3445')
 
     def test_pr24_metadata_errors_are_exact_dated_references_not_successes(self):
         ledger = json.loads((ROOT / 'docs/quality/PR24_LINKCHECK_2026-11-11.json').read_text(encoding='utf-8'))
